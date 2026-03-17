@@ -1,0 +1,15 @@
+{
+  "name": "@vendcfo/spreadsheet-bridge",
+  "version": "1.0.0",
+  "private": true,
+  "main": "index.ts",
+  "dependencies": {
+    "papaparse": "^5.5.3",
+    "zod": "^4.1.13"
+  },
+  "devDependencies": {
+    "@types/node": "^24.10.1",
+    "@types/papaparse": "^5.5.1",
+    "typescript": "^5.9.3"
+  }
+}

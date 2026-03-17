@@ -1,0 +1,6 @@
+Date,Description,Amount,Expense Category,Route Name,Location Name,Machine Serial
+2026-03-01,Stripe Payout,5400.00,,Downtown Route,Downtown Core Office,AMS-39V-001
+2026-03-05,Costco Wholesale,-850.00,Inventory,,,
+2026-03-10,Stripe Payout,3200.00,,Downtown Route,Downtown Core Office,AMS-39V-001
+2026-03-12,Shell Gas,-150.00,Fuel,,,
+2026-03-15,Vending Machine Repair,-400.00,Maintenance,,,

@@ -1,0 +1,4 @@
+Contact: security@vendhub.com
+Preferred-Languages: en
+Canonical: https://vendhub.com/.well-known/security.txt
+Policy: https://github.com/vendhub-ai/vendhub/blob/main/SECURITY.md

@@ -1,0 +1,95 @@
+---
+title: API Reference
+description: Access your VendHub data programmatically through the REST API.
+section: developer
+order: 1
+---
+
+The VendHub API lets you access your financial data programmatically. Build custom integrations, automate workflows, or connect VendHub to your own tools.
+
+## Full API documentation
+
+For complete API documentation including all endpoints, parameters, and examples:
+
+**[api.vendhub.com](https://api.vendhub.com)**
+
+## Overview
+
+The API provides access to:
+
+- Transactions
+- Invoices
+- Customers
+- Time tracking projects and entries
+- Financial reports
+- Documents
+- Bank accounts
+
+## Authentication
+
+The VendHub API supports two authentication methods:
+
+### API Keys (for your own data)
+
+For accessing your own VendHub data in scripts, automations, or personal tools.
+
+1. Go to [Settings → Developer](https://app.vendhub.com/settings/developer)
+2. Click **Create API key**
+3. Give it a descriptive name
+4. Copy the key immediately (you won't see it again)
+
+Include your API key in the `Authorization` header:
+
+```
+Authorization: Bearer your-api-key-here
+```
+
+### OAuth 2.0 (for user-facing apps)
+
+For building apps that access other users' VendHub data with their permission.
+
+1. Create an OAuth application in [Settings → Developer](https://app.vendhub.com/settings/developer)
+2. Implement the OAuth authorization flow
+3. Exchange authorization codes for access tokens
+4. Use access tokens in API requests
+
+[Build an OAuth app →](/docs/build-oauth-app)
+
+## Base URL
+
+All API endpoints use:
+
+```
+https://api.vendhub.com/v1
+```
+
+## Rate limits
+
+- **Standard**: 100 requests per minute
+- **Burst**: Up to 200 requests in short bursts
+
+If you exceed rate limits, you'll receive a `429 Too Many Requests` response. Wait and retry with exponential backoff.
+
+## SDKs
+
+### NPM package
+
+Install the VendHub SDK:
+
+```bash
+npm install @vendhub-ai/sdk
+```
+
+### MCP package
+
+For AI tool integrations:
+
+```bash
+npx @vendhub-ai/mcp
+```
+
+[MCP documentation →](/docs/assistant-mcp)
+
+## Support
+
+- **Email**: [support@vendhub.com](mailto:support@vendhub.com)
