@@ -4,6 +4,9 @@ import { CashFlowCalculator } from '@/components/calculators/cash-flow-calculato
 import { RouteProfitCalculator } from '@/components/calculators/route-profit-calculator';
 import { MarkupCalculator } from '@/components/calculators/markup-calculator';
 import { ProductMixCalculator } from '@/components/calculators/product-mix-calculator';
+import { RevShareCalculator } from '@/components/calculators/rev-share-calculator';
+import { BreakEvenCalculator } from '@/components/calculators/break-even-calculator';
+import { EquipmentFinancingCalculator } from '@/components/calculators/equipment-financing-calculator';
 
 export default function CalculatorsPage() {
   return (
@@ -18,6 +21,9 @@ export default function CalculatorsPage() {
         <RouteProfitCalculator />
         <LaborCalculator />
         <ProductMixCalculator />
+        <EquipmentFinancingCalculator />
+        <BreakEvenCalculator />
+        <RevShareCalculator />
       </div>
     </div>
   );

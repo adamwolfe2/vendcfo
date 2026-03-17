@@ -1,3 +1,5 @@
+"use client";
+
 import React, { useState } from 'react';
 import { calculateRouteProfit, RouteProfitInputs, RouteProfitOutputs } from '@vendcfo/calculators';
 

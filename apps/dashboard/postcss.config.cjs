@@ -1,2 +1,2 @@
 // @ts-expect-error - No types for postcss
-module.exports = require("@vendhub/ui/postcss");
+module.exports = require("@vendcfo/ui/postcss");

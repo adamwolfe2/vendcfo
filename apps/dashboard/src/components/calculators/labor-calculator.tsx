@@ -1,3 +1,5 @@
+"use client";
+
 import React, { useState } from 'react';
 import { calculateLabor, LaborInputs, LaborOutputs } from '@vendcfo/calculators';
 
