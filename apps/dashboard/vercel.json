@@ -4,7 +4,7 @@
   "github": {
     "enabled": true
   },
-  "buildCommand": "cd ../.. && turbo run build --filter=@vendcfo/dashboard --only",
+  "buildCommand": "TURBOPACK=0 next build",
   "regions": ["iad1"],
   "headers": [
     {
