@@ -104,27 +104,35 @@ export default async function Layout({
     }
   }
 
-  return (
-    <HydrateClient>
-      <div className="relative">
-        <Sidebar />
+  const content = (
+    <div className="relative">
+      <Sidebar />
 
-        <div className="md:ml-[70px] pb-4">
-          <Header />
-          <TrialGuard
-            plan={user.team?.plan}
-            createdAt={user.team?.createdAt}
-            user={{ fullName: user.fullName }}
-          >
-            <div className="px-4 md:px-8">{children}</div>
-          </TrialGuard>
-        </div>
-
-        <ExportStatus />
-        <GlobalSheetsProvider />
-        <GlobalTimerProvider />
-        <TimezoneDetector />
+      <div className="md:ml-[70px] pb-4">
+        <Header />
+        <TrialGuard
+          plan={user.team?.plan}
+          createdAt={user.team?.createdAt}
+          user={{ fullName: user.fullName }}
+        >
+          <div className="px-4 md:px-8">{children}</div>
+        </TrialGuard>
       </div>
-    </HydrateClient>
+
+      {!isDemo && (
+        <>
+          <ExportStatus />
+          <GlobalSheetsProvider />
+          <GlobalTimerProvider />
+          <TimezoneDetector />
+        </>
+      )}
+    </div>
   );
+
+  if (isDemo) {
+    return content;
+  }
+
+  return <HydrateClient>{content}</HydrateClient>;
 }

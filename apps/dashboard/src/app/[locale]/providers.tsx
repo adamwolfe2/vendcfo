@@ -12,11 +12,24 @@ type ProviderProps = {
 };
 
 export function Providers({ locale, children }: ProviderProps) {
-  return (
+  const isMockMode = process.env.NEXT_PUBLIC_MOCK_UI === "true";
+
+  return isMockMode ? (
+    <I18nProviderClient locale={locale}>
+      <DesktopProvider />
+      <ThemeProvider
+        attribute="class"
+        defaultTheme="light"
+        forcedTheme="light"
+        disableTransitionOnChange
+      >
+        {children}
+      </ThemeProvider>
+    </I18nProviderClient>
+  ) : (
     <TRPCReactProvider>
       <I18nProviderClient locale={locale}>
         <DesktopProvider />
-
         <ThemeProvider
           attribute="class"
           defaultTheme="light"
