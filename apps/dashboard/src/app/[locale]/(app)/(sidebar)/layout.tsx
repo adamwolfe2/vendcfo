@@ -20,22 +20,22 @@ export default async function Layout({
 }) {
   const queryClient = getQueryClient();
 
-  // NOTE: These are used in the global sheets
-  batchPrefetch([
-    trpc.team.current.queryOptions(),
-    trpc.invoice.defaultSettings.queryOptions(),
-    trpc.search.global.queryOptions({ searchTerm: "" }),
-  ]);
-
   // Mock user for UI testing
   let user;
   if (process.env.NEXT_PUBLIC_MOCK_UI === 'true') {
     user = {
       fullName: "VendHub Admin",
       teamId: "mock-team",
-      team: { plan: "pro" }
+      team: { plan: "pro", createdAt: new Date().toISOString() }
     };
   } else {
+    // NOTE: These are used in the global sheets
+    batchPrefetch([
+      trpc.team.current.queryOptions(),
+      trpc.invoice.defaultSettings.queryOptions(),
+      trpc.search.global.queryOptions({ searchTerm: "" }),
+    ]);
+
     user = await queryClient.fetchQuery(trpc.user.me.queryOptions());
 
     if (!user) {
