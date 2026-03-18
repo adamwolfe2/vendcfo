@@ -320,6 +320,142 @@ function CashflowSlide() {
   );
 }
 
+// --- P&L Breakdown Slide ---
+const plData = [
+  { location: "Downtown Mall", revenue: 8400, cogs: 3360, opex: 1680, profit: 3360 },
+  { location: "Airport Terminal", revenue: 6200, cogs: 2480, opex: 1240, profit: 2480 },
+  { location: "Office Park", revenue: 4800, cogs: 1920, opex: 960, profit: 1920 },
+  { location: "University", revenue: 5600, cogs: 2240, opex: 1120, profit: 2240 },
+  { location: "Hospital", revenue: 3900, cogs: 1560, opex: 780, profit: 1560 },
+];
+
+function PLSlide() {
+  const netProfit = useAnimatedCounter(11560);
+  const margin = useAnimatedCounter(38);
+  const locations = useAnimatedCounter(24);
+
+  return (
+    <div className="space-y-6">
+      <div className="grid grid-cols-3 gap-4">
+        <div>
+          <p className="text-[11px] text-white/35 mb-1">Net Profit</p>
+          <p className="text-xl font-medium text-white tabular-nums">
+            ${netProfit.toLocaleString()}
+          </p>
+          <p className="text-[11px] text-emerald-400/70 mt-0.5">+18% YoY</p>
+        </div>
+        <div>
+          <p className="text-[11px] text-white/35 mb-1">Profit Margin</p>
+          <p className="text-xl font-medium text-white tabular-nums">{margin}%</p>
+          <p className="text-[11px] text-emerald-400/70 mt-0.5">+4.2pts</p>
+        </div>
+        <div>
+          <p className="text-[11px] text-white/35 mb-1">Locations</p>
+          <p className="text-xl font-medium text-white tabular-nums">{locations}</p>
+          <p className="text-[11px] text-white/35 mt-0.5">all profitable</p>
+        </div>
+      </div>
+
+      <div className="h-[200px] -mx-2">
+        <ResponsiveContainer width="100%" height="100%">
+          <BarChart data={plData} barSize={14} barGap={2} layout="vertical">
+            <CartesianGrid stroke="rgba(255,255,255,0.04)" strokeDasharray="3 3" horizontal={false} />
+            <XAxis
+              type="number"
+              tick={{ fill: "rgba(255,255,255,0.25)", fontSize: 10 }}
+              axisLine={false}
+              tickLine={false}
+              tickFormatter={(v) => `$${(v / 1000).toFixed(0)}k`}
+            />
+            <YAxis
+              type="category"
+              dataKey="location"
+              tick={{ fill: "rgba(255,255,255,0.3)", fontSize: 9 }}
+              axisLine={false}
+              tickLine={false}
+              width={90}
+            />
+            <Bar dataKey="profit" fill="rgba(255,255,255,0.25)" radius={[0, 3, 3, 0]} animationDuration={1200} />
+            <Bar dataKey="opex" fill="rgba(255,255,255,0.08)" radius={[0, 3, 3, 0]} animationDuration={1200} />
+          </BarChart>
+        </ResponsiveContainer>
+      </div>
+    </div>
+  );
+}
+
+// --- Product Margin Optimizer Slide ---
+const marginData = [
+  { product: "Energy Drinks", cost: 0.85, price: 2.50, margin: 66, volume: 420 },
+  { product: "Water Bottles", cost: 0.22, price: 1.75, margin: 87, volume: 680 },
+  { product: "Candy Bars", cost: 0.45, price: 1.50, margin: 70, volume: 390 },
+  { product: "Chips", cost: 0.55, price: 2.00, margin: 73, volume: 310 },
+  { product: "Coffee", cost: 0.35, price: 2.25, margin: 84, volume: 520 },
+  { product: "Sandwiches", cost: 1.80, price: 4.50, margin: 60, volume: 140 },
+];
+
+function MarginSlide() {
+  const avgMargin = useAnimatedCounter(73);
+  const topProduct = useAnimatedCounter(87);
+  const monthlyProfit = useAnimatedCounter(4280);
+
+  return (
+    <div className="space-y-6">
+      <div className="grid grid-cols-3 gap-4">
+        <div>
+          <p className="text-[11px] text-white/35 mb-1">Avg Margin</p>
+          <p className="text-xl font-medium text-white tabular-nums">{avgMargin}%</p>
+          <p className="text-[11px] text-emerald-400/70 mt-0.5">+6% optimized</p>
+        </div>
+        <div>
+          <p className="text-[11px] text-white/35 mb-1">Best Margin</p>
+          <p className="text-xl font-medium text-white tabular-nums">{topProduct}%</p>
+          <p className="text-[11px] text-white/35 mt-0.5">Water Bottles</p>
+        </div>
+        <div>
+          <p className="text-[11px] text-white/35 mb-1">Product Profit</p>
+          <p className="text-xl font-medium text-white tabular-nums">
+            ${monthlyProfit.toLocaleString()}
+          </p>
+          <p className="text-[11px] text-emerald-400/70 mt-0.5">per month</p>
+        </div>
+      </div>
+
+      <div className="h-[200px] -mx-2">
+        <ResponsiveContainer width="100%" height="100%">
+          <BarChart data={marginData} barSize={24}>
+            <CartesianGrid stroke="rgba(255,255,255,0.04)" strokeDasharray="3 3" vertical={false} />
+            <XAxis
+              dataKey="product"
+              tick={{ fill: "rgba(255,255,255,0.25)", fontSize: 9 }}
+              axisLine={false}
+              tickLine={false}
+              interval={0}
+              angle={-20}
+              textAnchor="end"
+              height={40}
+            />
+            <YAxis
+              tick={{ fill: "rgba(255,255,255,0.25)", fontSize: 10 }}
+              axisLine={false}
+              tickLine={false}
+              tickFormatter={(v) => `${v}%`}
+              width={35}
+              domain={[0, 100]}
+            />
+            <Bar
+              dataKey="margin"
+              fill="rgba(255,255,255,0.18)"
+              radius={[3, 3, 0, 0]}
+              animationDuration={1200}
+            />
+          </BarChart>
+        </ResponsiveContainer>
+      </div>
+    </div>
+  );
+}
+
 // --- Slide metadata ---
 const slides = [
   {
@@ -331,6 +467,16 @@ const slides = [
     label: "Machine Performance",
     title: "See which machines drive your business",
     component: MachineSlide,
+  },
+  {
+    label: "P&L By Location",
+    title: "Know your profit at every location",
+    component: PLSlide,
+  },
+  {
+    label: "Product Margins",
+    title: "Maximize margin on every product you stock",
+    component: MarginSlide,
   },
   {
     label: "Route Intelligence",
@@ -374,7 +520,7 @@ export function LoginFeatureShowcase() {
 
       {/* Content — centered */}
       <div className="relative z-10 flex flex-col justify-center items-center w-full h-full p-10 xl:p-14">
-        <div className="w-full max-w-[480px]">
+        <div className="w-full max-w-[560px]">
           {/* Header */}
           <AnimatePresence mode="wait">
             <motion.div
