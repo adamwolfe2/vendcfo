@@ -22,6 +22,9 @@ export const getQueryClient = cache(makeQueryClient);
  */
 const getAccessToken = cache(async (): Promise<string | undefined> => {
   const supabase = await createClient();
+  // Use getSession for the access token (getUser doesn't return it).
+  // The middleware already verifies the user via getUser() — this just
+  // extracts the JWT for the TRPC context.
   const {
     data: { session },
   } = await supabase.auth.getSession();

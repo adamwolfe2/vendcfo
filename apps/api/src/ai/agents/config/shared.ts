@@ -6,20 +6,54 @@ import { openai } from "@ai-sdk/openai";
 import type { ChatUserContext } from "@vendcfo/cache/chat-cache";
 import { getSharedRedisClient } from "@vendcfo/cache/shared-redis";
 
-const memoryTemplate = readFileSync(
-  join(process.cwd(), "src/ai/agents/config/memory-template.md"),
-  "utf-8",
-);
+// Lazy-load markdown files — these don't exist in the Vercel deployment
+// bundle (the dashboard imports this module but runs in a different cwd).
+// Reading at module evaluation time crashes the entire TRPC router.
+let _memoryTemplate: string | null = null;
+let _suggestionsInstructions: string | null = null;
+let _titleInstructions: string | null = null;
 
-const suggestionsInstructions = readFileSync(
-  join(process.cwd(), "src/ai/agents/config/suggestions-instructions.md"),
-  "utf-8",
-);
+function getMemoryTemplate(): string {
+  if (_memoryTemplate === null) {
+    try {
+      _memoryTemplate = readFileSync(
+        join(process.cwd(), "src/ai/agents/config/memory-template.md"),
+        "utf-8",
+      );
+    } catch {
+      _memoryTemplate = "You are a helpful financial assistant for vending machine operators.";
+    }
+  }
+  return _memoryTemplate;
+}
 
-const titleInstructions = readFileSync(
-  join(process.cwd(), "src/ai/agents/config/title-instructions.md"),
-  "utf-8",
-);
+function getSuggestionsInstructions(): string {
+  if (_suggestionsInstructions === null) {
+    try {
+      _suggestionsInstructions = readFileSync(
+        join(process.cwd(), "src/ai/agents/config/suggestions-instructions.md"),
+        "utf-8",
+      );
+    } catch {
+      _suggestionsInstructions = "Generate helpful follow-up suggestions.";
+    }
+  }
+  return _suggestionsInstructions;
+}
+
+function getTitleInstructions(): string {
+  if (_titleInstructions === null) {
+    try {
+      _titleInstructions = readFileSync(
+        join(process.cwd(), "src/ai/agents/config/title-instructions.md"),
+        "utf-8",
+      );
+    } catch {
+      _titleInstructions = "Generate a short, descriptive title for this conversation.";
+    }
+  }
+  return _titleInstructions;
+}
 
 export function formatContextForLLM(context: AppContext): string {
   return `<company_info>
@@ -141,20 +175,20 @@ export const createAgent = (config: AgentConfig<AppContext>) => {
       },
       workingMemory: {
         enabled: true,
-        template: memoryTemplate,
+        template: getMemoryTemplate(),
         scope: "user",
       },
       chats: {
         enabled: true,
         generateTitle: {
           model: openai("gpt-4.1-nano"),
-          instructions: titleInstructions,
+          instructions: getTitleInstructions(),
         },
         generateSuggestions: {
           enabled: true,
           model: openai("gpt-4.1-nano"),
           limit: 5,
-          instructions: suggestionsInstructions,
+          instructions: getSuggestionsInstructions(),
         },
       },
     },
