@@ -2,7 +2,7 @@
   "version": 2,
   "public": false,
   "github": {
-    "enabled": false
+    "enabled": true
   },
   "buildCommand": "cd ../.. && turbo run build --filter=@vendcfo/dashboard --only",
   "regions": ["fra1", "iad1", "sfo1"],
