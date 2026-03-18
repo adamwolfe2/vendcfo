@@ -10,6 +10,9 @@
   },
   "exports": {
     "./trpc/routers/_app": "./src/trpc/routers/_app.ts",
+    "./trpc/init": "./src/trpc/init.ts",
+    "./utils/auth": "./src/utils/auth.ts",
+    "./services/supabase": "./src/services/supabase.ts",
     "./ai/types": "./src/ai/types.ts"
   },
   "dependencies": {

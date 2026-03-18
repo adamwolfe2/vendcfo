@@ -34,9 +34,10 @@ const config = {
     "@vendcfo/api",
     "@vendcfo/calculators",
     "@vendcfo/spreadsheet-bridge",
-    "@vendcfo/engine"
+    "@vendcfo/engine",
+    "@vendcfo/db"
   ],
-  serverExternalPackages: ["@react-pdf/renderer", "pino"],
+  serverExternalPackages: ["@react-pdf/renderer", "pino", "pg"],
   typescript: {
     ignoreBuildErrors: true,
   },

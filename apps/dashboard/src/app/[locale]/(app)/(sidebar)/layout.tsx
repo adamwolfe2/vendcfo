@@ -20,35 +20,25 @@ export default async function Layout({
 }) {
   const queryClient = getQueryClient();
 
-  // Mock user for UI testing
-  let user;
-  if (process.env.NEXT_PUBLIC_MOCK_UI === 'true') {
-    user = {
-      fullName: "VendCFO Admin",
-      teamId: "mock-team",
-      team: { plan: "pro", createdAt: new Date().toISOString() }
-    };
-  } else {
-    // NOTE: These are used in the global sheets
-    batchPrefetch([
-      trpc.team.current.queryOptions(),
-      trpc.invoice.defaultSettings.queryOptions(),
-      trpc.search.global.queryOptions({ searchTerm: "" }),
-    ]);
+  // NOTE: These are used in the global sheets
+  batchPrefetch([
+    trpc.team.current.queryOptions(),
+    trpc.invoice.defaultSettings.queryOptions(),
+    trpc.search.global.queryOptions({ searchTerm: "" }),
+  ]);
 
-    user = await queryClient.fetchQuery(trpc.user.me.queryOptions());
+  const user = await queryClient.fetchQuery(trpc.user.me.queryOptions());
 
-    if (!user) {
-      redirect("/login");
-    }
+  if (!user) {
+    redirect("/login");
+  }
 
-    if (!user.fullName) {
-      redirect("/setup");
-    }
+  if (!user.fullName) {
+    redirect("/setup");
+  }
 
-    if (!user.teamId) {
-      redirect("/teams");
-    }
+  if (!user.teamId) {
+    redirect("/teams");
   }
 
   return (

@@ -25,7 +25,7 @@ export const trpc = createTRPCOptionsProxy<AppRouter>({
   client: createTRPCClient({
     links: [
       httpBatchLink({
-        url: `${process.env.NEXT_PUBLIC_API_URL}/trpc`,
+        url: `${process.env.NEXT_PUBLIC_URL}/api/trpc`,
         transformer: superjson,
         async headers() {
           const supabase = await createClient();
@@ -73,9 +73,6 @@ export function HydrateClient(props: { children: React.ReactNode }) {
 export function prefetch<T extends ReturnType<TRPCQueryOptions<any>>>(
   queryOptions: T,
 ) {
-  // Skip TRPC calls in mock/demo mode (no API server available)
-  if (process.env.NEXT_PUBLIC_MOCK_UI === 'true') return;
-
   const queryClient = getQueryClient();
 
   if (queryOptions.queryKey[1]?.type === "infinite") {
@@ -88,9 +85,6 @@ export function prefetch<T extends ReturnType<TRPCQueryOptions<any>>>(
 export function batchPrefetch<T extends ReturnType<TRPCQueryOptions<any>>>(
   queryOptionsArray: T[],
 ) {
-  // Skip TRPC calls in mock/demo mode (no API server available)
-  if (process.env.NEXT_PUBLIC_MOCK_UI === 'true') return;
-
   const queryClient = getQueryClient();
 
   for (const queryOptions of queryOptionsArray) {
@@ -118,7 +112,7 @@ export async function getTRPCClient() {
   return createTRPCClient<AppRouter>({
     links: [
       httpBatchLink({
-        url: `${process.env.NEXT_PUBLIC_API_URL}/trpc`,
+        url: `${process.env.NEXT_PUBLIC_URL}/api/trpc`,
         transformer: superjson,
         headers: {
           Authorization: `Bearer ${session?.access_token}`,

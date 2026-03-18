@@ -16,21 +16,15 @@ export default async function Overview() {
     headers: headersList,
   });
 
-  const isMockMode = process.env.NEXT_PUBLIC_MOCK_UI === 'true';
+  const queryClient = getQueryClient();
 
-  let widgetPreferences: any[] = [];
+  // Fetch widget preferences directly for initial data (no prefetch needed)
+  const widgetPreferences = await queryClient.fetchQuery(
+    trpc.widgets.getWidgetPreferences.queryOptions(),
+  );
 
-  if (!isMockMode) {
-    const queryClient = getQueryClient();
-
-    // Fetch widget preferences directly for initial data (no prefetch needed)
-    widgetPreferences = await queryClient.fetchQuery(
-      trpc.widgets.getWidgetPreferences.queryOptions(),
-    );
-
-    // Prefetch suggested actions (metrics are prefetched client-side to respect localStorage)
-    prefetch(trpc.suggestedActions.list.queryOptions({ limit: 6 }));
-  }
+  // Prefetch suggested actions (metrics are prefetched client-side to respect localStorage)
+  prefetch(trpc.suggestedActions.list.queryOptions({ limit: 6 }));
 
   return (
     <HydrateClient>
