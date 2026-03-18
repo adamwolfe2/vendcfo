@@ -1,12 +1,10 @@
 import "server-only";
 
-import { Cookies } from "@/utils/constants";
 import type { AppRouter } from "@vendcfo/api/trpc/routers/_app";
-import { getCountryCode, getLocale, getTimezone } from "@vendcfo/location";
 import { createClient } from "@vendcfo/supabase/server";
 import { HydrationBoundary } from "@tanstack/react-query";
 import { dehydrate } from "@tanstack/react-query";
-import { createTRPCClient, httpBatchLink, loggerLink } from "@trpc/client";
+import { createTRPCClient, httpBatchLink } from "@trpc/client";
 import {
   type TRPCQueryOptions,
   createTRPCOptionsProxy,
@@ -20,12 +18,19 @@ import { makeQueryClient } from "./query-client";
 //            will return the same client during the same request.
 export const getQueryClient = cache(makeQueryClient);
 
+// Use the full URL for server-side calls — on Vercel, VERCEL_URL is the deployment URL
+function getBaseUrl() {
+  if (process.env.NEXT_PUBLIC_URL) return process.env.NEXT_PUBLIC_URL;
+  if (process.env.VERCEL_URL) return `https://${process.env.VERCEL_URL}`;
+  return "http://localhost:3001";
+}
+
 export const trpc = createTRPCOptionsProxy<AppRouter>({
   queryClient: getQueryClient,
   client: createTRPCClient({
     links: [
       httpBatchLink({
-        url: `${process.env.NEXT_PUBLIC_URL}/api/trpc`,
+        url: `${getBaseUrl()}/api/trpc`,
         transformer: superjson,
         async headers() {
           const supabase = await createClient();
@@ -37,24 +42,10 @@ export const trpc = createTRPCOptionsProxy<AppRouter>({
 
           const headers: Record<string, string> = {
             Authorization: `Bearer ${session?.access_token}`,
-            "x-user-timezone": await getTimezone(),
-            "x-user-locale": await getLocale(),
-            "x-user-country": await getCountryCode(),
           };
-
-          // Pass force-primary cookie as header to API for replication lag handling
-          const forcePrimary = cookieStore.get(Cookies.ForcePrimary);
-          if (forcePrimary?.value === "true") {
-            headers["x-force-primary"] = "true";
-          }
 
           return headers;
         },
-      }),
-      loggerLink({
-        enabled: (opts) =>
-          process.env.NODE_ENV === "development" ||
-          (opts.direction === "down" && opts.result instanceof Error),
       }),
     ],
   }),
@@ -98,12 +89,9 @@ export function batchPrefetch<T extends ReturnType<TRPCQueryOptions<any>>>(
 
 /**
  * Get a tRPC client for server-side API routes
- * Use this when you need to call mutations from API routes (e.g., webhooks, callbacks)
- * For queries, use the `trpc` proxy with `queryOptions` instead
  */
 export async function getTRPCClient() {
   const supabase = await createClient();
-  const cookieStore = await cookies();
 
   const {
     data: { session },
@@ -112,16 +100,10 @@ export async function getTRPCClient() {
   return createTRPCClient<AppRouter>({
     links: [
       httpBatchLink({
-        url: `${process.env.NEXT_PUBLIC_URL}/api/trpc`,
+        url: `${getBaseUrl()}/api/trpc`,
         transformer: superjson,
         headers: {
           Authorization: `Bearer ${session?.access_token}`,
-          "x-user-timezone": await getTimezone(),
-          "x-user-locale": await getLocale(),
-          "x-user-country": await getCountryCode(),
-          ...(cookieStore.get(Cookies.ForcePrimary)?.value === "true" && {
-            "x-force-primary": "true",
-          }),
         },
       }),
     ],

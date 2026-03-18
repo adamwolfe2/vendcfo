@@ -88,6 +88,7 @@
         "NEXT_PUBLIC_URL",
         "NEXT_PUBLIC_API_URL",
         "NEXT_PUBLIC_MOCK_UI",
+        "VERCEL_URL",
         "VERCEL_TARGET_ENV",
         "SENTRY_AUTH_TOKEN",
         "SENTRY_ORG",
