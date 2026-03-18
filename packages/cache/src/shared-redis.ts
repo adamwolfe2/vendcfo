@@ -14,7 +14,20 @@ export function getSharedRedisClient(): RedisClientType {
   const redisUrl = process.env.REDIS_URL;
 
   if (!redisUrl) {
-    throw new Error("REDIS_URL environment variable is required");
+    // Return a no-op client when Redis is not configured
+    console.warn("[Redis] REDIS_URL not set — using no-op client");
+    return {
+      get: async () => null,
+      set: async () => null,
+      del: async () => null,
+      exists: async () => 0,
+      expire: async () => false,
+      keys: async () => [],
+      connect: async () => {},
+      disconnect: async () => {},
+      isOpen: false,
+      on: () => {},
+    } as any;
   }
 
   const isProduction =
