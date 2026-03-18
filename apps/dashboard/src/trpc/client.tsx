@@ -48,12 +48,10 @@ export function TRPCReactProvider(
         links: [
           () =>
             ({ op }) =>
-              observable((observer) => {
-                observer.next({
-                  result: { type: "data", data: null },
-                } as any);
-                observer.complete();
-              }),
+              // Never resolve — keeps all queries in "loading" state permanently.
+              // Components show their skeleton/loading UI instead of crashing
+              // on null data from a non-existent API server.
+              observable(() => {}),
         ],
       });
     }
