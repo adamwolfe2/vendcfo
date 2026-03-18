@@ -30,27 +30,20 @@ export async function middleware(request: NextRequest) {
     const url = new URL("/", request.url);
     const nextUrl = request.nextUrl;
 
-    const pathnameLocale = nextUrl.pathname.split("/", 2)?.[1];
-
-    // Remove the locale from the pathname
-    const pathnameWithoutLocale = pathnameLocale
-      ? nextUrl.pathname.slice(pathnameLocale.length + 1)
-      : nextUrl.pathname;
-
-    // Create a new URL without the locale in the pathname
-    const newUrl = new URL(pathnameWithoutLocale || "/", request.url);
+    // Single locale with rewrite strategy — pathname never has locale prefix
+    const newUrl = new URL(nextUrl.pathname || "/", request.url);
 
     const encodedSearchParams = `${newUrl?.pathname?.substring(1)}${
       newUrl.search
     }`;
 
     const {
-      data: { session },
-    } = await supabase.auth.getSession();
+      data: { user },
+    } = await supabase.auth.getUser();
 
     // 1. Not authenticated
     if (
-      !session &&
+      !user &&
       newUrl.pathname !== "/login" &&
       !newUrl.pathname.includes("/i/") &&
       !newUrl.pathname.includes("/p/") &&
@@ -70,7 +63,7 @@ export async function middleware(request: NextRequest) {
     }
 
     // If authenticated, proceed with other checks
-    if (session) {
+    if (user) {
       if (newUrl.pathname !== "/teams/create" && newUrl.pathname !== "/teams") {
         // Check if the URL contains an invite code
         const inviteCodeMatch = newUrl.pathname.startsWith("/teams/invite/");

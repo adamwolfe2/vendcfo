@@ -5,7 +5,7 @@ export async function updateSession(
   request: NextRequest,
   response: NextResponse,
 ) {
-  createServerClient(
+  const supabase = createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
     {
@@ -24,6 +24,10 @@ export async function updateSession(
       },
     },
   );
+
+  // Critical: this call refreshes the session and persists it to cookies.
+  // Without it, the session is never written to the response.
+  await supabase.auth.getUser();
 
   return response;
 }

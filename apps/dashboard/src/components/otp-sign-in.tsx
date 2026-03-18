@@ -8,7 +8,7 @@ import { Input } from "@vendcfo/ui/input";
 import { InputOTP, InputOTPGroup, InputOTPSlot } from "@vendcfo/ui/input-otp";
 import { Spinner } from "@vendcfo/ui/spinner";
 import { SubmitButton } from "@vendcfo/ui/submit-button";
-import { useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod/v3";
@@ -27,6 +27,7 @@ export function OTPSignIn({ className }: Props) {
   const [isVerifying, setIsVerifying] = useState(false);
   const [email, setEmail] = useState<string>();
   const supabase = createClient();
+  const router = useRouter();
   const searchParams = useSearchParams();
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -57,23 +58,23 @@ export function OTPSignIn({ className }: Props) {
 
     setIsVerifying(true);
 
-    // Verify OTP directly on the client — no server action needed
-    const { error } = await supabase.auth.verifyOtp({
+    const { data, error } = await supabase.auth.verifyOtp({
       email,
       token,
       type: "email",
     });
 
-    if (error) {
+    if (error || !data.session) {
       setIsVerifying(false);
       setSent(false);
       return;
     }
 
-    // Session is now set in the browser cookies by Supabase SSR
-    // Redirect to the app (middleware will handle the rest)
+    // Use router.push + refresh so Next.js middleware re-evaluates
+    // with the updated cookies (window.location.href wipes them)
     const returnTo = searchParams.get("return_to") || "";
-    window.location.href = `/${returnTo}`;
+    router.push(`/${returnTo}`);
+    router.refresh();
   }
 
   if (isSent) {
