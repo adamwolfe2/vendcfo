@@ -3,8 +3,9 @@ import { type RedisClientType, createClient } from "redis";
 let sharedRedisClient: RedisClientType | null = null;
 
 /**
- * Get or create a shared Redis client instance
- * This ensures we reuse the same connection for both cache and memory providers
+ * Get or create a shared Redis client instance.
+ * Uses lazy connect — the client connects on first command, not at import time.
+ * Falls back to no-op client if REDIS_URL is not set.
  */
 export function getSharedRedisClient(): RedisClientType {
   if (sharedRedisClient) {
@@ -14,7 +15,6 @@ export function getSharedRedisClient(): RedisClientType {
   const redisUrl = process.env.REDIS_URL;
 
   if (!redisUrl) {
-    // Return a no-op client when Redis is not configured
     console.warn("[Redis] REDIS_URL not set — using no-op client");
     return {
       get: async () => null,
@@ -30,23 +30,18 @@ export function getSharedRedisClient(): RedisClientType {
     } as any;
   }
 
-  const isProduction =
-    process.env.NODE_ENV === "production" || process.env.FLY_APP_NAME;
-
   sharedRedisClient = createClient({
     url: redisUrl,
-    pingInterval: 60 * 1000, // 1-minute ping to detect stale connections
     socket: {
-      family: isProduction ? 6 : 4, // IPv6 for Fly.io 6PN internal network
-      connectTimeout: isProduction ? 10000 : 5000,
-      keepAlive: true, // TCP keepalive for connection health
-      noDelay: true, // Disable Nagle's algorithm for lower latency
+      // Use IPv4 on Vercel, not IPv6 (IPv6 was for Fly.io 6PN)
+      family: 4,
+      connectTimeout: 5000,
       reconnectStrategy: (retries) => {
-        // Exponential backoff: 100ms, 200ms, 400ms... max 3s
+        if (retries > 3) {
+          console.error("[Redis] Max reconnection attempts reached");
+          return false;
+        }
         const delay = Math.min(100 * 2 ** retries, 3000);
-        console.log(
-          `[Redis] Reconnecting in ${delay}ms (attempt ${retries + 1})`,
-        );
         return delay;
       },
     },
@@ -56,13 +51,12 @@ export function getSharedRedisClient(): RedisClientType {
     console.error("[Redis] Error:", err.message);
   });
 
-  sharedRedisClient.on("reconnecting", () => {
-    console.log("[Redis] Reconnecting...");
-  });
-
-  // Connect immediately - redis v4+ requires explicit connect()
+  // Lazy connect — connects on first command, not at module load time.
+  // This prevents EBUSY errors from too many eager connections in serverless.
   sharedRedisClient.connect().catch((err) => {
-    console.error("[Redis] Initial connection error:", err.message);
+    console.error("[Redis] Connection error:", err.message);
+    // Reset so next invocation tries again
+    sharedRedisClient = null;
   });
 
   return sharedRedisClient;
