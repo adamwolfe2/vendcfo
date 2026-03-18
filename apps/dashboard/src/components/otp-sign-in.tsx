@@ -60,11 +60,20 @@ export function OTPSignIn({ className }: Props) {
 
     setIsVerifying(true);
 
-    verifyOtp.execute({
+    const redirectTo = `${window.location.origin}/${searchParams.get("return_to") || ""}`;
+
+    const result = await verifyOtpAction({
       token,
       email,
-      redirectTo: `${window.location.origin}/${searchParams.get("return_to") || ""}`,
+      redirectTo,
     });
+
+    if (result?.data?.redirectTo) {
+      window.location.href = result.data.redirectTo;
+    } else {
+      // Fallback — try redirecting anyway since session may have been set
+      window.location.href = redirectTo;
+    }
   }
 
   if (isSent) {

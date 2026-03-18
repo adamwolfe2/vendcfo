@@ -4,7 +4,6 @@ import { Cookies } from "@/utils/constants";
 import { createClient } from "@vendcfo/supabase/server";
 import { addYears } from "date-fns";
 import { cookies } from "next/headers";
-import { redirect } from "next/navigation";
 import { z } from "zod";
 import { actionClient } from "./safe-action";
 
@@ -19,13 +18,16 @@ export const verifyOtpAction = actionClient
   .action(async ({ parsedInput: { email, token, redirectTo } }) => {
     const supabase = await createClient();
 
-    await supabase.auth.verifyOtp({
+    const { error } = await supabase.auth.verifyOtp({
       email,
       token,
       type: "email",
     });
 
-    // Validate that the session was actually established (similar to OAuth callback)
+    if (error) {
+      throw new Error(error.message);
+    }
+
     const {
       data: { session },
     } = await supabase.auth.getSession();
@@ -38,5 +40,8 @@ export const verifyOtpAction = actionClient
       expires: addYears(new Date(), 1),
     });
 
-    redirect(redirectTo);
+    // Return the redirect URL instead of calling redirect() —
+    // redirect() throws internally and gets caught by next-safe-action's
+    // handleServerError, preventing the redirect from happening.
+    return { redirectTo };
   });
