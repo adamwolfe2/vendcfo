@@ -10,6 +10,11 @@ const I18nMiddleware = createI18nMiddleware({
 });
 
 export async function middleware(request: NextRequest) {
+  // In mock/demo mode, skip all Supabase auth — env vars aren't configured
+  if (process.env.NEXT_PUBLIC_MOCK_UI === 'true') {
+    return I18nMiddleware(request);
+  }
+
   // @ts-ignore-error - NextRequest type with current bun version is not compatible with NextResponse type
   const response = await updateSession(request, I18nMiddleware(request));
   const supabase = await createClient();
