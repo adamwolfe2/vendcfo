@@ -19,8 +19,8 @@ export function Providers({ locale, children }: ProviderProps) {
 
         <ThemeProvider
           attribute="class"
-          defaultTheme="system"
-          enableSystem
+          defaultTheme="light"
+          forcedTheme="light"
           disableTransitionOnChange
         >
           {children}

@@ -10,7 +10,7 @@ import Link from "next/link";
 import { userAgent } from "next/server";
 
 export const metadata: Metadata = {
-  title: "Login | VendHub",
+  title: "Login | VendCFO",
 };
 
 export default async function Page() {
@@ -150,7 +150,7 @@ export default async function Page() {
           <div className="space-y-8 flex-1 flex flex-col justify-center">
             {/* Header */}
             <div className="text-center space-y-2">
-              <h1 className="text-lg mb-4 font-serif">Welcome to VendHub</h1>
+              <h1 className="text-lg mb-4 font-serif">Welcome to VendCFO</h1>
               <p className="font-sans text-sm text-[#878787]">
                 Sign in or create an account
               </p>

@@ -24,7 +24,7 @@ export default async function Layout({
   let user;
   if (process.env.NEXT_PUBLIC_MOCK_UI === 'true') {
     user = {
-      fullName: "VendHub Admin",
+      fullName: "VendCFO Admin",
       teamId: "mock-team",
       team: { plan: "pro", createdAt: new Date().toISOString() }
     };
