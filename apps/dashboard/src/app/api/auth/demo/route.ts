@@ -7,7 +7,6 @@ export async function GET(request: NextRequest) {
   response.cookies.set("vendcfo-demo", "true", {
     path: "/",
     maxAge: 60 * 60 * 24,
-    httpOnly: true,
     sameSite: "lax",
   });
 
