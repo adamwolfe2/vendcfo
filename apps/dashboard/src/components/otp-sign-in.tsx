@@ -1,6 +1,5 @@
 "use client";
 
-import { verifyOtpAction } from "@/actions/verify-otp-action";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { createClient } from "@vendcfo/supabase/client";
 import { cn } from "@vendcfo/ui/cn";
@@ -9,7 +8,6 @@ import { Input } from "@vendcfo/ui/input";
 import { InputOTP, InputOTPGroup, InputOTPSlot } from "@vendcfo/ui/input-otp";
 import { Spinner } from "@vendcfo/ui/spinner";
 import { SubmitButton } from "@vendcfo/ui/submit-button";
-import { useAction } from "next-safe-action/hooks";
 import { useSearchParams } from "next/navigation";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
@@ -24,7 +22,6 @@ type Props = {
 };
 
 export function OTPSignIn({ className }: Props) {
-  const verifyOtp = useAction(verifyOtpAction);
   const [isLoading, setLoading] = useState(false);
   const [isSent, setSent] = useState(false);
   const [isVerifying, setIsVerifying] = useState(false);
@@ -60,27 +57,30 @@ export function OTPSignIn({ className }: Props) {
 
     setIsVerifying(true);
 
-    const redirectTo = `${window.location.origin}/${searchParams.get("return_to") || ""}`;
-
-    const result = await verifyOtpAction({
-      token,
+    // Verify OTP directly on the client — no server action needed
+    const { error } = await supabase.auth.verifyOtp({
       email,
-      redirectTo,
+      token,
+      type: "email",
     });
 
-    if (result?.data?.redirectTo) {
-      window.location.href = result.data.redirectTo;
-    } else {
-      // Fallback — try redirecting anyway since session may have been set
-      window.location.href = redirectTo;
+    if (error) {
+      setIsVerifying(false);
+      setSent(false);
+      return;
     }
+
+    // Session is now set in the browser cookies by Supabase SSR
+    // Redirect to the app (middleware will handle the rest)
+    const returnTo = searchParams.get("return_to") || "";
+    window.location.href = `/${returnTo}`;
   }
 
   if (isSent) {
     return (
       <div className={cn("flex flex-col space-y-4 items-center", className)}>
         <div className="h-[62px] w-full flex items-center justify-center">
-          {verifyOtp.isExecuting || isVerifying ? (
+          {isVerifying ? (
             <div className="flex items-center justify-center h-full bg-background/95 border border-input w-full">
               <div className="flex items-center space-x-2 bg-background px-4 py-2 rounded-md shadow-sm">
                 <Spinner size={16} className="text-primary" />
@@ -94,7 +94,7 @@ export function OTPSignIn({ className }: Props) {
               maxLength={6}
               autoFocus
               onComplete={onComplete}
-              disabled={verifyOtp.isExecuting || isVerifying}
+              disabled={isVerifying}
               render={({ slots }) => (
                 <InputOTPGroup>
                   {slots.map((slot, index) => (
@@ -118,7 +118,7 @@ export function OTPSignIn({ className }: Props) {
             onClick={() => setSent(false)}
             type="button"
             className="text-sm text-primary underline font-medium"
-            disabled={verifyOtp.isExecuting || isVerifying}
+            disabled={isVerifying}
           >
             Resend code
           </button>
