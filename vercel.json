@@ -1,0 +1,6 @@
+{
+  "framework": "nextjs",
+  "buildCommand": "cd apps/dashboard && bun run build",
+  "outputDirectory": "apps/dashboard/.next",
+  "installCommand": "bun install"
+}
