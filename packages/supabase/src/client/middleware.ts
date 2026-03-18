@@ -5,6 +5,12 @@ export async function updateSession(
   request: NextRequest,
   response: NextResponse,
 ) {
+  // Log all Supabase-related cookies for debugging
+  const sbCookies = Array.from(request.cookies.getAll())
+    .filter((c) => c.name.startsWith("sb-"))
+    .map((c) => `${c.name}=${c.value.substring(0, 20)}...`);
+  console.log(`[updateSession] cookies found: ${sbCookies.length > 0 ? sbCookies.join(", ") : "NONE"}`);
+
   const supabase = createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
@@ -25,11 +31,16 @@ export async function updateSession(
     },
   );
 
-  // Critical: this call refreshes the session and persists it to cookies.
-  // Without it, the session is never written to the response.
   const {
     data: { user },
+    error,
   } = await supabase.auth.getUser();
+
+  if (error) {
+    console.log(`[updateSession] getUser error: ${error.message}`);
+  } else {
+    console.log(`[updateSession] user: ${user?.id ?? "null"}, email: ${user?.email ?? "null"}`);
+  }
 
   return { response, user };
 }

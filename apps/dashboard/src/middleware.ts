@@ -9,37 +9,35 @@ const I18nMiddleware = createI18nMiddleware({
 
 export async function middleware(request: NextRequest) {
   const i18nResponse = I18nMiddleware(request);
+  const pathname = request.nextUrl.pathname;
 
-  // In mock/demo mode, demo cookie, or when Supabase isn't configured, skip auth
+  // Skip auth entirely if Supabase isn't configured
   if (
-    process.env.NEXT_PUBLIC_MOCK_UI === 'true' ||
-    request.cookies.get("vendcfo-demo")?.value === "true" ||
     !process.env.NEXT_PUBLIC_SUPABASE_URL ||
     !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
   ) {
+    console.log("[middleware] Supabase not configured, skipping auth");
     return i18nResponse;
   }
+
+  // Public routes that don't need auth
+  const isPublicRoute =
+    pathname === "/login" ||
+    pathname === "/en/login" ||
+    pathname.includes("/i/") ||
+    pathname.includes("/p/") ||
+    pathname.includes("/s/") ||
+    pathname.includes("/r/") ||
+    pathname.includes("/verify") ||
+    pathname.includes("/oauth-callback") ||
+    pathname.includes("/desktop/search");
 
   try {
     const { updateSession } = await import("@vendcfo/supabase/middleware");
 
-    // updateSession refreshes the auth token, persists cookies,
-    // and returns both the response and the authenticated user
     const { response, user } = await updateSession(request, i18nResponse);
 
-    const pathname = request.nextUrl.pathname;
-
-    // Check if this is a public route that doesn't need auth
-    const isPublicRoute =
-      pathname === "/login" ||
-      pathname === "/en/login" ||
-      pathname.includes("/i/") ||
-      pathname.includes("/p/") ||
-      pathname.includes("/s/") ||
-      pathname.includes("/r/") ||
-      pathname.includes("/verify") ||
-      pathname.includes("/oauth-callback") ||
-      pathname.includes("/desktop/search");
+    console.log(`[middleware] path=${pathname} user=${user?.id ?? "null"} public=${isPublicRoute}`);
 
     // Not authenticated — redirect to login (unless already on a public route)
     if (!user && !isPublicRoute) {
@@ -50,6 +48,7 @@ export async function middleware(request: NextRequest) {
         loginUrl.searchParams.append("return_to", cleanPath.substring(1));
       }
 
+      console.log(`[middleware] redirecting to /login (no user)`);
       return NextResponse.redirect(loginUrl);
     }
 
@@ -65,8 +64,7 @@ export async function middleware(request: NextRequest) {
         }
       }
 
-      // Check MFA — need a fresh Supabase client for MFA check
-      // but reuse the same cookie context from the response
+      // MFA check
       const { createServerClient } = await import("@supabase/ssr");
       const mfaSupabase = createServerClient(
         process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -96,7 +94,7 @@ export async function middleware(request: NextRequest) {
 
     return response;
   } catch (e) {
-    console.error("[middleware] Supabase auth failed, bypassing:", e);
+    console.error("[middleware] Supabase auth error:", e);
     return i18nResponse;
   }
 }
