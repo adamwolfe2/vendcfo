@@ -99,7 +99,7 @@ export function OTPSignIn({ className }: Props) {
             </div>
           ) : (
             <InputOTP
-              maxLength={6}
+              maxLength={8}
               autoFocus
               onComplete={onComplete}
               disabled={isVerifying}
@@ -109,7 +109,7 @@ export function OTPSignIn({ className }: Props) {
                     <InputOTPSlot
                       key={index.toString()}
                       {...slot}
-                      className="w-[62px] h-[62px]"
+                      className="w-[48px] h-[54px]"
                     />
                   ))}
                 </InputOTPGroup>
