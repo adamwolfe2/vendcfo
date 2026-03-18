@@ -9,6 +9,14 @@ import { ForesightLink } from "./foresight-link";
 
 const icons = {
   "/": () => <Icons.Overview size={20} />,
+  "/inbox": () => <Icons.Inbox size={20} />,
+  "/tracker": () => <Icons.Tracker size={20} />,
+  "/invoices": () => <Icons.Invoice size={20} />,
+  "/transactions": () => <Icons.Transactions size={20} />,
+  "/vault": () => <Icons.Files size={20} />,
+  "/customers": () => <Icons.Customers size={20} />,
+  "/apps": () => <Icons.Apps size={20} />,
+  // Vending section
   "/routes": () => <Icons.Customers size={20} />,
   "/locations": () => <Icons.Tracker size={20} />,
   "/machines": () => <Icons.Settings size={20} />,
@@ -16,17 +24,41 @@ const icons = {
   "/calculators": () => <Icons.Invoice size={20} />,
   "/scenarios": () => <Icons.Tracker size={20} />,
   "/alerts": () => <Icons.Transactions size={20} />,
+  "/import": () => <Icons.Files size={20} />,
 } as const;
 
 const items = [
+  // ─── Core Midday Features ───
   { path: "/", name: "Overview" },
-  { path: "/routes", name: "Routes" },
-  { path: "/locations", name: "Locations" },
-  { path: "/machines", name: "Machines" },
-  { path: "/skus", name: "SKUs" },
-  { path: "/calculators", name: "Calculators" },
-  { path: "/scenarios", name: "Scenarios" },
-  { path: "/alerts", name: "Alerts" },
+  { path: "/inbox", name: "Inbox" },
+  { path: "/tracker", name: "Tracker" },
+  { path: "/invoices", name: "Invoices" },
+  { path: "/transactions", name: "Transactions" },
+  { path: "/vault", name: "Vault" },
+  { path: "/customers", name: "Customers" },
+  // ─── VendCFO Operations ───
+  {
+    path: "/routes",
+    name: "Operations",
+    children: [
+      { path: "/routes", name: "Routes" },
+      { path: "/locations", name: "Locations" },
+      { path: "/machines", name: "Machines" },
+      { path: "/skus", name: "Products & SKUs" },
+      { path: "/import", name: "Import Data" },
+    ],
+  },
+  // ─── VendCFO Analytics ───
+  {
+    path: "/calculators",
+    name: "Analytics",
+    children: [
+      { path: "/calculators", name: "Calculators" },
+      { path: "/scenarios", name: "Scenario Builder" },
+      { path: "/alerts", name: "Alerts" },
+    ],
+  },
+  { path: "/apps", name: "Apps" },
 ];
 
 interface ItemProps {
@@ -132,7 +164,7 @@ const Item = ({
           {/* Background that expands */}
           <div
             className={cn(
-              "border border-transparent h-[40px] transition-all duration-200 ease-&lsqb;cubic-bezier(0.4,0,0.2,1)&rsqb; ml-[15px] mr-[15px]",
+              "border border-transparent h-[40px] transition-all duration-200 ease-[cubic-bezier(0.4,0,0.2,1)] ml-[15px] mr-[15px]",
               isActive &&
                 "bg-[#f7f7f7] dark:bg-[#131313] border-[#e6e6e6] dark:border-[#1d1d1d]",
               isExpanded ? "w-[calc(100%-30px)]" : "w-[40px]",
@@ -221,6 +253,10 @@ export function MainMenu({ onSelect, isExpanded = false }: Props) {
     setExpandedItem(null);
   }, [isExpanded]);
 
+  // Vending operation paths that should highlight the Operations parent
+  const vendingOpPaths = ["/routes", "/locations", "/machines", "/skus", "/import"];
+  const vendingAnalyticsPaths = ["/calculators", "/scenarios", "/alerts"];
+
   return (
     <div className="mt-6 w-full">
       <nav className="w-full">
@@ -231,8 +267,12 @@ export function MainMenu({ onSelect, isExpanded = false }: Props) {
             const isActive =
               (pathname === "/" && item.path === "/") ||
               (item.path === "/" && isChatPage) ||
+              (item.path === "/routes" && vendingOpPaths.some(p => pathname?.startsWith(p))) ||
+              (item.path === "/calculators" && vendingAnalyticsPaths.some(p => pathname?.startsWith(p))) ||
               (pathname !== "/" &&
                 !isChatPage &&
+                !vendingOpPaths.includes(`/${part}`) &&
+                !vendingAnalyticsPaths.includes(`/${part}`) &&
                 item.path.startsWith(`/${part}`));
 
             return (

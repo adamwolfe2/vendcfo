@@ -1,7 +1,5 @@
 import { ChatInterface } from "@/components/chat/chat-interface";
-import { KpiCards } from "@/components/vending/kpi-cards";
-import { PnlChart } from "@/components/vending/pnl-chart";
-import { RouteTable } from "@/components/vending/route-table";
+import { Widgets } from "@/components/widgets";
 import { HydrateClient, getQueryClient, prefetch, trpc } from "@/trpc/server";
 import { Provider as ChatProvider } from "@ai-sdk-tools/store";
 import { geolocation } from "@vercel/functions";
@@ -31,14 +29,7 @@ export default async function Overview() {
   return (
     <HydrateClient>
       <ChatProvider initialMessages={[]} key="home">
-        <div className="flex flex-col flex-1 p-6 max-w-7xl mx-auto w-full">
-          <h1 className="text-2xl font-bold text-foreground mb-6">VendCFO Overview</h1>
-          <KpiCards />
-          <PnlChart />
-          <div className="grid grid-cols-1 gap-6">
-            <RouteTable />
-          </div>
-        </div>
+        <Widgets initialPreferences={widgetPreferences} />
         <ChatInterface geo={geo} />
       </ChatProvider>
     </HydrateClient>
