@@ -26,6 +26,9 @@ function getCookie(name: string): string | null {
 }
 
 function isDemoMode(): boolean {
+  if (typeof window !== "undefined" && (window as any).__VENDCFO_DEMO__) {
+    return true;
+  }
   return getCookie("vendcfo-demo") === "true";
 }
 
