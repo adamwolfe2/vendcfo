@@ -47,7 +47,9 @@ export default async function Layout({
 }) {
   const queryClient = getQueryClient();
   const cookieStore = await cookies();
-  const isDemo = cookieStore.get("vendcfo-demo")?.value === "true";
+  const isDemo =
+    process.env.NEXT_PUBLIC_MOCK_UI === "true" ||
+    cookieStore.get("vendcfo-demo")?.value === "true";
 
   let user: any = null;
 

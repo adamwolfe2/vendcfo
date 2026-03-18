@@ -26,6 +26,7 @@ function getCookie(name: string): string | null {
 }
 
 function isDemoMode(): boolean {
+  if (process.env.NEXT_PUBLIC_MOCK_UI === "true") return true;
   if (typeof window !== "undefined" && (window as any).__VENDCFO_DEMO__) {
     return true;
   }

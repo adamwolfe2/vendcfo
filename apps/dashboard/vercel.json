@@ -4,7 +4,7 @@
   "github": {
     "enabled": true
   },
-  "buildCommand": "TURBOPACK=0 next build",
+  "buildCommand": "NEXT_PUBLIC_MOCK_UI=true TURBOPACK=0 next build",
   "regions": ["iad1"],
   "headers": [
     {

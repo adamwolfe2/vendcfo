@@ -17,7 +17,9 @@ export default function SidebarErrorPage({
   error: Error & { digest?: string };
   reset: () => void;
 }) {
-  const isMockMode = process.env.NEXT_PUBLIC_MOCK_UI === "true";
+  const isMockMode =
+    process.env.NEXT_PUBLIC_MOCK_UI === "true" ||
+    getCookie("vendcfo-demo") === "true";
 
   return (
     <div className="h-[calc(100vh-200px)] w-full flex items-center justify-center">
