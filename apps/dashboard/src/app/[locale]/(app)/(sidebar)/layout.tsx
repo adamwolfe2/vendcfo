@@ -11,7 +11,34 @@ import {
   getServerCaller,
   trpc,
 } from "@/trpc/server";
+import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
+
+// Demo user data for unauthenticated demo mode
+const DEMO_USER = {
+  id: "demo-user",
+  email: "demo@vendcfo.ai",
+  fullName: "Demo User",
+  avatarUrl: null,
+  teamId: "demo-team",
+  locale: "en",
+  weekStartsOnMonday: false,
+  timezone: "America/New_York",
+  dateFormat: "MM/dd/yyyy",
+  timeFormat: 12,
+  team: {
+    id: "demo-team",
+    name: "Demo Vending Co",
+    plan: "trial" as const,
+    createdAt: new Date().toISOString(),
+    canceledAt: null,
+    baseCurrency: "USD",
+    email: "demo@vendcfo.ai",
+    inboxEmail: null,
+    logoUrl: null,
+    inboxForwarding: false,
+  },
+};
 
 export default async function Layout({
   children,
@@ -19,57 +46,60 @@ export default async function Layout({
   children: React.ReactNode;
 }) {
   const queryClient = getQueryClient();
+  const cookieStore = await cookies();
+  const isDemo = cookieStore.get("vendcfo-demo")?.value === "true";
 
-  let user: Awaited<ReturnType<Awaited<ReturnType<typeof getServerCaller>>["user"]["me"]>> | null;
+  let user: any = null;
 
-  try {
-    const caller = await getServerCaller();
+  if (isDemo) {
+    // Demo mode — use mock data, skip TRPC
+    user = DEMO_USER;
+  } else {
+    try {
+      const caller = await getServerCaller();
+      user = await caller.user.me();
 
-    // Fetch user directly (no HTTP self-call)
-    user = await caller.user.me();
+      if (user) {
+        queryClient.setQueryData(
+          trpc.user.me.queryOptions().queryKey,
+          user,
+        );
+      }
 
-    // Populate query cache so client components get hydrated data
-    if (user) {
-      queryClient.setQueryData(
-        trpc.user.me.queryOptions().queryKey,
-        user,
-      );
+      const [teamData, invoiceDefaults] = await Promise.allSettled([
+        caller.team.current(),
+        caller.invoice.defaultSettings(),
+      ]);
+
+      if (teamData.status === "fulfilled") {
+        queryClient.setQueryData(
+          trpc.team.current.queryOptions().queryKey,
+          teamData.value,
+        );
+      }
+
+      if (invoiceDefaults.status === "fulfilled") {
+        queryClient.setQueryData(
+          trpc.invoice.defaultSettings.queryOptions().queryKey,
+          invoiceDefaults.value,
+        );
+      }
+    } catch (error) {
+      console.error("[sidebar/layout] TRPC caller error:", error);
+      redirect("/login");
     }
 
-    // Prefetch additional data in parallel via direct caller
-    const [teamData, invoiceDefaults] = await Promise.allSettled([
-      caller.team.current(),
-      caller.invoice.defaultSettings(),
-    ]);
-
-    if (teamData.status === "fulfilled") {
-      queryClient.setQueryData(
-        trpc.team.current.queryOptions().queryKey,
-        teamData.value,
-      );
+    if (!user) {
+      redirect("/login");
     }
 
-    if (invoiceDefaults.status === "fulfilled") {
-      queryClient.setQueryData(
-        trpc.invoice.defaultSettings.queryOptions().queryKey,
-        invoiceDefaults.value,
-      );
+    if (!user.fullName) {
+      redirect("/setup");
     }
-  } catch (error) {
-    console.error("[sidebar/layout] TRPC caller error:", error);
-    redirect("/login");
-  }
 
-  if (!user) {
-    redirect("/login");
-  }
-
-  if (!user.fullName) {
-    redirect("/setup");
-  }
-
-  if (!user.teamId) {
-    redirect("/teams");
+    if (!user.teamId) {
+      redirect("/teams");
+    }
   }
 
   return (

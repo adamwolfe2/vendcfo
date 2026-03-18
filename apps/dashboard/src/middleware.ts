@@ -10,9 +10,10 @@ const I18nMiddleware = createI18nMiddleware({
 export async function middleware(request: NextRequest) {
   const i18nResponse = I18nMiddleware(request);
 
-  // In mock/demo mode OR when Supabase isn't configured, skip auth entirely
+  // In mock/demo mode, demo cookie, or when Supabase isn't configured, skip auth
   if (
     process.env.NEXT_PUBLIC_MOCK_UI === 'true' ||
+    request.cookies.get("vendcfo-demo")?.value === "true" ||
     !process.env.NEXT_PUBLIC_SUPABASE_URL ||
     !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
   ) {
