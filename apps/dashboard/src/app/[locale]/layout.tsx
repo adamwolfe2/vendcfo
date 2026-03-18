@@ -6,7 +6,6 @@ import { isDesktopApp } from "@/utils/desktop";
 import { Provider as Analytics } from "@vendcfo/events/client";
 import { Toaster } from "@vendcfo/ui/toaster";
 import type { Metadata } from "next";
-import { cookies } from "next/headers";
 import { Hedvig_Letters_Sans, Hedvig_Letters_Serif } from "next/font/google";
 import { NuqsAdapter } from "nuqs/adapters/next/app";
 import type { ReactElement } from "react";
@@ -68,8 +67,6 @@ export default async function Layout({
 }) {
   const { locale } = await params;
   const isDesktop = await isDesktopApp();
-  const cookieStore = await cookies();
-  const isDemo = cookieStore.get("vendcfo-demo")?.value === "true";
 
   return (
     <html
@@ -83,13 +80,6 @@ export default async function Layout({
           "whitespace-pre-line overscroll-none antialiased",
         )}
       >
-        {isDemo && (
-          <script
-            dangerouslySetInnerHTML={{
-              __html: "window.__VENDCFO_DEMO__=true",
-            }}
-          />
-        )}
         <DesktopHeader />
 
         <NuqsAdapter>

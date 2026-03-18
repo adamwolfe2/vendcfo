@@ -24,13 +24,10 @@ export const withTeamPermission = async <TReturn>(opts: {
   if (!userId) {
     throw new TRPCError({
       code: "UNAUTHORIZED",
-      message: "No permission to access this team",
+      message: "Not authenticated",
     });
   }
 
-  // Try replica first (fast path), fallback to primary on failure
-  // This preserves the benefit of fast replicas while handling replication lag gracefully
-  // retryOnNull: true ensures we check primary if replica returns null (replication lag)
   const result = await withRetryOnPrimary(
     ctx.db,
     async (db) => {
@@ -49,16 +46,23 @@ export const withTeamPermission = async <TReturn>(opts: {
     { retryOnNull: true },
   );
 
+  // If user doesn't exist in public.users, pass through with null teamId.
+  // The calling procedure (e.g. user.me) should handle this gracefully
+  // by returning null, which triggers a redirect to /setup.
   if (!result) {
-    throw new TRPCError({
-      code: "NOT_FOUND",
-      message: "User not found",
+    console.warn(`[team-permission] User ${userId} not found in public.users`);
+    return next({
+      ctx: {
+        session: ctx.session,
+        teamId: null,
+        db: ctx.db,
+      },
     });
   }
 
   const teamId = result.teamId;
 
-  // If teamId is null, user has no team assigned but this is now allowed
+  // If teamId is null, user has no team assigned — allowed to continue
   if (teamId !== null) {
     const cacheKey = `user:${userId}:team:${teamId}`;
     let hasAccess = await teamCache.get(cacheKey);

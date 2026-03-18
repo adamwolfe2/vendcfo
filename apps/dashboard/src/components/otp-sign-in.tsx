@@ -77,11 +77,17 @@ export function OTPSignIn({ className }: Props) {
       return;
     }
 
-    // Session established — redirect
+    // Session established — wait for Supabase SSR to persist cookies,
+    // then do a hard navigation so the middleware sees the session.
+    // router.push() does a soft nav that races the cookie write.
     setAuthError(undefined);
     const returnTo = searchParams.get("return_to") || "";
-    router.push(`/${returnTo}`);
-    router.refresh();
+
+    // Give @supabase/ssr time to write the Set-Cookie headers
+    await new Promise((resolve) => setTimeout(resolve, 500));
+
+    // Hard navigation — forces full page load where middleware reads cookies
+    window.location.href = `/${returnTo}`;
   }
 
   if (isSent) {
