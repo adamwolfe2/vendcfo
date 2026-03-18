@@ -5,15 +5,11 @@
     "enabled": true
   },
   "buildCommand": "cd ../.. && turbo run build --filter=@vendcfo/dashboard --only",
-  "regions": ["fra1", "iad1", "sfo1"],
+  "regions": ["iad1"],
   "headers": [
     {
       "source": "/_next/static/:path*",
       "headers": [
-        {
-          "key": "Access-Control-Allow-Origin",
-          "value": "https://app.vendhub.com"
-        },
         {
           "key": "X-Content-Type-Options",
           "value": "nosniff"
