@@ -7,7 +7,17 @@
       "dependsOn": ["^topo"]
     },
     "build": {
-      "inputs": ["$TURBO_DEFAULT$", ".env"],
+      "inputs": [
+        "$TURBO_DEFAULT$",
+        ".env",
+        "!OVERNIGHT-AUDIT-REPORT.md",
+        "!README.md",
+        "!LICENSE",
+        "!SECURITY.md",
+        "!docs/**",
+        "!*.png",
+        "!*.csv"
+      ],
       "dependsOn": ["^build"],
       "outputs": [
         ".next/**",

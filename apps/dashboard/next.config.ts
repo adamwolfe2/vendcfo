@@ -73,7 +73,11 @@ export default isProduction
       // Upload source maps for better stack traces
       widenClientFileUpload: true,
 
-      // Tree-shake Sentry logger statements to reduce bundle size
-      disableLogger: true,
+      // Tree-shake Sentry logger statements to reduce bundle size (Turbopack-compatible)
+      bundleSizeOptimizations: {
+        excludeDebugStatements: true,
+        excludeReplayIframe: true,
+        excludeReplayShadowDom: true,
+      },
     })
   : config;
