@@ -12,45 +12,22 @@ import type { ReactElement } from "react";
 import { Providers } from "./providers";
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://app.vendhub.com"),
-  title: "VendCFO | Your AI-Powered Business Assistant",
+  metadataBase: new URL(
+    process.env.NEXT_PUBLIC_URL || "https://vendcfo.vercel.app",
+  ),
+  title: "VendCFO | AI-Powered Financial Management for Vending Operators",
   description:
-    "Automate financial tasks, stay organized, and make informed decisions effortlessly.",
+    "Track revenue, manage machines, optimize routes, and make data-driven decisions for your vending business.",
   twitter: {
-    title: "VendCFO | Your AI-Powered Business Assistant",
+    title: "VendCFO | AI-Powered Financial Management for Vending Operators",
     description:
-      "Automate financial tasks, stay organized, and make informed decisions effortlessly.",
-    images: [
-      {
-        url: "https://cdn.vendhub.com/opengraph-image-v1.jpg",
-        width: 800,
-        height: 600,
-      },
-      {
-        url: "https://cdn.vendhub.com/opengraph-image-v1.jpg",
-        width: 1800,
-        height: 1600,
-      },
-    ],
+      "Track revenue, manage machines, optimize routes, and make data-driven decisions for your vending business.",
   },
   openGraph: {
-    title: "VendCFO | Your AI-Powered Business Assistant",
+    title: "VendCFO | AI-Powered Financial Management for Vending Operators",
     description:
-      "Automate financial tasks, stay organized, and make informed decisions effortlessly.",
-    url: "https://app.vendhub.com",
+      "Track revenue, manage machines, optimize routes, and make data-driven decisions for your vending business.",
     siteName: "VendCFO",
-    images: [
-      {
-        url: "https://cdn.vendhub.com/opengraph-image-v1.jpg",
-        width: 800,
-        height: 600,
-      },
-      {
-        url: "https://cdn.vendhub.com/opengraph-image-v1.jpg",
-        width: 1800,
-        height: 1600,
-      },
-    ],
     locale: "en_US",
     type: "website",
   },

@@ -1,4 +1,4 @@
-export const OAUTH_CHANNEL_NAME = "vendhub_oauth_complete";
+export const OAUTH_CHANNEL_NAME = "vendcfo_oauth_complete";
 
 export type OAuthMessageType = "app_oauth_completed" | "app_oauth_error";
 

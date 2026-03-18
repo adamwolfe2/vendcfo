@@ -124,7 +124,7 @@ export default async function Page({ params }: Props) {
           <p className="text-center text-xs text-muted-foreground">
             Powered by{" "}
             <a
-              href="https://vendhub.com"
+              href="https://vendcfo.vercel.app"
               className="hover:text-foreground transition-colors"
             >
               VendCFO

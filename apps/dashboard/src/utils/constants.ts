@@ -7,7 +7,7 @@ export const Cookies = {
   HideConnectFlow: "hide-connect-flow",
   LastProject: "last-project",
   WeeklyCalendar: "weekly-calendar",
-  ForcePrimary: "vendhub-force-primary",
+  ForcePrimary: "vendcfo-force-primary",
 };
 
 export const LocalStorageKeys = {

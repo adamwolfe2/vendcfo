@@ -52,7 +52,7 @@ export function SetupMfa() {
   return (
     <div>
       <div className="absolute left-5 top-4 md:left-10 md:top-10">
-        <Link href="https://vendhub.com">
+        <Link href="/">
           <Icons.LogoSmall />
         </Link>
       </div>

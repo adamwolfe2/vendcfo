@@ -26,7 +26,7 @@ function getFaviconUrl(url: string): string {
 }
 
 /**
- * Modify URL to add utm_source=vendhub.com and replace utm_source=openai if present
+ * Modify URL to add utm_source=vendcfo and replace utm_source=openai if present
  */
 function modifyUrlWithUtmSource(url: string): string {
   try {
@@ -35,8 +35,8 @@ function modifyUrlWithUtmSource(url: string): string {
     // Remove existing utm_source parameter if present
     urlObj.searchParams.delete("utm_source");
 
-    // Add utm_source=vendhub.com
-    urlObj.searchParams.set("utm_source", "vendhub.com");
+    // Add utm_source=vendcfo
+    urlObj.searchParams.set("utm_source", "vendcfo");
 
     return urlObj.toString();
   } catch {

@@ -368,12 +368,12 @@ export function PortalContent({ portalId }: Props) {
       {/* Footer */}
       <div className="fixed bottom-4 right-4 hidden md:block">
         <a
-          href="https://vendhub.com?utm_source=customer-portal"
+          href="https://vendcfo.vercel.app?utm_source=customer-portal"
           target="_blank"
           rel="noreferrer"
           className="text-[9px] text-[#878787]"
         >
-          Powered by <span className="text-primary">vendhub</span>
+          Powered by <span className="text-primary">VendCFO</span>
         </a>
       </div>
 

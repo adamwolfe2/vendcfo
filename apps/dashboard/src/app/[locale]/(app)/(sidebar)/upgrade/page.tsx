@@ -99,7 +99,7 @@ export default async function UpgradePage() {
           </Link>{" "}
           or{" "}
           <OpenURL
-            href="https://cal.com/pontus-vendhub/15min"
+            href="https://cal.com/adamwolfe/vendcfo"
             className="hover:underline"
           >
             book a call with the founders

@@ -28,7 +28,7 @@ const icons = {
 } as const;
 
 const items = [
-  // ─── Core Midday Features ───
+  // ─── Core Financial Features ───
   { path: "/", name: "Overview" },
   { path: "/inbox", name: "Inbox" },
   { path: "/tracker", name: "Tracker" },
