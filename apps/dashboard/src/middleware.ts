@@ -30,43 +30,44 @@ export async function middleware(request: NextRequest) {
     const url = new URL("/", request.url);
     const nextUrl = request.nextUrl;
 
-    // Single locale with rewrite strategy — pathname never has locale prefix
-    const newUrl = new URL(nextUrl.pathname || "/", request.url);
+    // Use the original request pathname (before i18n rewrite)
+    // With rewrite strategy + single locale, nextUrl.pathname may have /en/ prefix
+    const pathname = request.nextUrl.pathname;
 
-    const encodedSearchParams = `${newUrl?.pathname?.substring(1)}${
-      newUrl.search
-    }`;
+    // Check if this is a public route that doesn't need auth
+    const isPublicRoute =
+      pathname === "/login" ||
+      pathname === "/en/login" ||
+      pathname.includes("/i/") ||
+      pathname.includes("/p/") ||
+      pathname.includes("/s/") ||
+      pathname.includes("/r/") ||
+      pathname.includes("/verify") ||
+      pathname.includes("/oauth-callback") ||
+      pathname.includes("/desktop/search");
 
     const {
       data: { user },
     } = await supabase.auth.getUser();
 
-    // 1. Not authenticated
-    if (
-      !user &&
-      newUrl.pathname !== "/login" &&
-      !newUrl.pathname.includes("/i/") &&
-      !newUrl.pathname.includes("/p/") &&
-      !newUrl.pathname.includes("/s/") &&
-      !newUrl.pathname.includes("/r/") &&
-      !newUrl.pathname.includes("/verify") &&
-      !newUrl.pathname.includes("/oauth-callback") &&
-      !newUrl.pathname.includes("/desktop/search")
-    ) {
-      const url = new URL("/login", request.url);
+    // 1. Not authenticated — redirect to login (unless already on a public route)
+    if (!user && !isPublicRoute) {
+      const loginUrl = new URL("/login", request.url);
 
-      if (encodedSearchParams) {
-        url.searchParams.append("return_to", encodedSearchParams);
+      // Only add return_to if it's a real path (not login itself)
+      const cleanPath = pathname.replace(/^\/en/, "") || "/";
+      if (cleanPath !== "/" && cleanPath !== "/login") {
+        loginUrl.searchParams.append("return_to", cleanPath.substring(1));
       }
 
-      return NextResponse.redirect(url);
+      return NextResponse.redirect(loginUrl);
     }
 
     // If authenticated, proceed with other checks
     if (user) {
-      if (newUrl.pathname !== "/teams/create" && newUrl.pathname !== "/teams") {
+      if (!pathname.includes("/teams/create") && !pathname.includes("/teams")) {
         // Check if the URL contains an invite code
-        const inviteCodeMatch = newUrl.pathname.startsWith("/teams/invite/");
+        const inviteCodeMatch = pathname.includes("/teams/invite/");
 
         if (inviteCodeMatch) {
           return NextResponse.redirect(
@@ -82,15 +83,10 @@ export async function middleware(request: NextRequest) {
         mfaData &&
         mfaData.nextLevel === "aal2" &&
         mfaData.nextLevel !== mfaData.currentLevel &&
-        newUrl.pathname !== "/mfa/verify"
+        !pathname.includes("/mfa/verify")
       ) {
-        const url = new URL("/mfa/verify", request.url);
-
-        if (encodedSearchParams) {
-          url.searchParams.append("return_to", encodedSearchParams);
-        }
-
-        return NextResponse.redirect(url);
+        const mfaUrl = new URL("/mfa/verify", request.url);
+        return NextResponse.redirect(mfaUrl);
       }
     }
 
