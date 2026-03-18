@@ -48,10 +48,20 @@ export function TRPCReactProvider(
         links: [
           () =>
             ({ op }) =>
-              // Never resolve — keeps all queries in "loading" state permanently.
-              // Components show their skeleton/loading UI instead of crashing
-              // on null data from a non-existent API server.
-              observable(() => {}),
+              observable((observer) => {
+                if (typeof window === "undefined") {
+                  // SERVER: resolve immediately with empty data so SSR completes
+                  // without hanging. The server must finish rendering quickly.
+                  observer.next({
+                    result: { type: "data" as const, data: undefined },
+                  } as any);
+                  observer.complete();
+                }
+                // CLIENT: never resolve — keeps queries in "loading" state.
+                // Components show skeleton/loading UI instead of crashing
+                // on undefined data from a non-existent API server.
+                // React Query's useQuery returns { data: undefined, isLoading: true }
+              }),
         ],
       });
     }
