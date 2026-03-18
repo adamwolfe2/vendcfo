@@ -27,7 +27,9 @@ export async function updateSession(
 
   // Critical: this call refreshes the session and persists it to cookies.
   // Without it, the session is never written to the response.
-  await supabase.auth.getUser();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
 
-  return response;
+  return { response, user };
 }
