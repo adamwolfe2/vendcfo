@@ -25,6 +25,7 @@ export function OTPSignIn({ className }: Props) {
   const [isLoading, setLoading] = useState(false);
   const [isSent, setSent] = useState(false);
   const [isVerifying, setIsVerifying] = useState(false);
+  const [authError, setAuthError] = useState<string>();
   const [email, setEmail] = useState<string>();
   const supabase = createClient();
   const router = useRouter();
@@ -64,14 +65,20 @@ export function OTPSignIn({ className }: Props) {
       type: "email",
     });
 
-    if (error || !data.session) {
+    if (error) {
+      setAuthError(`OTP Error: ${error.message}`);
       setIsVerifying(false);
-      setSent(false);
       return;
     }
 
-    // Use router.push + refresh so Next.js middleware re-evaluates
-    // with the updated cookies (window.location.href wipes them)
+    if (!data.session) {
+      setAuthError("No session returned. Check Supabase configuration.");
+      setIsVerifying(false);
+      return;
+    }
+
+    // Session established — redirect
+    setAuthError(undefined);
     const returnTo = searchParams.get("return_to") || "";
     router.push(`/${returnTo}`);
     router.refresh();
@@ -110,6 +117,10 @@ export function OTPSignIn({ className }: Props) {
             />
           )}
         </div>
+
+        {authError && (
+          <p className="text-sm text-red-600 text-center w-full px-2">{authError}</p>
+        )}
 
         <div className="flex space-x-2">
           <span className="text-sm text-[#878787]">
