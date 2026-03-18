@@ -2,14 +2,12 @@ import "server-only";
 
 import type { AppRouter } from "@vendcfo/api/trpc/routers/_app";
 import { createClient } from "@vendcfo/supabase/server";
-import { HydrationBoundary } from "@tanstack/react-query";
-import { dehydrate } from "@tanstack/react-query";
-import { createTRPCClient, httpBatchLink } from "@trpc/client";
+import { HydrationBoundary, dehydrate } from "@tanstack/react-query";
 import {
   type TRPCQueryOptions,
   createTRPCOptionsProxy,
 } from "@trpc/tanstack-react-query";
-import { cookies } from "next/headers";
+import { createTRPCClient, httpBatchLink } from "@trpc/client";
 import { cache } from "react";
 import superjson from "superjson";
 import { makeQueryClient } from "./query-client";
@@ -18,7 +16,61 @@ import { makeQueryClient } from "./query-client";
 //            will return the same client during the same request.
 export const getQueryClient = cache(makeQueryClient);
 
-// Use the full URL for server-side calls — on Vercel, VERCEL_URL is the deployment URL
+/**
+ * Get a Supabase access token from the current server-side session.
+ * Cached per-request to avoid multiple cookie reads.
+ */
+const getAccessToken = cache(async (): Promise<string | undefined> => {
+  const supabase = await createClient();
+  const {
+    data: { session },
+  } = await supabase.auth.getSession();
+  return session?.access_token ?? undefined;
+});
+
+/**
+ * Create a direct server-side TRPC caller that bypasses HTTP entirely.
+ * This avoids the serverless self-call problem on Vercel.
+ */
+const getServerCaller = cache(async () => {
+  const { appRouter } = await import("@vendcfo/api/trpc/routers/_app");
+  const { createCallerFactory } = await import("@vendcfo/api/trpc/init");
+  const { verifyAccessToken } = await import("@vendcfo/api/utils/auth");
+  const {
+    createClient: createApiSupabase,
+  } = await import("@vendcfo/api/services/supabase");
+  const { db } = await import("@vendcfo/db/client");
+
+  const accessToken = await getAccessToken();
+  const session = await verifyAccessToken(accessToken);
+  const supabase = await createApiSupabase(accessToken);
+
+  const createCaller = createCallerFactory(appRouter);
+
+  return createCaller({
+    session,
+    supabase,
+    db,
+    geo: {
+      country: null,
+      locale: null,
+      timezone: null,
+      ip: null,
+    },
+    forcePrimary: false,
+  });
+});
+
+/**
+ * Server-side TRPC options proxy for use with TanStack Query prefetching.
+ *
+ * Uses httpBatchLink pointed at the same origin. The actual data fetching
+ * for server components goes through `getServerCaller()` (direct caller),
+ * while this proxy generates queryOptions objects for prefetching.
+ *
+ * On Vercel, VERCEL_URL provides the deployment URL for self-calls.
+ * In practice, most server-side data is fetched via the direct caller.
+ */
 function getBaseUrl() {
   if (process.env.NEXT_PUBLIC_URL) return process.env.NEXT_PUBLIC_URL;
   if (process.env.VERCEL_URL) return `https://${process.env.VERCEL_URL}`;
@@ -33,17 +85,11 @@ export const trpc = createTRPCOptionsProxy<AppRouter>({
         url: `${getBaseUrl()}/api/trpc`,
         transformer: superjson,
         async headers() {
-          const supabase = await createClient();
-          const cookieStore = await cookies();
-
-          const {
-            data: { session },
-          } = await supabase.auth.getSession();
-
-          const headers: Record<string, string> = {
-            Authorization: `Bearer ${session?.access_token}`,
-          };
-
+          const accessToken = await getAccessToken();
+          const headers: Record<string, string> = {};
+          if (accessToken) {
+            headers.Authorization = `Bearer ${accessToken}`;
+          }
           return headers;
         },
       }),
@@ -88,14 +134,17 @@ export function batchPrefetch<T extends ReturnType<TRPCQueryOptions<any>>>(
 }
 
 /**
- * Get a tRPC client for server-side API routes
+ * Get a direct TRPC caller for server-side use (no HTTP).
+ * Use this instead of getTRPCClient() for server components and API routes.
+ */
+export { getServerCaller };
+
+/**
+ * Get a tRPC HTTP client for server-side API routes.
+ * Prefer getServerCaller() for direct in-process calls.
  */
 export async function getTRPCClient() {
-  const supabase = await createClient();
-
-  const {
-    data: { session },
-  } = await supabase.auth.getSession();
+  const accessToken = await getAccessToken();
 
   return createTRPCClient<AppRouter>({
     links: [
@@ -103,7 +152,7 @@ export async function getTRPCClient() {
         url: `${getBaseUrl()}/api/trpc`,
         transformer: superjson,
         headers: {
-          Authorization: `Bearer ${session?.access_token}`,
+          Authorization: `Bearer ${accessToken}`,
         },
       }),
     ],

@@ -1,8 +1,12 @@
 import { OAuthConsentScreen } from "@/components/oauth/oauth-consent-screen";
 import { OAuthErrorMessage } from "@/components/oauth/oauth-error-message";
 import { loadOAuthParams } from "@/hooks/use-oauth-params";
-import { HydrateClient, getQueryClient } from "@/trpc/server";
-import { trpc } from "@/trpc/server";
+import {
+  HydrateClient,
+  getQueryClient,
+  getServerCaller,
+  trpc,
+} from "@/trpc/server";
 import { categorizeOAuthError, validateOAuthParams } from "@/utils/oauth-utils";
 import type { Metadata } from "next";
 import type { SearchParams } from "nuqs";
@@ -40,31 +44,42 @@ export default async function Page(props: Props) {
   // Validate OAuth application and parameters
   try {
     const queryClient = getQueryClient();
+    const caller = await getServerCaller();
 
     // Validate the OAuth application info first
-    await queryClient.fetchQuery(
+    const appInfo = await caller.oauthApplications.getApplicationInfo({
+      clientId: client_id!,
+      redirectUri: redirect_uri!,
+      scope: scope!,
+      state: state || undefined,
+    });
+
+    queryClient.setQueryData(
       trpc.oauthApplications.getApplicationInfo.queryOptions({
         clientId: client_id!,
         redirectUri: redirect_uri!,
         scope: scope!,
         state: state || undefined,
-      }),
+      }).queryKey,
+      appInfo,
     );
 
-    // If validation passes, prefetch additional data for hydration
-    await Promise.all([
-      queryClient.prefetchQuery(trpc.user.me.queryOptions()),
-      queryClient.prefetchQuery(
-        trpc.oauthApplications.getApplicationInfo.queryOptions({
-          clientId: client_id!,
-          redirectUri: redirect_uri!,
-          scope: scope!,
-          state: state || undefined,
-        }),
-      ),
-      queryClient.prefetchQuery(trpc.team.list.queryOptions()),
-      queryClient.prefetchQuery(trpc.team.current.queryOptions()),
+    // Prefetch additional data for hydration via direct caller
+    const [userData, teamList, teamCurrent] = await Promise.allSettled([
+      caller.user.me(),
+      caller.team.list(),
+      caller.team.current(),
     ]);
+
+    if (userData.status === "fulfilled") {
+      queryClient.setQueryData(trpc.user.me.queryOptions().queryKey, userData.value);
+    }
+    if (teamList.status === "fulfilled") {
+      queryClient.setQueryData(trpc.team.list.queryOptions().queryKey, teamList.value);
+    }
+    if (teamCurrent.status === "fulfilled") {
+      queryClient.setQueryData(trpc.team.current.queryOptions().queryKey, teamCurrent.value);
+    }
 
     // Render the consent screen
     return (

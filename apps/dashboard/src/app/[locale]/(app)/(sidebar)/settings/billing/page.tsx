@@ -3,6 +3,7 @@ import { Orders } from "@/components/orders";
 import { Plans } from "@/components/plans";
 import { prefetch, trpc } from "@/trpc/server";
 import { getQueryClient } from "@/trpc/server";
+import { getServerCaller } from "@/trpc/server";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -11,15 +12,32 @@ export const metadata: Metadata = {
 
 export default async function Billing() {
   const queryClient = getQueryClient();
-  const user = await queryClient.fetchQuery(trpc.user.me.queryOptions());
+
+  let user: Awaited<ReturnType<Awaited<ReturnType<typeof getServerCaller>>["user"]["me"]>> | null = null;
+
+  try {
+    const caller = await getServerCaller();
+    user = await caller.user.me();
+    queryClient.setQueryData(
+      trpc.user.me.queryOptions().queryKey,
+      user,
+    );
+  } catch (error) {
+    console.error("[BillingPage] Failed to fetch user via direct caller:", error);
+  }
 
   const team = user?.team;
 
-  prefetch(
-    trpc.billing.orders.infiniteQueryOptions({
-      pageSize: 15,
-    }),
-  );
+  // Infinite query — leave as prefetch but wrap in try/catch
+  try {
+    prefetch(
+      trpc.billing.orders.infiniteQueryOptions({
+        pageSize: 15,
+      }),
+    );
+  } catch (error) {
+    console.error("[BillingPage] Failed to prefetch billing orders:", error);
+  }
 
   return (
     <div className="space-y-12">

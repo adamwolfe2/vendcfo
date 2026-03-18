@@ -7,8 +7,8 @@ import { TimezoneDetector } from "@/components/timezone-detector";
 import { TrialGuard } from "@/components/trial-guard";
 import {
   HydrateClient,
-  batchPrefetch,
   getQueryClient,
+  getServerCaller,
   trpc,
 } from "@/trpc/server";
 import { redirect } from "next/navigation";
@@ -20,14 +20,45 @@ export default async function Layout({
 }) {
   const queryClient = getQueryClient();
 
-  // NOTE: These are used in the global sheets
-  batchPrefetch([
-    trpc.team.current.queryOptions(),
-    trpc.invoice.defaultSettings.queryOptions(),
-    trpc.search.global.queryOptions({ searchTerm: "" }),
-  ]);
+  let user: Awaited<ReturnType<Awaited<ReturnType<typeof getServerCaller>>["user"]["me"]>> | null;
 
-  const user = await queryClient.fetchQuery(trpc.user.me.queryOptions());
+  try {
+    const caller = await getServerCaller();
+
+    // Fetch user directly (no HTTP self-call)
+    user = await caller.user.me();
+
+    // Populate query cache so client components get hydrated data
+    if (user) {
+      queryClient.setQueryData(
+        trpc.user.me.queryOptions().queryKey,
+        user,
+      );
+    }
+
+    // Prefetch additional data in parallel via direct caller
+    const [teamData, invoiceDefaults] = await Promise.allSettled([
+      caller.team.current(),
+      caller.invoice.defaultSettings(),
+    ]);
+
+    if (teamData.status === "fulfilled") {
+      queryClient.setQueryData(
+        trpc.team.current.queryOptions().queryKey,
+        teamData.value,
+      );
+    }
+
+    if (invoiceDefaults.status === "fulfilled") {
+      queryClient.setQueryData(
+        trpc.invoice.defaultSettings.queryOptions().queryKey,
+        invoiceDefaults.value,
+      );
+    }
+  } catch (error) {
+    console.error("[sidebar/layout] TRPC caller error:", error);
+    redirect("/login");
+  }
 
   if (!user) {
     redirect("/login");

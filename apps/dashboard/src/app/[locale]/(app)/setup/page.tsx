@@ -1,5 +1,5 @@
 import { SetupForm } from "@/components/setup-form";
-import { getQueryClient, trpc } from "@/trpc/server";
+import { getQueryClient, getServerCaller, trpc } from "@/trpc/server";
 import { HydrateClient } from "@/trpc/server";
 import { Icons } from "@vendcfo/ui/icons";
 import type { Metadata } from "next";
@@ -12,7 +12,21 @@ export const metadata: Metadata = {
 
 export default async function Page() {
   const queryClient = getQueryClient();
-  const user = await queryClient.fetchQuery(trpc.user.me.queryOptions());
+
+  let user: any = null;
+  try {
+    const caller = await getServerCaller();
+    user = await caller.user.me();
+
+    if (user) {
+      queryClient.setQueryData(
+        trpc.user.me.queryOptions().queryKey,
+        user,
+      );
+    }
+  } catch {
+    return redirect("/login");
+  }
 
   if (!user?.id) {
     return redirect("/");

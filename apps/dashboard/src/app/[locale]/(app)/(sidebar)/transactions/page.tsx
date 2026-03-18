@@ -9,7 +9,8 @@ import { TransactionsUploadZone } from "@/components/transactions-upload-zone";
 import { loadSortParams } from "@/hooks/use-sort-params";
 import { loadTransactionFilterParams } from "@/hooks/use-transaction-filter-params";
 import { loadTransactionTab } from "@/hooks/use-transaction-tab";
-import { HydrateClient, batchPrefetch, trpc } from "@/trpc/server";
+import { HydrateClient, getQueryClient, trpc } from "@/trpc/server";
+import { getServerCaller } from "@/trpc/server";
 import { getInitialTableSettings } from "@/utils/columns";
 import type { Metadata } from "next";
 import type { SearchParams } from "nuqs/server";
@@ -49,18 +50,63 @@ export default async function Transactions(props: Props) {
     pageSize: 10000,
   };
 
-  // Prefetch all data needed for instant experience
-  batchPrefetch([
-    // Transaction data for both tabs
-    trpc.transactions.get.infiniteQueryOptions(allTabFilter),
-    trpc.transactions.get.infiniteQueryOptions(reviewTabFilter),
-    trpc.transactions.getReviewCount.queryOptions(),
-    // Shared data used by table rows (assign user, tags)
-    trpc.team.members.queryOptions(),
-    trpc.tags.get.queryOptions(),
-    // Apps for export bar (accounting providers)
-    trpc.apps.get.queryOptions(),
-  ]);
+  const queryClient = getQueryClient();
+
+  // Prefetch all data needed for instant experience via direct caller
+  try {
+    const caller = await getServerCaller();
+
+    const results = await Promise.allSettled([
+      caller.transactions.getReviewCount(),
+      caller.team.members(),
+      caller.tags.get(),
+      caller.apps.get(),
+    ]);
+
+    // Populate cache for regular queries
+    if (results[0].status === "fulfilled") {
+      queryClient.setQueryData(
+        trpc.transactions.getReviewCount.queryOptions().queryKey,
+        results[0].value,
+      );
+    }
+    if (results[1].status === "fulfilled") {
+      queryClient.setQueryData(
+        trpc.team.members.queryOptions().queryKey,
+        results[1].value,
+      );
+    }
+    if (results[2].status === "fulfilled") {
+      queryClient.setQueryData(
+        trpc.tags.get.queryOptions().queryKey,
+        results[2].value,
+      );
+    }
+    if (results[3].status === "fulfilled") {
+      queryClient.setQueryData(
+        trpc.apps.get.queryOptions().queryKey,
+        results[3].value,
+      );
+    }
+
+    // Infinite queries — leave as prefetch with try/catch
+    try {
+      void queryClient.prefetchInfiniteQuery(
+        trpc.transactions.get.infiniteQueryOptions(allTabFilter),
+      );
+    } catch (e) {
+      console.error("[TransactionsPage] Failed to prefetch allTab:", e);
+    }
+    try {
+      void queryClient.prefetchInfiniteQuery(
+        trpc.transactions.get.infiniteQueryOptions(reviewTabFilter),
+      );
+    } catch (e) {
+      console.error("[TransactionsPage] Failed to prefetch reviewTab:", e);
+    }
+  } catch (error) {
+    console.error("[TransactionsPage] Failed to prefetch via direct caller:", error);
+  }
 
   return (
     <HydrateClient>

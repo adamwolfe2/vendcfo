@@ -1,4 +1,4 @@
-import { getQueryClient, trpc } from "@/trpc/server";
+import { getServerCaller } from "@/trpc/server";
 import { logger } from "@/utils/logger";
 import { setupAnalytics } from "@vendcfo/events/server";
 import { createClient } from "@vendcfo/supabase/server";
@@ -54,8 +54,9 @@ export const authActionClient = actionClientWithMeta
     return result;
   })
   .use(async ({ next, metadata }) => {
-    const queryClient = getQueryClient();
-    const user = await queryClient.fetchQuery(trpc.user.me.queryOptions());
+    // Use direct caller instead of HTTP self-call
+    const caller = await getServerCaller();
+    const user = await caller.user.me();
 
     const supabase = await createClient();
 

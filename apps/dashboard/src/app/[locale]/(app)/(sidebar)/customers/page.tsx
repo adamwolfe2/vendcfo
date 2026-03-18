@@ -11,7 +11,8 @@ import { CustomersSkeleton } from "@/components/tables/customers/skeleton";
 import { TopRevenueClient } from "@/components/top-revenue-client";
 import { loadCustomerFilterParams } from "@/hooks/use-customer-filter-params";
 import { loadSortParams } from "@/hooks/use-sort-params";
-import { HydrateClient, batchPrefetch, trpc } from "@/trpc/server";
+import { HydrateClient, getQueryClient, trpc } from "@/trpc/server";
+import { getServerCaller } from "@/trpc/server";
 import { getInitialTableSettings } from "@/utils/columns";
 import type { Metadata } from "next";
 import { ErrorBoundary } from "next/dist/client/components/error-boundary";
@@ -35,17 +36,55 @@ export default async function Page(props: Props) {
   // Get unified table settings from cookie
   const initialSettings = await getInitialTableSettings("customers");
 
-  // Prefetch customer analytics
-  batchPrefetch([
-    trpc.customers.get.infiniteQueryOptions({
-      ...filter,
-      sort,
-    }),
-    trpc.invoice.mostActiveClient.queryOptions(),
-    trpc.invoice.inactiveClientsCount.queryOptions(),
-    trpc.invoice.topRevenueClient.queryOptions(),
-    trpc.invoice.newCustomersCount.queryOptions(),
-  ]);
+  const queryClient = getQueryClient();
+
+  // Prefetch customer analytics via direct caller
+  try {
+    const caller = await getServerCaller();
+
+    const results = await Promise.allSettled([
+      caller.invoice.mostActiveClient(),
+      caller.invoice.inactiveClientsCount(),
+      caller.invoice.topRevenueClient(),
+      caller.invoice.newCustomersCount(),
+    ]);
+
+    if (results[0].status === "fulfilled") {
+      queryClient.setQueryData(
+        trpc.invoice.mostActiveClient.queryOptions().queryKey,
+        results[0].value,
+      );
+    }
+    if (results[1].status === "fulfilled") {
+      queryClient.setQueryData(
+        trpc.invoice.inactiveClientsCount.queryOptions().queryKey,
+        results[1].value,
+      );
+    }
+    if (results[2].status === "fulfilled") {
+      queryClient.setQueryData(
+        trpc.invoice.topRevenueClient.queryOptions().queryKey,
+        results[2].value,
+      );
+    }
+    if (results[3].status === "fulfilled") {
+      queryClient.setQueryData(
+        trpc.invoice.newCustomersCount.queryOptions().queryKey,
+        results[3].value,
+      );
+    }
+
+    // Infinite query — leave as prefetch with try/catch
+    try {
+      void queryClient.prefetchInfiniteQuery(
+        trpc.customers.get.infiniteQueryOptions({ ...filter, sort }),
+      );
+    } catch (e) {
+      console.error("[CustomersPage] Failed to prefetch customers list:", e);
+    }
+  } catch (error) {
+    console.error("[CustomersPage] Failed to prefetch via direct caller:", error);
+  }
 
   return (
     <HydrateClient>

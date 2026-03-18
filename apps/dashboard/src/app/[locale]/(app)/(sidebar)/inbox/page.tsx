@@ -6,6 +6,7 @@ import { InboxView } from "@/components/inbox/inbox-view";
 import { loadInboxFilterParams } from "@/hooks/use-inbox-filter-params";
 import { loadInboxParams } from "@/hooks/use-inbox-params";
 import { HydrateClient, getQueryClient, trpc } from "@/trpc/server";
+import { getServerCaller } from "@/trpc/server";
 import type { Metadata } from "next";
 import type { SearchParams } from "nuqs";
 import { Suspense } from "react";
@@ -24,18 +25,33 @@ export default async function Page(props: Props) {
   const filter = loadInboxFilterParams(searchParams);
   const params = loadInboxParams(searchParams);
 
-  // Fetch inbox data and accounts in parallel
-  const [data, accounts] = await Promise.all([
-    queryClient.fetchInfiniteQuery(
+  // Fetch inbox data (infinite query — wrap in try/catch, leave as fetchInfiniteQuery)
+  let data: Awaited<ReturnType<typeof queryClient.fetchInfiniteQuery>> | null = null;
+  try {
+    data = await queryClient.fetchInfiniteQuery(
       trpc.inbox.get.infiniteQueryOptions({
         order: params.order,
         sort: params.sort,
         ...filter,
-        tab: filter.tab ?? "all", // Default to "all" tab
+        tab: filter.tab ?? "all",
       }),
-    ),
-    queryClient.fetchQuery(trpc.inboxAccounts.get.queryOptions()),
-  ]);
+    );
+  } catch (error) {
+    console.error("[InboxPage] Failed to fetch inbox data:", error);
+  }
+
+  // Fetch accounts via direct caller
+  let accounts: Awaited<ReturnType<Awaited<ReturnType<typeof getServerCaller>>["inboxAccounts"]["get"]>> | null = null;
+  try {
+    const caller = await getServerCaller();
+    accounts = await caller.inboxAccounts.get();
+    queryClient.setQueryData(
+      trpc.inboxAccounts.get.queryOptions().queryKey,
+      accounts,
+    );
+  } catch (error) {
+    console.error("[InboxPage] Failed to fetch inbox accounts via direct caller:", error);
+  }
 
   const hasInboxItems = (data?.pages?.[0]?.data?.length ?? 0) > 0;
   const hasConnectedAccounts = accounts && accounts.length > 0;

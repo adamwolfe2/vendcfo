@@ -1,6 +1,7 @@
 import { OpenURL } from "@/components/open-url";
 import { Plans } from "@/components/plans";
 import { getQueryClient, trpc } from "@/trpc/server";
+import { getServerCaller } from "@/trpc/server";
 import { getTrialDaysLeft } from "@/utils/trial";
 import type { Metadata } from "next";
 import Link from "next/link";
@@ -11,7 +12,20 @@ export const metadata: Metadata = {
 
 export default async function UpgradePage() {
   const queryClient = getQueryClient();
-  const user = await queryClient.fetchQuery(trpc.user.me.queryOptions());
+
+  let user: Awaited<ReturnType<Awaited<ReturnType<typeof getServerCaller>>["user"]["me"]>> | null = null;
+
+  try {
+    const caller = await getServerCaller();
+    user = await caller.user.me();
+    queryClient.setQueryData(
+      trpc.user.me.queryOptions().queryKey,
+      user,
+    );
+  } catch (error) {
+    console.error("[UpgradePage] Failed to fetch user via direct caller:", error);
+    return null;
+  }
 
   const team = user?.team;
 

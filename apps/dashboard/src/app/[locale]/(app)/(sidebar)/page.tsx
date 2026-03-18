@@ -1,6 +1,11 @@
 import { ChatInterface } from "@/components/chat/chat-interface";
 import { Widgets } from "@/components/widgets";
-import { HydrateClient, getQueryClient, prefetch, trpc } from "@/trpc/server";
+import {
+  HydrateClient,
+  getQueryClient,
+  getServerCaller,
+  trpc,
+} from "@/trpc/server";
 import { Provider as ChatProvider } from "@ai-sdk-tools/store";
 import { geolocation } from "@vercel/functions";
 import type { Metadata } from "next";
@@ -18,13 +23,29 @@ export default async function Overview() {
 
   const queryClient = getQueryClient();
 
-  // Fetch widget preferences directly for initial data (no prefetch needed)
-  const widgetPreferences = await queryClient.fetchQuery(
-    trpc.widgets.getWidgetPreferences.queryOptions(),
-  );
+  let widgetPreferences: any = null;
 
-  // Prefetch suggested actions (metrics are prefetched client-side to respect localStorage)
-  prefetch(trpc.suggestedActions.list.queryOptions({ limit: 6 }));
+  try {
+    const caller = await getServerCaller();
+
+    // Fetch widget preferences directly (no HTTP self-call)
+    widgetPreferences = await caller.widgets.getWidgetPreferences();
+
+    // Populate query cache for client hydration
+    queryClient.setQueryData(
+      trpc.widgets.getWidgetPreferences.queryOptions().queryKey,
+      widgetPreferences,
+    );
+
+    // Prefetch suggested actions via direct caller
+    const suggestedActions = await caller.suggestedActions.list({ limit: 6 });
+    queryClient.setQueryData(
+      trpc.suggestedActions.list.queryOptions({ limit: 6 }).queryKey,
+      suggestedActions,
+    );
+  } catch (error) {
+    console.error("[overview] TRPC caller error:", error);
+  }
 
   return (
     <HydrateClient>

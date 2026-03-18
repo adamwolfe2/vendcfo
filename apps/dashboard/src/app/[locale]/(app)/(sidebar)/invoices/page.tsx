@@ -14,7 +14,8 @@ import { DataTable } from "@/components/tables/invoices/data-table";
 import { InvoiceSkeleton } from "@/components/tables/invoices/skeleton";
 import { loadInvoiceFilterParams } from "@/hooks/use-invoice-filter-params";
 import { loadSortParams } from "@/hooks/use-sort-params";
-import { HydrateClient, batchPrefetch, trpc } from "@/trpc/server";
+import { HydrateClient, getQueryClient, trpc } from "@/trpc/server";
+import { getServerCaller } from "@/trpc/server";
 import { getInitialTableSettings } from "@/utils/columns";
 import type { Metadata } from "next";
 import { ErrorBoundary } from "next/dist/client/components/error-boundary";
@@ -38,22 +39,55 @@ export default async function Page(props: Props) {
   // Get unified table settings from cookie
   const initialSettings = await getInitialTableSettings("invoices");
 
-  batchPrefetch([
-    trpc.invoice.get.infiniteQueryOptions({
-      ...filter,
-      sort,
-    }),
-    trpc.invoice.invoiceSummary.queryOptions({
-      statuses: ["draft", "scheduled", "unpaid"],
-    }),
-    trpc.invoice.invoiceSummary.queryOptions({
-      statuses: ["paid"],
-    }),
-    trpc.invoice.invoiceSummary.queryOptions({
-      statuses: ["overdue"],
-    }),
-    trpc.invoice.paymentStatus.queryOptions(),
-  ]);
+  const queryClient = getQueryClient();
+
+  try {
+    const caller = await getServerCaller();
+
+    // Fetch regular queries via direct caller
+    const results = await Promise.allSettled([
+      caller.invoice.invoiceSummary({ statuses: ["draft", "scheduled", "unpaid"] }),
+      caller.invoice.invoiceSummary({ statuses: ["paid"] }),
+      caller.invoice.invoiceSummary({ statuses: ["overdue"] }),
+      caller.invoice.paymentStatus(),
+    ]);
+
+    if (results[0].status === "fulfilled") {
+      queryClient.setQueryData(
+        trpc.invoice.invoiceSummary.queryOptions({ statuses: ["draft", "scheduled", "unpaid"] }).queryKey,
+        results[0].value,
+      );
+    }
+    if (results[1].status === "fulfilled") {
+      queryClient.setQueryData(
+        trpc.invoice.invoiceSummary.queryOptions({ statuses: ["paid"] }).queryKey,
+        results[1].value,
+      );
+    }
+    if (results[2].status === "fulfilled") {
+      queryClient.setQueryData(
+        trpc.invoice.invoiceSummary.queryOptions({ statuses: ["overdue"] }).queryKey,
+        results[2].value,
+      );
+    }
+    if (results[3].status === "fulfilled") {
+      queryClient.setQueryData(
+        trpc.invoice.paymentStatus.queryOptions().queryKey,
+        results[3].value,
+      );
+    }
+
+    // Infinite query — leave as prefetch with try/catch
+    try {
+      void queryClient.prefetchInfiniteQuery(
+        trpc.invoice.get.infiniteQueryOptions({ ...filter, sort }),
+      );
+    } catch (e) {
+      console.error("[InvoicesPage] Failed to prefetch invoice list:", e);
+    }
+  } catch (error) {
+    console.error("[InvoicesPage] Failed to prefetch via direct caller:", error);
+  }
 
   return (
     <HydrateClient>

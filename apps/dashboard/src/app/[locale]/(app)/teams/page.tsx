@@ -1,7 +1,12 @@
 import { SelectTeamTable } from "@/components/tables/select-team/table";
 import { TeamInvites } from "@/components/team-invites";
 import { UserMenu } from "@/components/user-menu";
-import { HydrateClient, getQueryClient, prefetch, trpc } from "@/trpc/server";
+import {
+  HydrateClient,
+  getQueryClient,
+  getServerCaller,
+  trpc,
+} from "@/trpc/server";
 import { Button } from "@vendcfo/ui/button";
 import { Icons } from "@vendcfo/ui/icons";
 import type { Metadata } from "next";
@@ -14,12 +19,32 @@ export const metadata: Metadata = {
 
 export default async function Teams() {
   const queryClient = getQueryClient();
-  const teams = await queryClient.fetchQuery(trpc.team.list.queryOptions());
-  const invites = await queryClient.fetchQuery(
-    trpc.team.invitesByEmail.queryOptions(),
-  );
 
-  const user = await queryClient.fetchQuery(trpc.user.me.queryOptions());
+  let teams: any[] = [];
+  let invites: any[] = [];
+  let user: any = null;
+
+  try {
+    const caller = await getServerCaller();
+    [teams, invites, user] = await Promise.all([
+      caller.team.list(),
+      caller.team.invitesByEmail(),
+      caller.user.me(),
+    ]);
+
+    // Populate query cache for client hydration
+    queryClient.setQueryData(trpc.team.list.queryOptions().queryKey, teams);
+    queryClient.setQueryData(
+      trpc.team.invitesByEmail.queryOptions().queryKey,
+      invites,
+    );
+    if (user) {
+      queryClient.setQueryData(trpc.user.me.queryOptions().queryKey, user);
+    }
+  } catch (error) {
+    console.error("[teams] TRPC caller error:", error);
+    redirect("/login");
+  }
 
   // If no teams and no invites, redirect to create team
   if (!teams?.length && !invites?.length) {
@@ -49,7 +74,7 @@ export default async function Teams() {
               </h1>
               {invites?.length > 0 ? (
                 <p className="text-[#878787] text-sm mb-8">
-                  Join a team you’ve been invited to or create a new one.
+                  Join a team you've been invited to or create a new one.
                 </p>
               ) : (
                 <p className="text-[#878787] text-sm mb-8">
