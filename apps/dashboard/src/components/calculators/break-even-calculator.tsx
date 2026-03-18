@@ -2,13 +2,13 @@
 
 import React, { useState } from 'react';
 import { calculateBreakEven, BreakEvenInputs, BreakEvenOutputs } from '@vendcfo/calculators';
+import { Card, CardContent, CardHeader, CardTitle } from "@vendcfo/ui/card";
+import { Input } from "@vendcfo/ui/input";
+import { Label } from "@vendcfo/ui/label";
 
 export function BreakEvenCalculator() {
   const [inputs, setInputs] = useState<BreakEvenInputs>({
-    fixedMonthlyCostsGlobal: 5000,
-    avgGrossMarginPct: 45,
-    perLocationFixedCostsAvg: 100,
-    monthlyDebtObligations: 1200
+    fixedMonthlyCostsGlobal: 5000, avgGrossMarginPct: 45, perLocationFixedCostsAvg: 100, monthlyDebtObligations: 1200,
   });
 
   const results: BreakEvenOutputs = calculateBreakEven(inputs);
@@ -19,84 +19,32 @@ export function BreakEvenCalculator() {
   };
 
   return (
-    <div className="bg-white p-6 rounded-xl shadow border border-gray-200 w-full max-w-md">
-      <h2 className="text-xl font-bold mb-4">Break-Even Analysis</h2>
-      <p className="text-sm text-gray-500 mb-6">Calculate exactly how much revenue and how many locations you need to cover all fixed costs.</p>
-      
-      <div className="space-y-4 mb-6">
-        <div className="grid grid-cols-2 gap-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Global Fixed Costs ($)</label>
-            <input 
-              type="number" 
-              name="fixedMonthlyCostsGlobal" 
-              value={inputs.fixedMonthlyCostsGlobal} 
-              onChange={handleChange}
-              className="w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm p-2 border" 
-            />
+    <Card className="w-full max-w-md">
+      <CardHeader className="pb-4"><CardTitle>Break-Even Analysis</CardTitle></CardHeader>
+      <CardContent>
+        <div className="space-y-4 mb-6">
+          <div className="grid grid-cols-2 gap-4">
+            <div><Label htmlFor="be-fixed">Global Fixed Costs</Label><Input type="number" id="be-fixed" name="fixedMonthlyCostsGlobal" value={inputs.fixedMonthlyCostsGlobal} onChange={handleChange} className="mt-1" /></div>
+            <div><Label htmlFor="be-margin">Avg Gross Margin (%)</Label><Input type="number" id="be-margin" name="avgGrossMarginPct" value={inputs.avgGrossMarginPct} onChange={handleChange} className="mt-1" /></div>
           </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Avg Gross Margin (%)</label>
-            <input 
-              type="number" 
-              name="avgGrossMarginPct" 
-              value={inputs.avgGrossMarginPct} 
-              onChange={handleChange}
-              className="w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm p-2 border" 
-            />
+          <div className="grid grid-cols-2 gap-4">
+            <div><Label htmlFor="be-loc">Fixed Cost / Location</Label><Input type="number" id="be-loc" name="perLocationFixedCostsAvg" value={inputs.perLocationFixedCostsAvg} onChange={handleChange} className="mt-1" /></div>
+            <div><Label htmlFor="be-debt">Monthly Debt ($)</Label><Input type="number" id="be-debt" name="monthlyDebtObligations" value={inputs.monthlyDebtObligations} onChange={handleChange} className="mt-1" /></div>
           </div>
         </div>
-
-        <div className="grid grid-cols-2 gap-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Fixed Cost / Location</label>
-            <input 
-              type="number" 
-              name="perLocationFixedCostsAvg" 
-              value={inputs.perLocationFixedCostsAvg} 
-              onChange={handleChange}
-              className="w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm p-2 border" 
-            />
+        <div className="bg-secondary p-4 rounded-lg border border-border">
+          <h3 className="text-sm font-bold text-foreground uppercase tracking-wider mb-3">Break-Even Target</h3>
+          <div className="space-y-3 font-mono text-sm">
+            <div className="flex justify-between"><span className="text-muted-foreground">Revenue Required / Mo:</span><span className="font-bold text-blue-600 dark:text-blue-400">${results.totalRevenueRequired.toLocaleString()}</span></div>
+            <div className="flex justify-between pt-2 border-t border-border"><span className="text-muted-foreground">Locations Required:</span><span className="font-medium text-foreground">{results.locationsRequiredToBreakEven === Infinity ? 'Unreachable' : Math.ceil(results.locationsRequiredToBreakEven).toLocaleString()}</span></div>
           </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Monthly Debt ($)</label>
-            <input 
-              type="number" 
-              name="monthlyDebtObligations" 
-              value={inputs.monthlyDebtObligations} 
-              onChange={handleChange}
-              className="w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm p-2 border" 
-            />
-          </div>
+          {results.locationsRequiredToBreakEven === Infinity && (
+            <div className="mt-3 text-xs text-red-600 dark:text-red-400 bg-red-500/10 p-2 rounded">
+              <strong>Warning:</strong> Locations are losing money on a unit basis. Break-even impossible without margin improvement.
+            </div>
+          )}
         </div>
-      </div>
-
-      <div className="bg-gray-50 p-4 rounded-lg border border-gray-200">
-        <h3 className="text-sm font-bold text-gray-900 uppercase tracking-wider mb-3">Break-Even Target</h3>
-        
-        <div className="space-y-3 font-mono text-sm max-w-full overflow-hidden">
-          <div className="flex justify-between items-center">
-            <span className="text-gray-500">Revenue Required / Mo:</span>
-            <span className="font-bold text-blue-600">
-              ${results.totalRevenueRequired.toLocaleString()}
-            </span>
-          </div>
-          <div className="flex justify-between items-center pt-2 border-t border-gray-200">
-            <span className="text-gray-500">Locations Required:</span>
-            <span className="font-medium text-gray-900">
-              {results.locationsRequiredToBreakEven === Infinity 
-                ? 'Unreachable' 
-                : Math.ceil(results.locationsRequiredToBreakEven).toLocaleString()} Machines
-            </span>
-          </div>
-        </div>
-        
-        {results.locationsRequiredToBreakEven === Infinity && (
-          <div className="mt-3 text-xs text-red-600 bg-red-50 p-2 rounded">
-            <strong>Warning:</strong> Your locations are currently losing money on a unit basis. You cannot break even by adding more locations unless margins improve.
-          </div>
-        )}
-      </div>
-    </div>
+      </CardContent>
+    </Card>
   );
 }

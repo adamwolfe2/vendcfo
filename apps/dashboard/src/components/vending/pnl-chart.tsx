@@ -1,20 +1,22 @@
 import React from 'react';
+import { Card, CardContent, CardHeader, CardTitle } from "@vendcfo/ui/card";
 
 export function PnlChart() {
   return (
-    <div className="bg-white p-6 rounded-xl shadow border border-gray-100 mt-8 mb-8 h-80 flex flex-col justify-between">
-      <div className="flex justify-between items-center mb-4">
-        <h3 className="font-semibold text-lg text-gray-900">12-Month Profit & Loss Trend</h3>
-        <select className="text-sm border border-gray-200 rounded p-1 text-gray-600">
+    <Card className="mt-4 mb-8">
+      <CardHeader className="pb-2 flex flex-row items-center justify-between">
+        <CardTitle className="text-lg">12-Month Profit &amp; Loss Trend</CardTitle>
+        <select className="text-sm border border-border rounded-md px-2 py-1 text-muted-foreground bg-background">
           <option>Last 12 Months</option>
           <option>Year to Date</option>
           <option>Last Quarter</option>
         </select>
-      </div>
-      
-      <div className="flex-1 flex items-center justify-center border-2 border-dashed border-gray-200 rounded-lg bg-gray-50">
-        <p className="text-gray-500 font-medium">Monthly P&L Line Chart rendering area...</p>
-      </div>
-    </div>
+      </CardHeader>
+      <CardContent>
+        <div className="h-64 flex items-center justify-center border-2 border-dashed border-border rounded-lg bg-secondary/50">
+          <p className="text-muted-foreground font-medium">Monthly P&amp;L Line Chart rendering area...</p>
+        </div>
+      </CardContent>
+    </Card>
   );
 }

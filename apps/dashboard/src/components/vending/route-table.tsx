@@ -1,5 +1,14 @@
 import React from 'react';
 import { ArrowUpRight, ArrowDownRight, AlertTriangle } from 'lucide-react';
+import { Card, CardContent, CardHeader, CardTitle } from "@vendcfo/ui/card";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@vendcfo/ui/table";
 
 const MOCK_ROUTES = [
   { id: '1', name: 'Downtown Core', stops: 12, revenue: 8400, profit: 3200, profitPerVisit: 133, status: 'green' },
@@ -10,52 +19,58 @@ const MOCK_ROUTES = [
 
 export function RouteTable() {
   return (
-    <div className="bg-white shadow rounded-xl border border-gray-100 overflow-hidden">
-      <div className="px-6 py-5 border-b border-gray-100 flex justify-between items-center">
-        <h3 className="text-lg font-semibold text-gray-900">Route Profitability Ranking</h3>
-        <button className="text-sm text-blue-600 font-medium hover:text-blue-800">Export CSV</button>
-      </div>
-      <div className="overflow-x-auto">
-        <table className="min-w-full divide-y divide-gray-200">
-          <thead className="bg-gray-50">
-            <tr>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Route Name</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Locations</th>
-              <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Gross Rev/mo</th>
-              <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Net Profit/mo</th>
-              <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Profit/Visit</th>
-              <th className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-            </tr>
-          </thead>
-          <tbody className="bg-white divide-y divide-gray-200">
+    <Card>
+      <CardHeader className="flex flex-row items-center justify-between pb-2">
+        <CardTitle className="text-lg">Route Profitability Ranking</CardTitle>
+        <button className="text-sm text-primary font-medium hover:text-primary/80 transition-colors">
+          Export CSV
+        </button>
+      </CardHeader>
+      <CardContent className="p-0">
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>Route Name</TableHead>
+              <TableHead>Locations</TableHead>
+              <TableHead className="text-right">Gross Rev/mo</TableHead>
+              <TableHead className="text-right">Net Profit/mo</TableHead>
+              <TableHead className="text-right">Profit/Visit</TableHead>
+              <TableHead className="text-center">Status</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
             {MOCK_ROUTES.sort((a, b) => b.profit - a.profit).map((route) => (
-              <tr key={route.id} className="hover:bg-gray-50 cursor-pointer transition">
-                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{route.name}</td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{route.stops}</td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 text-right">${route.revenue.toLocaleString()}</td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-right font-medium">
+              <TableRow key={route.id} className="cursor-pointer">
+                <TableCell className="font-medium">{route.name}</TableCell>
+                <TableCell>{route.stops}</TableCell>
+                <TableCell className="text-right">${route.revenue.toLocaleString()}</TableCell>
+                <TableCell className="text-right font-medium">
                   {route.profit > 0 ? (
-                    <span className="text-green-600 flex items-center justify-end"><ArrowUpRight size={14} className="mr-1"/>${route.profit.toLocaleString()}</span>
+                    <span className="text-green-600 dark:text-green-400 flex items-center justify-end">
+                      <ArrowUpRight size={14} className="mr-1"/>${route.profit.toLocaleString()}
+                    </span>
                   ) : (
-                    <span className="text-red-500 flex items-center justify-end"><ArrowDownRight size={14} className="mr-1"/>-${Math.abs(route.profit).toLocaleString()}</span>
+                    <span className="text-red-500 dark:text-red-400 flex items-center justify-end">
+                      <ArrowDownRight size={14} className="mr-1"/>-${Math.abs(route.profit).toLocaleString()}
+                    </span>
                   )}
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 text-right font-mono">${route.profitPerVisit}</td>
-                <td className="px-6 py-4 whitespace-nowrap text-center">
+                </TableCell>
+                <TableCell className="text-right font-mono">${route.profitPerVisit}</TableCell>
+                <TableCell className="text-center">
                   <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                    route.status === 'green' ? 'bg-green-100 text-green-800' :
-                    route.status === 'yellow' ? 'bg-yellow-100 text-yellow-800' :
-                    'bg-red-100 text-red-800'
+                    route.status === 'green' ? 'bg-green-500/10 text-green-600 dark:text-green-400' :
+                    route.status === 'yellow' ? 'bg-yellow-500/10 text-yellow-600 dark:text-yellow-400' :
+                    'bg-red-500/10 text-red-600 dark:text-red-400'
                   }`}>
                     {route.status === 'red' && <AlertTriangle size={12} className="mr-1" />}
                     {route.status.toUpperCase()}
                   </span>
-                </td>
-              </tr>
+                </TableCell>
+              </TableRow>
             ))}
-          </tbody>
-        </table>
-      </div>
-    </div>
+          </TableBody>
+        </Table>
+      </CardContent>
+    </Card>
   );
 }

@@ -10,11 +10,11 @@ import { EquipmentFinancingCalculator } from '@/components/calculators/equipment
 
 export default function CalculatorsPage() {
   return (
-    <div className="p-8">
-      <h1 className="text-2xl font-bold mb-4">VendCFO Calculators</h1>
-      <p className="text-gray-600 mb-8">Model your vending operations using these specialized tools.</p>
+    <div className="p-8 max-w-7xl mx-auto w-full">
+      <h1 className="text-2xl font-bold text-foreground mb-2">VendCFO Calculators</h1>
+      <p className="text-muted-foreground mb-8">Model your vending operations using these specialized tools.</p>
       
-      <div className="flex flex-wrap gap-8 items-start">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 items-start">
         <MarginCalculator />
         <MarkupCalculator />
         <CashFlowCalculator />

@@ -32,7 +32,7 @@ export default async function Overview() {
     <HydrateClient>
       <ChatProvider initialMessages={[]} key="home">
         <div className="flex flex-col flex-1 p-6 max-w-7xl mx-auto w-full">
-          <h1 className="text-2xl font-bold text-gray-900 mb-6">VendCFO Overview</h1>
+          <h1 className="text-2xl font-bold text-foreground mb-6">VendCFO Overview</h1>
           <KpiCards />
           <PnlChart />
           <div className="grid grid-cols-1 gap-6">

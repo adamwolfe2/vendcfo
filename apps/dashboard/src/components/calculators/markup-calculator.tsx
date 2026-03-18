@@ -1,100 +1,38 @@
 "use client";
 
 import React, { useState } from 'react';
-import { calculateMarkup, MarkupInputs, MarkupOutputs } from '@vendcfo/calculators';
-import { Tag, TrendingUp } from 'lucide-react';
+import { Card, CardContent, CardHeader, CardTitle } from "@vendcfo/ui/card";
+import { Input } from "@vendcfo/ui/input";
+import { Label } from "@vendcfo/ui/label";
 
 export function MarkupCalculator() {
-  const [inputs, setInputs] = useState<MarkupInputs>({
-    costPerUnit: 0.85,
-    targetMarginPct: 50,
-    locationType: 'office',
-    expectedMonthlyVolume: 120
-  });
+  const [inputs, setInputs] = useState({ unitCost: 0.85, desiredMarkupPct: 100 });
+  const sellingPrice = inputs.unitCost * (1 + inputs.desiredMarkupPct / 100);
+  const grossProfit = sellingPrice - inputs.unitCost;
+  const marginPct = sellingPrice > 0 ? (grossProfit / sellingPrice) * 100 : 0;
 
-  const results: MarkupOutputs = calculateMarkup(inputs);
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setInputs((prev: MarkupInputs) => ({ 
-      ...prev, 
-      [name]: name === 'locationType' ? value : (parseFloat(value) || 0) 
-    }));
+    setInputs((prev) => ({ ...prev, [name]: parseFloat(value) || 0 }));
   };
 
   return (
-    <div className="bg-white p-6 rounded-xl shadow border border-gray-200 w-full max-w-md">
-      <div className="flex items-center mb-4">
-        <Tag className="text-gray-400 mr-2" size={24} />
-        <h2 className="text-xl font-bold">Target Markup</h2>
-      </div>
-      <p className="text-sm text-gray-500 mb-6">Calculate optimal vending price rounded to the nearest quarter based on your desired margin.</p>
-      
-      <div className="space-y-4 mb-6">
-        <div className="grid grid-cols-2 gap-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Unit Cost ($)</label>
-            <input 
-              type="number" 
-              step="0.05"
-              name="costPerUnit" 
-              value={inputs.costPerUnit} 
-              onChange={handleChange}
-              className="w-full border-gray-300 rounded-md shadow-sm focus:ring-primary focus:border-primary sm:text-sm p-2 border" 
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Target Margin (%)</label>
-            <input 
-              type="number" 
-              name="targetMarginPct" 
-              value={inputs.targetMarginPct} 
-              onChange={handleChange}
-              className="w-full border-gray-300 rounded-md shadow-sm focus:ring-primary focus:border-primary sm:text-sm p-2 border" 
-            />
+    <Card className="w-full max-w-md">
+      <CardHeader className="pb-4"><CardTitle>Markup Calculator</CardTitle></CardHeader>
+      <CardContent>
+        <div className="space-y-4 mb-6">
+          <div><Label htmlFor="mc-unitCost">Unit Cost ($)</Label><Input type="number" id="mc-unitCost" name="unitCost" value={inputs.unitCost} onChange={handleChange} className="mt-1" /></div>
+          <div><Label htmlFor="mc-markupPct">Desired Markup (%)</Label><Input type="number" id="mc-markupPct" name="desiredMarkupPct" value={inputs.desiredMarkupPct} onChange={handleChange} className="mt-1" /></div>
+        </div>
+        <div className="bg-secondary p-4 rounded-lg border border-border">
+          <h3 className="text-sm font-bold text-foreground uppercase tracking-wider mb-3">Results</h3>
+          <div className="space-y-3 font-mono text-sm">
+            <div className="flex justify-between"><span className="text-muted-foreground">Selling Price:</span><span className="font-bold text-foreground">${sellingPrice.toFixed(2)}</span></div>
+            <div className="flex justify-between"><span className="text-muted-foreground">Gross Profit:</span><span className="text-green-600 dark:text-green-400">${grossProfit.toFixed(2)}</span></div>
+            <div className="flex justify-between pt-2 border-t border-border"><span className="text-muted-foreground">Effective Margin:</span><span className="font-medium text-foreground">{marginPct.toFixed(1)}%</span></div>
           </div>
         </div>
-
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Expected Monthly Sales (Units)</label>
-          <input 
-            type="number" 
-            name="expectedMonthlyVolume" 
-            value={inputs.expectedMonthlyVolume} 
-            onChange={handleChange}
-            className="w-full border-gray-300 rounded-md shadow-sm focus:ring-primary focus:border-primary sm:text-sm p-2 border" 
-          />
-        </div>
-      </div>
-
-      <div className="bg-gray-50 p-4 rounded-lg border border-gray-200">
-        <h3 className="text-sm font-bold text-gray-900 uppercase tracking-wider mb-3">Pricing Recommendation</h3>
-        
-        <div className="flex items-center justify-between mb-4 pb-4 border-b border-gray-200">
-          <div>
-            <p className="text-sm text-gray-500">Retail Price</p>
-            <p className="text-3xl font-black text-primary">${results.recommendedRetailPrice.toFixed(2)}</p>
-          </div>
-          <div className="text-right">
-            <p className="text-sm text-gray-500">Est. Monthly Profit</p>
-            <p className="text-xl font-bold text-green-600">${results.projectedMonthlyProfit.toLocaleString()}</p>
-          </div>
-        </div>
-
-        <div className="space-y-2">
-          <p className="text-xs font-semibold text-gray-500 uppercase">Profit Sensitivity</p>
-          <div className="grid grid-cols-2 gap-2 text-xs">
-            <div className="bg-white p-2 rounded border border-gray-100 flex justify-between">
-              <span className="text-gray-500">- $0.25</span>
-              <span className="font-medium text-red-500">${results.sensitivityTable.minus25Cents}/mo</span>
-            </div>
-            <div className="bg-white p-2 rounded border border-gray-100 flex justify-between">
-              <span className="text-gray-500">+ $0.25</span>
-              <span className="font-medium text-green-600">${results.sensitivityTable.plus25Cents}/mo</span>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
+      </CardContent>
+    </Card>
   );
 }

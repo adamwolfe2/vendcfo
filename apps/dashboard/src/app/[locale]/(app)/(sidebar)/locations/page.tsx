@@ -1,64 +1,80 @@
 import React from 'react';
 import { Building2, ArrowUpRight, ArrowDownRight } from 'lucide-react';
 import { getDb } from '@vendcfo/spreadsheet-bridge';
+import { Card, CardContent } from "@vendcfo/ui/card";
+import { Button } from "@vendcfo/ui/button";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@vendcfo/ui/table";
 
 export default function LocationsPage() {
   const db = getDb();
   const sortedLocations = [...db.locations].sort((a, b) => b.profit - a.profit);
 
   return (
-    <div className="p-8 max-w-7xl mx-auto">
+    <div className="p-8 max-w-7xl mx-auto w-full">
       <div className="flex justify-between items-center mb-8">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Locations</h1>
-          <p className="text-gray-600">Manage location agreements, revenue share, and profitability.</p>
+          <h1 className="text-2xl font-bold text-foreground">Locations</h1>
+          <p className="text-muted-foreground">Manage location agreements, revenue share, and profitability.</p>
         </div>
-        <button className="bg-black text-white px-4 py-2 rounded-md font-medium text-sm hover:bg-gray-800 transition">
-          Add Location
-        </button>
+        <Button>Add Location</Button>
       </div>
       
-      <div className="bg-white rounded-xl shadow border border-gray-100 overflow-hidden">
-        <table className="min-w-full divide-y divide-gray-200">
-          <thead className="bg-gray-50">
-            <tr>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Location Name</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Route</th>
-              <th className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Machines</th>
-              <th className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Rev Share %</th>
-              <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">30d Net Profit</th>
-              <th className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-            </tr>
-          </thead>
-          <tbody className="bg-white divide-y divide-gray-200">
-            {sortedLocations.map((loc) => (
-              <tr key={loc.id} className="hover:bg-gray-50 cursor-pointer">
-                <td className="px-6 py-4 whitespace-nowrap">
-                  <div className="flex items-center">
-                    <Building2 className="flex-shrink-0 h-5 w-5 text-gray-400 mr-3" />
-                    <div className="text-sm font-medium text-gray-900">{loc.name}</div>
-                  </div>
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{db.routes.find(r => r.id === loc.routeId)?.name || 'Needs Route'}</td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 text-center">{loc.machines}</td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 text-center">{loc.revShare}%</td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-right font-medium">
-                  {loc.profit > 0 ? (
-                    <span className="text-green-600 flex justify-end items-center"><ArrowUpRight size={14} className="mr-1"/>${loc.profit}</span>
-                  ) : (
-                    <span className="text-red-500 flex justify-end items-center"><ArrowDownRight size={14} className="mr-1"/>-${Math.abs(loc.profit)}</span>
-                  )}
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-center">
-                  <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${loc.status === 'Active' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
-                    {loc.status}
-                  </span>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+      <Card>
+        <CardContent className="p-0">
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Location Name</TableHead>
+                <TableHead>Route</TableHead>
+                <TableHead className="text-center">Machines</TableHead>
+                <TableHead className="text-center">Rev Share %</TableHead>
+                <TableHead className="text-right">30d Net Profit</TableHead>
+                <TableHead className="text-center">Status</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {sortedLocations.map((loc) => (
+                <TableRow key={loc.id} className="cursor-pointer">
+                  <TableCell>
+                    <div className="flex items-center">
+                      <Building2 className="flex-shrink-0 h-4 w-4 text-muted-foreground mr-3" />
+                      <span className="font-medium">{loc.name}</span>
+                    </div>
+                  </TableCell>
+                  <TableCell className="text-muted-foreground">{db.routes.find(r => r.id === loc.routeId)?.name || 'Unassigned'}</TableCell>
+                  <TableCell className="text-center">{loc.machines}</TableCell>
+                  <TableCell className="text-center">{loc.revShare}%</TableCell>
+                  <TableCell className="text-right font-medium">
+                    {loc.profit > 0 ? (
+                      <span className="text-green-600 dark:text-green-400 flex justify-end items-center">
+                        <ArrowUpRight size={14} className="mr-1"/>${loc.profit}
+                      </span>
+                    ) : (
+                      <span className="text-red-500 dark:text-red-400 flex justify-end items-center">
+                        <ArrowDownRight size={14} className="mr-1"/>-${Math.abs(loc.profit)}
+                      </span>
+                    )}
+                  </TableCell>
+                  <TableCell className="text-center">
+                    <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                      loc.status === 'Active' ? 'bg-green-500/10 text-green-600 dark:text-green-400' : 'bg-red-500/10 text-red-600 dark:text-red-400'
+                    }`}>
+                      {loc.status}
+                    </span>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </CardContent>
+      </Card>
     </div>
   );
 }

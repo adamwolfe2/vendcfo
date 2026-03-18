@@ -1,4 +1,5 @@
-import { DollarSign, TrendingUp, Percent, Wallet } from "lucide-react";
+import { DollarSign, TrendingUp, TrendingDown, Percent, Wallet } from "lucide-react";
+import { Card, CardContent } from "@vendcfo/ui/card";
 import { getDb, calculateDashboardMetrics } from '@vendcfo/spreadsheet-bridge';
 
 export function KpiCards() {
@@ -9,67 +10,65 @@ export function KpiCards() {
     metrics = calculateDashboardMetrics(db);
   }
 
+  const cards = [
+    {
+      label: "Total Revenue",
+      value: `$${metrics.revenue.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}`,
+      icon: DollarSign,
+      iconBg: "bg-blue-500/10 text-blue-500 dark:bg-blue-400/10 dark:text-blue-400",
+      trend: "+12%",
+      trendUp: true,
+    },
+    {
+      label: "Net Profit",
+      value: `$${metrics.profit.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}`,
+      icon: TrendingUp,
+      iconBg: "bg-green-500/10 text-green-500 dark:bg-green-400/10 dark:text-green-400",
+      trend: "+5%",
+      trendUp: true,
+    },
+    {
+      label: "Gross Margin",
+      value: `${metrics.margin.toFixed(1)}%`,
+      icon: Percent,
+      iconBg: "bg-purple-500/10 text-purple-500 dark:bg-purple-400/10 dark:text-purple-400",
+      trend: "-1.2%",
+      trendUp: false,
+    },
+    {
+      label: "Cash on Hand",
+      value: `$${metrics.cash.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}`,
+      icon: Wallet,
+      iconBg: "bg-orange-500/10 text-orange-500 dark:bg-orange-400/10 dark:text-orange-400",
+      trend: "4.5mo runway",
+      trendUp: true,
+    },
+  ];
+
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-      <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100 flex flex-col justify-between">
-        <div className="flex justify-between items-start mb-4">
-          <div>
-            <p className="text-sm font-medium text-gray-500">Total Revenue</p>
-            <h3 className="text-2xl font-bold text-gray-900 mt-1">${metrics.revenue.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}</h3>
-          </div>
-          <div className="p-2 bg-blue-50 text-blue-600 rounded-lg">
-            <DollarSign size={20} />
-          </div>
-        </div>
-        <p className="text-sm text-green-600 font-medium flex items-center">
-          <TrendingUp size={14} className="mr-1" /> +12% from last month
-        </p>
-      </div>
-
-      <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100 flex flex-col justify-between">
-        <div className="flex justify-between items-start mb-4">
-          <div>
-            <p className="text-sm font-medium text-gray-500">Net Profit</p>
-            <h3 className="text-2xl font-bold text-gray-900 mt-1">${metrics.profit.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}</h3>
-          </div>
-          <div className="p-2 bg-green-50 text-green-600 rounded-lg">
-            <TrendingUp size={20} />
-          </div>
-        </div>
-        <p className="text-sm text-green-600 font-medium flex items-center">
-          <TrendingUp size={14} className="mr-1" /> +5% from last month
-        </p>
-      </div>
-
-      <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100 flex flex-col justify-between">
-        <div className="flex justify-between items-start mb-4">
-          <div>
-            <p className="text-sm font-medium text-gray-500">Gross Margin</p>
-            <h3 className="text-2xl font-bold text-gray-900 mt-1">{metrics.margin.toFixed(1)}%</h3>
-          </div>
-          <div className="p-2 bg-purple-50 text-purple-600 rounded-lg">
-            <Percent size={20} />
-          </div>
-        </div>
-        <p className="text-sm text-red-500 font-medium flex items-center">
-          <TrendingUp size={14} className="mr-1 transform rotate-180" /> -1.2% from last month
-        </p>
-      </div>
-
-      <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100 flex flex-col justify-between">
-        <div className="flex justify-between items-start mb-4">
-          <div>
-            <p className="text-sm font-medium text-gray-500">Cash on Hand</p>
-            <h3 className="text-2xl font-bold text-gray-900 mt-1">${metrics.cash.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}</h3>
-          </div>
-          <div className="p-2 bg-orange-50 text-orange-600 rounded-lg">
-            <Wallet size={20} />
-          </div>
-        </div>
-        <p className="text-sm text-gray-500 font-medium flex items-center">
-          Provides 4.5 months runway
-        </p>
-      </div>
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+      {cards.map((card) => {
+        const Icon = card.icon;
+        return (
+          <Card key={card.label}>
+            <CardContent className="p-6">
+              <div className="flex justify-between items-start mb-4">
+                <div>
+                  <p className="text-sm font-medium text-muted-foreground">{card.label}</p>
+                  <h3 className="text-2xl font-bold text-foreground mt-1">{card.value}</h3>
+                </div>
+                <div className={`p-2 rounded-lg ${card.iconBg}`}>
+                  <Icon size={20} />
+                </div>
+              </div>
+              <p className={`text-sm font-medium flex items-center ${card.trendUp ? 'text-green-600 dark:text-green-400' : 'text-red-500 dark:text-red-400'}`}>
+                {card.trendUp ? <TrendingUp size={14} className="mr-1" /> : <TrendingDown size={14} className="mr-1" />}
+                {card.trend} {card.label !== "Cash on Hand" ? "from last month" : ""}
+              </p>
+            </CardContent>
+          </Card>
+        );
+      })}
     </div>
   );
 }

@@ -2,6 +2,9 @@
 
 import React, { useState } from 'react';
 import { calculateMargin, MarginInputs, MarginOutputs } from '@vendcfo/calculators';
+import { Card, CardContent, CardHeader, CardTitle } from "@vendcfo/ui/card";
+import { Input } from "@vendcfo/ui/input";
+import { Label } from "@vendcfo/ui/label";
 
 export function MarginCalculator() {
   const [inputs, setInputs] = useState<MarginInputs>({
@@ -19,77 +22,52 @@ export function MarginCalculator() {
   };
 
   return (
-    <div className="bg-white p-6 rounded-xl shadow border border-gray-200 w-full max-w-md">
-      <h2 className="text-xl font-bold mb-4">Margin Calculator</h2>
-      
-      <div className="space-y-4 mb-6">
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Unit Cost ($)</label>
-          <input 
-            type="number" 
-            name="unitCost" 
-            value={inputs.unitCost} 
-            onChange={handleChange}
-            className="w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm p-2 border" 
-          />
-        </div>
-        
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Retail Price ($)</label>
-          <input 
-            type="number" 
-            name="retailPrice" 
-            value={inputs.retailPrice} 
-            onChange={handleChange}
-            className="w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm p-2 border" 
-          />
-        </div>
-
-        <div className="grid grid-cols-2 gap-4">
+    <Card className="w-full max-w-md">
+      <CardHeader className="pb-4">
+        <CardTitle>Margin Calculator</CardTitle>
+      </CardHeader>
+      <CardContent>
+        <div className="space-y-4 mb-6">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Merchant Fee (%)</label>
-            <input 
-              type="number" 
-              name="merchantFeePct" 
-              value={inputs.merchantFeePct} 
-              onChange={handleChange}
-              className="w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm p-2 border" 
-            />
+            <Label htmlFor="unitCost">Unit Cost ($)</Label>
+            <Input type="number" id="unitCost" name="unitCost" value={inputs.unitCost} onChange={handleChange} className="mt-1" />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Rev Share (%)</label>
-            <input 
-              type="number" 
-              name="revSharePct" 
-              value={inputs.revSharePct} 
-              onChange={handleChange}
-              className="w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm p-2 border" 
-            />
+            <Label htmlFor="retailPrice">Retail Price ($)</Label>
+            <Input type="number" id="retailPrice" name="retailPrice" value={inputs.retailPrice} onChange={handleChange} className="mt-1" />
+          </div>
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <Label htmlFor="merchantFeePct">Merchant Fee (%)</Label>
+              <Input type="number" id="merchantFeePct" name="merchantFeePct" value={inputs.merchantFeePct} onChange={handleChange} className="mt-1" />
+            </div>
+            <div>
+              <Label htmlFor="revSharePct">Rev Share (%)</Label>
+              <Input type="number" id="revSharePct" name="revSharePct" value={inputs.revSharePct} onChange={handleChange} className="mt-1" />
+            </div>
           </div>
         </div>
-      </div>
 
-      <div className="bg-gray-50 p-4 rounded-lg border border-gray-200">
-        <h3 className="text-sm font-bold text-gray-900 uppercase tracking-wider mb-3">Results</h3>
-        <div className="grid grid-cols-2 gap-y-3 font-mono text-sm">
-          <div className="text-gray-500">Net Profit</div>
-          <div className="text-right font-medium text-green-700">${results.netProfitPerUnit}</div>
-          
-          <div className="text-gray-500">Gross Margin</div>
-          <div className={`text-right font-bold ${results.grossMarginPct < 30 ? 'text-red-500' : 'text-green-600'}`}>
-            {results.grossMarginPct}%
+        <div className="bg-secondary p-4 rounded-lg border border-border">
+          <h3 className="text-sm font-bold text-foreground uppercase tracking-wider mb-3">Results</h3>
+          <div className="grid grid-cols-2 gap-y-3 font-mono text-sm">
+            <div className="text-muted-foreground">Net Profit</div>
+            <div className="text-right font-medium text-green-600 dark:text-green-400">${results.netProfitPerUnit}</div>
+            <div className="text-muted-foreground">Gross Margin</div>
+            <div className={`text-right font-bold ${results.grossMarginPct < 30 ? 'text-red-500 dark:text-red-400' : 'text-green-600 dark:text-green-400'}`}>
+              {results.grossMarginPct}%
+            </div>
+            <div className="text-muted-foreground">Break Even</div>
+            <div className="text-right text-foreground">${results.breakEvenPrice}</div>
           </div>
           
-          <div className="text-gray-500">Break Even</div>
-          <div className="text-right text-gray-900">${results.breakEvenPrice}</div>
+          {results.grossMarginPct < 30 && (
+            <div className="mt-3 text-xs text-red-600 dark:text-red-400 bg-red-500/10 p-2 rounded">
+              Warning: Margin below 30%. Raise price to ${results.suggestedPrices.margin35} for 35%.
+            </div>
+          )}
         </div>
-        
-        {results.grossMarginPct < 30 && (
-          <div className="mt-3 text-xs text-red-600 bg-red-50 p-2 rounded">
-            Warning: Margin is below 30%. Consider raising price to ${results.suggestedPrices.margin35} to reach 35% margin.
-          </div>
-        )}
-      </div>
-    </div>
+      </CardContent>
+    </Card>
   );
 }
