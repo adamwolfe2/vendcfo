@@ -1,12 +1,19 @@
-import { appRouter } from "@vendcfo/api/trpc/routers/_app";
-import { verifyAccessToken } from "@vendcfo/api/utils/auth";
-import { createClient } from "@vendcfo/api/services/supabase";
-import { db } from "@vendcfo/db/client";
 import { fetchRequestHandler } from "@trpc/server/adapters/fetch";
 import type { NextRequest } from "next/server";
 
-const handler = (req: NextRequest) =>
-  fetchRequestHandler({
+// Force dynamic — skip static page data collection at build time
+// (the router imports Resend, Stripe, etc. which need API keys at init)
+export const dynamic = "force-dynamic";
+
+const handler = async (req: NextRequest) => {
+  // Lazy imports — only load the heavy router + DB at request time,
+  // not at build/module-evaluation time
+  const { appRouter } = await import("@vendcfo/api/trpc/routers/_app");
+  const { verifyAccessToken } = await import("@vendcfo/api/utils/auth");
+  const { createClient } = await import("@vendcfo/api/services/supabase");
+  const { db } = await import("@vendcfo/db/client");
+
+  return fetchRequestHandler({
     endpoint: "/api/trpc",
     req,
     router: appRouter,
@@ -35,5 +42,6 @@ const handler = (req: NextRequest) =>
       };
     },
   });
+};
 
 export { handler as GET, handler as POST };
