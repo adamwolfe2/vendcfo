@@ -1,14 +1,12 @@
-import { NextResponse } from "next/server";
+import { type NextRequest, NextResponse } from "next/server";
 
-export async function GET() {
-  const response = NextResponse.redirect(
-    new URL("/", process.env.NEXT_PUBLIC_URL || process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "http://localhost:3001"),
-  );
+export async function GET(request: NextRequest) {
+  const url = new URL("/", request.url);
+  const response = NextResponse.redirect(url);
 
-  // Set a demo mode cookie that the middleware will check
   response.cookies.set("vendcfo-demo", "true", {
     path: "/",
-    maxAge: 60 * 60 * 24, // 24 hours
+    maxAge: 60 * 60 * 24,
     httpOnly: true,
     sameSite: "lax",
   });
