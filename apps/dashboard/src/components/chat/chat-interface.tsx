@@ -86,7 +86,7 @@ export function ChatInterface({ geo }: Props) {
   const { messages, status } = useChat<UIChatMessage>({
     id: chatId,
     transport: new DefaultChatTransport({
-      api: `${process.env.NEXT_PUBLIC_API_URL}/chat`,
+      api: "/api/chat",
       fetch: authenticatedFetch,
       prepareSendMessagesRequest({ messages, id }) {
         const lastMessage = messages[messages.length - 1] as ChatInputMessage;

@@ -5,6 +5,7 @@ import { Icons } from "@vendcfo/ui/icons";
 import Link from "next/link";
 import { useState } from "react";
 import { MainMenu } from "./main-menu";
+import { OnboardingChecklist } from "./onboarding-checklist";
 import { TeamDropdown } from "./team-dropdown";
 
 export function Sidebar() {
@@ -35,6 +36,7 @@ export function Sidebar() {
         <MainMenu isExpanded={isExpanded} />
       </div>
 
+      <OnboardingChecklist isExpanded={isExpanded} />
       <TeamDropdown isExpanded={isExpanded} />
     </aside>
   );
