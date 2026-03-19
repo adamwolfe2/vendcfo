@@ -67,11 +67,15 @@ export async function GET(request: NextRequest) {
         .select("id")
         .single();
 
+      if (!data?.id) {
+        return NextResponse.redirect(new URL("/", request.url));
+      }
+
       // Redirect to frontend which will trigger the reconnect job
       // The frontend handles job triggering to track progress via runId/accessToken
       return NextResponse.redirect(
         new URL(
-          `/settings/accounts?id=${data?.id}&step=reconnect`,
+          `/settings/accounts?id=${data.id}&step=reconnect`,
           redirectBase,
         ),
       );

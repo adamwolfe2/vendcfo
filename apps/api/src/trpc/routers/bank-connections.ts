@@ -59,7 +59,7 @@ export const bankConnectionsRouter = createTRPCRouter({
       });
 
       if (!data) {
-        throw new Error("Bank connection not found");
+        throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Bank connection not found" });
       }
 
       await tasks.trigger("delete-connection", {

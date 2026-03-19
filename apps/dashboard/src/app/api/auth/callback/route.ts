@@ -29,52 +29,57 @@ export async function GET(req: NextRequest) {
   }
 
   if (code) {
-    const supabase = await createClient();
-    await supabase.auth.exchangeCodeForSession(code);
+    try {
+      const supabase = await createClient();
+      await supabase.auth.exchangeCodeForSession(code);
 
-    const {
-      data: { session },
-    } = await getSession();
+      const {
+        data: { session },
+      } = await getSession();
 
-    if (session) {
-      const userId = session.user.id;
+      if (session) {
+        const userId = session.user.id;
 
-      // Ensure public.users record exists (safe to call on every login)
-      await ensureUserExists(db, {
-        id: userId,
-        email: session.user.email!,
-        fullName: session.user.user_metadata?.full_name ?? null,
-      });
+        // Ensure public.users record exists (safe to call on every login)
+        await ensureUserExists(db, {
+          id: userId,
+          email: session.user.email!,
+          fullName: session.user.user_metadata?.full_name ?? null,
+        });
 
-      // Set cookie to force primary database reads for new users (10 seconds)
-      // This prevents replication lag issues when user record hasn't replicated yet
-      cookieStore.set(Cookies.ForcePrimary, "true", {
-        expires: addSeconds(new Date(), 10),
-        httpOnly: false, // Needs to be readable by client-side tRPC
-        sameSite: "lax",
-      });
+        // Set cookie to force primary database reads for new users (10 seconds)
+        // This prevents replication lag issues when user record hasn't replicated yet
+        cookieStore.set(Cookies.ForcePrimary, "true", {
+          expires: addSeconds(new Date(), 10),
+          httpOnly: false, // Needs to be readable by client-side tRPC
+          sameSite: "lax",
+        });
 
-      const analytics = await setupAnalytics();
+        const analytics = await setupAnalytics();
 
-      await analytics.track({
-        event: LogEvents.SignIn.name,
-        channel: LogEvents.SignIn.channel,
-      });
+        await analytics.track({
+          event: LogEvents.SignIn.name,
+          channel: LogEvents.SignIn.channel,
+        });
 
-      // If user is redirected from an invite, redirect to teams page to accept/decline the invite
-      if (returnTo?.startsWith("teams/invite/")) {
-        return NextResponse.redirect(`${requestUrl.origin}/teams`);
+        // If user is redirected from an invite, redirect to teams page to accept/decline the invite
+        if (returnTo?.startsWith("teams/invite/")) {
+          return NextResponse.redirect(`${requestUrl.origin}/teams`);
+        }
+
+        // If user have no teams, redirect to team creation
+        const { count } = await supabase
+          .from("users_on_team")
+          .select("*", { count: "exact" })
+          .eq("user_id", userId);
+
+        if (count === 0 && !returnTo?.startsWith("teams/invite/")) {
+          return NextResponse.redirect(`${requestUrl.origin}/teams/create`);
+        }
       }
-
-      // If user have no teams, redirect to team creation
-      const { count } = await supabase
-        .from("users_on_team")
-        .select("*", { count: "exact" })
-        .eq("user_id", userId);
-
-      if (count === 0 && !returnTo?.startsWith("teams/invite/")) {
-        return NextResponse.redirect(`${requestUrl.origin}/teams/create`);
-      }
+    } catch (error) {
+      console.error("[auth/callback] Error:", error);
+      return NextResponse.redirect(`${requestUrl.origin}/login?error=auth_failed`);
     }
   }
 
