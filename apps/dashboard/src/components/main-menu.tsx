@@ -3,6 +3,7 @@
 import { useChatInterface } from "@/hooks/use-chat-interface";
 import { cn } from "@vendcfo/ui/cn";
 import { Icons } from "@vendcfo/ui/icons";
+import { Route, Users } from "lucide-react";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { ForesightLink } from "./foresight-link";
@@ -14,10 +15,10 @@ const icons = {
   "/invoices": () => <Icons.Invoice size={20} />,
   "/transactions": () => <Icons.Transactions size={20} />,
   "/vault": () => <Icons.Files size={20} />,
-  "/customers": () => <Icons.Customers size={20} />,
+  "/customers": () => <Users size={20} strokeWidth={1.5} />,
   "/apps": () => <Icons.Apps size={20} />,
   // Vending section
-  "/routes": () => <Icons.Customers size={20} />,
+  "/routes": () => <Route size={20} strokeWidth={1.5} />,
   "/locations": () => <Icons.Tracker size={20} />,
   "/machines": () => <Icons.Settings size={20} />,
   "/skus": () => <Icons.Apps size={20} />,
