@@ -21,11 +21,11 @@ export default async function Layout({
   const queryClient = getQueryClient();
 
   let user: any = null;
+  let callerError: string | null = null;
 
   try {
     const caller = await getServerCaller();
     user = await caller.user.me();
-    console.log("[sidebar/layout] user.me result:", user ? { id: user.id, teamId: user.teamId, fullName: user.fullName } : "null");
 
     if (user) {
       queryClient.setQueryData(
@@ -54,17 +54,52 @@ export default async function Layout({
     }
   } catch (error) {
     const msg = error instanceof Error ? error.message : String(error);
-    // NEXT_REDIRECT is thrown by Next.js redirect() — rethrow it, don't catch
+    // NEXT_REDIRECT is thrown by Next.js redirect() — rethrow, don't catch
     if (msg === "NEXT_REDIRECT" || (error as any)?.digest?.startsWith("NEXT_REDIRECT")) {
       throw error;
     }
-    console.error("[sidebar/layout] TRPC caller error:", msg);
-    console.error("[sidebar/layout] ENV check — SUPABASE_URL:", !!process.env.SUPABASE_URL, "SUPABASE_JWT_SECRET:", !!process.env.SUPABASE_JWT_SECRET, "DATABASE_PRIMARY_URL:", !!process.env.DATABASE_PRIMARY_URL, "SUPABASE_SERVICE_KEY:", !!process.env.SUPABASE_SERVICE_KEY);
-    redirect("/login");
+    console.error("[sidebar/layout] TRPC error:", msg);
+    console.error("[sidebar/layout] Stack:", error instanceof Error ? error.stack : "no stack");
+
+    // Only redirect to /login for actual auth errors.
+    // For all other errors (DB, network, etc.), show the error to the user
+    // instead of creating a redirect loop.
+    if (msg.includes("UNAUTHORIZED") || msg.includes("Not authenticated")) {
+      redirect("/login");
+    }
+
+    // For non-auth errors, store the error and show a helpful page
+    callerError = msg;
+  }
+
+  // If we got a non-auth error, show it instead of looping to /login
+  if (callerError) {
+    return (
+      <div className="h-screen w-full flex items-center justify-center">
+        <div className="max-w-lg w-full text-center px-4">
+          <h2 className="text-lg font-medium mb-4">Unable to load dashboard</h2>
+          <p className="text-sm text-[#878787] mb-4">
+            The server encountered an error connecting to backend services.
+            This is usually temporary.
+          </p>
+          <pre className="text-xs text-left bg-[#f5f5f5] p-4 rounded mb-6 overflow-auto max-h-40 whitespace-pre-wrap">
+            {callerError}
+          </pre>
+          <a
+            href="/"
+            className="inline-block px-4 py-2 border border-[#ddd] rounded text-sm hover:bg-[#f5f5f5] transition-colors"
+          >
+            Try again
+          </a>
+        </div>
+      </div>
+    );
   }
 
   if (!user) {
-    redirect("/login");
+    // User is authenticated (passed middleware) but has no user record.
+    // Redirect to teams/create which will trigger user provisioning.
+    redirect("/teams/create");
   }
 
   if (!user.fullName) {
