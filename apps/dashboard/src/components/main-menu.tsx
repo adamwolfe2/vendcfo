@@ -3,7 +3,7 @@
 import { useChatInterface } from "@/hooks/use-chat-interface";
 import { cn } from "@vendcfo/ui/cn";
 import { Icons } from "@vendcfo/ui/icons";
-import { GraduationCap, Route, Users } from "lucide-react";
+import { CalendarDays, GraduationCap, KeyRound, Route, Users } from "lucide-react";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { ForesightLink } from "./foresight-link";
@@ -26,7 +26,9 @@ const icons = {
   "/scenarios": () => <Icons.Tracker size={20} />,
   "/alerts": () => <Icons.Transactions size={20} />,
   "/import": () => <Icons.Files size={20} />,
+  "/logistics": () => <CalendarDays size={20} strokeWidth={1.5} />,
   "/training": () => <GraduationCap size={20} strokeWidth={1.5} />,
+  "/passwords": () => <KeyRound size={20} strokeWidth={1.5} />,
 } as const;
 
 const items = [
@@ -44,6 +46,7 @@ const items = [
     name: "Operations",
     children: [
       { path: "/routes", name: "Routes" },
+      { path: "/logistics", name: "Logistics" },
       { path: "/locations", name: "Locations" },
       { path: "/machines", name: "Machines" },
       { path: "/skus", name: "Products & SKUs" },
@@ -60,8 +63,9 @@ const items = [
       { path: "/alerts", name: "Alerts" },
     ],
   },
-  // ─── Training ───
+  // ─── Training & Security ───
   { path: "/training", name: "Training" },
+  { path: "/passwords", name: "Passwords" },
   { path: "/apps", name: "Apps" },
 ];
 
@@ -258,7 +262,7 @@ export function MainMenu({ onSelect, isExpanded = false }: Props) {
   }, [isExpanded]);
 
   // Vending operation paths that should highlight the Operations parent
-  const vendingOpPaths = ["/routes", "/locations", "/machines", "/skus", "/import"];
+  const vendingOpPaths = ["/routes", "/logistics", "/locations", "/machines", "/skus", "/import"];
   const vendingAnalyticsPaths = ["/calculators", "/scenarios", "/alerts"];
 
   return (
