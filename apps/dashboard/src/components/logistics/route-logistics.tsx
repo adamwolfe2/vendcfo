@@ -8,6 +8,8 @@ import {
   Check,
   Loader2,
   MapPin,
+  User,
+  X,
 } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
 
@@ -35,6 +37,7 @@ interface ScheduleEntry {
   day_of_week: number;
   action: string;
   estimated_hours: number;
+  operator_name?: string;
 }
 
 type ActionType = "nothing" | "pick_stock" | "pickup_only" | "delivery";
@@ -103,28 +106,134 @@ function SaveIndicator({ status }: { status: "idle" | "saving" | "saved" }) {
 
 function ActionCell({
   action,
+  operatorName,
   onClick,
+  onAssignOperator,
 }: {
   action: ActionType;
+  operatorName?: string;
   onClick: () => void;
+  onAssignOperator: (name: string) => void;
 }) {
   const config = ACTION_CONFIG[action];
+  const [showPopover, setShowPopover] = useState(false);
+  const [inputValue, setInputValue] = useState(operatorName ?? "");
+  const popoverRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    setInputValue(operatorName ?? "");
+  }, [operatorName]);
+
+  useEffect(() => {
+    if (showPopover && inputRef.current) {
+      inputRef.current.focus();
+    }
+  }, [showPopover]);
+
+  useEffect(() => {
+    function handleClickOutside(e: MouseEvent) {
+      if (popoverRef.current && !popoverRef.current.contains(e.target as Node)) {
+        setShowPopover(false);
+      }
+    }
+    if (showPopover) {
+      document.addEventListener("mousedown", handleClickOutside);
+    }
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, [showPopover]);
 
   return (
     <td
-      className="border border-[#e5e5e5] text-center cursor-pointer select-none transition-colors hover:opacity-80"
+      className="border border-[#e5e5e5] text-center cursor-pointer select-none transition-colors hover:opacity-80 relative"
       style={{
         backgroundColor: config.bg,
         minWidth: 100,
       }}
       onClick={onClick}
     >
-      <span
-        className="text-xs font-medium"
-        style={{ color: config.text }}
-      >
-        {config.label}
-      </span>
+      <div className="flex flex-col items-center gap-0.5 py-1 px-1">
+        <span
+          className="text-xs font-medium"
+          style={{ color: config.text }}
+        >
+          {config.label}
+        </span>
+        {operatorName && (
+          <span className="text-[10px] text-[#666] truncate max-w-[90px] leading-tight">
+            {operatorName}
+          </span>
+        )}
+        <button
+          type="button"
+          className="mt-0.5 p-0.5 rounded hover:bg-black/5 transition-colors"
+          title="Assign operator"
+          onClick={(e) => {
+            e.stopPropagation();
+            setShowPopover(true);
+          }}
+        >
+          <User size={12} strokeWidth={1.5} className="text-[#888]" />
+        </button>
+      </div>
+      {showPopover && (
+        <div
+          ref={popoverRef}
+          className="absolute z-50 top-full left-1/2 -translate-x-1/2 mt-1 bg-white border border-[#d0d0d0] rounded-lg shadow-lg p-2 min-w-[160px]"
+          onClick={(e) => e.stopPropagation()}
+        >
+          <div className="flex items-center justify-between mb-1.5">
+            <span className="text-[10px] font-medium text-[#555] uppercase tracking-wide">
+              Assign Operator
+            </span>
+            <button
+              type="button"
+              onClick={() => setShowPopover(false)}
+              className="p-0.5 rounded hover:bg-[#f0f0f0]"
+            >
+              <X size={12} strokeWidth={1.5} className="text-[#888]" />
+            </button>
+          </div>
+          <div className="flex gap-1">
+            <input
+              ref={inputRef}
+              type="text"
+              placeholder="Operator name"
+              value={inputValue}
+              onChange={(e) => setInputValue(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  onAssignOperator(inputValue.trim());
+                  setShowPopover(false);
+                }
+              }}
+              className="flex-1 text-xs border border-[#d0d0d0] rounded px-2 py-1 bg-white outline-none focus:border-[#888]"
+            />
+            <button
+              type="button"
+              className="text-xs bg-[#111] text-white px-2 py-1 rounded hover:bg-[#333] transition-colors"
+              onClick={() => {
+                onAssignOperator(inputValue.trim());
+                setShowPopover(false);
+              }}
+            >
+              Save
+            </button>
+          </div>
+          {operatorName && (
+            <button
+              type="button"
+              className="mt-1.5 text-[10px] text-[#c00] hover:underline"
+              onClick={() => {
+                onAssignOperator("");
+                setShowPopover(false);
+              }}
+            >
+              Remove operator
+            </button>
+          )}
+        </div>
+      )}
     </td>
   );
 }
@@ -211,6 +320,7 @@ export function RouteLogistics({
             day_of_week: entry.day_of_week,
             action: entry.action,
             estimated_hours: Number(entry.estimated_hours),
+            operator_name: entry.operator_name ?? undefined,
           });
         }
         setSchedule(map);
@@ -237,6 +347,7 @@ export function RouteLogistics({
             day_of_week: entry.day_of_week,
             action: entry.action,
             estimated_hours: entry.estimated_hours,
+            operator_name: entry.operator_name ?? null,
             updated_at: new Date().toISOString(),
           },
           { onConflict: "team_id,location_id,day_of_week" },
@@ -262,6 +373,29 @@ export function RouteLogistics({
       day_of_week: dayOfWeek,
       action: nextAction,
       estimated_hours: current?.estimated_hours ?? 0.5,
+      operator_name: current?.operator_name,
+    };
+
+    setSchedule((prev) => {
+      const next = new Map(prev);
+      next.set(key, entry);
+      return next;
+    });
+
+    saveEntry(entry);
+  };
+
+  const handleAssignOperator = (locationId: string, dayOfWeek: number, operatorName: string) => {
+    const key = makeKey(locationId, dayOfWeek);
+    const current = schedule.get(key);
+
+    const entry: ScheduleEntry = {
+      team_id: teamId,
+      location_id: locationId,
+      day_of_week: dayOfWeek,
+      action: current?.action ?? "nothing",
+      estimated_hours: current?.estimated_hours ?? 0.5,
+      operator_name: operatorName || undefined,
     };
 
     setSchedule((prev) => {
@@ -281,7 +415,7 @@ export function RouteLogistics({
         const key = makeKey(locationId, day.key);
         const existing = next.get(key);
         if (existing) {
-          const updated = { ...existing, estimated_hours: hours };
+          const updated = { ...existing, estimated_hours: hours, operator_name: existing.operator_name };
           next.set(key, updated);
           saveEntry(updated);
         }
@@ -317,6 +451,11 @@ export function RouteLogistics({
     return 0.5;
   };
 
+  const getOperatorName = (locationId: string, dayOfWeek: number): string | undefined => {
+    const key = makeKey(locationId, dayOfWeek);
+    return schedule.get(key)?.operator_name;
+  };
+
   // Summary calculations
   const summaryByDay = DAYS.map((day) => {
     let stops = 0;
@@ -334,6 +473,47 @@ export function RouteLogistics({
   const totalStops = summaryByDay.reduce((sum, d) => sum + d.stops, 0);
   const totalHours = summaryByDay.reduce((sum, d) => sum + d.hours, 0);
   const totalCost = totalHours * hourlyRate;
+
+  // Operator summary calculations
+  const operatorNames = new Set<string>();
+  for (const entry of schedule.values()) {
+    if (entry.operator_name) {
+      operatorNames.add(entry.operator_name);
+    }
+  }
+
+  const OPERATOR_COLORS = [
+    { bg: "#dcfce7", text: "#166534", border: "#86efac" },
+    { bg: "#dbeafe", text: "#1e40af", border: "#93c5fd" },
+    { bg: "#ffedd5", text: "#9a3412", border: "#fdba74" },
+    { bg: "#f3e8ff", text: "#6b21a8", border: "#c4b5fd" },
+  ];
+
+  const operatorSummary = Array.from(operatorNames).sort().map((name, idx) => {
+    const color = OPERATOR_COLORS[idx % OPERATOR_COLORS.length];
+    const byDay = DAYS.map((day) => {
+      let stops = 0;
+      let serviceHours = 0;
+      for (const loc of locations) {
+        const key = makeKey(loc.id, day.key);
+        const entry = schedule.get(key);
+        if (entry?.operator_name === name && entry.action !== "nothing") {
+          stops++;
+          serviceHours += entry.estimated_hours;
+        }
+      }
+      const drivingHours = stops * 0.5;
+      const totalHrs = serviceHours + drivingHours;
+      return { stops, drivingHours, totalHrs, cost: totalHrs * hourlyRate };
+    });
+
+    const weeklyStops = byDay.reduce((s, d) => s + d.stops, 0);
+    const weeklyDriving = byDay.reduce((s, d) => s + d.drivingHours, 0);
+    const weeklyTotalHrs = byDay.reduce((s, d) => s + d.totalHrs, 0);
+    const weeklyCost = byDay.reduce((s, d) => s + d.cost, 0);
+
+    return { name, color, byDay, weeklyStops, weeklyDriving, weeklyTotalHrs, weeklyCost };
+  });
 
   if (locations.length === 0) {
     return (
@@ -381,7 +561,9 @@ export function RouteLogistics({
           <ActionCell
             key={day.key}
             action={getAction(loc.id, day.key)}
+            operatorName={getOperatorName(loc.id, day.key)}
             onClick={() => handleCellClick(loc.id, day.key)}
+            onAssignOperator={(name) => handleAssignOperator(loc.id, day.key, name)}
           />
         ))}
       </tr>
@@ -607,6 +789,138 @@ export function RouteLogistics({
               </table>
             </div>
           </div>
+
+          {/* Operator Summary Section */}
+          {operatorSummary.length > 0 && (
+            <div className="mt-8">
+              <h2 className="text-lg font-semibold text-[#111] mb-4 flex items-center gap-2">
+                <User size={18} strokeWidth={1.5} className="text-[#555]" />
+                Operator Summary
+              </h2>
+              <div className="overflow-x-auto border border-[#e5e5e5] rounded-lg">
+                <table
+                  className="w-full"
+                  style={{ borderCollapse: "collapse" }}
+                >
+                  <thead>
+                    <tr className="bg-[#f9fafb]">
+                      <th className="border border-[#e5e5e5] px-3 py-2.5 text-left text-sm font-medium text-[#555] min-w-[160px]">
+                        Operator / Metric
+                      </th>
+                      {DAYS.map((day) => (
+                        <th
+                          key={day.key}
+                          className="border border-[#e5e5e5] px-3 py-2.5 text-center text-sm font-medium text-[#555]"
+                          style={{ minWidth: 100 }}
+                        >
+                          {day.label}
+                        </th>
+                      ))}
+                      <th
+                        className="border border-[#e5e5e5] px-3 py-2.5 text-center text-sm font-semibold text-[#111]"
+                        style={{ minWidth: 100 }}
+                      >
+                        Weekly Total
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {operatorSummary.map((op) => (
+                      <>
+                        {/* Operator header row */}
+                        <tr key={`${op.name}-header`}>
+                          <td
+                            colSpan={8}
+                            className="border border-[#e5e5e5] px-3 py-2"
+                            style={{
+                              backgroundColor: op.color.bg,
+                              borderLeftWidth: 3,
+                              borderLeftColor: op.color.border,
+                            }}
+                          >
+                            <span
+                              className="text-sm font-semibold"
+                              style={{ color: op.color.text }}
+                            >
+                              {op.name}
+                            </span>
+                          </td>
+                        </tr>
+                        {/* Stops row */}
+                        <tr key={`${op.name}-stops`}>
+                          <td className="border border-[#e5e5e5] px-3 py-1.5 text-xs font-medium text-[#555] pl-6">
+                            Stops
+                          </td>
+                          {op.byDay.map((d, i) => (
+                            <td
+                              key={DAYS[i].key}
+                              className="border border-[#e5e5e5] px-3 py-1.5 text-center text-xs text-[#555]"
+                            >
+                              {d.stops || "-"}
+                            </td>
+                          ))}
+                          <td className="border border-[#e5e5e5] px-3 py-1.5 text-center text-xs font-semibold text-[#111]">
+                            {op.weeklyStops}
+                          </td>
+                        </tr>
+                        {/* Driving row */}
+                        <tr key={`${op.name}-driving`}>
+                          <td className="border border-[#e5e5e5] px-3 py-1.5 text-xs font-medium text-[#555] pl-6">
+                            Driving (0.5hr/stop)
+                          </td>
+                          {op.byDay.map((d, i) => (
+                            <td
+                              key={DAYS[i].key}
+                              className="border border-[#e5e5e5] px-3 py-1.5 text-center text-xs text-[#555]"
+                            >
+                              {d.drivingHours ? d.drivingHours.toFixed(1) : "-"}
+                            </td>
+                          ))}
+                          <td className="border border-[#e5e5e5] px-3 py-1.5 text-center text-xs font-semibold text-[#111]">
+                            {op.weeklyDriving.toFixed(1)}
+                          </td>
+                        </tr>
+                        {/* Total Hours row */}
+                        <tr key={`${op.name}-hours`}>
+                          <td className="border border-[#e5e5e5] px-3 py-1.5 text-xs font-medium text-[#555] pl-6">
+                            Total Hours
+                          </td>
+                          {op.byDay.map((d, i) => (
+                            <td
+                              key={DAYS[i].key}
+                              className="border border-[#e5e5e5] px-3 py-1.5 text-center text-xs text-[#555]"
+                            >
+                              {d.totalHrs ? d.totalHrs.toFixed(1) : "-"}
+                            </td>
+                          ))}
+                          <td className="border border-[#e5e5e5] px-3 py-1.5 text-center text-xs font-semibold text-[#111]">
+                            {op.weeklyTotalHrs.toFixed(1)}
+                          </td>
+                        </tr>
+                        {/* Estimated Cost row */}
+                        <tr key={`${op.name}-cost`}>
+                          <td className="border border-[#e5e5e5] px-3 py-1.5 text-xs font-medium text-[#555] pl-6">
+                            Estimated Cost
+                          </td>
+                          {op.byDay.map((d, i) => (
+                            <td
+                              key={DAYS[i].key}
+                              className="border border-[#e5e5e5] px-3 py-1.5 text-center text-xs text-[#555]"
+                            >
+                              {d.cost ? `$${d.cost.toFixed(0)}` : "-"}
+                            </td>
+                          ))}
+                          <td className="border border-[#e5e5e5] px-3 py-1.5 text-center text-xs font-semibold text-[#111]">
+                            ${op.weeklyCost.toFixed(0)}
+                          </td>
+                        </tr>
+                      </>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          )}
         </>
       )}
     </div>
