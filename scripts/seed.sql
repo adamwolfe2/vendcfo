@@ -222,7 +222,7 @@ SELECT
   'USD',
   v_team_id,
   CASE
-    WHEN d < now() - interval '60 days' THEN 'paid'
+    WHEN d < now() - interval '''60 days''' THEN '''paid'''
     WHEN d < now() - interval '30 days' THEN 'paid'
     WHEN d < now() THEN 'unpaid'
     ELSE 'draft'
@@ -239,7 +239,7 @@ SELECT
 FROM generate_series('2021-02-01'::date, '2025-12-01'::date, '2 months') AS d
 CROSS JOIN (
   SELECT id, name FROM customers
-  WHERE v_team_id = v_team_id AND id IN (
+  WHERE team_id = v_team_id AND id IN (
     'c1000001-0000-0000-0000-000000000001',
     'c1000001-0000-0000-0000-000000000003',
     'c1000001-0000-0000-0000-000000000006',
