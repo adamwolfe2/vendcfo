@@ -221,12 +221,12 @@ SELECT
   round((800 + random() * 2000)::numeric, 2),
   'USD',
   v_team_id,
-  CASE
-    WHEN d < now() - interval '''60 days''' THEN '''paid'''
+  (CASE
+    WHEN d < now() - interval '60 days' THEN 'paid'
     WHEN d < now() - interval '30 days' THEN 'paid'
     WHEN d < now() THEN 'unpaid'
     ELSE 'draft'
-  END,
+  END)::invoice_status,
   encode(gen_random_bytes(16), 'hex'),
   d::timestamptz,
   (d + interval '30 days')::timestamptz,
