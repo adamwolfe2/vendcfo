@@ -2,16 +2,16 @@ import { fetchRequestHandler } from "@trpc/server/adapters/fetch";
 import type { NextRequest } from "next/server";
 
 // Force dynamic — skip static page data collection at build time
-// (the router imports Resend, Stripe, etc. which need API keys at init)
 export const dynamic = "force-dynamic";
 
 const handler = async (req: NextRequest) => {
-  // Lazy imports — only load the heavy router + DB at request time,
-  // not at build/module-evaluation time
   const { appRouter } = await import("@vendcfo/api/trpc/routers/_app");
   const { verifyAccessToken } = await import("@vendcfo/api/utils/auth");
   const { createClient } = await import("@vendcfo/api/services/supabase");
   const { db } = await import("@vendcfo/db/client");
+  const { createClient: createDashboardSupabase } = await import(
+    "@vendcfo/supabase/server"
+  );
 
   return fetchRequestHandler({
     endpoint: "/api/trpc",
@@ -20,7 +20,30 @@ const handler = async (req: NextRequest) => {
     createContext: async ({ req }) => {
       const authHeader = req.headers.get("authorization");
       const accessToken = authHeader?.split(" ")[1];
-      const session = await verifyAccessToken(accessToken);
+      let session = await verifyAccessToken(accessToken);
+
+      // Fallback: if JWT verification failed, try cookie-based auth
+      // This handles cases where SUPABASE_JWT_SECRET is wrong/missing
+      if (!session) {
+        try {
+          const supabaseAuth = await createDashboardSupabase();
+          const {
+            data: { user },
+          } = await supabaseAuth.auth.getUser();
+          if (user) {
+            session = {
+              user: {
+                id: user.id,
+                email: user.email,
+                full_name: user.user_metadata?.full_name,
+              },
+            };
+          }
+        } catch {
+          // Cookie auth failed too
+        }
+      }
+
       const supabase = await createClient(accessToken);
 
       const geo = {
@@ -30,8 +53,7 @@ const handler = async (req: NextRequest) => {
         ip: req.headers.get("x-forwarded-for") ?? null,
       };
 
-      const forcePrimary =
-        req.headers.get("x-force-primary") === "true";
+      const forcePrimary = req.headers.get("x-force-primary") === "true";
 
       return {
         session,
