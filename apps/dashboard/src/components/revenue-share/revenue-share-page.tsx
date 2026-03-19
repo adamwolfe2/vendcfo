@@ -2,12 +2,15 @@
 
 import { createClient } from "@vendcfo/supabase/client";
 import {
+  CheckCircle2,
   ChevronDown,
+  Clock,
   DollarSign,
   Download,
   Loader2,
   Mail,
   Plus,
+  Send,
   X,
 } from "lucide-react";
 import { useCallback, useEffect, useMemo, useState } from "react";
@@ -39,6 +42,20 @@ interface LocationRow extends Location {
   revMoM: number;
   monthlyShare: number;
   quarterlyShare: number;
+}
+
+interface RevSharePayment {
+  id: string;
+  location_id: string;
+  period_start: string;
+  period_end: string;
+  payment_status: string;
+  email_sent_at: string | null;
+}
+
+interface Toast {
+  message: string;
+  type: "success" | "error";
 }
 
 type PeriodFilter = "month" | "quarter" | "year";
@@ -542,12 +559,18 @@ function GroupSection({
   headerColor,
   onUpdate,
   savingId,
+  payments,
+  sendingIds,
+  onSendReport,
 }: {
   label: string;
   rows: LocationRow[];
   headerColor: string;
   onUpdate: (id: string, field: string, value: string | number) => void;
   savingId: string | null;
+  payments: RevSharePayment[];
+  sendingIds: Set<string>;
+  onSendReport: (locationId: string) => void;
 }) {
   if (rows.length === 0) return null;
 
@@ -558,7 +581,7 @@ function GroupSection({
       {/* Group header */}
       <tr>
         <td
-          colSpan={16}
+          colSpan={17}
           className={`px-3 py-2 text-xs font-bold text-white uppercase tracking-wider ${headerColor}`}
         >
           {label} ({rows.length})
@@ -699,6 +722,58 @@ function GroupSection({
               onSave={(v) => onUpdate(row.id, "status", v)}
             />
           </td>
+
+          {/* Report Send / Status */}
+          <td className="px-3 py-2 text-xs whitespace-nowrap text-center">
+            {(() => {
+              const payment = payments.find((p) => p.location_id === row.id);
+              const isSending = sendingIds.has(row.id);
+
+              if (isSending) {
+                return (
+                  <span className="inline-flex items-center gap-1 text-[#888]">
+                    <Loader2 size={12} className="animate-spin" />
+                    Sending
+                  </span>
+                );
+              }
+
+              if (payment?.email_sent_at) {
+                return (
+                  <span className="inline-flex items-center gap-1 rounded-full bg-[#dcfce7] border border-[#bbf7d0] px-2 py-0.5 text-[10px] font-medium text-[#166534]">
+                    <CheckCircle2 size={10} strokeWidth={2} />
+                    Sent
+                  </span>
+                );
+              }
+
+              if (!row.rev_share_contact_email) {
+                return (
+                  <span className="inline-flex items-center gap-1 text-[10px] text-[#aaa]">
+                    <Clock size={10} strokeWidth={1.5} />
+                    No Email
+                  </span>
+                );
+              }
+
+              return (
+                <div className="flex items-center justify-center gap-2">
+                  <span className="inline-flex items-center gap-1 text-[10px] text-[#999]">
+                    <Clock size={10} strokeWidth={1.5} />
+                    Pending
+                  </span>
+                  <button
+                    type="button"
+                    onClick={() => onSendReport(row.id)}
+                    title={`Send report to ${row.rev_share_contact_email}`}
+                    className="inline-flex items-center justify-center rounded p-1 min-h-[28px] min-w-[28px] text-[#555] transition-colors hover:bg-[#f0f0f0] hover:text-[#111]"
+                  >
+                    <Send size={12} strokeWidth={1.5} />
+                  </button>
+                </div>
+              );
+            })()}
+          </td>
         </tr>
       ))}
 
@@ -724,6 +799,7 @@ function GroupSection({
         </td>
         <td className="px-3 py-2 text-xs text-[#999]">--</td>
         <td className="px-3 py-2 text-xs text-[#999]">--</td>
+        <td className="px-3 py-2 text-xs text-[#999]">--</td>
       </tr>
     </>
   );
@@ -740,6 +816,10 @@ export function RevenueSharePage({ teamId }: { teamId: string }) {
   const [period, setPeriod] = useState<PeriodFilter>("month");
   const [savingId, setSavingId] = useState<string | null>(null);
   const [showAddModal, setShowAddModal] = useState(false);
+  const [payments, setPayments] = useState<RevSharePayment[]>([]);
+  const [sendingIds, setSendingIds] = useState<Set<string>>(new Set());
+  const [sendingAll, setSendingAll] = useState(false);
+  const [toast, setToast] = useState<Toast | null>(null);
 
   const periodMultiplier = period === "month" ? 1 : period === "quarter" ? 3 : 12;
 
@@ -755,9 +835,38 @@ export function RevenueSharePage({ teamId }: { teamId: string }) {
     setLoading(false);
   }, [supabase, teamId]);
 
+  const fetchPayments = useCallback(async () => {
+    // Get current period boundaries
+    const now = new Date();
+    const quarter = Math.floor(now.getMonth() / 3);
+    const periodStart = new Date(now.getFullYear(), quarter * 3, 1)
+      .toISOString()
+      .slice(0, 10);
+    const periodEnd = new Date(now.getFullYear(), quarter * 3 + 3, 0)
+      .toISOString()
+      .slice(0, 10);
+
+    const { data } = await supabase
+      .from("rev_share_payments")
+      .select("id, location_id, period_start, period_end, payment_status, email_sent_at")
+      .eq("team_id", teamId)
+      .gte("period_start", periodStart)
+      .lte("period_end", periodEnd);
+
+    setPayments((data as RevSharePayment[]) ?? []);
+  }, [supabase, teamId]);
+
   useEffect(() => {
     fetchLocations();
-  }, [fetchLocations]);
+    fetchPayments();
+  }, [fetchLocations, fetchPayments]);
+
+  // Auto-dismiss toast
+  useEffect(() => {
+    if (!toast) return;
+    const timer = setTimeout(() => setToast(null), 5000);
+    return () => clearTimeout(timer);
+  }, [toast]);
 
   const rows = useMemo(() => buildRows(locations, periodMultiplier), [locations, periodMultiplier]);
   const groups = useMemo(() => groupByStatus(rows), [rows]);
@@ -780,6 +889,66 @@ export function RevenueSharePage({ teamId }: { teamId: string }) {
     },
     [supabase]
   );
+
+  const handleSendReport = useCallback(
+    async (locationId: string) => {
+      setSendingIds((prev) => new Set(prev).add(locationId));
+      try {
+        const res = await fetch("/api/revenue-share/send-report", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ locationIds: [locationId], period: "quarterly" }),
+        });
+        const data = await res.json();
+        if (!res.ok) {
+          throw new Error(data.error || "Failed to send report");
+        }
+        if (data.sent > 0) {
+          setToast({ message: `Report sent successfully`, type: "success" });
+        } else if (data.details?.[0]?.error) {
+          setToast({ message: data.details[0].error, type: "error" });
+        } else {
+          setToast({ message: "No report sent (check email config)", type: "error" });
+        }
+        fetchPayments();
+      } catch (err: unknown) {
+        const msg = err instanceof Error ? err.message : "Failed to send report";
+        setToast({ message: msg, type: "error" });
+      } finally {
+        setSendingIds((prev) => {
+          const next = new Set(prev);
+          next.delete(locationId);
+          return next;
+        });
+      }
+    },
+    [fetchPayments],
+  );
+
+  const handleSendAll = useCallback(async () => {
+    setSendingAll(true);
+    try {
+      const res = await fetch("/api/revenue-share/send-report", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ period: "quarterly" }),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        throw new Error(data.error || "Failed to send reports");
+      }
+      setToast({
+        message: `${data.sent} report${data.sent !== 1 ? "s" : ""} sent${data.failed > 0 ? `, ${data.failed} failed` : ""}`,
+        type: data.failed > 0 ? "error" : "success",
+      });
+      fetchPayments();
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : "Failed to send reports";
+      setToast({ message: msg, type: "error" });
+    } finally {
+      setSendingAll(false);
+    }
+  }, [fetchPayments]);
 
   const allRows = useMemo(() => [...groups.current, ...groups.expansion, ...groups.inactive], [groups]);
 
@@ -813,6 +982,21 @@ export function RevenueSharePage({ teamId }: { teamId: string }) {
           </div>
 
           <div className="flex gap-2">
+            {/* Send All Reports */}
+            <button
+              type="button"
+              onClick={handleSendAll}
+              disabled={allRows.length === 0 || sendingAll}
+              className="inline-flex items-center justify-center gap-1.5 rounded-md border border-[#d0d0d0] bg-white px-3.5 py-2 min-h-[44px] text-sm font-medium text-[#555] transition-colors hover:bg-[#f5f5f5] disabled:opacity-50 flex-1 sm:flex-initial"
+            >
+              {sendingAll ? (
+                <Loader2 size={15} strokeWidth={1.5} className="animate-spin" />
+              ) : (
+                <Send size={15} strokeWidth={1.5} />
+              )}
+              {sendingAll ? "Sending..." : "Send All"}
+            </button>
+
             {/* Export */}
             <button
               type="button"
@@ -908,6 +1092,9 @@ export function RevenueSharePage({ teamId }: { teamId: string }) {
                 <th className="px-3 py-2.5 text-[10px] font-semibold text-[#666] uppercase tracking-wider whitespace-nowrap">
                   Status
                 </th>
+                <th className="px-3 py-2.5 text-[10px] font-semibold text-[#666] uppercase tracking-wider text-center whitespace-nowrap">
+                  Report
+                </th>
               </tr>
             </thead>
             <tbody>
@@ -917,6 +1104,9 @@ export function RevenueSharePage({ teamId }: { teamId: string }) {
                 headerColor={STATUS_COLORS.current.header}
                 onUpdate={handleUpdate}
                 savingId={savingId}
+                payments={payments}
+                sendingIds={sendingIds}
+                onSendReport={handleSendReport}
               />
               <GroupSection
                 label="Expansion Confirmed"
@@ -924,6 +1114,9 @@ export function RevenueSharePage({ teamId }: { teamId: string }) {
                 headerColor={STATUS_COLORS.expansion.header}
                 onUpdate={handleUpdate}
                 savingId={savingId}
+                payments={payments}
+                sendingIds={sendingIds}
+                onSendReport={handleSendReport}
               />
               <GroupSection
                 label="Inactive"
@@ -931,6 +1124,9 @@ export function RevenueSharePage({ teamId }: { teamId: string }) {
                 headerColor={STATUS_COLORS.inactive.header}
                 onUpdate={handleUpdate}
                 savingId={savingId}
+                payments={payments}
+                sendingIds={sendingIds}
+                onSendReport={handleSendReport}
               />
             </tbody>
           </table>
@@ -944,6 +1140,33 @@ export function RevenueSharePage({ teamId }: { teamId: string }) {
           onClose={() => setShowAddModal(false)}
           onSaved={fetchLocations}
         />
+      )}
+
+      {/* Toast Notification */}
+      {toast && (
+        <div className="fixed bottom-6 right-6 z-50 animate-in slide-in-from-bottom-4 fade-in duration-300">
+          <div
+            className={`flex items-center gap-2 rounded-lg border px-4 py-3 shadow-lg text-sm font-medium ${
+              toast.type === "success"
+                ? "bg-white border-[#bbf7d0] text-[#166534]"
+                : "bg-white border-[#fecaca] text-[#991b1b]"
+            }`}
+          >
+            {toast.type === "success" ? (
+              <CheckCircle2 size={16} strokeWidth={1.5} />
+            ) : (
+              <X size={16} strokeWidth={1.5} />
+            )}
+            {toast.message}
+            <button
+              type="button"
+              onClick={() => setToast(null)}
+              className="ml-2 rounded p-0.5 text-[#999] hover:text-[#333] transition-colors"
+            >
+              <X size={14} strokeWidth={1.5} />
+            </button>
+          </div>
+        </div>
       )}
     </div>
   );
