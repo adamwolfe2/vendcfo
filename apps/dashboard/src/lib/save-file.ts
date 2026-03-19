@@ -11,7 +11,6 @@ export async function saveFile(blob: Blob, filename: string) {
   const { nativeSaveFile } = await import("@vendcfo/desktop-client/core");
   try {
     await nativeSaveFile(blob, filename);
-    console.log("[saveFile] File saved successfully:", filename);
   } catch (error) {
     console.error("[saveFile] Failed to save file:", error);
     throw error;

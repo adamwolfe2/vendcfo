@@ -166,7 +166,6 @@ export class EnableBankingApi {
 
       return response;
     } catch (error) {
-      console.log(error);
       throw error;
     }
   }
@@ -179,7 +178,6 @@ export class EnableBankingApi {
 
       return transformSessionData(response);
     } catch (error) {
-      console.log(error);
       throw new ProviderError({
         message: "Failed to exchange code",
         // @ts-ignore
@@ -246,7 +244,6 @@ export class EnableBankingApi {
 
       return accountDetails;
     } catch (error) {
-      console.log(error);
       throw error;
     }
   }

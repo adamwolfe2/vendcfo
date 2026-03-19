@@ -46,7 +46,6 @@ export const institutionsRouter = createTRPCRouter({
 
         return data.sort((a, b) => b.balance.amount - a.balance.amount);
       } catch (error) {
-        console.log(error);
         throw new TRPCError({
           code: "INTERNAL_SERVER_ERROR",
           message: "Failed to get accounts",

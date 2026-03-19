@@ -54,9 +54,8 @@ async function main() {
       .collections("institutions")
       .documents()
       .import(documents, { action: "upsert" });
-  } catch (error) {
-    // @ts-ignore
-    console.log(error.importResults);
+  } catch {
+    // Import errors are non-fatal for upsert operations
   }
 }
 

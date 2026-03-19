@@ -28,17 +28,11 @@ export async function downloadFile(url: string, filename: string) {
   }
 
   const blob = await response.blob();
-  console.log("[downloadFile] Fetched blob:", {
-    size: blob.size,
-    type: blob.type,
-    filename,
-  });
 
   const { nativeSaveFile } = await import("@vendcfo/desktop-client/core");
 
   try {
     await nativeSaveFile(blob, filename);
-    console.log("[downloadFile] File download completed successfully");
   } catch (error) {
     console.error("[downloadFile] Failed to save file:", error);
     throw error;

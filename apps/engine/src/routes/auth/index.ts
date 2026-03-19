@@ -455,7 +455,6 @@ const app = new OpenAPIHono<{ Bindings: Bindings }>()
         );
       } catch (error) {
         const errorResponse = createErrorResponse(error);
-        console.log("errorResponse", errorResponse);
 
         return c.json(errorResponse, 400);
       }

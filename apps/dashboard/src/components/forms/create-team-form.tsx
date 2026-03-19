@@ -67,22 +67,13 @@ export function CreateTeamForm({
 
         try {
           // Invalidate all queries to ensure fresh data everywhere
-          console.log(`[${successId}] Invalidating queries`);
           await queryClient.invalidateQueries();
 
           // Revalidate server-side paths and redirect
-          console.log(`[${successId}] Revalidating server-side paths`);
           await revalidateAfterTeamChange();
-
-          console.log(
-            `[${successId}] Team creation flow completed successfully`,
-          );
         } catch (error) {
           // Check if this is a Next.js redirect (expected behavior)
           if (error instanceof Error && error.message === "NEXT_REDIRECT") {
-            console.log(
-              `[${successId}] Team creation completed successfully - redirecting to home`,
-            );
             // This is expected - Next.js redirects work by throwing this error
             return;
           }

@@ -69,10 +69,6 @@ export async function POST(req: NextRequest) {
     .eq("enrollment_id", payload.enrollment_id)
     .single();
 
-  console.log("payload", payload);
-  console.log("connectionData", connectionData);
-  console.log("connectionError", connectionError);
-
   if (!connectionData) {
     return NextResponse.json(
       { error: "Connection not found" },

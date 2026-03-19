@@ -104,7 +104,6 @@ export function saveImageFromString(base64String: string, filePath: string) {
 
   try {
     fs.writeFileSync(filePath, buffer);
-    console.log(`Image saved successfully to ${filePath}`);
   } catch (err) {
     console.error(`Error saving image: ${err}`);
   }
@@ -130,7 +129,6 @@ export async function saveImageFromURL(
       if (err) {
         throw new Error(`Failed to save image: ${err.message}`);
       }
-      console.log(`Image saved to ${fullPath}`);
     });
   } catch (error) {
     console.error(`Error: ${error}`);
@@ -140,7 +138,6 @@ export async function saveImageFromURL(
 export function saveFile(filePath: string, content: string) {
   try {
     fs.writeFileSync(filePath, content);
-    console.log(`File saved successfully to ${filePath}`);
   } catch (err) {
     console.error(`Error saving file: ${err}`);
   }

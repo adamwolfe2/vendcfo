@@ -27,11 +27,9 @@ export function DesktopProvider() {
         if (pathname === "/") {
           // Enable search window for dashboard and login pages
           await currentWindow.emit("search-window-enabled", true);
-          console.log("Search window enabled via event");
         } else if (pathname === "/login") {
           // Enable search window for login page
           await currentWindow.emit("search-window-enabled", false);
-          console.log("Search window enabled via event");
         }
       } catch (error) {
         console.error("Failed to emit search window state:", error);
@@ -55,15 +53,10 @@ export function DesktopProvider() {
         const label = currentWindow.label;
 
         if (label !== "main") {
-          console.log(
-            `📄 Skipping show_window - not in main window (current: ${label})`,
-          );
           return;
         }
 
-        console.log("Calling show_window command");
         await invoke("show_window");
-        console.log("Window shown successfully");
       } catch (error) {
         console.error("Failed to show window:", error);
       }
@@ -90,28 +83,18 @@ export function DesktopProvider() {
         const label = currentWindow.label;
 
         if (label !== "main") {
-          console.log(
-            `🔗 Skipping deep link setup - not in main window (current: ${label})`,
-          );
           return;
         }
 
-        console.log("🔗 Setting up deep link listener...");
-
         cleanup = await listenForDeepLinks((path) => {
-          console.log("Deep link navigation received:", path);
-
           // Handle different paths
           if (path === "" || path === "dashboard") {
-            console.log("📍 Navigating to dashboard");
             router.push("/");
           } else if (path.startsWith("api/auth/callback")) {
             // Handle authentication callback
-            console.log("🔐 Handling auth callback");
             router.push(`/${path}`);
           } else {
             // Handle other paths
-            console.log(`📍 Navigating to: /${path}`);
             router.push(`/${path}`);
           }
         });
@@ -126,7 +109,6 @@ export function DesktopProvider() {
     return () => {
       if (cleanup) {
         cleanup();
-        console.log("🧹 Deep link listener cleaned up");
       }
     };
   }, [router]);
@@ -147,13 +129,8 @@ export function DesktopProvider() {
 
         // Only set up navigation listener in the main window
         if (label !== "main") {
-          console.log(
-            `🚀 Skipping desktop navigation setup - not in main window (current: ${label})`,
-          );
           return;
         }
-
-        console.log("🚀 Setting up desktop navigation listener...");
 
         // Handle full path navigation
         unlistenNavigation = await currentWindow.listen(
@@ -163,10 +140,6 @@ export function DesktopProvider() {
               path: string;
               params?: Record<string, any>;
             };
-            console.log("🚀 Desktop navigation received in main window:", {
-              path,
-              params,
-            });
 
             if (params && Object.keys(params).length > 0) {
               // Build URL with parameters
@@ -177,10 +150,8 @@ export function DesktopProvider() {
                 }
               }
               const fullPath = `${path}?${searchParams.toString()}`;
-              console.log(`📍 Main window navigating to: ${fullPath}`);
               router.push(fullPath);
             } else {
-              console.log(`📍 Main window navigating to: ${path}`);
               router.push(path);
             }
           },
@@ -191,10 +162,6 @@ export function DesktopProvider() {
           "desktop-navigate-with-params",
           (event) => {
             const { params } = event.payload as { params: Record<string, any> };
-            console.log(
-              "🚀 Desktop params navigation received in main window:",
-              { params },
-            );
 
             // Get current pathname and apply parameters
             const currentPath = window.location.pathname;
@@ -207,14 +174,9 @@ export function DesktopProvider() {
             }
 
             const fullPath = `${currentPath}?${searchParams.toString()}`;
-            console.log(
-              `📍 Main window adding params to current page: ${fullPath}`,
-            );
             router.push(fullPath);
           },
         );
-
-        console.log("Desktop navigation listeners registered");
       } catch (error) {
         console.error("Failed to set up desktop navigation listener:", error);
       }
@@ -226,11 +188,9 @@ export function DesktopProvider() {
     return () => {
       if (unlistenNavigation) {
         unlistenNavigation();
-        console.log("🧹 Desktop navigation listener cleaned up");
       }
       if (unlistenParamsNavigation) {
         unlistenParamsNavigation();
-        console.log("🧹 Desktop params navigation listener cleaned up");
       }
     };
   }, [router]);
