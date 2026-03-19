@@ -1,8 +1,9 @@
 import type { Session } from "@api/utils/auth";
-import { withRetryOnPrimary } from "@api/utils/db-retry";
 import { TRPCError } from "@trpc/server";
 import { teamCache } from "@vendcfo/cache/team-cache";
 import type { Database } from "@vendcfo/db/client";
+import { users, usersOnTeam } from "@vendcfo/db/schema";
+import { eq } from "drizzle-orm";
 
 export const withTeamPermission = async <TReturn>(opts: {
   ctx: {
@@ -28,28 +29,14 @@ export const withTeamPermission = async <TReturn>(opts: {
     });
   }
 
-  const result = await withRetryOnPrimary(
-    ctx.db,
-    async (db) => {
-      return await db.query.users.findFirst({
-        with: {
-          usersOnTeams: {
-            columns: {
-              id: true,
-              teamId: true,
-            },
-          },
-        },
-        where: (users, { eq }) => eq(users.id, userId),
-      });
-    },
-    { retryOnNull: true },
-  );
+  // Use simple queries instead of relational API (lateral joins fail on Supabase pooler)
+  const [userRow] = await ctx.db
+    .select({ id: users.id, teamId: users.teamId })
+    .from(users)
+    .where(eq(users.id, userId))
+    .limit(1);
 
-  // If user doesn't exist in public.users, pass through with null teamId.
-  // The calling procedure (e.g. user.me) should handle this gracefully
-  // by returning null, which triggers a redirect to /setup.
-  if (!result) {
+  if (!userRow) {
     console.warn(`[team-permission] User ${userId} not found in public.users`);
     return next({
       ctx: {
@@ -60,18 +47,19 @@ export const withTeamPermission = async <TReturn>(opts: {
     });
   }
 
-  const teamId = result.teamId;
+  const teamId = userRow.teamId;
 
-  // If teamId is null, user has no team assigned — allowed to continue
   if (teamId !== null) {
     const cacheKey = `user:${userId}:team:${teamId}`;
     let hasAccess = await teamCache.get(cacheKey);
 
     if (hasAccess === undefined) {
-      hasAccess = result.usersOnTeams.some(
-        (membership) => membership.teamId === teamId,
-      );
+      const memberships = await ctx.db
+        .select({ teamId: usersOnTeam.teamId })
+        .from(usersOnTeam)
+        .where(eq(usersOnTeam.userId, userId));
 
+      hasAccess = memberships.some((m) => m.teamId === teamId);
       await teamCache.set(cacheKey, hasAccess);
     }
 
