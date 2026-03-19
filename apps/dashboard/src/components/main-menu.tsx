@@ -3,7 +3,7 @@
 import { useChatInterface } from "@/hooks/use-chat-interface";
 import { cn } from "@vendcfo/ui/cn";
 import { Icons } from "@vendcfo/ui/icons";
-import { Route, Users } from "lucide-react";
+import { GraduationCap, Route, Users } from "lucide-react";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { ForesightLink } from "./foresight-link";
@@ -26,6 +26,7 @@ const icons = {
   "/scenarios": () => <Icons.Tracker size={20} />,
   "/alerts": () => <Icons.Transactions size={20} />,
   "/import": () => <Icons.Files size={20} />,
+  "/training": () => <GraduationCap size={20} strokeWidth={1.5} />,
 } as const;
 
 const items = [
@@ -59,6 +60,8 @@ const items = [
       { path: "/alerts", name: "Alerts" },
     ],
   },
+  // ─── Training ───
+  { path: "/training", name: "Training" },
   { path: "/apps", name: "Apps" },
 ];
 
