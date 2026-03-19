@@ -176,27 +176,28 @@ function PasswordRow({
   };
 
   return (
-    <div className="group flex items-center gap-4 rounded-lg border border-[#e0e0e0] bg-white px-4 py-3 transition-colors hover:border-[#ccc] hover:bg-[#fafafa]">
-      {/* Lock icon */}
-      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-[#f5f5f5] text-[#666]">
-        <Lock size={18} strokeWidth={1.5} />
-      </div>
+    <div className="group flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 rounded-lg border border-[#e0e0e0] bg-white px-3 sm:px-4 py-3 transition-colors hover:border-[#ccc] hover:bg-[#fafafa]">
+      {/* Top row on mobile: Lock icon + Title + Username */}
+      <div className="flex items-center gap-3 min-w-0 flex-1">
+        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-[#f5f5f5] text-[#666]">
+          <Lock size={18} strokeWidth={1.5} />
+        </div>
 
-      {/* Title + Username */}
-      <div className="min-w-0 flex-1">
-        <div className="flex items-center gap-2">
-          <span className="truncate text-sm font-semibold text-[#111]">
-            {entry.title}
-          </span>
-          {entry.is_shared && (
-            <span className="shrink-0 rounded border border-[#d0d0d0] bg-[#f5f5f5] px-1.5 py-0.5 text-[10px] font-medium text-[#888] uppercase tracking-wide">
-              Shared
+        <div className="min-w-0 flex-1">
+          <div className="flex items-center gap-2">
+            <span className="truncate text-sm font-semibold text-[#111]">
+              {entry.title}
             </span>
+            {entry.is_shared && (
+              <span className="shrink-0 rounded border border-[#d0d0d0] bg-[#f5f5f5] px-1.5 py-0.5 text-[10px] font-medium text-[#888] uppercase tracking-wide">
+                Shared
+              </span>
+            )}
+          </div>
+          {entry.username && (
+            <p className="truncate text-xs text-[#888]">{entry.username}</p>
           )}
         </div>
-        {entry.username && (
-          <p className="truncate text-xs text-[#888]">{entry.username}</p>
-        )}
       </div>
 
       {/* Password display */}
@@ -240,20 +241,20 @@ function PasswordRow({
         <CategoryBadge category={entry.category} />
       </div>
 
-      {/* Actions */}
-      <div className="flex shrink-0 items-center gap-1">
+      {/* Actions — bottom row on mobile */}
+      <div className="flex shrink-0 items-center gap-1 border-t border-[#f0f0f0] pt-2 sm:border-0 sm:pt-0">
         <button
           type="button"
           onClick={handleCopy}
           title="Copy password"
-          className="rounded p-1.5 text-[#999] transition-colors hover:bg-[#f0f0f0] hover:text-[#555]"
+          className="rounded p-2 min-h-[44px] min-w-[44px] flex items-center justify-center text-[#999] transition-colors hover:bg-[#f0f0f0] hover:text-[#555]"
         >
           {copied ? (
             <span className="text-[10px] font-medium text-green-600">
               Copied!
             </span>
           ) : (
-            <Copy size={15} strokeWidth={1.5} />
+            <Copy size={18} strokeWidth={1.5} />
           )}
         </button>
         <button
@@ -261,29 +262,29 @@ function PasswordRow({
           onClick={handleShowToggle}
           disabled={decrypting}
           title={showPassword ? "Hide password" : "Show password"}
-          className="rounded p-1.5 text-[#999] transition-colors hover:bg-[#f0f0f0] hover:text-[#555] disabled:opacity-50"
+          className="rounded p-2 min-h-[44px] min-w-[44px] flex items-center justify-center text-[#999] transition-colors hover:bg-[#f0f0f0] hover:text-[#555] disabled:opacity-50"
         >
           {showPassword ? (
-            <EyeOff size={15} strokeWidth={1.5} />
+            <EyeOff size={18} strokeWidth={1.5} />
           ) : (
-            <Eye size={15} strokeWidth={1.5} />
+            <Eye size={18} strokeWidth={1.5} />
           )}
         </button>
         <button
           type="button"
           onClick={() => onEdit(entry)}
           title="Edit"
-          className="rounded p-1.5 text-[#999] transition-colors hover:bg-[#f0f0f0] hover:text-[#555]"
+          className="rounded p-2 min-h-[44px] min-w-[44px] flex items-center justify-center text-[#999] transition-colors hover:bg-[#f0f0f0] hover:text-[#555]"
         >
-          <Pencil size={15} strokeWidth={1.5} />
+          <Pencil size={18} strokeWidth={1.5} />
         </button>
         <button
           type="button"
           onClick={() => onDelete(entry.id)}
           title="Delete"
-          className="rounded p-1.5 text-[#999] transition-colors hover:bg-red-50 hover:text-red-600"
+          className="rounded p-2 min-h-[44px] min-w-[44px] flex items-center justify-center text-[#999] transition-colors hover:bg-red-50 hover:text-red-600"
         >
-          <Trash2 size={15} strokeWidth={1.5} />
+          <Trash2 size={18} strokeWidth={1.5} />
         </button>
       </div>
     </div>
@@ -400,8 +401,8 @@ function PasswordModal({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/30">
-      <div className="relative mx-4 w-full max-w-lg rounded-lg border border-[#e0e0e0] bg-white p-6 shadow-lg">
+    <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/30">
+      <div className="relative w-full max-h-[90vh] overflow-y-auto sm:mx-4 sm:max-w-lg rounded-t-xl sm:rounded-lg border border-[#e0e0e0] bg-white p-5 sm:p-6 shadow-lg">
         <div className="mb-5 flex items-center justify-between">
           <h2 className="text-lg font-semibold text-[#111]">
             {mode === "add" ? "Add Entry" : "Edit Entry"}
@@ -409,7 +410,7 @@ function PasswordModal({
           <button
             type="button"
             onClick={onClose}
-            className="rounded p-1 text-[#999] transition-colors hover:text-[#333]"
+            className="rounded p-2 min-h-[44px] min-w-[44px] flex items-center justify-center text-[#999] transition-colors hover:text-[#333]"
           >
             <X size={20} strokeWidth={1.5} />
           </button>
@@ -450,7 +451,7 @@ function PasswordModal({
             <label className="mb-1 block text-sm font-medium text-[#333]">
               Password <span className="text-red-500">*</span>
             </label>
-            <div className="flex gap-2">
+            <div className="flex flex-col sm:flex-row gap-2">
               <div className="relative flex-1">
                 <input
                   type={showPw ? "text" : "password"}
@@ -459,12 +460,12 @@ function PasswordModal({
                   required
                   disabled={loadingExisting}
                   placeholder={loadingExisting ? "Decrypting..." : "Enter password"}
-                  className="w-full rounded-md border border-[#d0d0d0] bg-white py-2 pl-3 pr-9 text-sm text-[#111] placeholder-[#aaa] outline-none transition-colors focus:border-[#888] disabled:opacity-50"
+                  className="w-full rounded-md border border-[#d0d0d0] bg-white py-2 pl-3 pr-9 text-sm text-[#111] placeholder-[#aaa] outline-none transition-colors focus:border-[#888] disabled:opacity-50 min-h-[44px]"
                 />
                 <button
                   type="button"
                   onClick={() => setShowPw(!showPw)}
-                  className="absolute right-2 top-1/2 -translate-y-1/2 text-[#aaa] hover:text-[#555]"
+                  className="absolute right-2 top-1/2 -translate-y-1/2 p-1 text-[#aaa] hover:text-[#555]"
                 >
                   {showPw ? (
                     <EyeOff size={16} strokeWidth={1.5} />
@@ -476,7 +477,7 @@ function PasswordModal({
               <button
                 type="button"
                 onClick={handleGenerate}
-                className="inline-flex items-center gap-1.5 rounded-md border border-[#d0d0d0] bg-white px-3 py-2 text-sm font-medium text-[#555] transition-colors hover:bg-[#f5f5f5]"
+                className="inline-flex items-center justify-center gap-1.5 rounded-md border border-[#d0d0d0] bg-white px-3 py-2 min-h-[44px] text-sm font-medium text-[#555] transition-colors hover:bg-[#f5f5f5] w-full sm:w-auto"
               >
                 <RefreshCw size={14} strokeWidth={1.5} />
                 Generate
@@ -550,18 +551,18 @@ function PasswordModal({
 
           {error && <p className="text-sm text-red-600">{error}</p>}
 
-          <div className="flex justify-end gap-3 pt-2">
+          <div className="flex flex-col-reverse sm:flex-row justify-end gap-3 pt-2">
             <button
               type="button"
               onClick={onClose}
-              className="rounded-md border border-[#d0d0d0] bg-white px-4 py-2 text-sm font-medium text-[#555] transition-colors hover:bg-[#f5f5f5]"
+              className="rounded-md border border-[#d0d0d0] bg-white px-4 py-2 min-h-[44px] text-sm font-medium text-[#555] transition-colors hover:bg-[#f5f5f5] w-full sm:w-auto"
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={saving || !title.trim() || !password.trim()}
-              className="rounded-md bg-[#111] px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-[#333] disabled:opacity-50"
+              className="rounded-md bg-[#111] px-4 py-2 min-h-[44px] text-sm font-medium text-white transition-colors hover:bg-[#333] disabled:opacity-50 w-full sm:w-auto"
             >
               {saving ? "Saving..." : mode === "add" ? "Add Entry" : "Save Changes"}
             </button>
@@ -702,11 +703,11 @@ export function PasswordVault({
   }, [entries, searchQuery]);
 
   return (
-    <div className="mx-auto w-full max-w-5xl p-8">
+    <div className="mx-auto w-full max-w-5xl px-4 py-6 sm:p-8">
       {/* Header */}
-      <div className="mb-2 flex items-start justify-between gap-4">
+      <div className="mb-2 flex flex-col sm:flex-row sm:items-start justify-between gap-3">
         <div>
-          <h1 className="text-2xl font-bold text-foreground">Password Vault</h1>
+          <h1 className="text-xl sm:text-2xl font-bold text-foreground">Password Vault</h1>
           <p className="mt-1 text-sm text-muted-foreground">
             Securely store and manage credentials for your team.
           </p>
@@ -714,7 +715,7 @@ export function PasswordVault({
         <button
           type="button"
           onClick={() => setShowAddModal(true)}
-          className="inline-flex shrink-0 items-center gap-1.5 rounded-md bg-[#111] px-3.5 py-2 text-sm font-medium text-white transition-colors hover:bg-[#333]"
+          className="inline-flex shrink-0 items-center justify-center gap-1.5 rounded-md bg-[#111] px-3.5 py-2 min-h-[44px] text-sm font-medium text-white transition-colors hover:bg-[#333] w-full sm:w-auto"
         >
           <Plus size={16} strokeWidth={1.5} />
           Add Entry

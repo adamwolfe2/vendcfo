@@ -37,9 +37,9 @@ interface BusinessProfile {
 
 function StepIndicator({ currentStep }: { currentStep: Step }) {
   return (
-    <div className="flex items-center justify-center gap-3 mb-10">
+    <div className="flex items-center justify-center gap-2 sm:gap-3 mb-8 sm:mb-10">
       {([1, 2, 3] as const).map((step) => (
-        <div key={step} className="flex items-center gap-3">
+        <div key={step} className="flex items-center gap-2 sm:gap-3">
           <div
             className={cn(
               "w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium border transition-colors",
@@ -59,7 +59,7 @@ function StepIndicator({ currentStep }: { currentStep: Step }) {
           {step < 3 && (
             <div
               className={cn(
-                "w-12 h-px",
+                "w-8 sm:w-12 h-px",
                 currentStep > step ? "bg-black" : "bg-[#ddd]",
               )}
             />
@@ -116,9 +116,9 @@ function StepOne({
   ];
 
   return (
-    <div>
-      <div className="text-center mb-8">
-        <h1 className="text-2xl font-serif mb-2">
+    <div className="px-4 sm:px-0">
+      <div className="text-center mb-6 sm:mb-8">
+        <h1 className="text-xl sm:text-2xl font-serif mb-2">
           How would you like to get started?
         </h1>
         <p className="text-[#878787] text-sm">
@@ -132,7 +132,7 @@ function StepOne({
             key={card.title}
             className="border border-[#ddd] rounded-lg hover:shadow-md transition-shadow cursor-pointer group"
           >
-            <CardContent className="p-6 flex flex-col items-center text-center h-full">
+            <CardContent className="p-5 sm:p-6 flex flex-col items-center text-center h-full">
               <div className="w-12 h-12 rounded-lg bg-[#f5f5f5] flex items-center justify-center mb-4 group-hover:bg-[#eee] transition-colors">
                 <card.icon className="w-6 h-6 text-black" />
               </div>
@@ -181,9 +181,9 @@ function StepTwo({
   onSkip: () => void;
 }) {
   return (
-    <div>
-      <div className="text-center mb-8">
-        <h1 className="text-2xl font-serif mb-2">
+    <div className="px-4 sm:px-0">
+      <div className="text-center mb-6 sm:mb-8">
+        <h1 className="text-xl sm:text-2xl font-serif mb-2">
           Tell us about your business
         </h1>
         <p className="text-[#878787] text-sm">
@@ -192,7 +192,7 @@ function StepTwo({
       </div>
 
       <Card className="border border-[#ddd] rounded-lg">
-        <CardContent className="p-6 space-y-5">
+        <CardContent className="p-5 sm:p-6 space-y-5">
           <div className="space-y-2">
             <label className="text-sm font-medium">Business type</label>
             <Select
@@ -217,7 +217,7 @@ function StepTwo({
             </Select>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             <div className="space-y-2">
               <label className="text-sm font-medium">Number of machines</label>
               <Input
@@ -270,17 +270,17 @@ function StepTwo({
             </Select>
           </div>
 
-          <div className="flex items-center justify-between pt-2">
+          <div className="flex flex-col-reverse sm:flex-row items-center justify-between gap-3 pt-2">
             <button
               type="button"
               onClick={onSkip}
-              className="text-sm text-[#878787] hover:text-black transition-colors"
+              className="text-sm text-[#878787] hover:text-black transition-colors min-h-[44px] w-full sm:w-auto"
             >
               Skip this step
             </button>
             <Button
               onClick={onSubmit}
-              className="bg-black text-white hover:bg-black/90"
+              className="bg-black text-white hover:bg-black/90 w-full sm:w-auto min-h-[44px]"
             >
               Continue
               <ArrowRight className="w-4 h-4 ml-2" />
@@ -302,7 +302,7 @@ function StepThree({ onFinish }: { onFinish: () => void }) {
   }, []);
 
   return (
-    <div className="text-center">
+    <div className="text-center px-4 sm:px-0">
       <div
         className={cn(
           "transition-all duration-500 ease-out",
@@ -313,7 +313,7 @@ function StepThree({ onFinish }: { onFinish: () => void }) {
           <Check className="w-8 h-8 text-[#22c55e]" />
         </div>
 
-        <h1 className="text-2xl font-serif mb-3">You are all set!</h1>
+        <h1 className="text-xl sm:text-2xl font-serif mb-3">You are all set!</h1>
         <p className="text-[#878787] text-sm mb-8 max-w-md mx-auto leading-relaxed">
           Your dashboard is ready. We will generate insights as your data comes
           in.
@@ -321,7 +321,7 @@ function StepThree({ onFinish }: { onFinish: () => void }) {
 
         <Button
           onClick={onFinish}
-          className="bg-black text-white hover:bg-black/90 px-8"
+          className="bg-black text-white hover:bg-black/90 px-8 w-full sm:w-auto min-h-[44px]"
         >
           Go to Dashboard
           <ArrowRight className="w-4 h-4 ml-2" />

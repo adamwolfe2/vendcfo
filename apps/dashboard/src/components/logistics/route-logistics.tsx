@@ -47,12 +47,12 @@ type ActionType = "nothing" | "pick_stock" | "pickup_only" | "delivery";
 // ---------------------------------------------------------------------------
 
 const DAYS = [
-  { key: 1, label: "Monday" },
-  { key: 2, label: "Tuesday" },
-  { key: 3, label: "Wednesday" },
-  { key: 4, label: "Thursday" },
-  { key: 5, label: "Friday" },
-  { key: 6, label: "Saturday" },
+  { key: 1, label: "Monday", short: "Mon" },
+  { key: 2, label: "Tuesday", short: "Tue" },
+  { key: 3, label: "Wednesday", short: "Wed" },
+  { key: 4, label: "Thursday", short: "Thu" },
+  { key: 5, label: "Friday", short: "Fri" },
+  { key: 6, label: "Saturday", short: "Sat" },
 ] as const;
 
 const ACTION_CYCLE: ActionType[] = [
@@ -148,25 +148,25 @@ function ActionCell({
       className="border border-[#e5e5e5] text-center cursor-pointer select-none transition-colors hover:opacity-80 relative"
       style={{
         backgroundColor: config.bg,
-        minWidth: 100,
+        minWidth: 80,
       }}
       onClick={onClick}
     >
-      <div className="flex flex-col items-center gap-0.5 py-1 px-1">
+      <div className="flex flex-col items-center gap-0.5 py-1.5 px-1 min-h-[44px] justify-center">
         <span
-          className="text-xs font-medium"
+          className="text-[10px] sm:text-xs font-medium"
           style={{ color: config.text }}
         >
           {config.label}
         </span>
         {operatorName && (
-          <span className="text-[10px] text-[#666] truncate max-w-[90px] leading-tight">
+          <span className="text-[9px] sm:text-[10px] text-[#666] truncate max-w-[70px] sm:max-w-[90px] leading-tight">
             {operatorName}
           </span>
         )}
         <button
           type="button"
-          className="mt-0.5 p-0.5 rounded hover:bg-black/5 transition-colors"
+          className="mt-0.5 p-1 min-h-[28px] min-w-[28px] flex items-center justify-center rounded hover:bg-black/5 transition-colors"
           title="Assign operator"
           onClick={(e) => {
             e.stopPropagation();
@@ -179,22 +179,22 @@ function ActionCell({
       {showPopover && (
         <div
           ref={popoverRef}
-          className="absolute z-50 top-full left-1/2 -translate-x-1/2 mt-1 bg-white border border-[#d0d0d0] rounded-lg shadow-lg p-2 min-w-[160px]"
+          className="absolute z-50 top-full left-0 sm:left-1/2 sm:-translate-x-1/2 mt-1 bg-white border border-[#d0d0d0] rounded-lg shadow-lg p-2.5 min-w-[180px]"
           onClick={(e) => e.stopPropagation()}
         >
-          <div className="flex items-center justify-between mb-1.5">
+          <div className="flex items-center justify-between mb-2">
             <span className="text-[10px] font-medium text-[#555] uppercase tracking-wide">
               Assign Operator
             </span>
             <button
               type="button"
               onClick={() => setShowPopover(false)}
-              className="p-0.5 rounded hover:bg-[#f0f0f0]"
+              className="p-1.5 min-h-[32px] min-w-[32px] flex items-center justify-center rounded hover:bg-[#f0f0f0]"
             >
-              <X size={12} strokeWidth={1.5} className="text-[#888]" />
+              <X size={14} strokeWidth={1.5} className="text-[#888]" />
             </button>
           </div>
-          <div className="flex gap-1">
+          <div className="flex gap-1.5">
             <input
               ref={inputRef}
               type="text"
@@ -207,11 +207,11 @@ function ActionCell({
                   setShowPopover(false);
                 }
               }}
-              className="flex-1 text-xs border border-[#d0d0d0] rounded px-2 py-1 bg-white outline-none focus:border-[#888]"
+              className="flex-1 text-xs border border-[#d0d0d0] rounded px-2 py-2 min-h-[36px] bg-white outline-none focus:border-[#888]"
             />
             <button
               type="button"
-              className="text-xs bg-[#111] text-white px-2 py-1 rounded hover:bg-[#333] transition-colors"
+              className="text-xs bg-[#111] text-white px-3 py-2 min-h-[36px] rounded hover:bg-[#333] transition-colors"
               onClick={() => {
                 onAssignOperator(inputValue.trim());
                 setShowPopover(false);
@@ -517,12 +517,12 @@ export function RouteLogistics({
 
   if (locations.length === 0) {
     return (
-      <div className="p-8 max-w-7xl mx-auto w-full">
+      <div className="px-3 py-6 sm:p-8 max-w-7xl mx-auto w-full">
         <div className="mb-8">
-          <h1 className="text-2xl font-bold text-foreground mb-2">
+          <h1 className="text-xl sm:text-2xl font-bold text-foreground mb-2">
             Route Logistics
           </h1>
-          <p className="text-muted-foreground">
+          <p className="text-sm text-muted-foreground">
             Weekly schedule grid for vending machine route operations.
           </p>
         </div>
@@ -536,15 +536,15 @@ export function RouteLogistics({
 
     return (
       <tr key={loc.id} className="hover:bg-[#fafafa]">
-        <td className="border border-[#e5e5e5] px-3 py-2 sticky left-0 bg-white z-10">
-          <div className="font-medium text-sm text-[#111]">{loc.name}</div>
+        <td className="border border-[#e5e5e5] px-2 sm:px-3 py-2 sticky left-0 bg-white z-10 min-w-[120px] sm:min-w-[180px]">
+          <div className="font-medium text-xs sm:text-sm text-[#111] truncate max-w-[110px] sm:max-w-none">{loc.name}</div>
         </td>
-        <td className="border border-[#e5e5e5] px-3 py-2">
+        <td className="border border-[#e5e5e5] px-2 sm:px-3 py-2 hidden sm:table-cell">
           <div className="text-xs text-[#878787] truncate max-w-[180px]">
             {loc.address}
           </div>
         </td>
-        <td className="border border-[#e5e5e5] px-2 py-1 text-center">
+        <td className="border border-[#e5e5e5] px-1 sm:px-2 py-1 text-center">
           <input
             type="number"
             min={0.25}
@@ -554,7 +554,7 @@ export function RouteLogistics({
             onChange={(e) =>
               handleHoursChange(loc.id, Number.parseFloat(e.target.value) || 0.5)
             }
-            className="w-14 text-center text-xs border border-[#d0d0d0] rounded px-1 py-1 bg-white outline-none focus:border-[#888]"
+            className="w-12 sm:w-14 text-center text-xs border border-[#d0d0d0] rounded px-1 py-1.5 min-h-[36px] bg-white outline-none focus:border-[#888]"
           />
         </td>
         {DAYS.map((day) => (
@@ -602,22 +602,22 @@ export function RouteLogistics({
   };
 
   return (
-    <div className="p-8 max-w-full mx-auto w-full">
+    <div className="px-3 py-6 sm:p-8 max-w-full mx-auto w-full">
       {/* Header */}
-      <div className="mb-6 flex items-start justify-between">
+      <div className="mb-6 flex flex-col sm:flex-row sm:items-start justify-between gap-3">
         <div>
-          <h1 className="text-2xl font-bold text-foreground mb-2">
+          <h1 className="text-xl sm:text-2xl font-bold text-foreground mb-2">
             Route Logistics
           </h1>
-          <p className="text-muted-foreground">
+          <p className="text-sm text-muted-foreground">
             Weekly schedule grid for vending machine route operations.
           </p>
         </div>
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-3 sm:gap-4 flex-wrap">
           <SaveIndicator status={saveStatus} />
           <div className="flex items-center gap-2">
             <label className="text-xs font-medium text-[#555]">
-              Hourly Rate
+              Rate
             </label>
             <div className="flex items-center">
               <span className="text-xs text-[#888] mr-1">$</span>
@@ -629,7 +629,7 @@ export function RouteLogistics({
                 onChange={(e) =>
                   setHourlyRate(Number.parseInt(e.target.value, 10) || 0)
                 }
-                className="w-16 text-center text-xs border border-[#d0d0d0] rounded px-1 py-1 bg-white outline-none focus:border-[#888]"
+                className="w-16 text-center text-xs border border-[#d0d0d0] rounded px-1 py-1.5 min-h-[36px] bg-white outline-none focus:border-[#888]"
               />
               <span className="text-xs text-[#888] ml-1">/hr</span>
             </div>
@@ -653,22 +653,23 @@ export function RouteLogistics({
             >
               <thead>
                 <tr className="bg-[#f9fafb]">
-                  <th className="border border-[#e5e5e5] px-3 py-2.5 text-left text-sm font-medium text-[#555] sticky left-0 bg-[#f9fafb] z-10 min-w-[180px]">
+                  <th className="border border-[#e5e5e5] px-2 sm:px-3 py-2.5 text-left text-xs sm:text-sm font-medium text-[#555] sticky left-0 bg-[#f9fafb] z-10 min-w-[120px] sm:min-w-[180px]">
                     Location
                   </th>
-                  <th className="border border-[#e5e5e5] px-3 py-2.5 text-left text-sm font-medium text-[#555] min-w-[160px]">
+                  <th className="border border-[#e5e5e5] px-2 sm:px-3 py-2.5 text-left text-xs sm:text-sm font-medium text-[#555] min-w-[100px] sm:min-w-[160px] hidden sm:table-cell">
                     Address
                   </th>
-                  <th className="border border-[#e5e5e5] px-2 py-2.5 text-center text-sm font-medium text-[#555] min-w-[80px]">
-                    Est. Hours
+                  <th className="border border-[#e5e5e5] px-1 sm:px-2 py-2.5 text-center text-xs sm:text-sm font-medium text-[#555] min-w-[60px] sm:min-w-[80px]">
+                    Hrs
                   </th>
                   {DAYS.map((day) => (
                     <th
                       key={day.key}
-                      className="border border-[#e5e5e5] px-3 py-2.5 text-center text-sm font-medium text-[#555]"
-                      style={{ minWidth: 100 }}
+                      className="border border-[#e5e5e5] px-1 sm:px-3 py-2.5 text-center text-xs sm:text-sm font-medium text-[#555]"
+                      style={{ minWidth: 80 }}
                     >
-                      {day.label}
+                      <span className="hidden sm:inline">{day.label}</span>
+                      <span className="sm:hidden">{day.short}</span>
                     </th>
                   ))}
                 </tr>
@@ -691,7 +692,7 @@ export function RouteLogistics({
           </div>
 
           {/* Legend */}
-          <div className="mt-4 flex items-center gap-4">
+          <div className="mt-4 flex flex-wrap items-center gap-3 sm:gap-4">
             <span className="text-xs font-medium text-[#555]">Legend:</span>
             {ACTION_CYCLE.map((action) => {
               const config = ACTION_CONFIG[action];
@@ -709,7 +710,7 @@ export function RouteLogistics({
 
           {/* Summary Section */}
           <div className="mt-8">
-            <h2 className="text-lg font-semibold text-[#111] mb-4">
+            <h2 className="text-base sm:text-lg font-semibold text-[#111] mb-4">
               Weekly Summary
             </h2>
             <div className="overflow-x-auto border border-[#e5e5e5] rounded-lg">
@@ -719,69 +720,70 @@ export function RouteLogistics({
               >
                 <thead>
                   <tr className="bg-[#f9fafb]">
-                    <th className="border border-[#e5e5e5] px-3 py-2.5 text-left text-sm font-medium text-[#555] min-w-[140px]">
+                    <th className="border border-[#e5e5e5] px-2 sm:px-3 py-2.5 text-left text-xs sm:text-sm font-medium text-[#555] min-w-[100px] sm:min-w-[140px] sticky left-0 bg-[#f9fafb] z-10">
                       Metric
                     </th>
                     {DAYS.map((day) => (
                       <th
                         key={day.key}
-                        className="border border-[#e5e5e5] px-3 py-2.5 text-center text-sm font-medium text-[#555]"
-                        style={{ minWidth: 100 }}
+                        className="border border-[#e5e5e5] px-1 sm:px-3 py-2.5 text-center text-xs sm:text-sm font-medium text-[#555]"
+                        style={{ minWidth: 80 }}
                       >
-                        {day.label}
+                        <span className="hidden sm:inline">{day.label}</span>
+                        <span className="sm:hidden">{day.short}</span>
                       </th>
                     ))}
-                    <th className="border border-[#e5e5e5] px-3 py-2.5 text-center text-sm font-semibold text-[#111]" style={{ minWidth: 100 }}>
-                      Weekly Total
+                    <th className="border border-[#e5e5e5] px-2 sm:px-3 py-2.5 text-center text-xs sm:text-sm font-semibold text-[#111]" style={{ minWidth: 80 }}>
+                      Total
                     </th>
                   </tr>
                 </thead>
                 <tbody>
                   <tr>
-                    <td className="border border-[#e5e5e5] px-3 py-2 text-sm font-medium text-[#333]">
-                      Total Stops
+                    <td className="border border-[#e5e5e5] px-2 sm:px-3 py-2 text-xs sm:text-sm font-medium text-[#333] sticky left-0 bg-white z-10">
+                      Stops
                     </td>
                     {summaryByDay.map((d) => (
                       <td
                         key={d.day}
-                        className="border border-[#e5e5e5] px-3 py-2 text-center text-sm text-[#555]"
+                        className="border border-[#e5e5e5] px-1 sm:px-3 py-2 text-center text-xs sm:text-sm text-[#555]"
                       >
                         {d.stops}
                       </td>
                     ))}
-                    <td className="border border-[#e5e5e5] px-3 py-2 text-center text-sm font-semibold text-[#111]">
+                    <td className="border border-[#e5e5e5] px-2 sm:px-3 py-2 text-center text-xs sm:text-sm font-semibold text-[#111]">
                       {totalStops}
                     </td>
                   </tr>
                   <tr>
-                    <td className="border border-[#e5e5e5] px-3 py-2 text-sm font-medium text-[#333]">
-                      Estimated Hours
+                    <td className="border border-[#e5e5e5] px-2 sm:px-3 py-2 text-xs sm:text-sm font-medium text-[#333] sticky left-0 bg-white z-10">
+                      Hours
                     </td>
                     {summaryByDay.map((d) => (
                       <td
                         key={d.day}
-                        className="border border-[#e5e5e5] px-3 py-2 text-center text-sm text-[#555]"
+                        className="border border-[#e5e5e5] px-1 sm:px-3 py-2 text-center text-xs sm:text-sm text-[#555]"
                       >
                         {d.hours.toFixed(1)}
                       </td>
                     ))}
-                    <td className="border border-[#e5e5e5] px-3 py-2 text-center text-sm font-semibold text-[#111]">
+                    <td className="border border-[#e5e5e5] px-2 sm:px-3 py-2 text-center text-xs sm:text-sm font-semibold text-[#111]">
                       {totalHours.toFixed(1)}
                     </td>
                   </tr>
                   <tr>
-                    <td className="border border-[#e5e5e5] px-3 py-2 text-sm font-medium text-[#333]">
-                      Estimated Cost
+                    <td className="border border-[#e5e5e5] px-2 sm:px-3 py-2 text-xs sm:text-sm font-medium text-[#333] sticky left-0 bg-white z-10">
+                      Cost
                     </td>
                     {summaryByDay.map((d) => (
                       <td
                         key={d.day}
-                        className="border border-[#e5e5e5] px-3 py-2 text-center text-sm text-[#555]"
+                        className="border border-[#e5e5e5] px-1 sm:px-3 py-2 text-center text-xs sm:text-sm text-[#555]"
                       >
                         ${(d.hours * hourlyRate).toFixed(0)}
                       </td>
                     ))}
-                    <td className="border border-[#e5e5e5] px-3 py-2 text-center text-sm font-semibold text-[#111]">
+                    <td className="border border-[#e5e5e5] px-2 sm:px-3 py-2 text-center text-xs sm:text-sm font-semibold text-[#111]">
                       ${totalCost.toFixed(0)}
                     </td>
                   </tr>
@@ -793,7 +795,7 @@ export function RouteLogistics({
           {/* Operator Summary Section */}
           {operatorSummary.length > 0 && (
             <div className="mt-8">
-              <h2 className="text-lg font-semibold text-[#111] mb-4 flex items-center gap-2">
+              <h2 className="text-base sm:text-lg font-semibold text-[#111] mb-4 flex items-center gap-2">
                 <User size={18} strokeWidth={1.5} className="text-[#555]" />
                 Operator Summary
               </h2>
@@ -804,23 +806,24 @@ export function RouteLogistics({
                 >
                   <thead>
                     <tr className="bg-[#f9fafb]">
-                      <th className="border border-[#e5e5e5] px-3 py-2.5 text-left text-sm font-medium text-[#555] min-w-[160px]">
-                        Operator / Metric
+                      <th className="border border-[#e5e5e5] px-2 sm:px-3 py-2.5 text-left text-xs sm:text-sm font-medium text-[#555] min-w-[110px] sm:min-w-[160px] sticky left-0 bg-[#f9fafb] z-10">
+                        Operator
                       </th>
                       {DAYS.map((day) => (
                         <th
                           key={day.key}
-                          className="border border-[#e5e5e5] px-3 py-2.5 text-center text-sm font-medium text-[#555]"
-                          style={{ minWidth: 100 }}
+                          className="border border-[#e5e5e5] px-1 sm:px-3 py-2.5 text-center text-xs sm:text-sm font-medium text-[#555]"
+                          style={{ minWidth: 80 }}
                         >
-                          {day.label}
+                          <span className="hidden sm:inline">{day.label}</span>
+                          <span className="sm:hidden">{day.short}</span>
                         </th>
                       ))}
                       <th
-                        className="border border-[#e5e5e5] px-3 py-2.5 text-center text-sm font-semibold text-[#111]"
-                        style={{ minWidth: 100 }}
+                        className="border border-[#e5e5e5] px-2 sm:px-3 py-2.5 text-center text-xs sm:text-sm font-semibold text-[#111]"
+                        style={{ minWidth: 80 }}
                       >
-                        Weekly Total
+                        Total
                       </th>
                     </tr>
                   </thead>

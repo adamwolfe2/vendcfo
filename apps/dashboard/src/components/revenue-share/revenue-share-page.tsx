@@ -217,7 +217,7 @@ function EditableCell({
         }
       }}
       autoFocus
-      className="w-full rounded border border-[#d0d0d0] bg-white px-1.5 py-0.5 text-xs outline-none focus:border-[#888]"
+      className="w-full rounded border border-[#d0d0d0] bg-white px-1.5 py-1 min-h-[36px] text-xs outline-none focus:border-[#888]"
     />
   );
 }
@@ -327,14 +327,14 @@ function AddLocationModal({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/30">
-      <div className="relative mx-4 w-full max-w-lg rounded-lg border border-[#e0e0e0] bg-white p-6 shadow-lg">
+    <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/30">
+      <div className="relative w-full max-h-[90vh] overflow-y-auto sm:mx-4 sm:max-w-lg rounded-t-xl sm:rounded-lg border border-[#e0e0e0] bg-white p-5 sm:p-6 shadow-lg">
         <div className="mb-5 flex items-center justify-between">
           <h2 className="text-lg font-semibold text-[#111]">Add Location</h2>
           <button
             type="button"
             onClick={onClose}
-            className="rounded p-1 text-[#999] transition-colors hover:text-[#333]"
+            className="rounded p-2 min-h-[44px] min-w-[44px] flex items-center justify-center text-[#999] transition-colors hover:text-[#333]"
           >
             <X size={20} strokeWidth={1.5} />
           </button>
@@ -355,7 +355,7 @@ function AddLocationModal({
             />
           </div>
 
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <label className="mb-1 block text-sm font-medium text-[#333]">Machines</label>
               <input
@@ -380,7 +380,7 @@ function AddLocationModal({
             </div>
           </div>
 
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <label className="mb-1 block text-sm font-medium text-[#333]">Rev Share %</label>
               <input
@@ -407,7 +407,7 @@ function AddLocationModal({
             </div>
           </div>
 
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <label className="mb-1 block text-sm font-medium text-[#333]">Contact Name</label>
               <input
@@ -430,7 +430,7 @@ function AddLocationModal({
             </div>
           </div>
 
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <label className="mb-1 block text-sm font-medium text-[#333]">Payment Method</label>
               <select
@@ -457,18 +457,18 @@ function AddLocationModal({
 
           {error && <p className="text-sm text-red-600">{error}</p>}
 
-          <div className="flex justify-end gap-3 pt-2">
+          <div className="flex flex-col-reverse sm:flex-row justify-end gap-3 pt-2">
             <button
               type="button"
               onClick={onClose}
-              className="rounded-md border border-[#d0d0d0] bg-white px-4 py-2 text-sm font-medium text-[#555] transition-colors hover:bg-[#f5f5f5]"
+              className="rounded-md border border-[#d0d0d0] bg-white px-4 py-2 min-h-[44px] text-sm font-medium text-[#555] transition-colors hover:bg-[#f5f5f5] w-full sm:w-auto"
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={saving || !name.trim()}
-              className="rounded-md bg-[#111] px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-[#333] disabled:opacity-50"
+              className="rounded-md bg-[#111] px-4 py-2 min-h-[44px] text-sm font-medium text-white transition-colors hover:bg-[#333] disabled:opacity-50 w-full sm:w-auto"
             >
               {saving ? "Saving..." : "Add Location"}
             </button>
@@ -572,7 +572,7 @@ function GroupSection({
           className="border-b border-[#e6e6e6] hover:bg-[#fafafa] transition-colors"
         >
           {/* Location — sticky */}
-          <td className="sticky left-0 z-10 bg-white px-3 py-2 text-xs font-bold text-[#111] whitespace-nowrap border-r border-[#e6e6e6] min-w-[180px]">
+          <td className="sticky left-0 z-10 bg-white px-2 sm:px-3 py-2 text-xs font-bold text-[#111] whitespace-nowrap border-r border-[#e6e6e6] min-w-[130px] sm:min-w-[180px]">
             {row.name}
             {savingId === row.id && (
               <span className="ml-2 text-[10px] font-normal text-[#999]">
@@ -704,7 +704,7 @@ function GroupSection({
 
       {/* Summary row */}
       <tr className="bg-[#f5f5f5] border-b-2 border-[#d0d0d0]">
-        <td className="sticky left-0 z-10 bg-[#f5f5f5] px-3 py-2 text-xs font-bold text-[#333] border-r border-[#e6e6e6]">
+        <td className="sticky left-0 z-10 bg-[#f5f5f5] px-2 sm:px-3 py-2 text-xs font-bold text-[#333] border-r border-[#e6e6e6] min-w-[130px] sm:min-w-[180px]">
           {label} Total
         </td>
         <td className="px-3 py-2 text-xs text-right font-bold text-[#111]">{fmt(summary.totalRevenue)}</td>
@@ -784,22 +784,22 @@ export function RevenueSharePage({ teamId }: { teamId: string }) {
   const allRows = useMemo(() => [...groups.current, ...groups.expansion, ...groups.inactive], [groups]);
 
   return (
-    <div className="p-8 w-full">
+    <div className="px-3 py-6 sm:p-8 w-full">
       {/* Header */}
-      <div className="flex items-start justify-between gap-4 mb-6">
+      <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4 mb-6">
         <div>
-          <h1 className="text-2xl font-bold text-[#111]">Revenue Share</h1>
+          <h1 className="text-xl sm:text-2xl font-bold text-[#111]">Revenue Share</h1>
           <p className="mt-1 text-sm text-[#666]">
             Track location partner revenue sharing, payouts, and contact details.
           </p>
         </div>
-        <div className="flex items-center gap-3">
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-3">
           {/* Period selector */}
           <div className="relative">
             <select
               value={period}
               onChange={(e) => setPeriod(e.target.value as PeriodFilter)}
-              className="appearance-none rounded-md border border-[#d0d0d0] bg-white pl-3 pr-8 py-2 text-sm text-[#333] outline-none focus:border-[#888]"
+              className="appearance-none rounded-md border border-[#d0d0d0] bg-white pl-3 pr-8 py-2 min-h-[44px] text-sm text-[#333] outline-none focus:border-[#888] w-full sm:w-auto"
             >
               <option value="month">This Month</option>
               <option value="quarter">This Quarter</option>
@@ -812,26 +812,28 @@ export function RevenueSharePage({ teamId }: { teamId: string }) {
             />
           </div>
 
-          {/* Export */}
-          <button
-            type="button"
-            onClick={() => exportCSV(allRows)}
-            disabled={allRows.length === 0}
-            className="inline-flex items-center gap-1.5 rounded-md border border-[#d0d0d0] bg-white px-3.5 py-2 text-sm font-medium text-[#555] transition-colors hover:bg-[#f5f5f5] disabled:opacity-50"
-          >
-            <Download size={15} strokeWidth={1.5} />
-            Export CSV
-          </button>
+          <div className="flex gap-2">
+            {/* Export */}
+            <button
+              type="button"
+              onClick={() => exportCSV(allRows)}
+              disabled={allRows.length === 0}
+              className="inline-flex items-center justify-center gap-1.5 rounded-md border border-[#d0d0d0] bg-white px-3.5 py-2 min-h-[44px] text-sm font-medium text-[#555] transition-colors hover:bg-[#f5f5f5] disabled:opacity-50 flex-1 sm:flex-initial"
+            >
+              <Download size={15} strokeWidth={1.5} />
+              Export
+            </button>
 
-          {/* Add Location */}
-          <button
-            type="button"
-            onClick={() => setShowAddModal(true)}
-            className="inline-flex items-center gap-1.5 rounded-md bg-[#111] px-3.5 py-2 text-sm font-medium text-white transition-colors hover:bg-[#333]"
-          >
-            <Plus size={15} strokeWidth={1.5} />
-            Add Location
-          </button>
+            {/* Add Location */}
+            <button
+              type="button"
+              onClick={() => setShowAddModal(true)}
+              className="inline-flex items-center justify-center gap-1.5 rounded-md bg-[#111] px-3.5 py-2 min-h-[44px] text-sm font-medium text-white transition-colors hover:bg-[#333] flex-1 sm:flex-initial"
+            >
+              <Plus size={15} strokeWidth={1.5} />
+              Add
+            </button>
+          </div>
         </div>
       </div>
 
@@ -858,7 +860,7 @@ export function RevenueSharePage({ teamId }: { teamId: string }) {
           <table className="w-full border-collapse text-left">
             <thead>
               <tr className="bg-[#f9f9f9] border-b border-[#e0e0e0]">
-                <th className="sticky left-0 z-20 bg-[#f9f9f9] px-3 py-2.5 text-[10px] font-semibold text-[#666] uppercase tracking-wider border-r border-[#e6e6e6] min-w-[180px]">
+                <th className="sticky left-0 z-20 bg-[#f9f9f9] px-2 sm:px-3 py-2.5 text-[10px] font-semibold text-[#666] uppercase tracking-wider border-r border-[#e6e6e6] min-w-[130px] sm:min-w-[180px]">
                   Location
                 </th>
                 <th className="px-3 py-2.5 text-[10px] font-semibold text-[#666] uppercase tracking-wider text-right whitespace-nowrap">

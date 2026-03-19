@@ -165,7 +165,7 @@ export function OnboardingChecklist({ isExpanded }: OnboardingChecklistProps) {
           <button
             type="button"
             onClick={() => setIsCollapsed(!isCollapsed)}
-            className="flex items-center gap-1.5 text-xs font-medium text-[#666] hover:text-[#333] transition-colors"
+            className="flex items-center gap-1.5 text-xs font-medium text-[#666] hover:text-[#333] transition-colors py-1 min-h-[36px]"
           >
             {isCollapsed ? (
               <ChevronUp size={14} />
@@ -181,10 +181,10 @@ export function OnboardingChecklist({ isExpanded }: OnboardingChecklistProps) {
             <button
               type="button"
               onClick={dismiss}
-              className="text-[#aaa] hover:text-[#666] transition-colors"
+              className="text-[#aaa] hover:text-[#666] transition-colors p-1.5 min-h-[32px] min-w-[32px] flex items-center justify-center"
               title="Dismiss checklist"
             >
-              <X size={12} />
+              <X size={14} />
             </button>
           </div>
         </div>
@@ -215,22 +215,22 @@ export function OnboardingChecklist({ isExpanded }: OnboardingChecklistProps) {
                     type="button"
                     onClick={(e) => toggleStep(step.id, e)}
                     className={cn(
-                      "flex-shrink-0 transition-colors",
+                      "flex-shrink-0 transition-colors p-1 min-h-[36px] min-w-[36px] flex items-center justify-center",
                       done
                         ? "text-[#666]"
                         : "text-[#ccc] hover:text-[#888]",
                     )}
                   >
                     {done ? (
-                      <CheckCircle2 size={15} />
+                      <CheckCircle2 size={16} />
                     ) : (
-                      <Circle size={15} />
+                      <Circle size={16} />
                     )}
                   </button>
                   <Link
                     href={step.href}
                     className={cn(
-                      "text-[11px] leading-tight py-1 transition-colors truncate",
+                      "text-[11px] leading-tight py-2 transition-colors truncate min-h-[36px] flex items-center",
                       done
                         ? "text-[#aaa] line-through"
                         : "text-[#666] hover:text-[#333] group-hover/step:text-[#333]",
