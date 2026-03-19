@@ -3,6 +3,24 @@ import { teams, users, usersOnTeam } from "@db/schema";
 import { teamPermissionsCache } from "@vendcfo/cache/team-permissions-cache";
 import { eq, inArray, sql } from "drizzle-orm";
 
+/**
+ * Ensure a public.users record exists for the given auth user.
+ * Uses INSERT ... ON CONFLICT DO NOTHING so it's safe to call multiple times.
+ */
+export const ensureUserExists = async (
+  db: Database,
+  { id, email, fullName }: { id: string; email: string; fullName?: string | null },
+) => {
+  await db
+    .insert(users)
+    .values({
+      id,
+      email,
+      fullName: fullName ?? null,
+    })
+    .onConflictDoNothing({ target: users.id });
+};
+
 export const getUserById = async (db: Database, id: string) => {
   const [result] = await db
     .select({

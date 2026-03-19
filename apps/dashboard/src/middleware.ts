@@ -16,7 +16,6 @@ export async function middleware(request: NextRequest) {
     !process.env.NEXT_PUBLIC_SUPABASE_URL ||
     !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
   ) {
-    console.log("[middleware] Supabase not configured, skipping auth");
     return i18nResponse;
   }
 
@@ -37,8 +36,6 @@ export async function middleware(request: NextRequest) {
 
     const { response, user } = await updateSession(request, i18nResponse);
 
-    console.log(`[middleware] path=${pathname} user=${user?.id ?? "null"} public=${isPublicRoute}`);
-
     // Not authenticated — redirect to login (unless already on a public route)
     if (!user && !isPublicRoute) {
       const loginUrl = new URL("/login", request.url);
@@ -48,7 +45,6 @@ export async function middleware(request: NextRequest) {
         loginUrl.searchParams.append("return_to", cleanPath.substring(1));
       }
 
-      console.log(`[middleware] redirecting to /login (no user)`);
       return NextResponse.redirect(loginUrl);
     }
 

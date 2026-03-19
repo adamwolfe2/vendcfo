@@ -4,6 +4,7 @@ import { createTRPCRouter, protectedProcedure } from "@api/trpc/init";
 import { withRetryOnPrimary } from "@api/utils/db-retry";
 import {
   deleteUser,
+  ensureUserExists,
   getUserById,
   getUserInvites,
   updateUser,
@@ -14,9 +15,19 @@ export const userRouter = createTRPCRouter({
   me: protectedProcedure.query(async ({ ctx: { db, session } }) => {
     // Cookie-based approach handles replication lag for new users via x-force-primary header
     // Retry logic still handles connection errors/timeouts
-    const result = await withRetryOnPrimary(db, async (dbInstance) =>
+    let result = await withRetryOnPrimary(db, async (dbInstance) =>
       getUserById(dbInstance, session.user.id),
     );
+
+    // Belt-and-suspenders: if user record is missing, create it and retry
+    if (!result && session.user.email) {
+      await ensureUserExists(db, {
+        id: session.user.id,
+        email: session.user.email,
+        fullName: session.user.user_metadata?.full_name ?? null,
+      });
+      result = await getUserById(db, session.user.id);
+    }
 
     if (!result) {
       return undefined;

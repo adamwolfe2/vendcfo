@@ -21,19 +21,9 @@ const primaryPool = new Pool({
   ...connectionConfig,
 });
 
-const fraPool = new Pool({
-  connectionString: process.env.DATABASE_FRA_URL!,
-  ...connectionConfig,
-});
-
-const sjcPool = new Pool({
-  connectionString: process.env.DATABASE_SJC_URL!,
-  ...connectionConfig,
-});
-
-const iadPool = new Pool({
-  connectionString: process.env.DATABASE_IAD_URL!,
-  ...connectionConfig,
+export const primaryDb = drizzle(primaryPool, {
+  schema,
+  casing: "snake_case",
 });
 
 const hasReplicas = Boolean(
@@ -42,46 +32,57 @@ const hasReplicas = Boolean(
     process.env.DATABASE_IAD_URL,
 );
 
-export const primaryDb = drizzle(primaryPool, {
-  schema,
-  casing: "snake_case",
-});
-
-const getReplicaIndexForRegion = () => {
-  switch (process.env.FLY_REGION) {
-    case "fra":
-      return 0;
-    case "iad":
-      return 1;
-    case "sjc":
-      return 2;
-    default:
-      return 0;
+function createDb() {
+  if (!hasReplicas) {
+    // No replicas — return primaryDb with $primary compat property
+    return Object.assign(primaryDb, {
+      $primary: primaryDb,
+      usePrimaryOnly: () => primaryDb,
+    });
   }
-};
 
-// Create the database instance once and export it
-const replicaIndex = getReplicaIndexForRegion();
+  const fraPool = new Pool({
+    connectionString: process.env.DATABASE_FRA_URL!,
+    ...connectionConfig,
+  });
 
-export const db = withReplicas(
-  primaryDb,
-  [
-    // Order of replicas is important
-    drizzle(fraPool, {
-      schema,
-      casing: "snake_case",
-    }),
-    drizzle(iadPool, {
-      schema,
-      casing: "snake_case",
-    }),
-    drizzle(sjcPool, {
-      schema,
-      casing: "snake_case",
-    }),
-  ],
-  (replicas) => replicas[replicaIndex]!,
-);
+  const sjcPool = new Pool({
+    connectionString: process.env.DATABASE_SJC_URL!,
+    ...connectionConfig,
+  });
+
+  const iadPool = new Pool({
+    connectionString: process.env.DATABASE_IAD_URL!,
+    ...connectionConfig,
+  });
+
+  const getReplicaIndexForRegion = () => {
+    switch (process.env.FLY_REGION) {
+      case "fra":
+        return 0;
+      case "iad":
+        return 1;
+      case "sjc":
+        return 2;
+      default:
+        return 0;
+    }
+  };
+
+  const replicaIndex = getReplicaIndexForRegion();
+
+  return withReplicas(
+    primaryDb,
+    [
+      drizzle(fraPool, { schema, casing: "snake_case" }),
+      drizzle(iadPool, { schema, casing: "snake_case" }),
+      drizzle(sjcPool, { schema, casing: "snake_case" }),
+    ],
+    (replicas) => replicas[replicaIndex]!,
+  );
+}
+
+export const db = createDb();
 
 // Keep connectDb for backward compatibility, but just return the singleton
 export const connectDb = async () => {

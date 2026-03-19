@@ -1,6 +1,8 @@
 import { Cookies } from "@/utils/constants";
 import { LogEvents } from "@vendcfo/events/events";
 import { setupAnalytics } from "@vendcfo/events/server";
+import { db } from "@vendcfo/db/client";
+import { ensureUserExists } from "@vendcfo/db/queries";
 import { getSession } from "@vendcfo/supabase/cached-queries";
 import { createClient } from "@vendcfo/supabase/server";
 import { addSeconds, addYears } from "date-fns";
@@ -36,6 +38,13 @@ export async function GET(req: NextRequest) {
 
     if (session) {
       const userId = session.user.id;
+
+      // Ensure public.users record exists (safe to call on every login)
+      await ensureUserExists(db, {
+        id: userId,
+        email: session.user.email!,
+        fullName: session.user.user_metadata?.full_name ?? null,
+      });
 
       // Set cookie to force primary database reads for new users (10 seconds)
       // This prevents replication lag issues when user record hasn't replicated yet

@@ -33,15 +33,6 @@ export default async function Page() {
               <OTPSignIn />
             </div>
 
-            {/* Demo Mode */}
-            <div className="text-center">
-              <Link
-                href="/api/auth/demo"
-                className="text-sm text-[#878787] hover:text-foreground transition-colors underline"
-              >
-                See Demo
-              </Link>
-            </div>
           </div>
 
           {/* Terms and Privacy Policy - Bottom aligned */}

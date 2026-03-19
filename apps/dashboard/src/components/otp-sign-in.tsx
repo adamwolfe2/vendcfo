@@ -83,8 +83,18 @@ export function OTPSignIn({ className }: Props) {
     setAuthError(undefined);
     const returnTo = searchParams.get("return_to") || "";
 
-    // Give @supabase/ssr time to write the Set-Cookie headers
-    await new Promise((resolve) => setTimeout(resolve, 500));
+    // Poll for the sb- cookie (max 3s, 200ms intervals) instead of fixed delay
+    await new Promise<void>((resolve) => {
+      let elapsed = 0;
+      const interval = setInterval(() => {
+        elapsed += 200;
+        const hasCookie = document.cookie.split(";").some((c) => c.trim().startsWith("sb-"));
+        if (hasCookie || elapsed >= 3000) {
+          clearInterval(interval);
+          resolve();
+        }
+      }, 200);
+    });
 
     // Hard navigation — forces full page load where middleware reads cookies
     window.location.href = `/${returnTo}`;
