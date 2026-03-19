@@ -12,21 +12,34 @@ import {
 import { generateFileKey } from "@vendcfo/encryption";
 
 export const userRouter = createTRPCRouter({
-  me: protectedProcedure.query(async ({ ctx: { db, session } }) => {
-    // Cookie-based approach handles replication lag for new users via x-force-primary header
-    // Retry logic still handles connection errors/timeouts
+  me: protectedProcedure.query(async ({ ctx: { db, supabase, session } }) => {
     let result = await withRetryOnPrimary(db, async (dbInstance) =>
       getUserById(dbInstance, session.user.id),
     );
 
-    // Belt-and-suspenders: if user record is missing, create it and retry
-    if (!result && session.user.email) {
-      await ensureUserExists(db, {
-        id: session.user.id,
-        email: session.user.email,
-        fullName: session.user.user_metadata?.full_name ?? null,
-      });
-      result = await getUserById(db, session.user.id);
+    // Belt-and-suspenders: if user record is missing, create it and retry.
+    // For OTP logins the auth callback is never hit, so this is the primary
+    // path that creates the public.users row.
+    if (!result) {
+      // session.user.email comes from verifyAccessToken (JWT top-level email claim).
+      // If somehow still missing, fall back to Supabase getUser().
+      let email = session.user.email;
+      let fullName = session.user.full_name ?? null;
+
+      if (!email) {
+        const { data } = await supabase.auth.getUser();
+        email = data.user?.email ?? undefined;
+        fullName = data.user?.user_metadata?.full_name ?? fullName;
+      }
+
+      if (email) {
+        await ensureUserExists(db, {
+          id: session.user.id,
+          email,
+          fullName,
+        });
+        result = await getUserById(db, session.user.id);
+      }
     }
 
     if (!result) {
