@@ -25,6 +25,7 @@ export default async function Layout({
   try {
     const caller = await getServerCaller();
     user = await caller.user.me();
+    console.log("[sidebar/layout] user.me result:", user ? { id: user.id, teamId: user.teamId, fullName: user.fullName } : "null");
 
     if (user) {
       queryClient.setQueryData(

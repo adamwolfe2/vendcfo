@@ -45,7 +45,29 @@ const getServerCaller = cache(async () => {
   const { db } = await import("@vendcfo/db/client");
 
   const accessToken = await getAccessToken();
-  const session = await verifyAccessToken(accessToken);
+  let session = await verifyAccessToken(accessToken);
+
+  // Fallback: if JWT verification failed (e.g. SUPABASE_JWT_SECRET missing/wrong),
+  // build the session from supabase.auth.getUser() which uses the cookie directly.
+  // This prevents the middleware passing auth but the TRPC layer rejecting it.
+  if (!session && accessToken) {
+    try {
+      const supabaseForAuth = await createClient();
+      const { data: { user } } = await supabaseForAuth.auth.getUser();
+      if (user) {
+        session = {
+          user: {
+            id: user.id,
+            email: user.email,
+            full_name: user.user_metadata?.full_name,
+          },
+        };
+      }
+    } catch {
+      // getUser failed too — session truly invalid
+    }
+  }
+
   const supabase = await createApiSupabase(accessToken);
 
   const createCaller = createCallerFactory(appRouter);
