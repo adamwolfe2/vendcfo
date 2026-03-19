@@ -27,7 +27,7 @@ export function LoginAccordion({ children }: Props) {
           <button
             type="button"
             onClick={() => setIsOpen(!isOpen)}
-            className="w-full bg-[#0e0e0e] dark:bg-[#131313] border border-[#0e0e0e] dark:border-border text-white dark:text-foreground font-sans text-sm py-3 px-4 hover:bg-[#1a1a1a] dark:hover:bg-border/50 transition-colors"
+            className="w-full bg-[#0e0e0e] border border-[#0e0e0e] text-white font-sans text-sm py-3 px-4 hover:bg-[#1a1a1a] transition-colors"
           >
             {isOpen ? "Hide other options" : "Show other options"}
           </button>

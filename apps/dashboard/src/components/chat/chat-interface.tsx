@@ -168,7 +168,7 @@ export function ChatInterface({ geo }: Props) {
                   showCanvas ? "right-0 md:right-[600px]" : "right-0",
                 )}
               >
-                <div className="bg-background/80 dark:bg-background/50 backdrop-blur-sm pt-6">
+                <div className="bg-background/80 backdrop-blur-sm pt-6">
                   <ChatHeader />
                 </div>
               </div>

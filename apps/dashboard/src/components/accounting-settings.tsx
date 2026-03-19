@@ -119,7 +119,7 @@ export function AccountingSettings() {
                   </div>
                 </div>
                 <div className="flex items-center gap-2">
-                  <div className="text-green-600 bg-green-100 text-[10px] dark:bg-green-900 dark:text-green-300 px-3 py-1 rounded-full font-mono">
+                  <div className="text-green-600 bg-green-100 text-[10px] px-3 py-1 rounded-full font-mono">
                     Connected
                   </div>
                 </div>

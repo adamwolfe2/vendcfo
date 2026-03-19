@@ -33,7 +33,7 @@ export function BaseWidget({
   return (
     <div
       className={cn(
-        "dark:bg-[#0c0c0c] border dark:border-[#1d1d1d] p-4 h-[210px] flex flex-col justify-between transition-all duration-300 dark:hover:bg-[#0f0f0f] dark:hover:border-[#222222] group",
+        "border p-4 h-[210px] flex flex-col justify-between transition-all duration-300 group",
         !isCustomizing && "cursor-pointer",
       )}
       {...longPressHandlers}

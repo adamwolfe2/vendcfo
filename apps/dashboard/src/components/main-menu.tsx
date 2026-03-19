@@ -103,7 +103,7 @@ const ChildItem = ({
         <div
           className={cn(
             "ml-[35px] mr-[15px] h-[32px] flex items-center",
-            "border-l border-[#e6e6e6] dark:border-[#1d1d1d] pl-3",
+            "border-l border-[#e6e6e6] pl-3",
             "transition-all duration-200 ease-out",
             showChild
               ? "opacity-100 translate-x-0"
@@ -166,14 +166,14 @@ const Item = ({
             className={cn(
               "border border-transparent h-[40px] transition-all duration-200 ease-[cubic-bezier(0.4,0,0.2,1)] ml-[15px] mr-[15px]",
               isActive &&
-                "bg-[#f7f7f7] dark:bg-[#131313] border-[#e6e6e6] dark:border-[#1d1d1d]",
+                "bg-[#f7f7f7] border-[#e6e6e6]",
               isExpanded ? "w-[calc(100%-30px)]" : "w-[40px]",
             )}
           />
 
           {/* Icon - always in same position from sidebar edge */}
-          <div className="absolute top-0 left-[15px] w-[40px] h-[40px] flex items-center justify-center dark:text-[#666666] text-black group-hover:!text-primary pointer-events-none">
-            <div className={cn(isActive && "dark:!text-white")}>
+          <div className="absolute top-0 left-[15px] w-[40px] h-[40px] flex items-center justify-center text-black group-hover:!text-primary pointer-events-none">
+            <div>
               <Icon />
             </div>
           </div>

@@ -262,8 +262,8 @@ export function AudioPlayer() {
           <div
             className={cn(
               "px-3 py-2 flex items-center gap-3",
-              "border border-[#e6e6e6] dark:border-[#1d1d1d]",
-              "bg-[rgba(247,247,247,0.95)] dark:bg-[rgba(19,19,19,0.95)]",
+              "border border-[#e6e6e6]",
+              "bg-[rgba(247,247,247,0.95)]",
               "backdrop-blur-lg",
             )}
           >
@@ -274,7 +274,7 @@ export function AudioPlayer() {
               disabled={!audioUrl || isLoading}
               className={cn(
                 "flex items-center justify-center w-8 h-8 transition-colors duration-200",
-                "hover:bg-[rgba(0,0,0,0.05)] dark:hover:bg-[rgba(255,255,255,0.05)]",
+                "hover:bg-[rgba(0,0,0,0.05)] ",
                 (!audioUrl || isLoading) && "opacity-50 cursor-not-allowed",
               )}
               aria-label={
@@ -322,7 +322,7 @@ export function AudioPlayer() {
               onClick={handleClose}
               className={cn(
                 "flex items-center justify-center w-6 h-6 transition-colors duration-200",
-                "hover:bg-[rgba(0,0,0,0.05)] dark:hover:bg-[rgba(255,255,255,0.05)]",
+                "hover:bg-[rgba(0,0,0,0.05)] ",
               )}
               aria-label="Close audio player"
             >

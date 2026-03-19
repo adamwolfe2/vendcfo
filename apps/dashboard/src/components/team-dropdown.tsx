@@ -171,7 +171,7 @@ export function TeamDropdown({ isExpanded = false }: Props) {
                       <Tooltip>
                         <TooltipTrigger asChild>
                           <Avatar
-                            className="w-[32px] h-[32px] rounded-none border border-[#DCDAD2] dark:border-[#2C2C2C] cursor-pointer"
+                            className="w-[32px] h-[32px] rounded-none border border-[#DCDAD2]  cursor-pointer"
                             onClick={() => {
                               if (index === 0) {
                                 toggleActive();
@@ -205,7 +205,7 @@ export function TeamDropdown({ isExpanded = false }: Props) {
                       </Tooltip>
                     ) : (
                       <Avatar
-                        className="w-[32px] h-[32px] rounded-none border border-[#DCDAD2] dark:border-[#2C2C2C] cursor-pointer"
+                        className="w-[32px] h-[32px] rounded-none border border-[#DCDAD2]  cursor-pointer"
                         onClick={() => {
                           if (index === 0) {
                             toggleActive();

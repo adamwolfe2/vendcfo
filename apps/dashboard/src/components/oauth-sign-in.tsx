@@ -32,8 +32,8 @@ export function OAuthSignIn({ provider, showLastUsed = false }: Props) {
         className={cn(
           "w-full font-sans text-sm h-[40px] px-6 py-4 transition-colors disabled:opacity-50",
           isPrimary
-            ? "bg-[#0e0e0e] dark:bg-white/90 border border-[#0e0e0e] dark:border-white text-white dark:text-[#0e0e0e] font-medium hover:bg-[#1a1a1a] dark:hover:bg-white"
-            : "bg-transparent border border-[#0e0e0e] dark:border-border text-[#0e0e0e] dark:text-foreground hover:bg-[#0e0e0e]/5 dark:hover:bg-border/10",
+            ? "bg-[#0e0e0e] border border-[#0e0e0e] text-white font-medium hover:bg-[#1a1a1a]"
+            : "bg-transparent border border-[#0e0e0e] text-[#0e0e0e] hover:bg-[#0e0e0e]/5",
         )}
       >
         <div className="flex items-center justify-center gap-2">

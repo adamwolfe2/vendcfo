@@ -88,7 +88,7 @@ export function CommandMenu() {
     >
       <AnimatedSizeContainer
         height
-        className="bg-[#f7f7f7]/85 dark:bg-[#171717]/85 backdrop-blur-lg max-h-80 overflow-y-auto"
+        className="bg-[#f7f7f7]/85 backdrop-blur-lg max-h-80 overflow-y-auto"
         transition={{
           type: "spring",
           duration: 0.2,
@@ -108,8 +108,8 @@ export function CommandMenu() {
                 className={cn(
                   "px-2 py-2 text-sm cursor-pointer transition-colors flex items-center justify-between group",
                   isActive
-                    ? "bg-black/5 dark:bg-white/5"
-                    : "hover:bg-black/5 dark:hover:bg-white/5",
+                    ? "bg-black/5"
+                    : "hover:bg-black/5",
                 )}
                 onMouseDown={(e) => {
                   // Prevent input from losing focus when clicking on command
@@ -122,7 +122,7 @@ export function CommandMenu() {
                   <span className="text-[#666] ml-2">{command.title}</span>
                 </div>
                 {isActive && (
-                  <span className="material-icons-outlined text-sm opacity-50 group-hover:opacity-100 text-gray-600 dark:text-gray-400 group-hover:text-black dark:group-hover:text-white">
+                  <span className="material-icons-outlined text-sm opacity-50 group-hover:opacity-100 text-gray-600 group-hover:text-black">
                     <Icons.ArrowForward />
                   </span>
                 )}

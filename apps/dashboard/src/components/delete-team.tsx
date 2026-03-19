@@ -87,14 +87,14 @@ export function DeleteTeam() {
                   </p>
 
                   {hasPaidPlan && (
-                    <div className="my-4 px-3 py-3 bg-amber-50 border border-amber-200 dark:bg-amber-900/10 dark:border-amber-800/30">
+                    <div className="my-4 px-3 py-3 bg-amber-50 border border-amber-200">
                       <div className="flex items-start gap-2">
-                        <AlertTriangle className="size-4 text-amber-600 dark:text-amber-400 flex-shrink-0 mt-0.5" />
+                        <AlertTriangle className="size-4 text-amber-600 flex-shrink-0 mt-0.5" />
                         <div className="text-sm">
-                          <p className="font-medium text-amber-700 dark:text-amber-300 mb-1">
+                          <p className="font-medium text-amber-700 mb-1">
                             You have an active subscription
                           </p>
-                          <p className="text-amber-700 dark:text-amber-300 mb-2">
+                          <p className="text-amber-700 mb-2">
                             Cancel your subscription first to avoid further
                             charges.
                           </p>
@@ -102,7 +102,7 @@ export function DeleteTeam() {
                             type="button"
                             onClick={() => getPortalUrlMutation.mutate()}
                             disabled={getPortalUrlMutation.isPending}
-                            className="inline-flex items-center gap-1 text-amber-700 dark:text-amber-300 underline underline-offset-2 hover:text-amber-800 dark:hover:text-amber-200"
+                            className="inline-flex items-center gap-1 text-amber-700 underline underline-offset-2 hover:text-amber-800"
                           >
                             {getPortalUrlMutation.isPending ? (
                               <Loader2 className="size-3 animate-spin" />

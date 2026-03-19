@@ -88,8 +88,8 @@ export function ChatHistoryButton() {
       className={cn(
         "flex items-center h-6 cursor-pointer transition-colors duration-200",
         isOpen
-          ? "bg-[rgba(0,0,0,0.05)] hover:bg-[rgba(0,0,0,0.08)] dark:bg-[rgba(255,255,255,0.05)] dark:hover:bg-[rgba(255,255,255,0.08)] rounded-full"
-          : "hover:bg-[rgba(0,0,0,0.05)] dark:hover:bg-[rgba(255,255,255,0.05)]",
+          ? "bg-[rgba(0,0,0,0.05)] hover:bg-[rgba(0,0,0,0.08)] rounded-full"
+          : "hover:bg-[rgba(0,0,0,0.05)]",
       )}
     >
       <span className="w-6 h-6 flex items-center justify-center">
@@ -98,8 +98,8 @@ export function ChatHistoryButton() {
           className={cn(
             "transition-colors",
             isOpen
-              ? "text-black dark:text-white"
-              : "text-[#707070] hover:text-[#999999] dark:text-[#666666] dark:hover:text-[#999999]",
+              ? "text-black"
+              : "text-[#707070] hover:text-[#999999]",
           )}
         />
       </span>
@@ -279,7 +279,7 @@ export function ChatHistoryDropdown() {
     >
       <AnimatedSizeContainer
         height
-        className="bg-[#f7f7f7]/85 dark:bg-[#171717]/85 backdrop-blur-lg max-h-80 flex flex-col overflow-hidden"
+        className="bg-[#f7f7f7]/85 backdrop-blur-lg max-h-80 flex flex-col overflow-hidden"
         transition={{
           type: "spring",
           duration: 0.2,
@@ -290,7 +290,7 @@ export function ChatHistoryDropdown() {
           transformOrigin: "bottom center",
         }}
       >
-        <div className="p-2 pb-2 flex-shrink-0 sticky top-0 bg-[#f7f7f7]/85 dark:bg-[#171717]/85 backdrop-blur-lg z-10">
+        <div className="p-2 pb-2 flex-shrink-0 sticky top-0 bg-[#f7f7f7]/85 backdrop-blur-lg z-10">
           <div className="relative">
             <Icons.Search
               className="absolute left-2 top-1/2 transform -translate-y-1/2 text-muted-foreground"
@@ -299,7 +299,7 @@ export function ChatHistoryDropdown() {
             <Input
               ref={searchInputRef}
               placeholder="Search history"
-              className="pl-8 bg-black/5 dark:bg-white/5 border-0 focus-visible:ring-0 focus-visible:ring-offset-0 h-8 text-sm"
+              className="pl-8 bg-black/5 border-0 focus-visible:ring-0 focus-visible:ring-offset-0 h-8 text-sm"
               onChange={(e) => {
                 debouncedSearch(e.target.value);
                 setSelectedIndex(-1);
@@ -332,8 +332,8 @@ export function ChatHistoryDropdown() {
                       className={cn(
                         "group relative flex items-center justify-between px-2 py-2 text-sm cursor-pointer transition-colors h-[32px]",
                         isSelected
-                          ? "bg-black/5 dark:bg-white/5"
-                          : "hover:bg-black/5 dark:hover:bg-white/5",
+                          ? "bg-black/5"
+                          : "hover:bg-black/5",
                       )}
                       onMouseDown={(e) => {
                         // Prevent input from losing focus when clicking on chat
@@ -343,12 +343,12 @@ export function ChatHistoryDropdown() {
                       onMouseEnter={() => setSelectedIndex(index)}
                     >
                       <div className="flex-1 min-w-0">
-                        <span className="text-[#666] dark:text-[#999] line-clamp-1 ml-2">
+                        <span className="text-[#666] line-clamp-1 ml-2">
                           {chat.title || "New chat"}
                         </span>
                       </div>
                       <div className="flex items-center gap-2 ml-2 flex-shrink-0 min-w-0">
-                        <span className="text-xs text-[#666] dark:text-[#999] whitespace-nowrap transition-all duration-200 group-hover:mr-1">
+                        <span className="text-xs text-[#666] whitespace-nowrap transition-all duration-200 group-hover:mr-1">
                           {formatDistanceToNow(chat.updatedAt, {
                             addSuffix: true,
                           })}

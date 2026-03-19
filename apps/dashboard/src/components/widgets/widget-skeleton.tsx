@@ -36,7 +36,7 @@ export function WidgetSkeleton({
   return (
     <div
       className={cn(
-        "dark:bg-[#0c0c0c] border dark:border-[#1d1d1d] p-4 h-[210px] flex flex-col justify-between",
+        "border p-4 h-[210px] flex flex-col justify-between",
         className,
       )}
     >
