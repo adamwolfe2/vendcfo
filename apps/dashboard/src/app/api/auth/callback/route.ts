@@ -84,7 +84,22 @@ export async function GET(req: NextRequest) {
   }
 
   if (returnTo) {
-    return NextResponse.redirect(`${requestUrl.origin}/${returnTo}`);
+    // Prevent open redirect: strip leading slashes, protocol-relative URLs, and
+    // ensure the path doesn't contain protocol schemes
+    const sanitized = returnTo
+      .replace(/^[/\\]+/, "")
+      .replace(/^https?:\/\//i, "")
+      .replace(/^[a-z]+:/i, "");
+
+    // Only allow simple relative paths (no backslashes, no protocol, no double dots escaping origin)
+    if (
+      sanitized &&
+      !sanitized.includes("\\") &&
+      !sanitized.includes("://") &&
+      !sanitized.startsWith(".")
+    ) {
+      return NextResponse.redirect(`${requestUrl.origin}/${sanitized}`);
+    }
   }
 
   return NextResponse.redirect(requestUrl.origin);

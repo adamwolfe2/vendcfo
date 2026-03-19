@@ -56,7 +56,7 @@ function transformAccountBalance(
   };
 }
 
-export async function GET(req: NextRequest) {
+export async function POST(req: NextRequest) {
   try {
     const {
       data: { session },
@@ -66,9 +66,11 @@ export async function GET(req: NextRequest) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const { searchParams } = new URL(req.url);
-    const accessToken = searchParams.get("accessToken");
-    const institutionId = searchParams.get("institutionId");
+    const body = await req.json().catch(() => ({}));
+    const { accessToken, institutionId } = body as {
+      accessToken?: string;
+      institutionId?: string;
+    };
 
     if (!accessToken || !institutionId) {
       return NextResponse.json(
