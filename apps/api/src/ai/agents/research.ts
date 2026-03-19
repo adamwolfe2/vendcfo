@@ -1,10 +1,10 @@
-import { openai } from "@ai-sdk/openai";
 import {
   type AppContext,
   COMMON_AGENT_RULES,
   createAgent,
   formatContextForLLM,
 } from "@api/ai/agents/config/shared";
+import { getAnalysisModel } from "@api/ai/models";
 import { getAccountBalancesTool } from "@api/ai/tools/get-account-balances";
 import { getBusinessHealthScoreTool } from "@api/ai/tools/get-business-health-score";
 import { getCashFlowTool } from "@api/ai/tools/get-cash-flow";
@@ -16,7 +16,7 @@ import { reportsAgent } from "./reports";
 
 export const researchAgent = createAgent({
   name: "research",
-  model: openai("gpt-4o"),
+  model: getAnalysisModel(),
   temperature: 0.7,
   instructions: (
     ctx: AppContext,

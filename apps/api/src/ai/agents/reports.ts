@@ -1,9 +1,9 @@
-import { openai } from "@ai-sdk/openai";
 import {
   COMMON_AGENT_RULES,
   createAgent,
   formatContextForLLM,
 } from "@api/ai/agents/config/shared";
+import { getReportsModel } from "@api/ai/models";
 import { getBalanceSheetTool } from "@api/ai/tools/get-balance-sheet";
 import { getBurnRateTool } from "@api/ai/tools/get-burn-rate";
 import { getBusinessHealthScoreTool } from "@api/ai/tools/get-business-health-score";
@@ -22,7 +22,7 @@ import { getTaxSummaryTool } from "@api/ai/tools/get-tax-summary";
 
 export const reportsAgent = createAgent({
   name: "reports",
-  model: openai("gpt-4o-mini"),
+  model: getReportsModel(),
   temperature: 0.3,
   instructions: (
     ctx,

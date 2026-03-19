@@ -1,14 +1,14 @@
-import { openai } from "@ai-sdk/openai";
 import {
   COMMON_AGENT_RULES,
   createAgent,
   formatContextForLLM,
 } from "@api/ai/agents/config/shared";
+import { getAnalysisModel } from "@api/ai/models";
 import { getInvoicesTool } from "@api/ai/tools/get-invoices";
 
 export const invoicesAgent = createAgent({
   name: "invoices",
-  model: openai("gpt-4o-mini"),
+  model: getAnalysisModel(),
   temperature: 0.3,
   instructions: (
     ctx,
