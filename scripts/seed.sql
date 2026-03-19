@@ -12,13 +12,13 @@ DECLARE
 BEGIN
 
 -- ─── BANK ACCOUNTS ──────────────────────────────────────────────────────────
-INSERT INTO bank_accounts (id, created_by, v_team_id, name, currency, enabled, account_id, balance, manual, type, base_currency) VALUES
+INSERT INTO bank_accounts (id, created_by, team_id, name, currency, enabled, account_id, balance, manual, type, base_currency) VALUES
   ('aa000001-0000-0000-0000-000000000001', v_user_id, v_team_id, 'AIMS Business Checking', 'USD', true, 'manual-checking-001', 47250.00, true, 'depository', 'USD'),
   ('aa000001-0000-0000-0000-000000000002', v_user_id, v_team_id, 'AIMS Business Savings', 'USD', true, 'manual-savings-001', 125000.00, true, 'depository', 'USD'),
   ('aa000001-0000-0000-0000-000000000003', v_user_id, v_team_id, 'AIMS Business Credit Card', 'USD', true, 'manual-credit-001', -3200.00, true, 'credit', 'USD');
 
 -- ─── CUSTOMERS (Location Contacts / Vendors) ───────────────────────────────
-INSERT INTO customers (id, name, email, country, address_line_1, city, state, zip, v_team_id, phone, status, token, country_code, industry) VALUES
+INSERT INTO customers (id, name, email, country, address_line_1, city, state, zip, team_id, phone, status, token, country_code, industry) VALUES
   ('c1000001-0000-0000-0000-000000000001', 'Metro Office Park LLC', 'billing@metroofficepk.com', 'US', '1200 Commerce Blvd', 'Austin', 'TX', '78701', v_team_id, '512-555-0101', 'active', '', 'US', 'Real Estate'),
   ('c1000001-0000-0000-0000-000000000002', 'Riverside Corporate Center', 'accounts@riversidecc.com', 'US', '800 River Walk Dr', 'San Antonio', 'TX', '78205', v_team_id, '210-555-0202', 'active', '', 'US', 'Real Estate'),
   ('c1000001-0000-0000-0000-000000000003', 'Lone Star University', 'procurement@lonestaruni.edu', 'US', '500 University Ave', 'Dallas', 'TX', '75201', v_team_id, '214-555-0303', 'active', '', 'US', 'Education'),
@@ -86,7 +86,7 @@ INSERT INTO skus (id, business_id, name, category, unit_cost, retail_price, targ
   ('e1000001-0000-0000-0000-000000000012', v_team_id, 'Gatorade Fruit Punch 20oz', 'soda', 0.95, 2.25, 57.8, '052000328981', 'PepsiCo Bottling');
 
 -- ─── TRANSACTION CATEGORIES ─────────────────────────────────────────────────
-INSERT INTO transaction_categories (id, name, v_team_id, slug, system, color) VALUES
+INSERT INTO transaction_categories (id, name, team_id, slug, system, color) VALUES
   ('00000001-0000-0000-0000-000000000001', 'Vending Revenue', v_team_id, 'vending-revenue', false, '#22c55e'),
   ('00000001-0000-0000-0000-000000000002', 'Inventory Purchase', v_team_id, 'inventory-purchase', false, '#ef4444'),
   ('00000001-0000-0000-0000-000000000003', 'Equipment Purchase', v_team_id, 'equipment-purchase', false, '#f97316'),
@@ -99,7 +99,7 @@ ON CONFLICT DO NOTHING;
 
 -- ─── TRANSACTIONS (5 years: 2021-2025) ─────────────────────────────────────
 -- Generate monthly revenue deposits + expense transactions
-INSERT INTO transactions (id, date, name, method, amount, currency, v_team_id, internal_id, status, manual, category_slug, bank_account_id, description)
+INSERT INTO transactions (id, date, name, method, amount, currency, team_id, internal_id, status, manual, category_slug, bank_account_id, description)
 SELECT
   gen_random_uuid(),
   d::date,
@@ -118,7 +118,7 @@ SELECT
 FROM generate_series('2021-01-15'::date, '2025-12-15'::date, '1 month') AS d;
 
 -- Monthly COGS (inventory purchases ~45% of revenue)
-INSERT INTO transactions (id, date, name, method, amount, currency, v_team_id, internal_id, status, manual, category_slug, bank_account_id, description)
+INSERT INTO transactions (id, date, name, method, amount, currency, team_id, internal_id, status, manual, category_slug, bank_account_id, description)
 SELECT
   gen_random_uuid(),
   (d + interval '5 days')::date,
@@ -136,7 +136,7 @@ SELECT
 FROM generate_series('2021-01-20'::date, '2025-12-20'::date, '1 month') AS d;
 
 -- Monthly vehicle expenses
-INSERT INTO transactions (id, date, name, method, amount, currency, v_team_id, internal_id, status, manual, category_slug, bank_account_id, description)
+INSERT INTO transactions (id, date, name, method, amount, currency, team_id, internal_id, status, manual, category_slug, bank_account_id, description)
 SELECT
   gen_random_uuid(),
   (d + interval '10 days')::date,
@@ -154,7 +154,7 @@ SELECT
 FROM generate_series('2021-01-10'::date, '2025-12-10'::date, '1 month') AS d;
 
 -- Quarterly location rent payments
-INSERT INTO transactions (id, date, name, method, amount, currency, v_team_id, internal_id, status, manual, category_slug, bank_account_id, description)
+INSERT INTO transactions (id, date, name, method, amount, currency, team_id, internal_id, status, manual, category_slug, bank_account_id, description)
 SELECT
   gen_random_uuid(),
   d::date,
@@ -172,7 +172,7 @@ SELECT
 FROM generate_series('2021-03-01'::date, '2025-12-01'::date, '3 months') AS d;
 
 -- Quarterly insurance
-INSERT INTO transactions (id, date, name, method, amount, currency, v_team_id, internal_id, status, manual, category_slug, bank_account_id, description)
+INSERT INTO transactions (id, date, name, method, amount, currency, team_id, internal_id, status, manual, category_slug, bank_account_id, description)
 SELECT
   gen_random_uuid(),
   (d + interval '15 days')::date,
@@ -190,7 +190,7 @@ SELECT
 FROM generate_series('2021-01-15'::date, '2025-12-15'::date, '3 months') AS d;
 
 -- Random repair expenses (2-4 per year)
-INSERT INTO transactions (id, date, name, method, amount, currency, v_team_id, internal_id, status, manual, category_slug, bank_account_id, description)
+INSERT INTO transactions (id, date, name, method, amount, currency, team_id, internal_id, status, manual, category_slug, bank_account_id, description)
 SELECT
   gen_random_uuid(),
   d::date,
@@ -213,7 +213,7 @@ SELECT
 FROM generate_series('2021-03-01'::date, '2025-11-01'::date, '4 months') AS d;
 
 -- ─── INVOICES (monthly location service invoices) ───────────────────────────
-INSERT INTO invoices (id, invoice_number, customer_id, amount, currency, v_team_id, status, token, issue_date, due_date, paid_at, customer_name, line_items)
+INSERT INTO invoices (id, invoice_number, customer_id, amount, currency, team_id, status, token, issue_date, due_date, paid_at, customer_name, line_items)
 SELECT
   gen_random_uuid(),
   'INV-' || to_char(d, 'YYYY') || '-' || lpad(row_number() OVER ()::text, 4, '0'),
@@ -249,7 +249,7 @@ CROSS JOIN (
 ) cust;
 
 -- ─── SERVICE LOGS ───────────────────────────────────────────────────────────
-INSERT INTO service_logs (id, business_id, machine_id, v_user_id, service_date, notes, revenue_collected, inventory_value_added)
+INSERT INTO service_logs (id, business_id, machine_id, user_id, service_date, notes, revenue_collected, inventory_value_added)
 SELECT
   gen_random_uuid(),
   team_id,
