@@ -104,7 +104,12 @@ export function useAppOAuth({
         throw new Error("Not authenticated");
       }
 
-      const apiUrl = process.env.NEXT_PUBLIC_API_URL || "";
+      // Dashboard-local routes (starting with /api/) are fetched directly.
+      // External API routes are prefixed with NEXT_PUBLIC_API_URL.
+      const isDashboardRoute = installUrlEndpoint.startsWith("/api/");
+      const apiUrl = isDashboardRoute
+        ? ""
+        : process.env.NEXT_PUBLIC_API_URL || "";
       const response = await fetch(`${apiUrl}${installUrlEndpoint}`, {
         headers: {
           Authorization: `Bearer ${session.access_token}`,

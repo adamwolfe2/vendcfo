@@ -1,6 +1,7 @@
 import { ExportStatus } from "@/components/export-status";
 import { GlobalTimerProvider } from "@/components/global-timer-provider";
 import { Header } from "@/components/header";
+import { OnboardingRedirect } from "@/components/onboarding/onboarding-redirect";
 import { GlobalSheetsProvider } from "@/components/sheets/global-sheets-provider";
 import { Sidebar } from "@/components/sidebar";
 import { TimezoneDetector } from "@/components/timezone-detector";
@@ -110,10 +111,31 @@ export default async function Layout({
     redirect("/teams");
   }
 
+  // Check if this is a brand-new team that should see onboarding
+  let shouldShowOnboarding = false;
+  try {
+    const teamCreatedAt = user.team?.createdAt
+      ? new Date(user.team.createdAt)
+      : null;
+    const oneHourAgo = new Date(Date.now() - 60 * 60 * 1000);
+
+    if (teamCreatedAt && teamCreatedAt > oneHourAgo) {
+      // Team was created within the last hour — check for transactions
+      const caller = await getServerCaller();
+      const reviewCount = await caller.transactions.getReviewCount();
+      if (typeof reviewCount === "number" && reviewCount === 0) {
+        shouldShowOnboarding = true;
+      }
+    }
+  } catch {
+    // If we can't determine, don't block the dashboard
+  }
+
   return (
     <HydrateClient>
       <div className="relative">
         <Sidebar />
+        {shouldShowOnboarding && <OnboardingRedirect />}
 
         <div className="md:ml-[70px] pb-4">
           <Header />
