@@ -108,7 +108,7 @@ SELECT
   -- Revenue grows: ~$4k/mo in 2021, scaling to ~$18k/mo in 2025
   round((3500 + (EXTRACT(YEAR FROM d) - 2021) * 250 * 12 / 12 + random() * 1500 + EXTRACT(MONTH FROM d) * 100)::numeric, 2),
   'USD',
-  team_id,
+  v_team_id,
   'rev-' || to_char(d, 'YYYY-MM'),
   'posted',
   true,
@@ -126,7 +126,7 @@ SELECT
   'card_purchase',
   round((-1 * (1500 + (EXTRACT(YEAR FROM d) - 2021) * 120 * 12 / 12 + random() * 800))::numeric, 2),
   'USD',
-  team_id,
+  v_team_id,
   'cogs-' || to_char(d, 'YYYY-MM'),
   'posted',
   true,
@@ -144,7 +144,7 @@ SELECT
   'card_purchase',
   round((-1 * (350 + random() * 200))::numeric, 2),
   'USD',
-  team_id,
+  v_team_id,
   'vehicle-' || to_char(d, 'YYYY-MM'),
   'posted',
   true,
@@ -162,7 +162,7 @@ SELECT
   'ach',
   round((-1 * (800 + (EXTRACT(YEAR FROM d) - 2021) * 150 + random() * 200))::numeric, 2),
   'USD',
-  team_id,
+  v_team_id,
   'rent-' || to_char(d, 'YYYY-Q'),
   'posted',
   true,
@@ -180,7 +180,7 @@ SELECT
   'ach',
   round((-1 * (450 + (EXTRACT(YEAR FROM d) - 2021) * 30 + random() * 50))::numeric, 2),
   'USD',
-  team_id,
+  v_team_id,
   'ins-' || to_char(d, 'YYYY-Q'),
   'posted',
   true,
@@ -203,7 +203,7 @@ SELECT
   'card_purchase',
   round((-1 * (75 + random() * 350))::numeric, 2),
   'USD',
-  team_id,
+  v_team_id,
   'repair-' || to_char(d, 'YYYY-MM-DD'),
   'posted',
   true,
@@ -220,7 +220,7 @@ SELECT
   cust.id,
   round((800 + random() * 2000)::numeric, 2),
   'USD',
-  team_id,
+  v_team_id,
   CASE
     WHEN d < now() - interval '60 days' THEN 'paid'
     WHEN d < now() - interval '30 days' THEN 'paid'
@@ -239,7 +239,7 @@ SELECT
 FROM generate_series('2021-02-01'::date, '2025-12-01'::date, '2 months') AS d
 CROSS JOIN (
   SELECT id, name FROM customers
-  WHERE team_id = v_team_id AND id IN (
+  WHERE v_team_id = v_team_id AND id IN (
     'c1000001-0000-0000-0000-000000000001',
     'c1000001-0000-0000-0000-000000000003',
     'c1000001-0000-0000-0000-000000000006',
@@ -249,12 +249,12 @@ CROSS JOIN (
 ) cust;
 
 -- ─── SERVICE LOGS ───────────────────────────────────────────────────────────
-INSERT INTO service_logs (id, business_id, machine_id, user_id, service_date, notes, revenue_collected, inventory_value_added)
+INSERT INTO service_logs (id, business_id, machine_id, v_user_id, service_date, notes, revenue_collected, inventory_value_added)
 SELECT
   gen_random_uuid(),
-  team_id,
+  v_team_id,
   m.id,
-  user_id,
+  v_user_id,
   d,
   CASE (random() * 4)::int
     WHEN 0 THEN 'Full restock, cleaned interior. All slots filled.'
