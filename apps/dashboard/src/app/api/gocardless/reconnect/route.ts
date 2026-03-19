@@ -1,0 +1,37 @@
+import { getSession } from "@vendcfo/supabase/cached-queries";
+import { updateBankConnection } from "@vendcfo/supabase/mutations";
+import { createClient } from "@vendcfo/supabase/server";
+import { type NextRequest, NextResponse } from "next/server";
+
+export async function GET(req: NextRequest) {
+  const {
+    data: { session },
+  } = await getSession();
+
+  if (!session) {
+    return NextResponse.redirect(new URL("/", req.url));
+  }
+
+  const supabase = await createClient();
+  const requestUrl = new URL(req.url);
+  const id = requestUrl.searchParams.get("id");
+  const referenceId = requestUrl.searchParams.get("reference_id") ?? undefined;
+  const isDesktop = requestUrl.searchParams.get("desktop");
+
+  if (id) {
+    await updateBankConnection(supabase, { id, referenceId });
+    // Frontend will trigger the reconnect job via useEffect when it sees step=reconnect
+    // This allows the frontend to track job progress via runId/accessToken
+  }
+
+  if (isDesktop === "true") {
+    const scheme = process.env.NEXT_PUBLIC_DESKTOP_SCHEME || "vendcfo";
+    return NextResponse.redirect(
+      `${scheme}://settings/accounts?id=${id}&step=reconnect`,
+    );
+  }
+
+  return NextResponse.redirect(
+    `${requestUrl.origin}/settings/accounts?id=${id}&step=reconnect`,
+  );
+}

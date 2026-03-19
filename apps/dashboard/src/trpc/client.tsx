@@ -1,0 +1,81 @@
+"use client";
+
+import { Cookies } from "@/utils/constants";
+import type { AppRouter } from "@vendcfo/api/trpc/routers/_app";
+import { createClient } from "@vendcfo/supabase/client";
+import type { QueryClient } from "@tanstack/react-query";
+import { QueryClientProvider, isServer } from "@tanstack/react-query";
+import { createTRPCClient, httpBatchLink, loggerLink } from "@trpc/client";
+import { createTRPCContext } from "@trpc/tanstack-react-query";
+import { useState } from "react";
+import superjson from "superjson";
+import { makeQueryClient } from "./query-client";
+
+function getCookie(name: string): string | null {
+  if (typeof document === "undefined") return null;
+  const value = `; ${document.cookie}`;
+  const parts = value.split(`; ${name}=`);
+  if (parts.length === 2) return parts.pop()?.split(";").shift() || null;
+  return null;
+}
+
+export const { TRPCProvider, useTRPC } = createTRPCContext<AppRouter>();
+
+let browserQueryClient: QueryClient;
+
+function getQueryClient() {
+  if (isServer) {
+    return makeQueryClient();
+  }
+  if (!browserQueryClient) browserQueryClient = makeQueryClient();
+  return browserQueryClient;
+}
+
+export function TRPCReactProvider(
+  props: Readonly<{
+    children: React.ReactNode;
+  }>,
+) {
+  const queryClient = getQueryClient();
+  const [trpcClient] = useState(() =>
+    createTRPCClient<AppRouter>({
+      links: [
+        httpBatchLink({
+          url: "/api/trpc",
+          transformer: superjson,
+          async headers() {
+            const supabase = createClient();
+
+            const {
+              data: { session },
+            } = await supabase.auth.getSession();
+
+            const headers: Record<string, string> = {
+              Authorization: `Bearer ${session?.access_token}`,
+            };
+
+            const forcePrimary = getCookie(Cookies.ForcePrimary);
+            if (forcePrimary === "true") {
+              headers["x-force-primary"] = "true";
+            }
+
+            return headers;
+          },
+        }),
+        loggerLink({
+          enabled: (opts) =>
+            process.env.NODE_ENV === "development" ||
+            (opts.direction === "down" && opts.result instanceof Error),
+        }),
+      ],
+    }),
+  );
+
+  return (
+    <QueryClientProvider client={queryClient}>
+      <TRPCProvider trpcClient={trpcClient} queryClient={queryClient}>
+        {props.children}
+      </TRPCProvider>
+    </QueryClientProvider>
+  );
+}
