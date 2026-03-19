@@ -53,7 +53,13 @@ export default async function Layout({
       );
     }
   } catch (error) {
-    console.error("[sidebar/layout] TRPC caller error:", error);
+    const msg = error instanceof Error ? error.message : String(error);
+    // NEXT_REDIRECT is thrown by Next.js redirect() — rethrow it, don't catch
+    if (msg === "NEXT_REDIRECT" || (error as any)?.digest?.startsWith("NEXT_REDIRECT")) {
+      throw error;
+    }
+    console.error("[sidebar/layout] TRPC caller error:", msg);
+    console.error("[sidebar/layout] ENV check — SUPABASE_URL:", !!process.env.SUPABASE_URL, "SUPABASE_JWT_SECRET:", !!process.env.SUPABASE_JWT_SECRET, "DATABASE_PRIMARY_URL:", !!process.env.DATABASE_PRIMARY_URL, "SUPABASE_SERVICE_KEY:", !!process.env.SUPABASE_SERVICE_KEY);
     redirect("/login");
   }
 

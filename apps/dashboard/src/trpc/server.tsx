@@ -47,10 +47,12 @@ const getServerCaller = cache(async () => {
   const accessToken = await getAccessToken();
   let session = await verifyAccessToken(accessToken);
 
-  // Fallback: if JWT verification failed (e.g. SUPABASE_JWT_SECRET missing/wrong),
-  // build the session from supabase.auth.getUser() which uses the cookie directly.
-  // This prevents the middleware passing auth but the TRPC layer rejecting it.
-  if (!session && accessToken) {
+  // Fallback: if JWT verification failed (SUPABASE_JWT_SECRET missing/wrong)
+  // OR getSession() returned no access token, build the session from
+  // supabase.auth.getUser() which validates directly via Supabase API.
+  // This is the same method the middleware uses, so if middleware passed,
+  // this will too.
+  if (!session) {
     try {
       const supabaseForAuth = await createClient();
       const { data: { user } } = await supabaseForAuth.auth.getUser();
@@ -62,9 +64,12 @@ const getServerCaller = cache(async () => {
             full_name: user.user_metadata?.full_name,
           },
         };
+        console.log("[getServerCaller] Fallback auth succeeded for user:", user.id);
+      } else {
+        console.log("[getServerCaller] Fallback auth: no user from getUser()");
       }
-    } catch {
-      // getUser failed too — session truly invalid
+    } catch (e) {
+      console.error("[getServerCaller] Fallback auth failed:", e);
     }
   }
 
