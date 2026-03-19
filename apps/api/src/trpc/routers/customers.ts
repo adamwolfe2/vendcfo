@@ -14,6 +14,7 @@ import {
   protectedProcedure,
   publicProcedure,
 } from "@api/trpc/init";
+import { TRPCError } from "@trpc/server";
 import {
   clearCustomerEnrichment,
   deleteCustomer,
@@ -27,7 +28,6 @@ import {
   upsertCustomer,
 } from "@vendcfo/db/queries";
 import { triggerJob } from "@vendcfo/job-client";
-import { TRPCError } from "@trpc/server";
 
 export const customersRouter = createTRPCRouter({
   get: protectedProcedure

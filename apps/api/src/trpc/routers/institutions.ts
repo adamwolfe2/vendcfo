@@ -4,8 +4,8 @@ import {
   updateUsageSchema,
 } from "@api/schemas/institutions";
 import { createTRPCRouter, protectedProcedure } from "@api/trpc/init";
-import { client } from "@vendcfo/engine-client";
 import { TRPCError } from "@trpc/server";
+import { client } from "@vendcfo/engine-client";
 
 export const institutionsRouter = createTRPCRouter({
   get: protectedProcedure

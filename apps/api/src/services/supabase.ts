@@ -1,5 +1,5 @@
-import type { Database } from "@vendcfo/supabase/types";
 import { createClient as createSupabaseClient } from "@supabase/supabase-js";
+import type { Database } from "@vendcfo/supabase/types";
 
 export async function createClient(accessToken?: string) {
   return createSupabaseClient<Database>(

@@ -1,4 +1,5 @@
 import { createTRPCRouter, protectedProcedure } from "@api/trpc/init";
+import { TRPCError } from "@trpc/server";
 import {
   getInvoiceById,
   getTeamById,
@@ -6,7 +7,6 @@ import {
   updateTeamById,
 } from "@vendcfo/db/queries";
 import { logger } from "@vendcfo/logger";
-import { TRPCError } from "@trpc/server";
 import Stripe from "stripe";
 import { z } from "zod";
 

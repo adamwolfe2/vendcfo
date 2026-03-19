@@ -21,7 +21,8 @@ function getMemoryTemplate(): string {
         "utf-8",
       );
     } catch {
-      _memoryTemplate = "You are a helpful financial assistant for vending machine operators.";
+      _memoryTemplate =
+        "You are a helpful financial assistant for vending machine operators.";
     }
   }
   return _memoryTemplate;
@@ -49,7 +50,8 @@ function getTitleInstructions(): string {
         "utf-8",
       );
     } catch {
-      _titleInstructions = "Generate a short, descriptive title for this conversation.";
+      _titleInstructions =
+        "Generate a short, descriptive title for this conversation.";
     }
   }
   return _titleInstructions;

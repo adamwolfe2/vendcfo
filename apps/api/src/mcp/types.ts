@@ -1,6 +1,6 @@
 import type { Scope } from "@api/utils/scopes";
-import type { Database } from "@vendcfo/db/client";
 import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
+import type { Database } from "@vendcfo/db/client";
 
 export interface McpContext {
   db: Database;

@@ -16,6 +16,7 @@ import {
   protectedProcedure,
   publicProcedure,
 } from "@api/trpc/init";
+import { TRPCError } from "@trpc/server";
 import {
   InvalidReportTypeError,
   ReportExpiredError,
@@ -33,7 +34,6 @@ import {
   getSpending,
   getTaxSummary,
 } from "@vendcfo/db/queries";
-import { TRPCError } from "@trpc/server";
 
 export const reportsRouter = createTRPCRouter({
   revenue: protectedProcedure

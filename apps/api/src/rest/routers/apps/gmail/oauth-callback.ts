@@ -6,10 +6,10 @@ import {
   mapOAuthError,
 } from "@api/rest/utils/oauth";
 import { OpenAPIHono, createRoute, z } from "@hono/zod-openapi";
+import { tasks } from "@trigger.dev/sdk";
 import { InboxConnector } from "@vendcfo/inbox/connector";
 import { decryptOAuthState } from "@vendcfo/inbox/utils";
 import { logger } from "@vendcfo/logger";
-import { tasks } from "@trigger.dev/sdk";
 import { HTTPException } from "hono/http-exception";
 
 const app = new OpenAPIHono<Context>();

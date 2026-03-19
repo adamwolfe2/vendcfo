@@ -35,9 +35,7 @@ export async function verifyAccessToken(
       user: {
         id: supabasePayload.sub!,
         // Supabase puts email at top-level AND in user_metadata — check both
-        email:
-          supabasePayload.email ??
-          supabasePayload.user_metadata?.email,
+        email: supabasePayload.email ?? supabasePayload.user_metadata?.email,
         full_name: supabasePayload.user_metadata?.full_name,
       },
     };

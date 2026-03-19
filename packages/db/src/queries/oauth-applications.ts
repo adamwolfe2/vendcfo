@@ -1,7 +1,7 @@
 import type { Database } from "@db/client";
 import { oauthApplications, users } from "@db/schema";
-import { hash } from "@vendcfo/encryption";
 import slugify from "@sindresorhus/slugify";
+import { hash } from "@vendcfo/encryption";
 import { and, desc, eq } from "drizzle-orm";
 import { nanoid } from "nanoid";
 

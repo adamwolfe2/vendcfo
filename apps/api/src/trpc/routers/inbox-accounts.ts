@@ -6,11 +6,11 @@ import {
   syncInboxAccountSchema,
 } from "@api/schemas/inbox-accounts";
 import { createTRPCRouter, protectedProcedure } from "@api/trpc/init";
+import { schedules, tasks } from "@trigger.dev/sdk";
+import { TRPCError } from "@trpc/server";
 import { deleteInboxAccount, getInboxAccounts } from "@vendcfo/db/queries";
 import { InboxConnector } from "@vendcfo/inbox/connector";
 import { encryptOAuthState } from "@vendcfo/inbox/utils";
-import { schedules, tasks } from "@trigger.dev/sdk";
-import { TRPCError } from "@trpc/server";
 
 export const inboxAccountsRouter = createTRPCRouter({
   get: protectedProcedure.query(async ({ ctx: { db, teamId } }) => {

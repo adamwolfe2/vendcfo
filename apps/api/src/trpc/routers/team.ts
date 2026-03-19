@@ -13,6 +13,8 @@ import {
 } from "@api/schemas/team";
 import { createTRPCRouter, protectedProcedure } from "@api/trpc/init";
 import type { InviteTeamMembersPayload } from "@jobs/schema";
+import { tasks } from "@trigger.dev/sdk";
+import { TRPCError } from "@trpc/server";
 import {
   acceptTeamInvite,
   createTeam,
@@ -36,8 +38,6 @@ import {
   updateTeamMember,
 } from "@vendcfo/db/queries";
 import { triggerJob } from "@vendcfo/job-client";
-import { tasks } from "@trigger.dev/sdk";
-import { TRPCError } from "@trpc/server";
 
 export const teamRouter = createTRPCRouter({
   current: protectedProcedure.query(async ({ ctx: { db, teamId } }) => {

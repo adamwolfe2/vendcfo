@@ -9,6 +9,7 @@ import {
 } from "@api/schemas/insights";
 import { createAdminClient } from "@api/services/supabase";
 import { createTRPCRouter, protectedProcedure } from "@api/trpc/init";
+import { TRPCError } from "@trpc/server";
 import {
   dismissInsight,
   getInsightById,
@@ -23,7 +24,6 @@ import {
   generateInsightAudio,
   isAudioEnabled,
 } from "@vendcfo/insights/audio";
-import { TRPCError } from "@trpc/server";
 
 const AUDIO_BUCKET = "vault";
 

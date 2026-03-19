@@ -1,7 +1,7 @@
+import type { SupabaseClient } from "@supabase/supabase-js";
 import { triggerJob } from "@vendcfo/job-client";
 import { logger } from "@vendcfo/logger";
 import { getExtensionFromMimeType } from "@vendcfo/utils";
-import type { SupabaseClient } from "@supabase/supabase-js";
 import { nanoid } from "nanoid";
 
 // Constants

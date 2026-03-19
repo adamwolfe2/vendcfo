@@ -5,6 +5,7 @@ import {
   getSyncStatusSchema,
 } from "@api/schemas/accounting";
 import { createTRPCRouter, protectedProcedure } from "@api/trpc/init";
+import { TRPCError } from "@trpc/server";
 import {
   type AccountingProviderConfig,
   getAccountingProvider,
@@ -18,7 +19,6 @@ import {
   getApps,
 } from "@vendcfo/db/queries";
 import { triggerJob } from "@vendcfo/job-client";
-import { TRPCError } from "@trpc/server";
 
 export const accountingRouter = createTRPCRouter({
   /**

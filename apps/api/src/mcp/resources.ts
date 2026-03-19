@@ -1,6 +1,6 @@
+import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { CATEGORIES } from "@vendcfo/categories";
 import { getTags, getTeamById } from "@vendcfo/db/queries";
-import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { type McpContext, hasScope } from "./types";
 
 export function registerResources(server: McpServer, ctx: McpContext): void {

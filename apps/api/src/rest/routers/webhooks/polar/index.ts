@@ -1,12 +1,12 @@
 import type { Context } from "@api/rest/types";
 import { OpenAPIHono, createRoute, z } from "@hono/zod-openapi";
-import { updateTeamById } from "@vendcfo/db/queries";
-import { logger } from "@vendcfo/logger";
-import { getPlanByProductId } from "@vendcfo/plans";
 import {
   WebhookVerificationError,
   validateEvent,
 } from "@polar-sh/sdk/webhooks";
+import { updateTeamById } from "@vendcfo/db/queries";
+import { logger } from "@vendcfo/logger";
+import { getPlanByProductId } from "@vendcfo/plans";
 import { HTTPException } from "hono/http-exception";
 
 const app = new OpenAPIHono<Context>();

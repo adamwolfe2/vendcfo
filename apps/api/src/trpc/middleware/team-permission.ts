@@ -1,8 +1,8 @@
 import type { Session } from "@api/utils/auth";
 import { withRetryOnPrimary } from "@api/utils/db-retry";
+import { TRPCError } from "@trpc/server";
 import { teamCache } from "@vendcfo/cache/team-cache";
 import type { Database } from "@vendcfo/db/client";
-import { TRPCError } from "@trpc/server";
 
 export const withTeamPermission = async <TReturn>(opts: {
   ctx: {

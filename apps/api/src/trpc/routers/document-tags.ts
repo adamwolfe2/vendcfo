@@ -10,8 +10,8 @@ import {
   deleteDocumentTagSchema,
 } from "@api/schemas/document-tags";
 import { createTRPCRouter, protectedProcedure } from "@api/trpc/init";
-import { Embed } from "@vendcfo/documents/embed";
 import slugify from "@sindresorhus/slugify";
+import { Embed } from "@vendcfo/documents/embed";
 
 export const documentTagsRouter = createTRPCRouter({
   get: protectedProcedure.query(async ({ ctx: { db, teamId } }) => {

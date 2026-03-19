@@ -9,7 +9,11 @@ import { eq, inArray, sql } from "drizzle-orm";
  */
 export const ensureUserExists = async (
   db: Database,
-  { id, email, fullName }: { id: string; email: string; fullName?: string | null },
+  {
+    id,
+    email,
+    fullName,
+  }: { id: string; email: string; fullName?: string | null },
 ) => {
   await db
     .insert(users)

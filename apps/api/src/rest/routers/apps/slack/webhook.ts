@@ -2,6 +2,7 @@ import { publicMiddleware } from "@api/rest/middleware";
 import type { Context } from "@api/rest/types";
 import { validateResponse } from "@api/utils/validate-response";
 import { OpenAPIHono, createRoute, z } from "@hono/zod-openapi";
+import type { FileShareMessageEvent } from "@slack/web-api";
 import {
   createSlackWebClient,
   fileShare,
@@ -11,7 +12,6 @@ import {
 import { getAppBySlackTeamId } from "@vendcfo/db/queries";
 import { triggerJob } from "@vendcfo/job-client";
 import { createLoggerWithContext } from "@vendcfo/logger";
-import type { FileShareMessageEvent } from "@slack/web-api";
 import { HTTPException } from "hono/http-exception";
 
 const logger = createLoggerWithContext("slack:webhook");

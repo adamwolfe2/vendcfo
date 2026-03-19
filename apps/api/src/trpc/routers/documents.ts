@@ -9,6 +9,7 @@ import {
   signedUrlsSchema,
 } from "@api/schemas/documents";
 import { createTRPCRouter, protectedProcedure } from "@api/trpc/init";
+import { TRPCError } from "@trpc/server";
 import {
   checkDocumentAttachments,
   deleteDocument,
@@ -21,7 +22,6 @@ import {
 import { isMimeTypeSupportedForProcessing } from "@vendcfo/documents/utils";
 import { triggerJob } from "@vendcfo/job-client";
 import { remove, signedUrl } from "@vendcfo/supabase/storage";
-import { TRPCError } from "@trpc/server";
 
 export const documentsRouter = createTRPCRouter({
   get: protectedProcedure

@@ -8,6 +8,7 @@ import {
   upsertInvoiceProductSchema,
 } from "@api/schemas/invoice";
 import { createTRPCRouter, protectedProcedure } from "@api/trpc/init";
+import { TRPCError } from "@trpc/server";
 import {
   createInvoiceProduct,
   deleteInvoiceProduct,
@@ -18,7 +19,6 @@ import {
   updateInvoiceProduct,
   upsertInvoiceProduct,
 } from "@vendcfo/db/queries";
-import { TRPCError } from "@trpc/server";
 
 export const invoiceProductsRouter = createTRPCRouter({
   get: protectedProcedure

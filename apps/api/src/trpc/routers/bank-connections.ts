@@ -4,6 +4,8 @@ import {
   getBankConnectionsSchema,
 } from "@api/schemas/bank-connections";
 import { createTRPCRouter, protectedProcedure } from "@api/trpc/init";
+import { tasks } from "@trigger.dev/sdk";
+import { TRPCError } from "@trpc/server";
 import {
   createBankConnection,
   deleteBankConnection,
@@ -13,8 +15,6 @@ import type {
   DeleteConnectionPayload,
   InitialBankSetupPayload,
 } from "@vendcfo/jobs/schema";
-import { tasks } from "@trigger.dev/sdk";
-import { TRPCError } from "@trpc/server";
 
 export const bankConnectionsRouter = createTRPCRouter({
   get: protectedProcedure
