@@ -24,7 +24,12 @@ const webhookSchema = z.object({
 
 export async function POST(req: NextRequest) {
   const text = await req.clone().text();
-  const body = await req.json();
+  let body: unknown;
+  try {
+    body = await req.json();
+  } catch {
+    return NextResponse.json({ error: "Invalid JSON" }, { status: 400 });
+  }
 
   const signatureValid = validateTellerSignature({
     signatureHeader: req.headers.get("teller-signature"),
@@ -101,10 +106,14 @@ export async function POST(req: NextRequest) {
           subDays(new Date(), 1),
         );
 
-        await tasks.trigger("sync-connection", {
-          connectionId: connectionData.id,
-          manualSync,
-        } satisfies SyncConnectionPayload);
+        try {
+          await tasks.trigger("sync-connection", {
+            connectionId: connectionData.id,
+            manualSync,
+          } satisfies SyncConnectionPayload);
+        } catch (error) {
+          console.error("[teller-webhook] Failed to trigger sync:", error);
+        }
       }
       break;
   }

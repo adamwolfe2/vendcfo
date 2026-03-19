@@ -33,9 +33,17 @@ export async function POST(req: Request) {
     return NextResponse.json({ message: "Not Authorized" }, { status: 401 });
   }
 
-  const body = await req.json();
+  let body: { record?: { id?: string } };
+  try {
+    body = await req.json();
+  } catch {
+    return NextResponse.json({ message: "Invalid JSON" }, { status: 400 });
+  }
 
-  const userId = body.record.id;
+  const userId = body.record?.id;
+  if (!userId) {
+    return NextResponse.json({ message: "Missing user ID" }, { status: 400 });
+  }
 
   const analytics = await setupAnalytics();
 

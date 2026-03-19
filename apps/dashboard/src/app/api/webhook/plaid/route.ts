@@ -51,7 +51,12 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  const body = await req.json();
+  let body: unknown;
+  try {
+    body = await req.json();
+  } catch {
+    return NextResponse.json({ error: "Invalid JSON" }, { status: 400 });
+  }
 
   const result = webhookSchema.safeParse(body);
 
@@ -113,10 +118,14 @@ export async function POST(req: NextRequest) {
           manualSync,
         });
 
-        await tasks.trigger("sync-connection", {
-          connectionId: connectionData.id,
-          manualSync,
-        } satisfies SyncConnectionPayload);
+        try {
+          await tasks.trigger("sync-connection", {
+            connectionId: connectionData.id,
+            manualSync,
+          } satisfies SyncConnectionPayload);
+        } catch (error) {
+          logger("Failed to trigger sync-connection", { error, connectionId: connectionData.id });
+        }
 
         break;
       }
