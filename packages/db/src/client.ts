@@ -16,10 +16,33 @@ const connectionConfig = {
   allowExitOnIdle: true,
 };
 
-const primaryPool = new Pool({
-  connectionString: process.env.DATABASE_PRIMARY_URL!,
-  ...connectionConfig,
-});
+/**
+ * Create a Pool that strips prepared statement names from queries.
+ * Supabase's transaction pooler (PgBouncer) does not support prepared
+ * statements. By removing the `name` field from query configs, pg falls
+ * back to the simple query protocol which works with any pooler.
+ */
+function createPool(connectionString: string) {
+  const pool = new Pool({
+    connectionString,
+    ...connectionConfig,
+  });
+
+  // Wrap the pool's query to strip prepared statement names
+  const originalQuery = pool.query.bind(pool);
+  // @ts-expect-error — overloaded signature, safe at runtime
+  pool.query = (configOrText: any, ...args: any[]) => {
+    if (typeof configOrText === "object" && configOrText !== null && "name" in configOrText) {
+      const { name, ...rest } = configOrText;
+      return originalQuery(rest, ...args);
+    }
+    return originalQuery(configOrText, ...args);
+  };
+
+  return pool;
+}
+
+const primaryPool = createPool(process.env.DATABASE_PRIMARY_URL!);
 
 export const primaryDb = drizzle(primaryPool, {
   schema,
@@ -41,20 +64,9 @@ function createDb() {
     });
   }
 
-  const fraPool = new Pool({
-    connectionString: process.env.DATABASE_FRA_URL!,
-    ...connectionConfig,
-  });
-
-  const sjcPool = new Pool({
-    connectionString: process.env.DATABASE_SJC_URL!,
-    ...connectionConfig,
-  });
-
-  const iadPool = new Pool({
-    connectionString: process.env.DATABASE_IAD_URL!,
-    ...connectionConfig,
-  });
+  const fraPool = createPool(process.env.DATABASE_FRA_URL!);
+  const sjcPool = createPool(process.env.DATABASE_SJC_URL!);
+  const iadPool = createPool(process.env.DATABASE_IAD_URL!);
 
   const getReplicaIndexForRegion = () => {
     switch (process.env.FLY_REGION) {
