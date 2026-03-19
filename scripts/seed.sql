@@ -249,7 +249,7 @@ CROSS JOIN (
 ) cust;
 
 -- ─── SERVICE LOGS ───────────────────────────────────────────────────────────
-INSERT INTO service_logs (id, business_id, machine_id, v_user_id, service_date, notes, revenue_collected, inventory_value_added)
+INSERT INTO service_logs (id, business_id, machine_id, user_id, service_date, notes, revenue_collected, inventory_value_added)
 SELECT
   gen_random_uuid(),
   v_team_id,
