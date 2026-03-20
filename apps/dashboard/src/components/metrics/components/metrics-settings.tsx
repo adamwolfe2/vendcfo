@@ -1,6 +1,7 @@
 "use client";
 
 import { useTRPC } from "@/trpc/client";
+import { useQuery } from "@tanstack/react-query";
 import { Button } from "@vendcfo/ui/button";
 import {
   DropdownMenu,
@@ -11,7 +12,6 @@ import {
   DropdownMenuTrigger,
 } from "@vendcfo/ui/dropdown-menu";
 import { Icons } from "@vendcfo/ui/icons";
-import { useQuery } from "@tanstack/react-query";
 
 interface MetricsSettingsProps {
   baseCurrency?: string;

@@ -40,7 +40,12 @@ export async function verifyAccessToken(
       },
     };
   } catch (error) {
-    console.error("[verifyAccessToken] JWT verification failed:", error instanceof Error ? error.message : error, "| JWT_SECRET defined:", !!process.env.SUPABASE_JWT_SECRET);
+    console.error(
+      "[verifyAccessToken] JWT verification failed:",
+      error instanceof Error ? error.message : error,
+      "| JWT_SECRET defined:",
+      !!process.env.SUPABASE_JWT_SECRET,
+    );
     return null;
   }
 }

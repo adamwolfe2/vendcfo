@@ -1,13 +1,7 @@
 "use client";
 
 import { cn } from "@vendcfo/ui/cn";
-import {
-  CheckCircle2,
-  Circle,
-  ChevronDown,
-  ChevronUp,
-  X,
-} from "lucide-react";
+import { CheckCircle2, ChevronDown, ChevronUp, Circle, X } from "lucide-react";
 import Link from "next/link";
 import { useCallback, useEffect, useState } from "react";
 
@@ -167,11 +161,7 @@ export function OnboardingChecklist({ isExpanded }: OnboardingChecklistProps) {
             onClick={() => setIsCollapsed(!isCollapsed)}
             className="flex items-center gap-1.5 text-xs font-medium text-[#666] hover:text-[#333] transition-colors py-1 min-h-[36px]"
           >
-            {isCollapsed ? (
-              <ChevronUp size={14} />
-            ) : (
-              <ChevronDown size={14} />
-            )}
+            {isCollapsed ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
             <span>Getting started</span>
           </button>
           <div className="flex items-center gap-2">
@@ -216,16 +206,10 @@ export function OnboardingChecklist({ isExpanded }: OnboardingChecklistProps) {
                     onClick={(e) => toggleStep(step.id, e)}
                     className={cn(
                       "flex-shrink-0 transition-colors p-1 min-h-[36px] min-w-[36px] flex items-center justify-center",
-                      done
-                        ? "text-[#666]"
-                        : "text-[#ccc] hover:text-[#888]",
+                      done ? "text-[#666]" : "text-[#ccc] hover:text-[#888]",
                     )}
                   >
-                    {done ? (
-                      <CheckCircle2 size={16} />
-                    ) : (
-                      <Circle size={16} />
-                    )}
+                    {done ? <CheckCircle2 size={16} /> : <Circle size={16} />}
                   </button>
                   <Link
                     href={step.href}

@@ -1,6 +1,6 @@
 import { useTRPC } from "@/trpc/client";
-import { Icons } from "@vendcfo/ui/icons";
 import { useQuery } from "@tanstack/react-query";
+import { Icons } from "@vendcfo/ui/icons";
 import { formatDistanceToNow } from "date-fns";
 import { useRouter } from "next/navigation";
 import { BaseWidget } from "./base";

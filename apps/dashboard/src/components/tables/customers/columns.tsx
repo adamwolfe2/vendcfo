@@ -4,6 +4,8 @@ import { FormatAmount } from "@/components/format-amount";
 import { useCustomerParams } from "@/hooks/use-customer-params";
 import { getWebsiteLogo } from "@/utils/logos";
 import type { RouterOutputs } from "@api/trpc/routers/_app";
+import { DotsHorizontalIcon } from "@radix-ui/react-icons";
+import type { ColumnDef } from "@tanstack/react-table";
 import { Avatar, AvatarFallback, AvatarImageNext } from "@vendcfo/ui/avatar";
 import { Badge } from "@vendcfo/ui/badge";
 import { Button } from "@vendcfo/ui/button";
@@ -21,8 +23,6 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@vendcfo/ui/tooltip";
-import { DotsHorizontalIcon } from "@radix-ui/react-icons";
-import type { ColumnDef } from "@tanstack/react-table";
 import { formatDistanceToNowStrict } from "date-fns";
 import Link from "next/link";
 import { memo, useCallback } from "react";

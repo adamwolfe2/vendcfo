@@ -2,11 +2,11 @@
 
 import { useUpload } from "@/hooks/use-upload";
 import { useTRPC } from "@/trpc/client";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Avatar, AvatarFallback, AvatarImage } from "@vendcfo/ui/avatar";
 import { cn } from "@vendcfo/ui/cn";
 import { Icons } from "@vendcfo/ui/icons";
 import { stripSpecialCharacters } from "@vendcfo/utils";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Loader2 } from "lucide-react";
 import { useRef, useState } from "react";
 import { forwardRef } from "react";

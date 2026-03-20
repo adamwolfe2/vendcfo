@@ -1143,23 +1143,11 @@ export async function findMatches(
 
       const amountScore = calculateAmountScore(inboxItem, candidate);
 
-      // Debug amount scoring for first candidate
-      if (candidate === candidateTransactions[0]) {
-        console.log(
-          `AMOUNT DEBUG: inbox=${inboxItem.amount} ${inboxItem.currency}, candidate=${candidate.amount} ${candidate.currency}, score=${amountScore}`,
-        );
-      }
       const currencyScore = calculateCurrencyScore(
         inboxItem.currency || undefined,
         candidate.currency || undefined,
       );
 
-      // Debug currency scoring for first candidate
-      if (candidate === candidateTransactions[0]) {
-        console.log(
-          `CURRENCY DEBUG: inbox="${inboxItem.currency}", candidate="${candidate.currency}", score=${currencyScore}`,
-        );
-      }
       const dateScore = calculateDateScore(
         inboxItem.date,
         candidate.date,
@@ -1379,13 +1367,6 @@ export async function findMatches(
         finalConfidence: confidenceScore,
         meetsCriteria: confidenceScore >= debugThreshold,
       });
-
-      // Debug the first candidate
-      if (candidate === candidateTransactions[0]) {
-        console.log(
-          `FIRST CANDIDATE: score=${confidenceScore}, debugThreshold=${debugThreshold}, meets=${confidenceScore >= debugThreshold}`,
-        );
-      }
 
       // Only consider if it meets minimum threshold
       if (confidenceScore >= debugThreshold) {

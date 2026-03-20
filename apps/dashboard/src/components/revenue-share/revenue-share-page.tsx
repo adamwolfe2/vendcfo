@@ -75,12 +75,7 @@ const MACHINE_TYPES = [
   "Other",
 ];
 
-const PAYMENT_METHODS = [
-  "check",
-  "ach",
-  "boys and girls online",
-  "n/a",
-];
+const PAYMENT_METHODS = ["check", "ach", "boys and girls online", "n/a"];
 
 const STATUS_OPTIONS = ["current", "expansion", "inactive"];
 
@@ -127,7 +122,10 @@ function momColor(mom: number): string {
   return "";
 }
 
-function buildRows(locations: Location[], periodMultiplier: number): LocationRow[] {
+function buildRows(
+  locations: Location[],
+  periodMultiplier: number,
+): LocationRow[] {
   return locations.map((loc) => {
     const machines = loc.machine_count ?? 1;
     const revSharePct = loc.rev_share_pct ?? 0;
@@ -173,12 +171,21 @@ function groupByStatus(rows: LocationRow[]): Record<string, LocationRow[]> {
 function computeSummary(rows: LocationRow[]) {
   const totalRevenue = rows.reduce((s, r) => s + r.revenue, 0);
   const totalCogs = rows.reduce((s, r) => s + r.cogs, 0);
-  const avgGm = rows.length > 0 ? rows.reduce((s, r) => s + r.gmPct, 0) / rows.length : 0;
+  const avgGm =
+    rows.length > 0 ? rows.reduce((s, r) => s + r.gmPct, 0) / rows.length : 0;
   const totalUnits = rows.reduce((s, r) => s + (r.unit_count ?? 0), 0);
   const totalMachines = rows.reduce((s, r) => s + (r.machine_count ?? 1), 0);
   const totalMonthly = rows.reduce((s, r) => s + r.monthlyShare, 0);
   const totalQuarterly = rows.reduce((s, r) => s + r.quarterlyShare, 0);
-  return { totalRevenue, totalCogs, avgGm, totalUnits, totalMachines, totalMonthly, totalQuarterly };
+  return {
+    totalRevenue,
+    totalCogs,
+    avgGm,
+    totalUnits,
+    totalMachines,
+    totalMonthly,
+    totalQuarterly,
+  };
 }
 
 // ---------------------------------------------------------------------------
@@ -276,7 +283,8 @@ function DropdownCell({
 function StatusBadge({ status }: { status: string }) {
   const s = (status ?? "current").toLowerCase();
   const colors = STATUS_COLORS[s] ?? STATUS_COLORS.current;
-  const label = s === "expansion" ? "Expansion" : s.charAt(0).toUpperCase() + s.slice(1);
+  const label =
+    s === "expansion" ? "Expansion" : s.charAt(0).toUpperCase() + s.slice(1);
 
   return (
     <span
@@ -323,9 +331,9 @@ function AddLocationModal({
     const { error: insertError } = await supabase.from("locations").insert({
       business_id: teamId,
       name: name.trim(),
-      machine_count: parseInt(machineCount, 10) || 1,
+      machine_count: Number.parseInt(machineCount, 10) || 1,
       machine_type: machineType,
-      rev_share_pct: parseFloat(revSharePct) || 0,
+      rev_share_pct: Number.parseFloat(revSharePct) || 0,
       rev_share_contact_name: contactName.trim() || null,
       rev_share_contact_email: contactEmail.trim() || null,
       rev_share_payment_method: paymentMethod,
@@ -374,7 +382,9 @@ function AddLocationModal({
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <label className="mb-1 block text-sm font-medium text-[#333]">Machines</label>
+              <label className="mb-1 block text-sm font-medium text-[#333]">
+                Machines
+              </label>
               <input
                 type="number"
                 value={machineCount}
@@ -384,14 +394,18 @@ function AddLocationModal({
               />
             </div>
             <div>
-              <label className="mb-1 block text-sm font-medium text-[#333]">Type</label>
+              <label className="mb-1 block text-sm font-medium text-[#333]">
+                Type
+              </label>
               <select
                 value={machineType}
                 onChange={(e) => setMachineType(e.target.value)}
                 className="w-full rounded-md border border-[#d0d0d0] bg-white px-3 py-2 text-sm text-[#111] outline-none focus:border-[#888]"
               >
                 {MACHINE_TYPES.map((t) => (
-                  <option key={t} value={t}>{t}</option>
+                  <option key={t} value={t}>
+                    {t}
+                  </option>
                 ))}
               </select>
             </div>
@@ -399,7 +413,9 @@ function AddLocationModal({
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <label className="mb-1 block text-sm font-medium text-[#333]">Rev Share %</label>
+              <label className="mb-1 block text-sm font-medium text-[#333]">
+                Rev Share %
+              </label>
               <input
                 type="number"
                 value={revSharePct}
@@ -411,14 +427,18 @@ function AddLocationModal({
               />
             </div>
             <div>
-              <label className="mb-1 block text-sm font-medium text-[#333]">Status</label>
+              <label className="mb-1 block text-sm font-medium text-[#333]">
+                Status
+              </label>
               <select
                 value={status}
                 onChange={(e) => setStatus(e.target.value)}
                 className="w-full rounded-md border border-[#d0d0d0] bg-white px-3 py-2 text-sm text-[#111] outline-none focus:border-[#888]"
               >
                 {STATUS_OPTIONS.map((s) => (
-                  <option key={s} value={s}>{s.charAt(0).toUpperCase() + s.slice(1)}</option>
+                  <option key={s} value={s}>
+                    {s.charAt(0).toUpperCase() + s.slice(1)}
+                  </option>
                 ))}
               </select>
             </div>
@@ -426,7 +446,9 @@ function AddLocationModal({
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <label className="mb-1 block text-sm font-medium text-[#333]">Contact Name</label>
+              <label className="mb-1 block text-sm font-medium text-[#333]">
+                Contact Name
+              </label>
               <input
                 type="text"
                 value={contactName}
@@ -436,7 +458,9 @@ function AddLocationModal({
               />
             </div>
             <div>
-              <label className="mb-1 block text-sm font-medium text-[#333]">Contact Email</label>
+              <label className="mb-1 block text-sm font-medium text-[#333]">
+                Contact Email
+              </label>
               <input
                 type="email"
                 value={contactEmail}
@@ -449,19 +473,25 @@ function AddLocationModal({
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <label className="mb-1 block text-sm font-medium text-[#333]">Payment Method</label>
+              <label className="mb-1 block text-sm font-medium text-[#333]">
+                Payment Method
+              </label>
               <select
                 value={paymentMethod}
                 onChange={(e) => setPaymentMethod(e.target.value)}
                 className="w-full rounded-md border border-[#d0d0d0] bg-white px-3 py-2 text-sm text-[#111] outline-none focus:border-[#888]"
               >
                 {PAYMENT_METHODS.map((m) => (
-                  <option key={m} value={m}>{m}</option>
+                  <option key={m} value={m}>
+                    {m}
+                  </option>
                 ))}
               </select>
             </div>
             <div>
-              <label className="mb-1 block text-sm font-medium text-[#333]">Payable To</label>
+              <label className="mb-1 block text-sm font-medium text-[#333]">
+                Payable To
+              </label>
               <input
                 type="text"
                 value={payableTo}
@@ -539,7 +569,9 @@ function exportCSV(rows: LocationRow[]) {
     r.status ?? "current",
   ]);
 
-  const csv = [headers.join(","), ...csvRows.map((r) => r.join(","))].join("\n");
+  const csv = [headers.join(","), ...csvRows.map((r) => r.join(","))].join(
+    "\n",
+  );
   const blob = new Blob([csv], { type: "text/csv" });
   const url = URL.createObjectURL(blob);
   const a = document.createElement("a");
@@ -616,13 +648,18 @@ function GroupSection({
           </td>
 
           {/* GM% */}
-          <td className={`px-3 py-2 text-xs text-center whitespace-nowrap font-medium ${gmColor(row.gmPct)}`}>
+          <td
+            className={`px-3 py-2 text-xs text-center whitespace-nowrap font-medium ${gmColor(row.gmPct)}`}
+          >
             {pct(row.gmPct)}
           </td>
 
           {/* Rev% MoM */}
-          <td className={`px-3 py-2 text-xs text-center whitespace-nowrap font-medium ${momColor(row.revMoM)}`}>
-            {row.revMoM > 0 ? "+" : ""}{pct(row.revMoM)}
+          <td
+            className={`px-3 py-2 text-xs text-center whitespace-nowrap font-medium ${momColor(row.revMoM)}`}
+          >
+            {row.revMoM > 0 ? "+" : ""}
+            {pct(row.revMoM)}
           </td>
 
           {/* Units */}
@@ -649,7 +686,9 @@ function GroupSection({
             <EditableCell
               value={String(row.rev_share_pct ?? 0)}
               type="number"
-              onSave={(v) => onUpdate(row.id, "rev_share_pct", parseFloat(v) || 0)}
+              onSave={(v) =>
+                onUpdate(row.id, "rev_share_pct", Number.parseFloat(v) || 0)
+              }
               className="text-center"
             />
           </td>
@@ -782,19 +821,35 @@ function GroupSection({
         <td className="sticky left-0 z-10 bg-[#f5f5f5] px-2 sm:px-3 py-2 text-xs font-bold text-[#333] border-r border-[#e6e6e6] min-w-[130px] sm:min-w-[180px]">
           {label} Total
         </td>
-        <td className="px-3 py-2 text-xs text-right font-bold text-[#111]">{fmt(summary.totalRevenue)}</td>
-        <td className="px-3 py-2 text-xs text-right font-bold text-[#991b1b]">({fmt(summary.totalCogs)})</td>
-        <td className={`px-3 py-2 text-xs text-center font-bold ${gmColor(summary.avgGm)}`}>{pct(summary.avgGm)}</td>
+        <td className="px-3 py-2 text-xs text-right font-bold text-[#111]">
+          {fmt(summary.totalRevenue)}
+        </td>
+        <td className="px-3 py-2 text-xs text-right font-bold text-[#991b1b]">
+          ({fmt(summary.totalCogs)})
+        </td>
+        <td
+          className={`px-3 py-2 text-xs text-center font-bold ${gmColor(summary.avgGm)}`}
+        >
+          {pct(summary.avgGm)}
+        </td>
         <td className="px-3 py-2 text-xs text-center text-[#999]">--</td>
-        <td className="px-3 py-2 text-xs text-center font-bold text-[#333]">{summary.totalUnits}</td>
-        <td className="px-3 py-2 text-xs text-center font-bold text-[#333]">{summary.totalMachines}</td>
+        <td className="px-3 py-2 text-xs text-center font-bold text-[#333]">
+          {summary.totalUnits}
+        </td>
+        <td className="px-3 py-2 text-xs text-center font-bold text-[#333]">
+          {summary.totalMachines}
+        </td>
         <td className="px-3 py-2 text-xs text-[#999]">--</td>
         <td className="px-3 py-2 text-xs text-center text-[#999]">--</td>
         <td className="px-3 py-2 text-xs text-[#999]">--</td>
         <td className="px-3 py-2 text-xs text-[#999]">--</td>
         <td className="px-3 py-2 text-xs text-[#999]">--</td>
-        <td className="px-3 py-2 text-xs text-right font-bold text-[#111]">{fmt(summary.totalMonthly)}</td>
-        <td className={`px-3 py-2 text-xs text-right font-bold text-[#111] ${summary.totalQuarterly > 500 ? "bg-[#fef9c3]" : ""}`}>
+        <td className="px-3 py-2 text-xs text-right font-bold text-[#111]">
+          {fmt(summary.totalMonthly)}
+        </td>
+        <td
+          className={`px-3 py-2 text-xs text-right font-bold text-[#111] ${summary.totalQuarterly > 500 ? "bg-[#fef9c3]" : ""}`}
+        >
           {fmt(summary.totalQuarterly)}
         </td>
         <td className="px-3 py-2 text-xs text-[#999]">--</td>
@@ -821,7 +876,8 @@ export function RevenueSharePage({ teamId }: { teamId: string }) {
   const [sendingAll, setSendingAll] = useState(false);
   const [toast, setToast] = useState<Toast | null>(null);
 
-  const periodMultiplier = period === "month" ? 1 : period === "quarter" ? 3 : 12;
+  const periodMultiplier =
+    period === "month" ? 1 : period === "quarter" ? 3 : 12;
 
   const fetchLocations = useCallback(async () => {
     setLoading(true);
@@ -848,7 +904,9 @@ export function RevenueSharePage({ teamId }: { teamId: string }) {
 
     const { data } = await supabase
       .from("rev_share_payments")
-      .select("id, location_id, period_start, period_end, payment_status, email_sent_at")
+      .select(
+        "id, location_id, period_start, period_end, payment_status, email_sent_at",
+      )
       .eq("team_id", teamId)
       .gte("period_start", periodStart)
       .lte("period_end", periodEnd);
@@ -868,7 +926,10 @@ export function RevenueSharePage({ teamId }: { teamId: string }) {
     return () => clearTimeout(timer);
   }, [toast]);
 
-  const rows = useMemo(() => buildRows(locations, periodMultiplier), [locations, periodMultiplier]);
+  const rows = useMemo(
+    () => buildRows(locations, periodMultiplier),
+    [locations, periodMultiplier],
+  );
   const groups = useMemo(() => groupByStatus(rows), [rows]);
 
   const handleUpdate = useCallback(
@@ -882,12 +943,12 @@ export function RevenueSharePage({ teamId }: { teamId: string }) {
 
       // Update local state
       setLocations((prev) =>
-        prev.map((loc) => (loc.id === id ? { ...loc, [field]: value } : loc))
+        prev.map((loc) => (loc.id === id ? { ...loc, [field]: value } : loc)),
       );
 
       setSavingId(null);
     },
-    [supabase]
+    [supabase],
   );
 
   const handleSendReport = useCallback(
@@ -897,7 +958,10 @@ export function RevenueSharePage({ teamId }: { teamId: string }) {
         const res = await fetch("/api/revenue-share/send-report", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ locationIds: [locationId], period: "quarterly" }),
+          body: JSON.stringify({
+            locationIds: [locationId],
+            period: "quarterly",
+          }),
         });
         const data = await res.json();
         if (!res.ok) {
@@ -908,11 +972,15 @@ export function RevenueSharePage({ teamId }: { teamId: string }) {
         } else if (data.details?.[0]?.error) {
           setToast({ message: data.details[0].error, type: "error" });
         } else {
-          setToast({ message: "No report sent (check email config)", type: "error" });
+          setToast({
+            message: "No report sent (check email config)",
+            type: "error",
+          });
         }
         fetchPayments();
       } catch (err: unknown) {
-        const msg = err instanceof Error ? err.message : "Failed to send report";
+        const msg =
+          err instanceof Error ? err.message : "Failed to send report";
         setToast({ message: msg, type: "error" });
       } finally {
         setSendingIds((prev) => {
@@ -950,16 +1018,22 @@ export function RevenueSharePage({ teamId }: { teamId: string }) {
     }
   }, [fetchPayments]);
 
-  const allRows = useMemo(() => [...groups.current, ...groups.expansion, ...groups.inactive], [groups]);
+  const allRows = useMemo(
+    () => [...groups.current, ...groups.expansion, ...groups.inactive],
+    [groups],
+  );
 
   return (
     <div className="px-3 py-6 sm:p-8 w-full">
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4 mb-6">
         <div>
-          <h1 className="text-xl sm:text-2xl font-bold text-[#111]">Revenue Share</h1>
+          <h1 className="text-xl sm:text-2xl font-bold text-[#111]">
+            Revenue Share
+          </h1>
           <p className="mt-1 text-sm text-[#666]">
-            Track location partner revenue sharing, payouts, and contact details.
+            Track location partner revenue sharing, payouts, and contact
+            details.
           </p>
         </div>
         <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-3">
@@ -1033,8 +1107,14 @@ export function RevenueSharePage({ teamId }: { teamId: string }) {
         </div>
       ) : allRows.length === 0 ? (
         <div className="flex flex-col items-center justify-center rounded-lg border border-dashed border-[#d0d0d0] bg-[#fafafa] py-20 px-6 text-center">
-          <DollarSign size={40} strokeWidth={1.5} className="mb-4 text-[#bbb]" />
-          <p className="text-sm font-medium text-[#555]">No locations with revenue share data</p>
+          <DollarSign
+            size={40}
+            strokeWidth={1.5}
+            className="mb-4 text-[#bbb]"
+          />
+          <p className="text-sm font-medium text-[#555]">
+            No locations with revenue share data
+          </p>
           <p className="mt-1 text-xs text-[#999]">
             Click "Add Location" to start tracking revenue share.
           </p>

@@ -1,9 +1,9 @@
 "use client";
 
 import { useCategoryParams } from "@/hooks/use-category-params";
+import type { Table } from "@tanstack/react-table";
 import { Button } from "@vendcfo/ui/button";
 import { Input } from "@vendcfo/ui/input";
-import type { Table } from "@tanstack/react-table";
 import type { Category } from "./columns";
 
 type Props = {

@@ -1,3 +1,4 @@
+import { CaretSortIcon } from "@radix-ui/react-icons";
 import { createClient } from "@vendcfo/supabase/client";
 import { Button } from "@vendcfo/ui/button";
 import {
@@ -7,7 +8,6 @@ import {
 } from "@vendcfo/ui/collapsible";
 import { InputOTP, InputOTPGroup, InputOTPSlot } from "@vendcfo/ui/input-otp";
 import { Spinner } from "@vendcfo/ui/spinner";
-import { CaretSortIcon } from "@radix-ui/react-icons";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";

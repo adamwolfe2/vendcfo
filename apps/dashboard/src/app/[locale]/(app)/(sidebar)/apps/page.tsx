@@ -1,11 +1,7 @@
 import { Apps } from "@/components/apps";
 import { AppsHeader } from "@/components/apps-header";
 import { AppsSkeleton } from "@/components/apps.skeleton";
-import {
-  HydrateClient,
-  getQueryClient,
-  trpc,
-} from "@/trpc/server";
+import { HydrateClient, getQueryClient, trpc } from "@/trpc/server";
 import { getServerCaller } from "@/trpc/server";
 import type { Metadata } from "next";
 import { Suspense } from "react";

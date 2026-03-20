@@ -1,6 +1,8 @@
 import { useI18n } from "@/locales/client";
 import { useTRPC } from "@/trpc/client";
 import type { RouterOutputs } from "@api/trpc/routers/_app";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import type { ColumnDef, FilterFn, Row } from "@tanstack/react-table";
 import { Avatar, AvatarFallback } from "@vendcfo/ui/avatar";
 import { Button } from "@vendcfo/ui/button";
 import {
@@ -9,8 +11,6 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@vendcfo/ui/dropdown-menu";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import type { ColumnDef, FilterFn, Row } from "@tanstack/react-table";
 import { MoreHorizontal } from "lucide-react";
 
 type TeamInvite = RouterOutputs["team"]["teamInvites"][number];

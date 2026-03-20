@@ -4,6 +4,7 @@ import { revalidateAfterTeamChange } from "@/actions/revalidate-action";
 import { SelectCurrency } from "@/components/select-currency";
 import { useZodForm } from "@/hooks/use-zod-form";
 import { useTRPC } from "@/trpc/client";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { uniqueCurrencies } from "@vendcfo/location/currencies";
 import {
   Form,
@@ -17,7 +18,6 @@ import {
 import { Input } from "@vendcfo/ui/input";
 import { SubmitButton } from "@vendcfo/ui/submit-button";
 import { getDefaultFiscalYearStartMonth } from "@vendcfo/utils";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { use, useEffect, useRef, useState } from "react";
 import { z } from "zod/v3";
 import { CountrySelector } from "../country-selector";
@@ -53,14 +53,6 @@ export function CreateTeamForm({
   const createTeamMutation = useMutation(
     trpc.team.create.mutationOptions({
       onSuccess: async (teamId) => {
-        const successId = `team_creation_success_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
-
-        console.log(`[${successId}] Team creation mutation successful`, {
-          teamId,
-          timestamp: new Date().toISOString(),
-          url: window.location.href,
-        });
-
         // Lock the form permanently - never reset on success
         setIsLoading(true);
         isSubmittedRef.current = true;
@@ -155,17 +147,6 @@ export function CreateTeamForm({
       });
       return;
     }
-
-    const submissionId = `form_submission_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
-
-    console.log(`[${submissionId}] Team creation form submission started`, {
-      teamName: values.name,
-      baseCurrency: values.baseCurrency,
-      countryCode: values.countryCode,
-      timestamp: new Date().toISOString(),
-      userAgent: navigator.userAgent,
-      url: window.location.href,
-    });
 
     setIsLoading(true);
     isSubmittedRef.current = true; // Permanent flag that survives re-renders

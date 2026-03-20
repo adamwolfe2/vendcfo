@@ -2,6 +2,8 @@
 
 import { revalidateAfterCheckout } from "@/actions/revalidate-action";
 import { useTRPC } from "@/trpc/client";
+import { PolarEmbedCheckout } from "@polar-sh/checkout/embed";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { cn } from "@vendcfo/ui/cn";
 import { SubmitButton } from "@vendcfo/ui/submit-button";
 import {
@@ -10,8 +12,6 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@vendcfo/ui/tooltip";
-import { PolarEmbedCheckout } from "@polar-sh/checkout/embed";
-import { useMutation, useQuery } from "@tanstack/react-query";
 import { Check } from "lucide-react";
 import { useTheme } from "next-themes";
 import { useEffect, useRef, useState } from "react";

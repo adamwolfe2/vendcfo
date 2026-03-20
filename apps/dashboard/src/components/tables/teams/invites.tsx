@@ -2,13 +2,13 @@
 
 import { useI18n } from "@/locales/client";
 import { useTRPC } from "@/trpc/client";
-import { Avatar, AvatarFallback, AvatarImageNext } from "@vendcfo/ui/avatar";
-import { SubmitButton } from "@vendcfo/ui/submit-button";
 import {
   useMutation,
   useQueryClient,
   useSuspenseQuery,
 } from "@tanstack/react-query";
+import { Avatar, AvatarFallback, AvatarImageNext } from "@vendcfo/ui/avatar";
+import { SubmitButton } from "@vendcfo/ui/submit-button";
 
 export function Invites() {
   const t = useI18n();

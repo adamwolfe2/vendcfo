@@ -10,6 +10,7 @@ import { useInboxParams } from "@/hooks/use-inbox-params";
 import { useRealtime } from "@/hooks/use-realtime";
 import { useUserQuery } from "@/hooks/use-user";
 import { useTRPC } from "@/trpc/client";
+import { useQueryClient } from "@tanstack/react-query";
 import { getInboxEmail } from "@vendcfo/inbox";
 import {
   Accordion,
@@ -17,7 +18,6 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@vendcfo/ui/accordion";
-import { useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import { CopyInput } from "../copy-input";
 import { UploadZone } from "./inbox-upload-zone";

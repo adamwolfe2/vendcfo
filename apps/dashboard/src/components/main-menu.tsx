@@ -3,7 +3,13 @@
 import { useChatInterface } from "@/hooks/use-chat-interface";
 import { cn } from "@vendcfo/ui/cn";
 import { Icons } from "@vendcfo/ui/icons";
-import { CalendarDays, GraduationCap, KeyRound, Route, Users } from "lucide-react";
+import {
+  CalendarDays,
+  GraduationCap,
+  KeyRound,
+  Route,
+  Users,
+} from "lucide-react";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { ForesightLink } from "./foresight-link";
@@ -173,8 +179,7 @@ const Item = ({
           <div
             className={cn(
               "border border-transparent h-[40px] transition-all duration-200 ease-[cubic-bezier(0.4,0,0.2,1)] ml-[15px] mr-[15px]",
-              isActive &&
-                "bg-[#f7f7f7] border-[#e6e6e6]",
+              isActive && "bg-[#f7f7f7] border-[#e6e6e6]",
               isExpanded ? "w-[calc(100%-30px)]" : "w-[40px]",
             )}
           />
@@ -262,7 +267,14 @@ export function MainMenu({ onSelect, isExpanded = false }: Props) {
   }, [isExpanded]);
 
   // Vending operation paths that should highlight the Operations parent
-  const vendingOpPaths = ["/routes", "/logistics", "/locations", "/machines", "/skus", "/import"];
+  const vendingOpPaths = [
+    "/routes",
+    "/logistics",
+    "/locations",
+    "/machines",
+    "/skus",
+    "/import",
+  ];
   const vendingAnalyticsPaths = ["/calculators", "/scenarios", "/alerts"];
 
   return (
@@ -275,8 +287,10 @@ export function MainMenu({ onSelect, isExpanded = false }: Props) {
             const isActive =
               (pathname === "/" && item.path === "/") ||
               (item.path === "/" && isChatPage) ||
-              (item.path === "/routes" && vendingOpPaths.some(p => pathname?.startsWith(p))) ||
-              (item.path === "/calculators" && vendingAnalyticsPaths.some(p => pathname?.startsWith(p))) ||
+              (item.path === "/routes" &&
+                vendingOpPaths.some((p) => pathname?.startsWith(p))) ||
+              (item.path === "/calculators" &&
+                vendingAnalyticsPaths.some((p) => pathname?.startsWith(p))) ||
               (pathname !== "/" &&
                 !isChatPage &&
                 !vendingOpPaths.includes(`/${part}`) &&

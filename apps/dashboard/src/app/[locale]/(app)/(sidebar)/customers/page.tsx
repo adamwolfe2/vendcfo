@@ -83,7 +83,10 @@ export default async function Page(props: Props) {
       console.error("[CustomersPage] Failed to prefetch customers list:", e);
     }
   } catch (error) {
-    console.error("[CustomersPage] Failed to prefetch via direct caller:", error);
+    console.error(
+      "[CustomersPage] Failed to prefetch via direct caller:",
+      error,
+    );
   }
 
   return (

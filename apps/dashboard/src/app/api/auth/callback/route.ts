@@ -1,8 +1,8 @@
 import { Cookies } from "@/utils/constants";
-import { LogEvents } from "@vendcfo/events/events";
-import { setupAnalytics } from "@vendcfo/events/server";
 import { db } from "@vendcfo/db/client";
 import { ensureUserExists } from "@vendcfo/db/queries";
+import { LogEvents } from "@vendcfo/events/events";
+import { setupAnalytics } from "@vendcfo/events/server";
 import { getSession } from "@vendcfo/supabase/cached-queries";
 import { createClient } from "@vendcfo/supabase/server";
 import { addSeconds, addYears } from "date-fns";
@@ -79,7 +79,9 @@ export async function GET(req: NextRequest) {
       }
     } catch (error) {
       console.error("[auth/callback] Error:", error);
-      return NextResponse.redirect(`${requestUrl.origin}/login?error=auth_failed`);
+      return NextResponse.redirect(
+        `${requestUrl.origin}/login?error=auth_failed`,
+      );
     }
   }
 

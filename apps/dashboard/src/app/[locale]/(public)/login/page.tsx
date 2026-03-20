@@ -22,7 +22,9 @@ export default async function Page() {
                   <Icons.LogoSmall className="w-full h-full text-foreground" />
                 </div>
               </div>
-              <h1 className="text-xl font-serif font-medium">Welcome to VendCFO</h1>
+              <h1 className="text-xl font-serif font-medium">
+                Welcome to VendCFO
+              </h1>
               <p className="font-sans text-sm text-[#878787]">
                 Sign in or create an account
               </p>
@@ -32,7 +34,6 @@ export default async function Page() {
             <div className="space-y-3 flex items-center justify-center w-full">
               <OTPSignIn />
             </div>
-
           </div>
 
           {/* Terms and Privacy Policy - Bottom aligned */}

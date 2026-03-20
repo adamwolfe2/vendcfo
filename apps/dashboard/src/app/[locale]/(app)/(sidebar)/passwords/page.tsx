@@ -15,10 +15,5 @@ export default async function Page() {
     redirect("/teams");
   }
 
-  return (
-    <PasswordVault
-      teamId={user.teamId}
-      userId={user.id}
-    />
-  );
+  return <PasswordVault teamId={user.teamId} userId={user.id} />;
 }

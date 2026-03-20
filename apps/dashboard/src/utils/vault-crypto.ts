@@ -8,7 +8,7 @@ export async function deriveKey(teamId: string): Promise<CryptoKey> {
     new TextEncoder().encode(teamId),
     "PBKDF2",
     false,
-    ["deriveKey"]
+    ["deriveKey"],
   );
 
   return crypto.subtle.deriveKey(
@@ -21,13 +21,13 @@ export async function deriveKey(teamId: string): Promise<CryptoKey> {
     keyMaterial,
     { name: "AES-GCM", length: 256 },
     false,
-    ["encrypt", "decrypt"]
+    ["encrypt", "decrypt"],
   );
 }
 
 export async function encryptPassword(
   password: string,
-  teamId: string
+  teamId: string,
 ): Promise<string> {
   const key = await deriveKey(teamId);
   const iv = crypto.getRandomValues(new Uint8Array(12));
@@ -35,10 +35,12 @@ export async function encryptPassword(
   const ciphertext = await crypto.subtle.encrypt(
     { name: "AES-GCM", iv },
     key,
-    encoded
+    encoded,
   );
   // Combine IV + ciphertext, encode as base64
-  const combined = new Uint8Array(iv.length + new Uint8Array(ciphertext).length);
+  const combined = new Uint8Array(
+    iv.length + new Uint8Array(ciphertext).length,
+  );
   combined.set(iv);
   combined.set(new Uint8Array(ciphertext), iv.length);
   return btoa(String.fromCharCode(...combined));
@@ -46,7 +48,7 @@ export async function encryptPassword(
 
 export async function decryptPassword(
   encrypted: string,
-  teamId: string
+  teamId: string,
 ): Promise<string> {
   const key = await deriveKey(teamId);
   const combined = Uint8Array.from(atob(encrypted), (c) => c.charCodeAt(0));
@@ -55,7 +57,7 @@ export async function decryptPassword(
   const decrypted = await crypto.subtle.decrypt(
     { name: "AES-GCM", iv },
     key,
-    ciphertext
+    ciphertext,
   );
   return new TextDecoder().decode(decrypted);
 }

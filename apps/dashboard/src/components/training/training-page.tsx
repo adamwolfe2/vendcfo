@@ -1,7 +1,7 @@
 "use client";
 
 import { createClient } from "@vendcfo/supabase/client";
-import { GraduationCap, Plus, Trash2, Play, X, Link } from "lucide-react";
+import { GraduationCap, Link, Play, Plus, Trash2, X } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
 
 // ---------------------------------------------------------------------------
@@ -50,9 +50,7 @@ export function getEmbedUrl(url: string): string | null {
     if (ytShort) return `https://www.youtube.com/embed/${ytShort[1]}`;
 
     // Vimeo
-    const vimeoMatch = url.match(
-      /(?:vimeo\.com\/(?:video\/)?)(\d+)/,
-    );
+    const vimeoMatch = url.match(/(?:vimeo\.com\/(?:video\/)?)(\d+)/);
     if (vimeoMatch) return `https://player.vimeo.com/video/${vimeoMatch[1]}`;
 
     // Loom
@@ -279,9 +277,7 @@ function AddVideoModal({
             </select>
           </div>
 
-          {error && (
-            <p className="text-sm text-red-600">{error}</p>
-          )}
+          {error && <p className="text-sm text-red-600">{error}</p>}
 
           <div className="flex flex-col-reverse sm:flex-row justify-end gap-3 pt-2">
             <button

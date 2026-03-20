@@ -88,7 +88,9 @@ export function OTPSignIn({ className }: Props) {
       let elapsed = 0;
       const interval = setInterval(() => {
         elapsed += 200;
-        const hasCookie = document.cookie.split(";").some((c) => c.trim().startsWith("sb-"));
+        const hasCookie = document.cookie
+          .split(";")
+          .some((c) => c.trim().startsWith("sb-"));
         if (hasCookie || elapsed >= 3000) {
           clearInterval(interval);
           resolve();
@@ -135,7 +137,9 @@ export function OTPSignIn({ className }: Props) {
         </div>
 
         {authError && (
-          <p className="text-sm text-red-600 text-center w-full px-2">{authError}</p>
+          <p className="text-sm text-red-600 text-center w-full px-2">
+            {authError}
+          </p>
         )}
 
         <div className="flex space-x-2">

@@ -1,13 +1,13 @@
 import "server-only";
 
-import type { AppRouter } from "@vendcfo/api/trpc/routers/_app";
-import { createClient } from "@vendcfo/supabase/server";
 import { HydrationBoundary, dehydrate } from "@tanstack/react-query";
+import { createTRPCClient, httpBatchLink } from "@trpc/client";
 import {
   type TRPCQueryOptions,
   createTRPCOptionsProxy,
 } from "@trpc/tanstack-react-query";
-import { createTRPCClient, httpBatchLink } from "@trpc/client";
+import type { AppRouter } from "@vendcfo/api/trpc/routers/_app";
+import { createClient } from "@vendcfo/supabase/server";
 import { cache } from "react";
 import superjson from "superjson";
 import { makeQueryClient } from "./query-client";
@@ -39,9 +39,9 @@ const getServerCaller = cache(async () => {
   const { appRouter } = await import("@vendcfo/api/trpc/routers/_app");
   const { createCallerFactory } = await import("@vendcfo/api/trpc/init");
   const { verifyAccessToken } = await import("@vendcfo/api/utils/auth");
-  const {
-    createClient: createApiSupabase,
-  } = await import("@vendcfo/api/services/supabase");
+  const { createClient: createApiSupabase } = await import(
+    "@vendcfo/api/services/supabase"
+  );
   const { db } = await import("@vendcfo/db/client");
 
   const accessToken = await getAccessToken();
@@ -55,7 +55,9 @@ const getServerCaller = cache(async () => {
   if (!session) {
     try {
       const supabaseForAuth = await createClient();
-      const { data: { user } } = await supabaseForAuth.auth.getUser();
+      const {
+        data: { user },
+      } = await supabaseForAuth.auth.getUser();
       if (user) {
         session = {
           user: {
@@ -64,9 +66,7 @@ const getServerCaller = cache(async () => {
             full_name: user.user_metadata?.full_name,
           },
         };
-        console.log("[getServerCaller] Fallback auth succeeded for user:", user.id);
       } else {
-        console.log("[getServerCaller] Fallback auth: no user from getUser()");
       }
     } catch (e) {
       console.error("[getServerCaller] Fallback auth failed:", e);

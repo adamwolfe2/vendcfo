@@ -1,9 +1,9 @@
 "use client";
 
 import { useTRPC } from "@/trpc/client";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Checkbox } from "@vendcfo/ui/checkbox";
 import { Label } from "@vendcfo/ui/label";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 type Props = {
   type: string;

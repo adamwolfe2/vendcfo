@@ -1,6 +1,11 @@
 "use client";
 
-import { AnimatePresence, motion, useMotionValue, useTransform } from "framer-motion";
+import {
+  AnimatePresence,
+  motion,
+  useMotionValue,
+  useTransform,
+} from "framer-motion";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import {
   Area,
@@ -19,7 +24,7 @@ import {
 function useAnimatedCounter(target: number, duration = 1200) {
   const [value, setValue] = useState(0);
   useEffect(() => {
-    let start = 0;
+    const start = 0;
     const startTime = performance.now();
     const step = (now: number) => {
       const progress = Math.min((now - startTime) / duration, 1);
@@ -87,12 +92,18 @@ function RevenueSlide() {
         </div>
         <div>
           <p className="text-[11px] text-white/35 mb-1">Active Machines</p>
-          <p className="text-xl font-medium text-white tabular-nums">{machines}</p>
-          <p className="text-[11px] text-emerald-400/70 mt-0.5">+8 this month</p>
+          <p className="text-xl font-medium text-white tabular-nums">
+            {machines}
+          </p>
+          <p className="text-[11px] text-emerald-400/70 mt-0.5">
+            +8 this month
+          </p>
         </div>
         <div>
           <p className="text-[11px] text-white/35 mb-1">Avg / Machine</p>
-          <p className="text-xl font-medium text-white tabular-nums">${perMachine}</p>
+          <p className="text-xl font-medium text-white tabular-nums">
+            ${perMachine}
+          </p>
           <p className="text-[11px] text-emerald-400/70 mt-0.5">+5.2%</p>
         </div>
       </div>
@@ -106,7 +117,11 @@ function RevenueSlide() {
                 <stop offset="100%" stopColor="rgba(255,255,255,0)" />
               </linearGradient>
             </defs>
-            <CartesianGrid stroke="rgba(255,255,255,0.04)" strokeDasharray="3 3" vertical={false} />
+            <CartesianGrid
+              stroke="rgba(255,255,255,0.04)"
+              strokeDasharray="3 3"
+              vertical={false}
+            />
             <XAxis
               dataKey="month"
               tick={{ fill: "rgba(255,255,255,0.25)", fontSize: 10 }}
@@ -146,17 +161,23 @@ function MachineSlide() {
       <div className="grid grid-cols-3 gap-4">
         <div>
           <p className="text-[11px] text-white/35 mb-1">Machines Online</p>
-          <p className="text-xl font-medium text-white tabular-nums">{online}/142</p>
+          <p className="text-xl font-medium text-white tabular-nums">
+            {online}/142
+          </p>
           <p className="text-[11px] text-emerald-400/70 mt-0.5">97.2% uptime</p>
         </div>
         <div>
           <p className="text-[11px] text-white/35 mb-1">Low Stock Alerts</p>
-          <p className="text-xl font-medium text-white tabular-nums">{alerts}</p>
+          <p className="text-xl font-medium text-white tabular-nums">
+            {alerts}
+          </p>
           <p className="text-[11px] text-amber-400/70 mt-0.5">need restock</p>
         </div>
         <div>
           <p className="text-[11px] text-white/35 mb-1">Revenue Today</p>
-          <p className="text-xl font-medium text-white tabular-nums">${today.toLocaleString()}</p>
+          <p className="text-xl font-medium text-white tabular-nums">
+            ${today.toLocaleString()}
+          </p>
           <p className="text-[11px] text-emerald-400/70 mt-0.5">+$213 vs avg</p>
         </div>
       </div>
@@ -164,7 +185,11 @@ function MachineSlide() {
       <div className="h-[180px] -mx-2">
         <ResponsiveContainer width="100%" height="100%">
           <BarChart data={machineData} barSize={28}>
-            <CartesianGrid stroke="rgba(255,255,255,0.04)" strokeDasharray="3 3" vertical={false} />
+            <CartesianGrid
+              stroke="rgba(255,255,255,0.04)"
+              strokeDasharray="3 3"
+              vertical={false}
+            />
             <XAxis
               dataKey="name"
               tick={{ fill: "rgba(255,255,255,0.25)", fontSize: 10 }}
@@ -201,17 +226,25 @@ function RouteSlide() {
       <div className="grid grid-cols-3 gap-4">
         <div>
           <p className="text-[11px] text-white/35 mb-1">Routes Optimized</p>
-          <p className="text-xl font-medium text-white tabular-nums">{routes}</p>
-          <p className="text-[11px] text-emerald-400/70 mt-0.5">-18% drive time</p>
+          <p className="text-xl font-medium text-white tabular-nums">
+            {routes}
+          </p>
+          <p className="text-[11px] text-emerald-400/70 mt-0.5">
+            -18% drive time
+          </p>
         </div>
         <div>
           <p className="text-[11px] text-white/35 mb-1">Stops / Day</p>
           <p className="text-xl font-medium text-white tabular-nums">{stops}</p>
-          <p className="text-[11px] text-emerald-400/70 mt-0.5">+6 vs last month</p>
+          <p className="text-[11px] text-emerald-400/70 mt-0.5">
+            +6 vs last month
+          </p>
         </div>
         <div>
           <p className="text-[11px] text-white/35 mb-1">Fuel Savings</p>
-          <p className="text-xl font-medium text-white tabular-nums">${savings.toLocaleString()}</p>
+          <p className="text-xl font-medium text-white tabular-nums">
+            ${savings.toLocaleString()}
+          </p>
           <p className="text-[11px] text-white/35 mt-0.5">per month</p>
         </div>
       </div>
@@ -219,7 +252,11 @@ function RouteSlide() {
       <div className="h-[180px] -mx-2">
         <ResponsiveContainer width="100%" height="100%">
           <LineChart data={routeData}>
-            <CartesianGrid stroke="rgba(255,255,255,0.04)" strokeDasharray="3 3" vertical={false} />
+            <CartesianGrid
+              stroke="rgba(255,255,255,0.04)"
+              strokeDasharray="3 3"
+              vertical={false}
+            />
             <XAxis
               dataKey="day"
               tick={{ fill: "rgba(255,255,255,0.25)", fontSize: 10 }}
@@ -279,7 +316,9 @@ function CashflowSlide() {
         </div>
         <div>
           <p className="text-[11px] text-white/35 mb-1">Avg. Days to Pay</p>
-          <p className="text-xl font-medium text-white tabular-nums">{(days / 10).toFixed(1)}</p>
+          <p className="text-xl font-medium text-white tabular-nums">
+            {(days / 10).toFixed(1)}
+          </p>
           <p className="text-[11px] text-emerald-400/70 mt-0.5">-2.1 days</p>
         </div>
       </div>
@@ -287,7 +326,11 @@ function CashflowSlide() {
       <div className="h-[180px] -mx-2">
         <ResponsiveContainer width="100%" height="100%">
           <BarChart data={cashflowData} barSize={20} barGap={4}>
-            <CartesianGrid stroke="rgba(255,255,255,0.04)" strokeDasharray="3 3" vertical={false} />
+            <CartesianGrid
+              stroke="rgba(255,255,255,0.04)"
+              strokeDasharray="3 3"
+              vertical={false}
+            />
             <XAxis
               dataKey="week"
               tick={{ fill: "rgba(255,255,255,0.25)", fontSize: 10 }}
@@ -322,10 +365,34 @@ function CashflowSlide() {
 
 // --- P&L Breakdown Slide ---
 const plData = [
-  { location: "Downtown Mall", revenue: 8400, cogs: 3360, opex: 1680, profit: 3360 },
-  { location: "Airport Terminal", revenue: 6200, cogs: 2480, opex: 1240, profit: 2480 },
-  { location: "Office Park", revenue: 4800, cogs: 1920, opex: 960, profit: 1920 },
-  { location: "University", revenue: 5600, cogs: 2240, opex: 1120, profit: 2240 },
+  {
+    location: "Downtown Mall",
+    revenue: 8400,
+    cogs: 3360,
+    opex: 1680,
+    profit: 3360,
+  },
+  {
+    location: "Airport Terminal",
+    revenue: 6200,
+    cogs: 2480,
+    opex: 1240,
+    profit: 2480,
+  },
+  {
+    location: "Office Park",
+    revenue: 4800,
+    cogs: 1920,
+    opex: 960,
+    profit: 1920,
+  },
+  {
+    location: "University",
+    revenue: 5600,
+    cogs: 2240,
+    opex: 1120,
+    profit: 2240,
+  },
   { location: "Hospital", revenue: 3900, cogs: 1560, opex: 780, profit: 1560 },
 ];
 
@@ -346,12 +413,16 @@ function PLSlide() {
         </div>
         <div>
           <p className="text-[11px] text-white/35 mb-1">Profit Margin</p>
-          <p className="text-xl font-medium text-white tabular-nums">{margin}%</p>
+          <p className="text-xl font-medium text-white tabular-nums">
+            {margin}%
+          </p>
           <p className="text-[11px] text-emerald-400/70 mt-0.5">+4.2pts</p>
         </div>
         <div>
           <p className="text-[11px] text-white/35 mb-1">Locations</p>
-          <p className="text-xl font-medium text-white tabular-nums">{locations}</p>
+          <p className="text-xl font-medium text-white tabular-nums">
+            {locations}
+          </p>
           <p className="text-[11px] text-white/35 mt-0.5">all profitable</p>
         </div>
       </div>
@@ -359,7 +430,11 @@ function PLSlide() {
       <div className="h-[200px] -mx-2">
         <ResponsiveContainer width="100%" height="100%">
           <BarChart data={plData} barSize={14} barGap={2} layout="vertical">
-            <CartesianGrid stroke="rgba(255,255,255,0.04)" strokeDasharray="3 3" horizontal={false} />
+            <CartesianGrid
+              stroke="rgba(255,255,255,0.04)"
+              strokeDasharray="3 3"
+              horizontal={false}
+            />
             <XAxis
               type="number"
               tick={{ fill: "rgba(255,255,255,0.25)", fontSize: 10 }}
@@ -375,8 +450,18 @@ function PLSlide() {
               tickLine={false}
               width={90}
             />
-            <Bar dataKey="profit" fill="rgba(255,255,255,0.25)" radius={[0, 3, 3, 0]} animationDuration={1200} />
-            <Bar dataKey="opex" fill="rgba(255,255,255,0.08)" radius={[0, 3, 3, 0]} animationDuration={1200} />
+            <Bar
+              dataKey="profit"
+              fill="rgba(255,255,255,0.25)"
+              radius={[0, 3, 3, 0]}
+              animationDuration={1200}
+            />
+            <Bar
+              dataKey="opex"
+              fill="rgba(255,255,255,0.08)"
+              radius={[0, 3, 3, 0]}
+              animationDuration={1200}
+            />
           </BarChart>
         </ResponsiveContainer>
       </div>
@@ -386,12 +471,18 @@ function PLSlide() {
 
 // --- Product Margin Optimizer Slide ---
 const marginData = [
-  { product: "Energy Drinks", cost: 0.85, price: 2.50, margin: 66, volume: 420 },
-  { product: "Water Bottles", cost: 0.22, price: 1.75, margin: 87, volume: 680 },
-  { product: "Candy Bars", cost: 0.45, price: 1.50, margin: 70, volume: 390 },
-  { product: "Chips", cost: 0.55, price: 2.00, margin: 73, volume: 310 },
+  { product: "Energy Drinks", cost: 0.85, price: 2.5, margin: 66, volume: 420 },
+  {
+    product: "Water Bottles",
+    cost: 0.22,
+    price: 1.75,
+    margin: 87,
+    volume: 680,
+  },
+  { product: "Candy Bars", cost: 0.45, price: 1.5, margin: 70, volume: 390 },
+  { product: "Chips", cost: 0.55, price: 2.0, margin: 73, volume: 310 },
   { product: "Coffee", cost: 0.35, price: 2.25, margin: 84, volume: 520 },
-  { product: "Sandwiches", cost: 1.80, price: 4.50, margin: 60, volume: 140 },
+  { product: "Sandwiches", cost: 1.8, price: 4.5, margin: 60, volume: 140 },
 ];
 
 function MarginSlide() {
@@ -404,12 +495,18 @@ function MarginSlide() {
       <div className="grid grid-cols-3 gap-4">
         <div>
           <p className="text-[11px] text-white/35 mb-1">Avg Margin</p>
-          <p className="text-xl font-medium text-white tabular-nums">{avgMargin}%</p>
-          <p className="text-[11px] text-emerald-400/70 mt-0.5">+6% optimized</p>
+          <p className="text-xl font-medium text-white tabular-nums">
+            {avgMargin}%
+          </p>
+          <p className="text-[11px] text-emerald-400/70 mt-0.5">
+            +6% optimized
+          </p>
         </div>
         <div>
           <p className="text-[11px] text-white/35 mb-1">Best Margin</p>
-          <p className="text-xl font-medium text-white tabular-nums">{topProduct}%</p>
+          <p className="text-xl font-medium text-white tabular-nums">
+            {topProduct}%
+          </p>
           <p className="text-[11px] text-white/35 mt-0.5">Water Bottles</p>
         </div>
         <div>
@@ -424,7 +521,11 @@ function MarginSlide() {
       <div className="h-[200px] -mx-2">
         <ResponsiveContainer width="100%" height="100%">
           <BarChart data={marginData} barSize={24}>
-            <CartesianGrid stroke="rgba(255,255,255,0.04)" strokeDasharray="3 3" vertical={false} />
+            <CartesianGrid
+              stroke="rgba(255,255,255,0.04)"
+              strokeDasharray="3 3"
+              vertical={false}
+            />
             <XAxis
               dataKey="product"
               tick={{ fill: "rgba(255,255,255,0.25)", fontSize: 9 }}

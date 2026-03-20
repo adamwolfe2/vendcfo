@@ -2,9 +2,9 @@
 
 import { useI18n } from "@/locales/client";
 import { useTRPC } from "@/trpc/client";
+import { useSuspenseQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@vendcfo/ui/card";
 import { Skeleton } from "@vendcfo/ui/skeleton";
-import { useSuspenseQuery } from "@tanstack/react-query";
 import { PaymentScoreVisualizer } from "./payment-score-visualizer";
 
 export function InvoicePaymentScoreSkeleton() {

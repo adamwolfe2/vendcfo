@@ -72,13 +72,22 @@ export default async function Page(props: Props) {
     ]);
 
     if (userData.status === "fulfilled") {
-      queryClient.setQueryData(trpc.user.me.queryOptions().queryKey, userData.value);
+      queryClient.setQueryData(
+        trpc.user.me.queryOptions().queryKey,
+        userData.value,
+      );
     }
     if (teamList.status === "fulfilled") {
-      queryClient.setQueryData(trpc.team.list.queryOptions().queryKey, teamList.value);
+      queryClient.setQueryData(
+        trpc.team.list.queryOptions().queryKey,
+        teamList.value,
+      );
     }
     if (teamCurrent.status === "fulfilled") {
-      queryClient.setQueryData(trpc.team.current.queryOptions().queryKey, teamCurrent.value);
+      queryClient.setQueryData(
+        trpc.team.current.queryOptions().queryKey,
+        teamCurrent.value,
+      );
     }
 
     // Render the consent screen

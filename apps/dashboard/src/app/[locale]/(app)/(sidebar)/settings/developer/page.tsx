@@ -38,7 +38,10 @@ export default async function Page() {
       );
     }
   } catch (error) {
-    console.error("[DeveloperPage] Failed to prefetch via direct caller:", error);
+    console.error(
+      "[DeveloperPage] Failed to prefetch via direct caller:",
+      error,
+    );
   }
 
   return (

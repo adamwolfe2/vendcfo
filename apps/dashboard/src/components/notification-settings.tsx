@@ -6,6 +6,7 @@ import {
   getCategoryDisplayTitle,
   getNotificationDisplayInfoWithFallback,
 } from "@/utils/notification-definitions";
+import { useQuery } from "@tanstack/react-query";
 import {
   Accordion,
   AccordionContent,
@@ -13,7 +14,6 @@ import {
   AccordionTrigger,
 } from "@vendcfo/ui/accordion";
 import { Skeleton } from "@vendcfo/ui/skeleton";
-import { useQuery } from "@tanstack/react-query";
 import { ChevronDown } from "lucide-react";
 import { NotificationSetting } from "./notification-setting";
 

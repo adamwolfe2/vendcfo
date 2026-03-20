@@ -96,7 +96,9 @@ export async function POST(req: NextRequest) {
     });
 
     // 7. Extract forced tool call from message metadata (widget clicks)
-    let forcedToolCall: { toolName: string; toolParams: Record<string, unknown> } | undefined;
+    let forcedToolCall:
+      | { toolName: string; toolParams: Record<string, unknown> }
+      | undefined;
     const metadata = (message as any)?.metadata;
     if (metadata?.toolCall?.toolName && metadata?.toolCall?.toolParams) {
       forcedToolCall = {

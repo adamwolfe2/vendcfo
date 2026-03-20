@@ -4,6 +4,8 @@ import { useGlobalTimerStatus } from "@/hooks/use-global-timer-status";
 import { useTimerStore } from "@/store/timer";
 import { useTRPC } from "@/trpc/client";
 import { secondsToHoursAndMinutes } from "@/utils/format";
+import NumberFlow from "@number-flow/react";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Icons } from "@vendcfo/ui/icons";
 import {
   Tooltip,
@@ -12,8 +14,6 @@ import {
   TooltipTrigger,
 } from "@vendcfo/ui/tooltip";
 import { useToast } from "@vendcfo/ui/use-toast";
-import NumberFlow from "@number-flow/react";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 interface TrackerTimerProps {

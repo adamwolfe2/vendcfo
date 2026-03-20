@@ -1,5 +1,6 @@
 import { useI18n } from "@/locales/client";
 import type { RouterOutputs } from "@api/trpc/routers/_app";
+import type { ColumnDef, FilterFn, Row } from "@tanstack/react-table";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -27,7 +28,6 @@ import {
   SelectValue,
 } from "@vendcfo/ui/select";
 import { useToast } from "@vendcfo/ui/use-toast";
-import type { ColumnDef, FilterFn, Row } from "@tanstack/react-table";
 import { MoreHorizontal } from "lucide-react";
 import { Loader2 } from "lucide-react";
 import * as React from "react";

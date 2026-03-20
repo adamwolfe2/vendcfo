@@ -4,8 +4,8 @@ import { manualSyncTransactionsAction } from "@/actions/transactions/manual-sync
 import { reconnectConnectionAction } from "@/actions/transactions/reconnect-connection-action";
 import { useSyncStatus } from "@/hooks/use-sync-status";
 import { useTRPC } from "@/trpc/client";
-import { useToast } from "@vendcfo/ui/use-toast";
 import { useQueryClient } from "@tanstack/react-query";
+import { useToast } from "@vendcfo/ui/use-toast";
 import { useAction } from "next-safe-action/hooks";
 import { parseAsString, useQueryStates } from "nuqs";
 import { useCallback, useEffect, useRef, useState } from "react";

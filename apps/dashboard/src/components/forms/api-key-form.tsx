@@ -11,6 +11,7 @@ import {
   scopePresets,
   scopesToName,
 } from "@api/utils/scopes";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { AnimatedSizeContainer } from "@vendcfo/ui/animated-size-container";
 import {
   Form,
@@ -23,7 +24,6 @@ import {
 import { Input } from "@vendcfo/ui/input";
 import { SubmitButton } from "@vendcfo/ui/submit-button";
 import { Tabs, TabsList, TabsTrigger } from "@vendcfo/ui/tabs";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import { z } from "zod/v3";
 import { ScopeSelector } from "../scope-selector";

@@ -32,7 +32,11 @@ function createPool(connectionString: string) {
   const originalQuery = pool.query.bind(pool);
   // @ts-expect-error — overloaded signature, safe at runtime
   pool.query = (configOrText: any, ...args: any[]) => {
-    if (typeof configOrText === "object" && configOrText !== null && "name" in configOrText) {
+    if (
+      typeof configOrText === "object" &&
+      configOrText !== null &&
+      "name" in configOrText
+    ) {
       const { name, ...rest } = configOrText;
       return originalQuery(rest, ...args);
     }

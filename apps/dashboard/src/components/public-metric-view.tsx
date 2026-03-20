@@ -14,10 +14,10 @@ import { StackedBarChart } from "@/components/charts/stacked-bar-chart";
 import type { ReportType } from "@/components/metrics/utils/chart-types";
 import { useTRPC } from "@/trpc/client";
 import { formatAmount } from "@/utils/format";
-import { cn } from "@vendcfo/ui/cn";
-import { Icons } from "@vendcfo/ui/icons";
 import NumberFlow from "@number-flow/react";
 import { useQuery } from "@tanstack/react-query";
+import { cn } from "@vendcfo/ui/cn";
+import { Icons } from "@vendcfo/ui/icons";
 import { format, parseISO } from "date-fns";
 import { useEffect, useMemo, useRef, useState } from "react";
 

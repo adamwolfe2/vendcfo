@@ -8,11 +8,11 @@ import { useRealtime } from "@/hooks/use-realtime";
 import { useUserQuery } from "@/hooks/use-user";
 import { useInboxStore } from "@/store/inbox";
 import { useTRPC } from "@/trpc/client";
-import { ScrollArea } from "@vendcfo/ui/scroll-area";
 import {
   useQueryClient,
   useSuspenseInfiniteQuery,
 } from "@tanstack/react-query";
+import { ScrollArea } from "@vendcfo/ui/scroll-area";
 import { AnimatePresence, motion } from "framer-motion";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useHotkeys } from "react-hotkeys-hook";

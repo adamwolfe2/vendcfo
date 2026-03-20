@@ -26,7 +26,8 @@ export default async function Page(props: Props) {
   const params = loadInboxParams(searchParams);
 
   // Fetch inbox data (infinite query — wrap in try/catch, leave as fetchInfiniteQuery)
-  let data: Awaited<ReturnType<typeof queryClient.fetchInfiniteQuery>> | null = null;
+  let data: Awaited<ReturnType<typeof queryClient.fetchInfiniteQuery>> | null =
+    null;
   try {
     data = await queryClient.fetchInfiniteQuery(
       trpc.inbox.get.infiniteQueryOptions({
@@ -41,7 +42,11 @@ export default async function Page(props: Props) {
   }
 
   // Fetch accounts via direct caller
-  let accounts: Awaited<ReturnType<Awaited<ReturnType<typeof getServerCaller>>["inboxAccounts"]["get"]>> | null = null;
+  let accounts: Awaited<
+    ReturnType<
+      Awaited<ReturnType<typeof getServerCaller>>["inboxAccounts"]["get"]
+    >
+  > | null = null;
   try {
     const caller = await getServerCaller();
     accounts = await caller.inboxAccounts.get();
@@ -50,7 +55,10 @@ export default async function Page(props: Props) {
       accounts,
     );
   } catch (error) {
-    console.error("[InboxPage] Failed to fetch inbox accounts via direct caller:", error);
+    console.error(
+      "[InboxPage] Failed to fetch inbox accounts via direct caller:",
+      error,
+    );
   }
 
   const hasInboxItems = (data?.pages?.[0]?.data?.length ?? 0) > 0;

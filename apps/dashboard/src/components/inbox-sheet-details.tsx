@@ -7,12 +7,12 @@ import { useInboxParams } from "@/hooks/use-inbox-params";
 import { useUserQuery } from "@/hooks/use-user";
 import { useTRPC } from "@/trpc/client";
 import { getWebsiteLogo } from "@/utils/logos";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Avatar, AvatarFallback, AvatarImageNext } from "@vendcfo/ui/avatar";
 import { Separator } from "@vendcfo/ui/separator";
 import { SheetHeader } from "@vendcfo/ui/sheet";
 import { Skeleton } from "@vendcfo/ui/skeleton";
 import { formatDate, getInitials } from "@vendcfo/utils/format";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
 
 export function InboxSheetDetails() {
   const trpc = useTRPC();

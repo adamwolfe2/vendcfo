@@ -3,8 +3,8 @@
 import { AssignedUser } from "@/components/assigned-user";
 import { useTransactionTableContextOptional } from "@/components/tables/transactions/transaction-table-context";
 import { useTRPC } from "@/trpc/client";
-import { Popover, PopoverContent, PopoverTrigger } from "@vendcfo/ui/popover";
 import { useQuery } from "@tanstack/react-query";
+import { Popover, PopoverContent, PopoverTrigger } from "@vendcfo/ui/popover";
 import { useState } from "react";
 
 type User = {

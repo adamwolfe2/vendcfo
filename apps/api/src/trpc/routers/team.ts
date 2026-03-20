@@ -68,40 +68,13 @@ export const teamRouter = createTRPCRouter({
   create: protectedProcedure
     .input(createTeamSchema)
     .mutation(async ({ ctx: { db, session }, input }) => {
-      const requestId = `trpc_team_create_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
-
-      console.log(`[${requestId}] TRPC team creation request`, {
+      const teamId = await createTeam(db, {
+        ...input,
         userId: session.user.id,
-        userEmail: session.user.email,
-        teamName: input.name,
-        baseCurrency: input.baseCurrency,
-        countryCode: input.countryCode,
-        switchTeam: input.switchTeam,
-        timestamp: new Date().toISOString(),
+        email: session.user.email!,
       });
 
-      try {
-        const teamId = await createTeam(db, {
-          ...input,
-          userId: session.user.id,
-          email: session.user.email!,
-        });
-
-        console.log(`[${requestId}] TRPC team creation successful`, {
-          teamId,
-          userId: session.user.id,
-        });
-
-        return teamId;
-      } catch (error) {
-        console.error(`[${requestId}] TRPC team creation failed`, {
-          error: error instanceof Error ? error.message : String(error),
-          stack: error instanceof Error ? error.stack : undefined,
-          userId: session.user.id,
-          input,
-        });
-        throw error;
-      }
+      return teamId;
     }),
 
   leave: protectedProcedure

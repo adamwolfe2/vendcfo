@@ -4,6 +4,7 @@ import { useReconnect } from "@/hooks/use-reconnect";
 import { useTRPC } from "@/trpc/client";
 import { connectionStatus } from "@/utils/connection-status";
 import type { RouterOutputs } from "@api/trpc/routers/_app";
+import { useSuspenseQuery } from "@tanstack/react-query";
 import { Icons } from "@vendcfo/ui/icons";
 import {
   Tooltip,
@@ -11,7 +12,6 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@vendcfo/ui/tooltip";
-import { useSuspenseQuery } from "@tanstack/react-query";
 import { differenceInDays, formatDistanceToNow } from "date-fns";
 import { BankAccount } from "./bank-account";
 import { BankLogo } from "./bank-logo";

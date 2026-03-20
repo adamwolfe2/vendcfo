@@ -1,6 +1,7 @@
 "use client";
 
 import { useTRPC } from "@/trpc/client";
+import { useMutation } from "@tanstack/react-query";
 import { createClient } from "@vendcfo/supabase/client";
 import {
   AlertDialog,
@@ -23,7 +24,6 @@ import {
 } from "@vendcfo/ui/card";
 import { Input } from "@vendcfo/ui/input";
 import { Label } from "@vendcfo/ui/label";
-import { useMutation } from "@tanstack/react-query";
 import { Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -50,8 +50,8 @@ export function DeleteAccount() {
         <CardTitle>Delete account</CardTitle>
         <CardDescription>
           Permanently remove your Personal Account and all of its contents from
-          the VendCFO platform. This action is not reversible, so please continue
-          with caution.
+          the VendCFO platform. This action is not reversible, so please
+          continue with caution.
         </CardDescription>
       </CardHeader>
       <CardFooter className="flex justify-between">

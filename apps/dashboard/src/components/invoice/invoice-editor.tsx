@@ -1,14 +1,6 @@
 "use client";
 
 import { useTRPC } from "@/trpc/client";
-import { cn } from "@vendcfo/ui/cn";
-import {
-  SlashCommand,
-  type SlashCommandItem,
-  SlashMenu,
-  type SlashMenuRef,
-} from "@vendcfo/ui/editor/extentions/slash-command";
-import { formatAmount } from "@vendcfo/utils/format";
 import { useQuery } from "@tanstack/react-query";
 import Link from "@tiptap/extension-link";
 import Placeholder from "@tiptap/extension-placeholder";
@@ -20,6 +12,14 @@ import {
   useEditor,
 } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
+import { cn } from "@vendcfo/ui/cn";
+import {
+  SlashCommand,
+  type SlashCommandItem,
+  SlashMenu,
+  type SlashMenuRef,
+} from "@vendcfo/ui/editor/extentions/slash-command";
+import { formatAmount } from "@vendcfo/utils/format";
 import { format } from "date-fns";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useFormContext, useWatch } from "react-hook-form";

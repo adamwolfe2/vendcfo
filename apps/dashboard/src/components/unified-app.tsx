@@ -1,6 +1,7 @@
 import { useAppOAuth } from "@/hooks/use-app-oauth";
 import { useTRPC } from "@/trpc/client";
 import { getScopeDescription } from "@/utils/scopes";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import type { UnifiedApp } from "@vendcfo/app-store/types";
 import { openUrl } from "@vendcfo/desktop-client/core";
 import { isDesktopApp } from "@vendcfo/desktop-client/platform";
@@ -24,7 +25,6 @@ import { ScrollArea } from "@vendcfo/ui/scroll-area";
 import { Sheet, SheetContent, SheetHeader } from "@vendcfo/ui/sheet";
 import { SubmitButton } from "@vendcfo/ui/submit-button";
 import { useToast } from "@vendcfo/ui/use-toast";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
 import Image from "next/image";
 import { parseAsBoolean, parseAsString, useQueryStates } from "nuqs";
 import { useEffect, useMemo, useState } from "react";
@@ -40,7 +40,10 @@ const oauthAppConfig: Record<
   gmail: { endpoint: "/apps/gmail/install-url", queryKey: "inboxAccounts" },
   outlook: { endpoint: "/apps/outlook/install-url", queryKey: "inboxAccounts" },
   xero: { endpoint: "/apps/xero/install-url", queryKey: "apps" },
-  quickbooks: { endpoint: "/api/apps/quickbooks/install-url", queryKey: "apps" },
+  quickbooks: {
+    endpoint: "/api/apps/quickbooks/install-url",
+    queryKey: "apps",
+  },
   fortnox: { endpoint: "/apps/fortnox/install-url", queryKey: "apps" },
   "stripe-payments": {
     endpoint: "/invoice-payments/connect-stripe",
@@ -527,9 +530,9 @@ export function UnifiedAppComponent({ app }: UnifiedAppProps) {
                 <p className="text-[10px] text-[#878787]">
                   All apps on the VendCFO App Store are open-source and
                   peer-reviewed. VendCFO Labs AB maintains high standards but
-                  doesn't endorse third-party apps. Apps published by VendCFO are
-                  officially certified. Report any concerns about app content or
-                  behavior.
+                  doesn't endorse third-party apps. Apps published by VendCFO
+                  are officially certified. Report any concerns about app
+                  content or behavior.
                 </p>
 
                 <a

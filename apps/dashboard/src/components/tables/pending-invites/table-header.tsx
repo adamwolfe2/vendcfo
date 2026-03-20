@@ -2,10 +2,10 @@
 
 import { InviteTeamMembersModal } from "@/components/modals/invite-team-members-modal";
 import type { RouterOutputs } from "@api/trpc/routers/_app";
+import type { Table } from "@tanstack/react-table";
 import { Button } from "@vendcfo/ui/button";
 import { Dialog } from "@vendcfo/ui/dialog";
 import { Input } from "@vendcfo/ui/input";
-import type { Table } from "@tanstack/react-table";
 import { useState } from "react";
 
 type Props = {

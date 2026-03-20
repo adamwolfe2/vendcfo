@@ -1,9 +1,9 @@
 "use client";
 
 import { getUrl } from "@/utils/environment";
+import type { Provider } from "@supabase/supabase-js";
 import { isDesktopApp } from "@vendcfo/desktop-client/platform";
 import { createClient } from "@vendcfo/supabase/client";
-import type { Provider } from "@supabase/supabase-js";
 import { useSearchParams } from "next/navigation";
 import { useState } from "react";
 

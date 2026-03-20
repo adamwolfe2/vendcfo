@@ -1,12 +1,12 @@
 "use client";
 
 import { Cookies } from "@/utils/constants";
-import type { AppRouter } from "@vendcfo/api/trpc/routers/_app";
-import { createClient } from "@vendcfo/supabase/client";
 import type { QueryClient } from "@tanstack/react-query";
 import { QueryClientProvider, isServer } from "@tanstack/react-query";
 import { createTRPCClient, httpBatchLink, loggerLink } from "@trpc/client";
 import { createTRPCContext } from "@trpc/tanstack-react-query";
+import type { AppRouter } from "@vendcfo/api/trpc/routers/_app";
+import { createClient } from "@vendcfo/supabase/client";
 import { useState } from "react";
 import superjson from "superjson";
 import { makeQueryClient } from "./query-client";

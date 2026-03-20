@@ -310,13 +310,14 @@ export async function POST(req: NextRequest) {
     // 2. Parse body
     const body: SendReportBody = await req.json().catch(() => ({}));
     const period = body.period ?? "quarterly";
-    const periodInfo = body.periodStart && body.periodEnd
-      ? {
-          start: body.periodStart,
-          end: body.periodEnd,
-          label: `${new Date(body.periodStart).toLocaleDateString("en-US", { month: "long", year: "numeric" })} - ${new Date(body.periodEnd).toLocaleDateString("en-US", { month: "long", year: "numeric" })}`,
-        }
-      : getDefaultPeriod(period);
+    const periodInfo =
+      body.periodStart && body.periodEnd
+        ? {
+            start: body.periodStart,
+            end: body.periodEnd,
+            label: `${new Date(body.periodStart).toLocaleDateString("en-US", { month: "long", year: "numeric" })} - ${new Date(body.periodEnd).toLocaleDateString("en-US", { month: "long", year: "numeric" })}`,
+          }
+        : getDefaultPeriod(period);
 
     const months = getMonthsBetween(periodInfo.start, periodInfo.end);
 
@@ -343,9 +344,12 @@ export async function POST(req: NextRequest) {
     }
 
     if (!locations || locations.length === 0) {
-      return NextResponse.json(
-        { sent: 0, failed: 0, details: [], message: "No eligible locations found" },
-      );
+      return NextResponse.json({
+        sent: 0,
+        failed: 0,
+        details: [],
+        message: "No eligible locations found",
+      });
     }
 
     // 4. Process each location
@@ -425,7 +429,9 @@ export async function POST(req: NextRequest) {
           resendId = emailResult.id ?? null;
         } catch (emailErr: unknown) {
           const errMsg =
-            emailErr instanceof Error ? emailErr.message : "Unknown email error";
+            emailErr instanceof Error
+              ? emailErr.message
+              : "Unknown email error";
           details.push({
             locationId: loc.id,
             locationName: loc.name,

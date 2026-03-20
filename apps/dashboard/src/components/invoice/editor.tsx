@@ -1,8 +1,8 @@
 "use client";
 
+import type { Editor as EditorInstance, JSONContent } from "@tiptap/react";
 import { cn } from "@vendcfo/ui/cn";
 import { Editor as BaseEditor } from "@vendcfo/ui/editor";
-import type { Editor as EditorInstance, JSONContent } from "@tiptap/react";
 import { useCallback, useState } from "react";
 
 type Props = {

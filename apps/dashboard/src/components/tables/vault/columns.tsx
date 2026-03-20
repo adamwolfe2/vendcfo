@@ -7,6 +7,7 @@ import { downloadFile } from "@/lib/download";
 import { isStaleProcessing } from "@/utils/document";
 import { formatSize } from "@/utils/format";
 import type { RouterOutputs } from "@api/trpc/routers/_app";
+import type { ColumnDef } from "@tanstack/react-table";
 import { isMimeTypeSupportedForProcessing } from "@vendcfo/documents/utils";
 import { Badge } from "@vendcfo/ui/badge";
 import { Button } from "@vendcfo/ui/button";
@@ -20,7 +21,6 @@ import {
   DropdownMenuTrigger,
 } from "@vendcfo/ui/dropdown-menu";
 import { Skeleton } from "@vendcfo/ui/skeleton";
-import type { ColumnDef } from "@tanstack/react-table";
 import { MoreHorizontal } from "lucide-react";
 import { useState } from "react";
 

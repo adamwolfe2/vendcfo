@@ -1,8 +1,8 @@
 "use client";
 
+import { type Row, flexRender } from "@tanstack/react-table";
 import { cn } from "@vendcfo/ui/cn";
 import { TableCell, TableRow } from "@vendcfo/ui/table";
-import { type Row, flexRender } from "@tanstack/react-table";
 import type { Customer } from "./columns";
 
 type Props = {

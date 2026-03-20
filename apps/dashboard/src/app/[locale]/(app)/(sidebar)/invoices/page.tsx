@@ -46,7 +46,9 @@ export default async function Page(props: Props) {
 
     // Fetch regular queries via direct caller
     const results = await Promise.allSettled([
-      caller.invoice.invoiceSummary({ statuses: ["draft", "scheduled", "unpaid"] }),
+      caller.invoice.invoiceSummary({
+        statuses: ["draft", "scheduled", "unpaid"],
+      }),
       caller.invoice.invoiceSummary({ statuses: ["paid"] }),
       caller.invoice.invoiceSummary({ statuses: ["overdue"] }),
       caller.invoice.paymentStatus(),
@@ -54,19 +56,23 @@ export default async function Page(props: Props) {
 
     if (results[0].status === "fulfilled") {
       queryClient.setQueryData(
-        trpc.invoice.invoiceSummary.queryOptions({ statuses: ["draft", "scheduled", "unpaid"] }).queryKey,
+        trpc.invoice.invoiceSummary.queryOptions({
+          statuses: ["draft", "scheduled", "unpaid"],
+        }).queryKey,
         results[0].value,
       );
     }
     if (results[1].status === "fulfilled") {
       queryClient.setQueryData(
-        trpc.invoice.invoiceSummary.queryOptions({ statuses: ["paid"] }).queryKey,
+        trpc.invoice.invoiceSummary.queryOptions({ statuses: ["paid"] })
+          .queryKey,
         results[1].value,
       );
     }
     if (results[2].status === "fulfilled") {
       queryClient.setQueryData(
-        trpc.invoice.invoiceSummary.queryOptions({ statuses: ["overdue"] }).queryKey,
+        trpc.invoice.invoiceSummary.queryOptions({ statuses: ["overdue"] })
+          .queryKey,
         results[2].value,
       );
     }
@@ -86,7 +92,10 @@ export default async function Page(props: Props) {
       console.error("[InvoicesPage] Failed to prefetch invoice list:", e);
     }
   } catch (error) {
-    console.error("[InvoicesPage] Failed to prefetch via direct caller:", error);
+    console.error(
+      "[InvoicesPage] Failed to prefetch via direct caller:",
+      error,
+    );
   }
 
   return (

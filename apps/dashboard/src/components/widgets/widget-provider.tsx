@@ -1,7 +1,7 @@
 "use client";
 
-import type { AppRouter } from "@vendcfo/api/trpc/routers/_app";
 import type { inferRouterOutputs } from "@trpc/server";
+import type { AppRouter } from "@vendcfo/api/trpc/routers/_app";
 import { type ReactNode, createContext, useContext, useRef } from "react";
 import { useStore } from "zustand";
 import { devtools } from "zustand/middleware";

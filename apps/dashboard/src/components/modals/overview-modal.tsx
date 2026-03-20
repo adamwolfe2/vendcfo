@@ -3,9 +3,9 @@
 import { hideConnectFlowAction } from "@/actions/hide-connect-flow-action";
 import { AddAccountButton } from "@/components/add-account-button";
 import { useTRPC } from "@/trpc/client";
+import { useQuery } from "@tanstack/react-query";
 import { cn } from "@vendcfo/ui/cn";
 import { Dialog, DialogContent } from "@vendcfo/ui/dialog";
-import { useQuery } from "@tanstack/react-query";
 import { useAction } from "next-safe-action/hooks";
 import Image from "next/image";
 import OverViewScreenOneLight from "public/assets/overview-1-light.png";

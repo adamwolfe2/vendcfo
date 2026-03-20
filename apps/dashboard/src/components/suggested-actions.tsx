@@ -3,11 +3,11 @@
 import { useChatInterface } from "@/hooks/use-chat-interface";
 import { useTRPC } from "@/trpc/client";
 import { useChatActions, useChatId } from "@ai-sdk-tools/store";
+import { useMutation, useSuspenseQuery } from "@tanstack/react-query";
+import type { inferRouterOutputs } from "@trpc/server";
 import type { AppRouter } from "@vendcfo/api/trpc/routers/_app";
 import { cn } from "@vendcfo/ui/cn";
 import { Icons } from "@vendcfo/ui/icons";
-import { useMutation, useSuspenseQuery } from "@tanstack/react-query";
-import type { inferRouterOutputs } from "@trpc/server";
 
 type RouterOutputs = inferRouterOutputs<AppRouter>;
 

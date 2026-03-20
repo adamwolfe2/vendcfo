@@ -1,10 +1,10 @@
 "use client";
 
 import { useProductParams } from "@/hooks/use-product-params";
+import type { Table } from "@tanstack/react-table";
 import { Button } from "@vendcfo/ui/button";
 import { Icons } from "@vendcfo/ui/icons";
 import { Input } from "@vendcfo/ui/input";
-import type { Table } from "@tanstack/react-table";
 import type { Product } from "./columns";
 
 type Props = {

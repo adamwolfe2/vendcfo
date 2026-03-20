@@ -5,6 +5,8 @@ import { useTeamQuery } from "@/hooks/use-team";
 import { useUserQuery } from "@/hooks/use-user";
 import { useTRPC } from "@/trpc/client";
 import type { PeriodOption } from "@/utils/metrics-date-utils";
+import { CheckIcon } from "@radix-ui/react-icons";
+import { useQuery } from "@tanstack/react-query";
 import { Button } from "@vendcfo/ui/button";
 import { Calendar, CalendarDayButton } from "@vendcfo/ui/calendar";
 import { cn } from "@vendcfo/ui/cn";
@@ -23,8 +25,6 @@ import {
   DropdownMenuTrigger,
 } from "@vendcfo/ui/dropdown-menu";
 import { Icons } from "@vendcfo/ui/icons";
-import { CheckIcon } from "@radix-ui/react-icons";
-import { useQuery } from "@tanstack/react-query";
 import { format, formatISO, parseISO } from "date-fns";
 import { useState } from "react";
 import type { DateRange } from "react-day-picker";

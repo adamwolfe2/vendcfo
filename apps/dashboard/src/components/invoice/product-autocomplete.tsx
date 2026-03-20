@@ -3,10 +3,10 @@
 import { useProductParams } from "@/hooks/use-product-params";
 import { useTRPC } from "@/trpc/client";
 import { formatAmount } from "@/utils/format";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { extractTextFromValue } from "@vendcfo/invoice";
 import type { InvoiceProduct } from "@vendcfo/invoice/types";
 import { cn } from "@vendcfo/ui/cn";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   useCallback,
   useEffect,

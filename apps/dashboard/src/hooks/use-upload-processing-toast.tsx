@@ -4,8 +4,8 @@ import { PROCESSING_TOAST_ID } from "@/components/transactions-upload-zone";
 import { useMatchSound } from "@/hooks/use-match-sound";
 import { useRealtime } from "@/hooks/use-realtime";
 import { usePendingUploadsStore } from "@/store/pending-uploads";
-import { toast } from "@vendcfo/ui/use-toast";
 import NumberFlow from "@number-flow/react";
+import { toast } from "@vendcfo/ui/use-toast";
 import { useCallback, useEffect, useRef } from "react";
 
 // Terminal statuses that indicate processing is truly complete

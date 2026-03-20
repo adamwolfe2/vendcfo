@@ -1,8 +1,8 @@
 import * as crypto from "node:crypto";
+import { tasks } from "@trigger.dev/sdk";
 import { LogEvents } from "@vendcfo/events/events";
 import { setupAnalytics } from "@vendcfo/events/server";
 import type { OnboardTeamPayload } from "@vendcfo/jobs/schema";
-import { tasks } from "@trigger.dev/sdk";
 import { headers } from "next/headers";
 import { NextResponse } from "next/server";
 

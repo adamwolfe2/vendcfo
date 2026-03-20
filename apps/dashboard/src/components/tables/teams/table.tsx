@@ -1,8 +1,6 @@
 "use client";
 
 import { useTRPC } from "@/trpc/client";
-import { cn } from "@vendcfo/ui/cn";
-import { Table, TableBody, TableCell, TableRow } from "@vendcfo/ui/table";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import type { ColumnFiltersState } from "@tanstack/react-table";
 import {
@@ -11,6 +9,8 @@ import {
   getFilteredRowModel,
   useReactTable,
 } from "@tanstack/react-table";
+import { cn } from "@vendcfo/ui/cn";
+import { Table, TableBody, TableCell, TableRow } from "@vendcfo/ui/table";
 import * as React from "react";
 import { useState } from "react";
 import { columns } from "./columns";

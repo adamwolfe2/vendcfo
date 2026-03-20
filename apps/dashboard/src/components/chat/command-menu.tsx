@@ -107,9 +107,7 @@ export function CommandMenu() {
                 key={`${command.command}-${index}`}
                 className={cn(
                   "px-2 py-2 text-sm cursor-pointer transition-colors flex items-center justify-between group",
-                  isActive
-                    ? "bg-black/5"
-                    : "hover:bg-black/5",
+                  isActive ? "bg-black/5" : "hover:bg-black/5",
                 )}
                 onMouseDown={(e) => {
                   // Prevent input from losing focus when clicking on command

@@ -3,11 +3,6 @@
 import { InviteTeamMembersModal } from "@/components/modals/invite-team-members-modal";
 import { useUserQuery } from "@/hooks/use-user";
 import { useTRPC } from "@/trpc/client";
-import { Button } from "@vendcfo/ui/button";
-import { cn } from "@vendcfo/ui/cn";
-import { Dialog } from "@vendcfo/ui/dialog";
-import { Input } from "@vendcfo/ui/input";
-import { Table, TableBody, TableCell, TableRow } from "@vendcfo/ui/table";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import {
   type ColumnFiltersState,
@@ -16,6 +11,11 @@ import {
   getFilteredRowModel,
   useReactTable,
 } from "@tanstack/react-table";
+import { Button } from "@vendcfo/ui/button";
+import { cn } from "@vendcfo/ui/cn";
+import { Dialog } from "@vendcfo/ui/dialog";
+import { Input } from "@vendcfo/ui/input";
+import { Table, TableBody, TableCell, TableRow } from "@vendcfo/ui/table";
 import * as React from "react";
 import { useState } from "react";
 import { columns } from "./columns";

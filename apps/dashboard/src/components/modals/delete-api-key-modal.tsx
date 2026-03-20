@@ -2,6 +2,7 @@
 
 import { useTokenModalStore } from "@/store/token-modal";
 import { useTRPC } from "@/trpc/client";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import {
   Dialog,
   DialogContent,
@@ -10,7 +11,6 @@ import {
   DialogTitle,
 } from "@vendcfo/ui/dialog";
 import { SubmitButton } from "@vendcfo/ui/submit-button";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 export function DeleteApiKeyModal() {
   const { setData, type, data } = useTokenModalStore();

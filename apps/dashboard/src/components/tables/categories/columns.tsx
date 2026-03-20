@@ -2,6 +2,8 @@
 
 import { useI18n } from "@/locales/client";
 import type { RouterOutputs } from "@api/trpc/routers/_app";
+import { DotsHorizontalIcon } from "@radix-ui/react-icons";
+import type { ColumnDef } from "@tanstack/react-table";
 import { Button } from "@vendcfo/ui/button";
 import { cn } from "@vendcfo/ui/cn";
 import {
@@ -17,8 +19,6 @@ import {
   TooltipTrigger,
 } from "@vendcfo/ui/tooltip";
 import { getTaxTypeLabel } from "@vendcfo/utils/tax";
-import { DotsHorizontalIcon } from "@radix-ui/react-icons";
-import type { ColumnDef } from "@tanstack/react-table";
 import { ChevronDown, ChevronRight } from "lucide-react";
 import type { Dispatch, SetStateAction } from "react";
 

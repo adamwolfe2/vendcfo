@@ -5,6 +5,7 @@ import { exchangePublicToken } from "@/actions/institutions/exchange-public-toke
 import { useConnectParams } from "@/hooks/use-connect-params";
 import { useTeamQuery } from "@/hooks/use-team";
 import { useTRPC } from "@/trpc/client";
+import { useQuery } from "@tanstack/react-query";
 import { track } from "@vendcfo/events/client";
 import { LogEvents } from "@vendcfo/events/events";
 import { Button } from "@vendcfo/ui/button";
@@ -17,7 +18,6 @@ import {
 } from "@vendcfo/ui/dialog";
 import { Input } from "@vendcfo/ui/input";
 import { Skeleton } from "@vendcfo/ui/skeleton";
-import { useQuery } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { usePlaidLink } from "react-plaid-link";

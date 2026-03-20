@@ -1,11 +1,11 @@
 "use client";
 
 import { useTRPC } from "@/trpc/client";
+import { useSuspenseInfiniteQuery } from "@tanstack/react-query";
 import { Button } from "@vendcfo/ui/button";
 import { Spinner } from "@vendcfo/ui/spinner";
 import { Table, TableBody, TableCell, TableRow } from "@vendcfo/ui/table";
 import { formatDate } from "@vendcfo/utils/format";
-import { useSuspenseInfiniteQuery } from "@tanstack/react-query";
 import { useMemo } from "react";
 import { FormatAmount } from "../../format-amount";
 import { OrderStatus } from "../../order-status";

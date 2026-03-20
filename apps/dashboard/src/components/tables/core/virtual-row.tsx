@@ -1,7 +1,5 @@
 "use client";
 
-import { cn } from "@vendcfo/ui/cn";
-import { TableCell, TableRow } from "@vendcfo/ui/table";
 import type {
   Cell,
   ColumnOrderState,
@@ -10,6 +8,8 @@ import type {
   VisibilityState,
 } from "@tanstack/react-table";
 import { flexRender } from "@tanstack/react-table";
+import { cn } from "@vendcfo/ui/cn";
+import { TableCell, TableRow } from "@vendcfo/ui/table";
 import type React from "react";
 import type { CSSProperties } from "react";
 import { memo } from "react";

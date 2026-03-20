@@ -1,8 +1,8 @@
 "use client";
 
 import { useTRPC } from "@/trpc/client";
-import { ComboboxDropdown } from "@vendcfo/ui/combobox-dropdown";
 import { useQuery } from "@tanstack/react-query";
+import { ComboboxDropdown } from "@vendcfo/ui/combobox-dropdown";
 
 type Props = {
   onSelect: (id: string) => void;

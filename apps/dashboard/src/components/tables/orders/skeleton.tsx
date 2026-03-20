@@ -1,6 +1,6 @@
+import { DotsHorizontalIcon } from "@radix-ui/react-icons";
 import { Skeleton } from "@vendcfo/ui/skeleton";
 import { Table, TableBody, TableCell, TableRow } from "@vendcfo/ui/table";
-import { DotsHorizontalIcon } from "@radix-ui/react-icons";
 import { OrdersTableHeader } from "./table-header";
 
 export function OrdersSkeleton() {

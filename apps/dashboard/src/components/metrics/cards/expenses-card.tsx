@@ -7,9 +7,9 @@ import { useMetricsCustomize } from "@/hooks/use-metrics-customize";
 import { useChatStore } from "@/store/chat";
 import { useTRPC } from "@/trpc/client";
 import { generateChartSelectionMessage } from "@/utils/chart-selection-message";
+import { useQuery } from "@tanstack/react-query";
 import { cn } from "@vendcfo/ui/cn";
 import { Icons } from "@vendcfo/ui/icons";
-import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 import { ShareMetricButton } from "../components/share-metric-button";
 

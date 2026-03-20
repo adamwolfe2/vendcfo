@@ -1,5 +1,6 @@
 "use client";
 
+import { useJsApiLoader } from "@react-google-maps/api";
 import { cn } from "@vendcfo/ui/cn";
 import {
   CommandEmpty,
@@ -9,7 +10,6 @@ import {
   CommandList,
   Command as CommandPrimitive,
 } from "@vendcfo/ui/command";
-import { useJsApiLoader } from "@react-google-maps/api";
 import { Check } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import usePlacesAutoComplete, { getDetails } from "use-places-autocomplete";

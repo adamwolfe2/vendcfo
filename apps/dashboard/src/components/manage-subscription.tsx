@@ -2,10 +2,10 @@
 
 import { useTeamQuery } from "@/hooks/use-team";
 import { useTRPC } from "@/trpc/client";
+import { useMutation } from "@tanstack/react-query";
 import { getPlanName } from "@vendcfo/plans";
 import { Card } from "@vendcfo/ui/card";
 import { SubmitButton } from "@vendcfo/ui/submit-button";
-import { useMutation } from "@tanstack/react-query";
 
 export function ManageSubscription() {
   const trpc = useTRPC();

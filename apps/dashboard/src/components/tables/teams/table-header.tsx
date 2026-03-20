@@ -1,9 +1,9 @@
 "use client";
 
 import type { RouterOutputs } from "@api/trpc/routers/_app";
+import type { Table } from "@tanstack/react-table";
 import { Button } from "@vendcfo/ui/button";
 import { Input } from "@vendcfo/ui/input";
-import type { Table } from "@tanstack/react-table";
 import Link from "next/link";
 
 type Props = {

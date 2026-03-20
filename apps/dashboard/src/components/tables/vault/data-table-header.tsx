@@ -14,9 +14,9 @@ import {
   SortableContext,
   horizontalListSortingStrategy,
 } from "@dnd-kit/sortable";
+import type { Header, Table } from "@tanstack/react-table";
 import { Checkbox } from "@vendcfo/ui/checkbox";
 import { TableHead, TableHeader, TableRow } from "@vendcfo/ui/table";
-import type { Header, Table } from "@tanstack/react-table";
 import { useMemo } from "react";
 
 interface Props<TData> {

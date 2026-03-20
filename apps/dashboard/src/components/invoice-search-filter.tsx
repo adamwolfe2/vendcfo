@@ -14,6 +14,7 @@ import {
 import { useInvoiceFilterParams } from "@/hooks/use-invoice-filter-params";
 import { useI18n } from "@/locales/client";
 import { useTRPC } from "@/trpc/client";
+import { useQuery } from "@tanstack/react-query";
 import { cn } from "@vendcfo/ui/cn";
 import {
   DropdownMenu,
@@ -29,7 +30,6 @@ import {
 } from "@vendcfo/ui/dropdown-menu";
 import { Icons } from "@vendcfo/ui/icons";
 import { Input } from "@vendcfo/ui/input";
-import { useQuery } from "@tanstack/react-query";
 import { formatISO } from "date-fns";
 import { useCallback, useRef, useState } from "react";
 import { useHotkeys } from "react-hotkeys-hook";

@@ -1,3 +1,4 @@
+import { CaretSortIcon, CheckIcon } from "@radix-ui/react-icons";
 import countries from "@vendcfo/location/country-flags";
 import { Button } from "@vendcfo/ui/button";
 import { cn } from "@vendcfo/ui/cn";
@@ -10,7 +11,6 @@ import {
   CommandList,
 } from "@vendcfo/ui/command";
 import { Popover, PopoverContent, PopoverTrigger } from "@vendcfo/ui/popover";
-import { CaretSortIcon, CheckIcon } from "@radix-ui/react-icons";
 import * as React from "react";
 import { useEffect } from "react";
 

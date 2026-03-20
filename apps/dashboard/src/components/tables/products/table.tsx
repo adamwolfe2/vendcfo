@@ -2,15 +2,6 @@
 
 import { useProductParams } from "@/hooks/use-product-params";
 import { useTRPC } from "@/trpc/client";
-import { cn } from "@vendcfo/ui/cn";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@vendcfo/ui/table";
 import {
   useMutation,
   useQueryClient,
@@ -23,6 +14,15 @@ import {
   getSortedRowModel,
   useReactTable,
 } from "@tanstack/react-table";
+import { cn } from "@vendcfo/ui/cn";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@vendcfo/ui/table";
 import React from "react";
 import { columns } from "./columns";
 import { Header } from "./header";

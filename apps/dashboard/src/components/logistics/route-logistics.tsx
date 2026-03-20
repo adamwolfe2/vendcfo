@@ -3,9 +3,9 @@
 import { createClient } from "@vendcfo/supabase/client";
 import {
   CalendarDays,
+  Check,
   ChevronDown,
   ChevronRight,
-  Check,
   Loader2,
   MapPin,
   User,
@@ -91,7 +91,11 @@ function SaveIndicator({ status }: { status: "idle" | "saving" | "saved" }) {
     <div className="flex items-center gap-1.5 text-xs font-medium">
       {status === "saving" ? (
         <>
-          <Loader2 size={14} strokeWidth={1.5} className="animate-spin text-[#888]" />
+          <Loader2
+            size={14}
+            strokeWidth={1.5}
+            className="animate-spin text-[#888]"
+          />
           <span className="text-[#888]">Saving...</span>
         </>
       ) : (
@@ -133,7 +137,10 @@ function ActionCell({
 
   useEffect(() => {
     function handleClickOutside(e: MouseEvent) {
-      if (popoverRef.current && !popoverRef.current.contains(e.target as Node)) {
+      if (
+        popoverRef.current &&
+        !popoverRef.current.contains(e.target as Node)
+      ) {
         setShowPopover(false);
       }
     }
@@ -385,7 +392,11 @@ export function RouteLogistics({
     saveEntry(entry);
   };
 
-  const handleAssignOperator = (locationId: string, dayOfWeek: number, operatorName: string) => {
+  const handleAssignOperator = (
+    locationId: string,
+    dayOfWeek: number,
+    operatorName: string,
+  ) => {
     const key = makeKey(locationId, dayOfWeek);
     const current = schedule.get(key);
 
@@ -415,7 +426,11 @@ export function RouteLogistics({
         const key = makeKey(locationId, day.key);
         const existing = next.get(key);
         if (existing) {
-          const updated = { ...existing, estimated_hours: hours, operator_name: existing.operator_name };
+          const updated = {
+            ...existing,
+            estimated_hours: hours,
+            operator_name: existing.operator_name,
+          };
           next.set(key, updated);
           saveEntry(updated);
         }
@@ -451,7 +466,10 @@ export function RouteLogistics({
     return 0.5;
   };
 
-  const getOperatorName = (locationId: string, dayOfWeek: number): string | undefined => {
+  const getOperatorName = (
+    locationId: string,
+    dayOfWeek: number,
+  ): string | undefined => {
     const key = makeKey(locationId, dayOfWeek);
     return schedule.get(key)?.operator_name;
   };
@@ -489,31 +507,41 @@ export function RouteLogistics({
     { bg: "#f3e8ff", text: "#6b21a8", border: "#c4b5fd" },
   ];
 
-  const operatorSummary = Array.from(operatorNames).sort().map((name, idx) => {
-    const color = OPERATOR_COLORS[idx % OPERATOR_COLORS.length];
-    const byDay = DAYS.map((day) => {
-      let stops = 0;
-      let serviceHours = 0;
-      for (const loc of locations) {
-        const key = makeKey(loc.id, day.key);
-        const entry = schedule.get(key);
-        if (entry?.operator_name === name && entry.action !== "nothing") {
-          stops++;
-          serviceHours += entry.estimated_hours;
+  const operatorSummary = Array.from(operatorNames)
+    .sort()
+    .map((name, idx) => {
+      const color = OPERATOR_COLORS[idx % OPERATOR_COLORS.length];
+      const byDay = DAYS.map((day) => {
+        let stops = 0;
+        let serviceHours = 0;
+        for (const loc of locations) {
+          const key = makeKey(loc.id, day.key);
+          const entry = schedule.get(key);
+          if (entry?.operator_name === name && entry.action !== "nothing") {
+            stops++;
+            serviceHours += entry.estimated_hours;
+          }
         }
-      }
-      const drivingHours = stops * 0.5;
-      const totalHrs = serviceHours + drivingHours;
-      return { stops, drivingHours, totalHrs, cost: totalHrs * hourlyRate };
+        const drivingHours = stops * 0.5;
+        const totalHrs = serviceHours + drivingHours;
+        return { stops, drivingHours, totalHrs, cost: totalHrs * hourlyRate };
+      });
+
+      const weeklyStops = byDay.reduce((s, d) => s + d.stops, 0);
+      const weeklyDriving = byDay.reduce((s, d) => s + d.drivingHours, 0);
+      const weeklyTotalHrs = byDay.reduce((s, d) => s + d.totalHrs, 0);
+      const weeklyCost = byDay.reduce((s, d) => s + d.cost, 0);
+
+      return {
+        name,
+        color,
+        byDay,
+        weeklyStops,
+        weeklyDriving,
+        weeklyTotalHrs,
+        weeklyCost,
+      };
     });
-
-    const weeklyStops = byDay.reduce((s, d) => s + d.stops, 0);
-    const weeklyDriving = byDay.reduce((s, d) => s + d.drivingHours, 0);
-    const weeklyTotalHrs = byDay.reduce((s, d) => s + d.totalHrs, 0);
-    const weeklyCost = byDay.reduce((s, d) => s + d.cost, 0);
-
-    return { name, color, byDay, weeklyStops, weeklyDriving, weeklyTotalHrs, weeklyCost };
-  });
 
   if (locations.length === 0) {
     return (
@@ -537,7 +565,9 @@ export function RouteLogistics({
     return (
       <tr key={loc.id} className="hover:bg-[#fafafa]">
         <td className="border border-[#e5e5e5] px-2 sm:px-3 py-2 sticky left-0 bg-white z-10 min-w-[120px] sm:min-w-[180px]">
-          <div className="font-medium text-xs sm:text-sm text-[#111] truncate max-w-[110px] sm:max-w-none">{loc.name}</div>
+          <div className="font-medium text-xs sm:text-sm text-[#111] truncate max-w-[110px] sm:max-w-none">
+            {loc.name}
+          </div>
         </td>
         <td className="border border-[#e5e5e5] px-2 sm:px-3 py-2 hidden sm:table-cell">
           <div className="text-xs text-[#878787] truncate max-w-[180px]">
@@ -552,7 +582,10 @@ export function RouteLogistics({
             step={0.25}
             value={hours}
             onChange={(e) =>
-              handleHoursChange(loc.id, Number.parseFloat(e.target.value) || 0.5)
+              handleHoursChange(
+                loc.id,
+                Number.parseFloat(e.target.value) || 0.5,
+              )
             }
             className="w-12 sm:w-14 text-center text-xs border border-[#d0d0d0] rounded px-1 py-1.5 min-h-[36px] bg-white outline-none focus:border-[#888]"
           />
@@ -563,14 +596,20 @@ export function RouteLogistics({
             action={getAction(loc.id, day.key)}
             operatorName={getOperatorName(loc.id, day.key)}
             onClick={() => handleCellClick(loc.id, day.key)}
-            onAssignOperator={(name) => handleAssignOperator(loc.id, day.key, name)}
+            onAssignOperator={(name) =>
+              handleAssignOperator(loc.id, day.key, name)
+            }
           />
         ))}
       </tr>
     );
   };
 
-  const renderRouteSection = (routeId: string, routeName: string, locs: Location[]) => {
+  const renderRouteSection = (
+    routeId: string,
+    routeName: string,
+    locs: Location[],
+  ) => {
     const isCollapsed = collapsedRoutes.has(routeId);
 
     return (
@@ -583,9 +622,17 @@ export function RouteLogistics({
           >
             <div className="flex items-center gap-2">
               {isCollapsed ? (
-                <ChevronRight size={16} strokeWidth={1.5} className="text-[#666]" />
+                <ChevronRight
+                  size={16}
+                  strokeWidth={1.5}
+                  className="text-[#666]"
+                />
               ) : (
-                <ChevronDown size={16} strokeWidth={1.5} className="text-[#666]" />
+                <ChevronDown
+                  size={16}
+                  strokeWidth={1.5}
+                  className="text-[#666]"
+                />
               )}
               <span className="font-semibold text-sm text-[#333]">
                 {routeName}
@@ -616,9 +663,7 @@ export function RouteLogistics({
         <div className="flex items-center gap-3 sm:gap-4 flex-wrap">
           <SaveIndicator status={saveStatus} />
           <div className="flex items-center gap-2">
-            <label className="text-xs font-medium text-[#555]">
-              Rate
-            </label>
+            <label className="text-xs font-medium text-[#555]">Rate</label>
             <div className="flex items-center">
               <span className="text-xs text-[#888] mr-1">$</span>
               <input
@@ -640,17 +685,18 @@ export function RouteLogistics({
       {/* Loading state */}
       {loading ? (
         <div className="flex items-center justify-center py-20">
-          <Loader2 size={24} strokeWidth={1.5} className="animate-spin text-[#888]" />
+          <Loader2
+            size={24}
+            strokeWidth={1.5}
+            className="animate-spin text-[#888]"
+          />
           <span className="ml-2 text-sm text-[#888]">Loading schedule...</span>
         </div>
       ) : (
         <>
           {/* Schedule Grid */}
           <div className="overflow-x-auto border border-[#e5e5e5] rounded-lg">
-            <table
-              className="w-full"
-              style={{ borderCollapse: "collapse" }}
-            >
+            <table className="w-full" style={{ borderCollapse: "collapse" }}>
               <thead>
                 <tr className="bg-[#f9fafb]">
                   <th className="border border-[#e5e5e5] px-2 sm:px-3 py-2.5 text-left text-xs sm:text-sm font-medium text-[#555] sticky left-0 bg-[#f9fafb] z-10 min-w-[120px] sm:min-w-[180px]">
@@ -714,10 +760,7 @@ export function RouteLogistics({
               Weekly Summary
             </h2>
             <div className="overflow-x-auto border border-[#e5e5e5] rounded-lg">
-              <table
-                className="w-full"
-                style={{ borderCollapse: "collapse" }}
-              >
+              <table className="w-full" style={{ borderCollapse: "collapse" }}>
                 <thead>
                   <tr className="bg-[#f9fafb]">
                     <th className="border border-[#e5e5e5] px-2 sm:px-3 py-2.5 text-left text-xs sm:text-sm font-medium text-[#555] min-w-[100px] sm:min-w-[140px] sticky left-0 bg-[#f9fafb] z-10">
@@ -733,7 +776,10 @@ export function RouteLogistics({
                         <span className="sm:hidden">{day.short}</span>
                       </th>
                     ))}
-                    <th className="border border-[#e5e5e5] px-2 sm:px-3 py-2.5 text-center text-xs sm:text-sm font-semibold text-[#111]" style={{ minWidth: 80 }}>
+                    <th
+                      className="border border-[#e5e5e5] px-2 sm:px-3 py-2.5 text-center text-xs sm:text-sm font-semibold text-[#111]"
+                      style={{ minWidth: 80 }}
+                    >
                       Total
                     </th>
                   </tr>

@@ -5,10 +5,10 @@ import { useJobStatus } from "@/hooks/use-job-status";
 import { useTeamMutation } from "@/hooks/use-team";
 import { useTeamQuery } from "@/hooks/use-team";
 import { useTRPC } from "@/trpc/client";
+import { useMutation } from "@tanstack/react-query";
 import { uniqueCurrencies } from "@vendcfo/location/currencies";
 import { Button } from "@vendcfo/ui/button";
 import { useToast } from "@vendcfo/ui/use-toast";
-import { useMutation } from "@tanstack/react-query";
 import { useEffect, useRef, useState } from "react";
 
 export function SelectCurrency() {

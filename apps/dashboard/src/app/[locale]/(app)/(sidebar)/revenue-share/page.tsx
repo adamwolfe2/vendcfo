@@ -15,9 +15,5 @@ export default async function Page() {
     redirect("/teams");
   }
 
-  return (
-    <RevenueSharePage
-      teamId={user.teamId}
-    />
-  );
+  return <RevenueSharePage teamId={user.teamId} />;
 }

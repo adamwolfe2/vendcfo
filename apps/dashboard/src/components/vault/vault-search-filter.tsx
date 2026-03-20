@@ -10,6 +10,7 @@ import { normalizeString, useAIFilter } from "@/hooks/use-ai-filter";
 import { useDocumentFilterParams } from "@/hooks/use-document-filter-params";
 import { useUserQuery } from "@/hooks/use-user";
 import { useTRPC } from "@/trpc/client";
+import { useQuery } from "@tanstack/react-query";
 import { Calendar } from "@vendcfo/ui/calendar";
 import { cn } from "@vendcfo/ui/cn";
 import {
@@ -26,7 +27,6 @@ import {
 } from "@vendcfo/ui/dropdown-menu";
 import { Icons } from "@vendcfo/ui/icons";
 import { Input } from "@vendcfo/ui/input";
-import { useQuery } from "@tanstack/react-query";
 import { formatISO, parseISO } from "date-fns";
 import { useCallback, useRef, useState } from "react";
 import { useHotkeys } from "react-hotkeys-hook";

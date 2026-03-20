@@ -2,9 +2,9 @@
 
 import { useConnectParams } from "@/hooks/use-connect-params";
 import { useInitialConnectionStatus } from "@/hooks/use-initial-connection-status";
+import { useQueryClient } from "@tanstack/react-query";
 import { Button } from "@vendcfo/ui/button";
 import { cn } from "@vendcfo/ui/cn";
-import { useQueryClient } from "@tanstack/react-query";
 import { useTheme } from "next-themes";
 import dynamic from "next/dynamic";
 import { useRouter } from "next/navigation";

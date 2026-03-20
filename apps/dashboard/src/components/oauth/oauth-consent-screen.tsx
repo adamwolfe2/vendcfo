@@ -4,6 +4,7 @@ import { useOAuthParams } from "@/hooks/use-oauth-params";
 import { useTeamQuery } from "@/hooks/use-team";
 import { useTRPC } from "@/trpc/client";
 import { getScopeDescription } from "@/utils/scopes";
+import { useMutation, useSuspenseQuery } from "@tanstack/react-query";
 import { Button } from "@vendcfo/ui/button";
 import {
   Card,
@@ -23,7 +24,6 @@ import {
   SelectValue,
 } from "@vendcfo/ui/select";
 import { useToast } from "@vendcfo/ui/use-toast";
-import { useMutation, useSuspenseQuery } from "@tanstack/react-query";
 import { AlertTriangle, Check, X } from "lucide-react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";

@@ -2,6 +2,12 @@
 
 import { useOAuthApplicationParams } from "@/hooks/use-oauth-application-params";
 import { useTRPC } from "@/trpc/client";
+import { useSuspenseQuery } from "@tanstack/react-query";
+import {
+  flexRender,
+  getCoreRowModel,
+  useReactTable,
+} from "@tanstack/react-table";
 import { Button } from "@vendcfo/ui/button";
 import { cn } from "@vendcfo/ui/cn";
 import {
@@ -12,12 +18,6 @@ import {
   TableHeader,
   TableRow,
 } from "@vendcfo/ui/table";
-import { useSuspenseQuery } from "@tanstack/react-query";
-import {
-  flexRender,
-  getCoreRowModel,
-  useReactTable,
-} from "@tanstack/react-table";
 import * as React from "react";
 import { columns } from "./columns";
 import { EmptyState } from "./empty-state";

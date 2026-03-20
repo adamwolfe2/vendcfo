@@ -3,8 +3,8 @@ import {
   getAccountingProvider,
 } from "@vendcfo/accounting";
 import { getSession } from "@vendcfo/supabase/cached-queries";
-import { createClient } from "@vendcfo/supabase/server";
 import { getUserQuery } from "@vendcfo/supabase/queries";
+import { createClient } from "@vendcfo/supabase/server";
 import { NextResponse } from "next/server";
 
 export const dynamic = "force-dynamic";

@@ -2,6 +2,7 @@
 
 import { useDocumentParams } from "@/hooks/use-document-params";
 import { useTRPC } from "@/trpc/client";
+import { useQuery } from "@tanstack/react-query";
 import {
   Accordion,
   AccordionContent,
@@ -9,7 +10,6 @@ import {
   AccordionTrigger,
 } from "@vendcfo/ui/accordion";
 import { Carousel, CarouselContent, CarouselItem } from "@vendcfo/ui/carousel";
-import { useQuery } from "@tanstack/react-query";
 import * as React from "react";
 import { VaultItem } from "./vault-item";
 import { VaultRelatedFilesSkeleton } from "./vault-related-files-skeleton";

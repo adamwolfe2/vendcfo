@@ -23,18 +23,15 @@ export const exchangePublicToken = async (token: string) => {
     throw new Error("Plaid credentials not configured");
   }
 
-  const response = await fetch(
-    `${PLAID_BASE_URL}/item/public_token/exchange`,
-    {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        client_id: plaidClientId,
-        secret: plaidSecret,
-        public_token: token,
-      }),
-    },
-  );
+  const response = await fetch(`${PLAID_BASE_URL}/item/public_token/exchange`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      client_id: plaidClientId,
+      secret: plaidSecret,
+      public_token: token,
+    }),
+  });
 
   if (!response.ok) {
     const errorData = await response.json().catch(() => ({}));

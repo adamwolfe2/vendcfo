@@ -1,9 +1,9 @@
 "use client";
 
 import { useTRPC } from "@/trpc/client";
+import { useMutation } from "@tanstack/react-query";
 import { Icons } from "@vendcfo/ui/icons";
 import { SubmitButton } from "@vendcfo/ui/submit-button";
-import { useMutation } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 
 export function ConnectOutlook() {

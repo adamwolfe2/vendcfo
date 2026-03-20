@@ -3,6 +3,11 @@
 import { useSyncStatus } from "@/hooks/use-sync-status";
 import { useTRPC } from "@/trpc/client";
 import type { RouterOutputs } from "@api/trpc/routers/_app";
+import {
+  useMutation,
+  useQueryClient,
+  useSuspenseQuery,
+} from "@tanstack/react-query";
 import { Avatar, AvatarFallback } from "@vendcfo/ui/avatar";
 import { Badge } from "@vendcfo/ui/badge";
 import { Button } from "@vendcfo/ui/button";
@@ -21,11 +26,6 @@ import {
   TooltipTrigger,
 } from "@vendcfo/ui/tooltip";
 import { useToast } from "@vendcfo/ui/use-toast";
-import {
-  useMutation,
-  useQueryClient,
-  useSuspenseQuery,
-} from "@tanstack/react-query";
 import { formatDistanceToNow } from "date-fns";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";

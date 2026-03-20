@@ -26,9 +26,6 @@ export default async function Page() {
     .order("created_at", { ascending: false });
 
   return (
-    <TrainingPage
-      publicVideos={publicVideos ?? []}
-      teamId={user.teamId}
-    />
+    <TrainingPage publicVideos={publicVideos ?? []} teamId={user.teamId} />
   );
 }

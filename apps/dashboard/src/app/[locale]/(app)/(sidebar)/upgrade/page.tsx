@@ -13,17 +13,19 @@ export const metadata: Metadata = {
 export default async function UpgradePage() {
   const queryClient = getQueryClient();
 
-  let user: Awaited<ReturnType<Awaited<ReturnType<typeof getServerCaller>>["user"]["me"]>> | null = null;
+  let user: Awaited<
+    ReturnType<Awaited<ReturnType<typeof getServerCaller>>["user"]["me"]>
+  > | null = null;
 
   try {
     const caller = await getServerCaller();
     user = await caller.user.me();
-    queryClient.setQueryData(
-      trpc.user.me.queryOptions().queryKey,
-      user,
-    );
+    queryClient.setQueryData(trpc.user.me.queryOptions().queryKey, user);
   } catch (error) {
-    console.error("[UpgradePage] Failed to fetch user via direct caller:", error);
+    console.error(
+      "[UpgradePage] Failed to fetch user via direct caller:",
+      error,
+    );
     return null;
   }
 

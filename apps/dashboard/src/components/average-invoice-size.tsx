@@ -3,8 +3,8 @@
 import { useTeamQuery } from "@/hooks/use-team";
 import { useUserQuery } from "@/hooks/use-user";
 import { useTRPC } from "@/trpc/client";
-import { Card, CardContent, CardHeader, CardTitle } from "@vendcfo/ui/card";
 import { useSuspenseQuery } from "@tanstack/react-query";
+import { Card, CardContent, CardHeader, CardTitle } from "@vendcfo/ui/card";
 import { FormatAmount } from "./format-amount";
 
 export function AverageInvoiceSize() {

@@ -6,6 +6,7 @@ import { useTeamQuery } from "@/hooks/use-team";
 import { useZodForm } from "@/hooks/use-zod-form";
 import { useTRPC } from "@/trpc/client";
 import type { RouterOutputs } from "@api/trpc/routers/_app";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { uniqueCurrencies } from "@vendcfo/location/currencies";
 import { CurrencyInput } from "@vendcfo/ui/currency-input";
 import {
@@ -21,7 +22,6 @@ import { Input } from "@vendcfo/ui/input";
 import { SubmitButton } from "@vendcfo/ui/submit-button";
 import { Switch } from "@vendcfo/ui/switch";
 import { Textarea } from "@vendcfo/ui/textarea";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { z } from "zod/v3";
 
 const formSchema = z.object({

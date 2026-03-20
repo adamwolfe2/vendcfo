@@ -3,10 +3,10 @@
 import { revalidateAfterTeamChange } from "@/actions/revalidate-action";
 import { useTRPC } from "@/trpc/client";
 import type { RouterOutputs } from "@api/trpc/routers/_app";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Avatar, AvatarFallback, AvatarImageNext } from "@vendcfo/ui/avatar";
 import { SubmitButton } from "@vendcfo/ui/submit-button";
 import { TableRow as BaseTableRow, TableCell } from "@vendcfo/ui/table";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 
 type Props = {

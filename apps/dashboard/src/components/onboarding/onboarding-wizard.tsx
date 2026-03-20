@@ -3,6 +3,7 @@
 import { useAppOAuth } from "@/hooks/use-app-oauth";
 import { Button } from "@vendcfo/ui/button";
 import { Card, CardContent } from "@vendcfo/ui/card";
+import { cn } from "@vendcfo/ui/cn";
 import { Input } from "@vendcfo/ui/input";
 import {
   Select,
@@ -11,7 +12,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@vendcfo/ui/select";
-import { cn } from "@vendcfo/ui/cn";
 import {
   ArrowRight,
   Check,
@@ -50,11 +50,7 @@ function StepIndicator({ currentStep }: { currentStep: Step }) {
                   : "bg-white text-[#878787] border-[#ddd]",
             )}
           >
-            {currentStep > step ? (
-              <Check className="w-4 h-4" />
-            ) : (
-              step
-            )}
+            {currentStep > step ? <Check className="w-4 h-4" /> : step}
           </div>
           {step < 3 && (
             <div
@@ -210,9 +206,7 @@ function StepTwo({
                 <SelectItem value="office_coffee">
                   Office Coffee Service
                 </SelectItem>
-                <SelectItem value="combo">
-                  Combo (Multiple Types)
-                </SelectItem>
+                <SelectItem value="combo">Combo (Multiple Types)</SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -229,9 +223,7 @@ function StepTwo({
               />
             </div>
             <div className="space-y-2">
-              <label className="text-sm font-medium">
-                Number of locations
-              </label>
+              <label className="text-sm font-medium">Number of locations</label>
               <Input
                 type="number"
                 min={0}
@@ -313,7 +305,9 @@ function StepThree({ onFinish }: { onFinish: () => void }) {
           <Check className="w-8 h-8 text-[#22c55e]" />
         </div>
 
-        <h1 className="text-xl sm:text-2xl font-serif mb-3">You are all set!</h1>
+        <h1 className="text-xl sm:text-2xl font-serif mb-3">
+          You are all set!
+        </h1>
         <p className="text-[#878787] text-sm mb-8 max-w-md mx-auto leading-relaxed">
           Your dashboard is ready. We will generate insights as your data comes
           in.
@@ -386,10 +380,7 @@ export function OnboardingWizard() {
     // Save business profile to localStorage for now
     // In a future iteration this can be persisted to team metadata via TRPC
     try {
-      localStorage.setItem(
-        "vendcfo-business-profile",
-        JSON.stringify(profile),
-      );
+      localStorage.setItem("vendcfo-business-profile", JSON.stringify(profile));
     } catch {
       // localStorage may not be available
     }

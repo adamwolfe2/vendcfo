@@ -8,6 +8,7 @@ import { TransactionBankAccount } from "@/components/transaction-bank-account";
 import { TransactionMethod } from "@/components/transaction-method";
 import { TransactionStatus } from "@/components/transaction-status";
 import type { RouterOutputs } from "@api/trpc/routers/_app";
+import type { ColumnDef } from "@tanstack/react-table";
 import { Badge } from "@vendcfo/ui/badge";
 import { Button } from "@vendcfo/ui/button";
 import { Checkbox } from "@vendcfo/ui/checkbox";
@@ -23,7 +24,6 @@ import { Icons } from "@vendcfo/ui/icons";
 import { Spinner } from "@vendcfo/ui/spinner";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@vendcfo/ui/tooltip";
 import { formatDate } from "@vendcfo/utils/format";
-import type { ColumnDef } from "@tanstack/react-table";
 import { memo, useCallback } from "react";
 
 type Transaction = RouterOutputs["transactions"]["get"]["data"][number];

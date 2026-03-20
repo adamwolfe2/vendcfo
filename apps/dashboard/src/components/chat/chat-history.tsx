@@ -2,12 +2,12 @@
 
 import { useForesightChatPrefetch } from "@/hooks/use-foresight-prefetch";
 import { useTRPC } from "@/trpc/client";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { AnimatedSizeContainer } from "@vendcfo/ui/animated-size-container";
 import { cn } from "@vendcfo/ui/cn";
 import { Icons } from "@vendcfo/ui/icons";
 import { Input } from "@vendcfo/ui/input";
 import { Skeleton } from "@vendcfo/ui/skeleton";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { formatDistanceToNow } from "date-fns";
 import { useRouter } from "next/navigation";
 import {
@@ -97,9 +97,7 @@ export function ChatHistoryButton() {
           size={16}
           className={cn(
             "transition-colors",
-            isOpen
-              ? "text-black"
-              : "text-[#707070] hover:text-[#999999]",
+            isOpen ? "text-black" : "text-[#707070] hover:text-[#999999]",
           )}
         />
       </span>
@@ -331,9 +329,7 @@ export function ChatHistoryDropdown() {
                       data-chat-index={index}
                       className={cn(
                         "group relative flex items-center justify-between px-2 py-2 text-sm cursor-pointer transition-colors h-[32px]",
-                        isSelected
-                          ? "bg-black/5"
-                          : "hover:bg-black/5",
+                        isSelected ? "bg-black/5" : "hover:bg-black/5",
                       )}
                       onMouseDown={(e) => {
                         // Prevent input from losing focus when clicking on chat

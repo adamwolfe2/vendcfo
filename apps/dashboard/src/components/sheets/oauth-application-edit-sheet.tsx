@@ -5,6 +5,7 @@ import { DeleteOAuthApplicationModal } from "@/components/modals/delete-oauth-ap
 import { OAuthApplicationStatusBadge } from "@/components/oauth-application-status-badge";
 import { useOAuthApplicationParams } from "@/hooks/use-oauth-application-params";
 import { useTRPC } from "@/trpc/client";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Badge } from "@vendcfo/ui/badge";
 import { Button } from "@vendcfo/ui/button";
 import {
@@ -17,7 +18,6 @@ import { Icons } from "@vendcfo/ui/icons";
 import { ScrollArea } from "@vendcfo/ui/scroll-area";
 import { Sheet, SheetContent, SheetHeader } from "@vendcfo/ui/sheet";
 import { useToast } from "@vendcfo/ui/use-toast";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import { useCopyToClipboard } from "usehooks-ts";
 

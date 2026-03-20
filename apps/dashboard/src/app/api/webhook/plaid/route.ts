@@ -1,8 +1,8 @@
 import { isTeamEligibleForSync } from "@/utils/check-team-eligibility";
 import { logger } from "@/utils/logger";
+import { tasks } from "@trigger.dev/sdk";
 import type { SyncConnectionPayload } from "@vendcfo/jobs/schema";
 import { createClient } from "@vendcfo/supabase/server";
-import { tasks } from "@trigger.dev/sdk";
 import { isAfter, subDays } from "date-fns";
 import { type NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
@@ -124,7 +124,10 @@ export async function POST(req: NextRequest) {
             manualSync,
           } satisfies SyncConnectionPayload);
         } catch (error) {
-          logger("Failed to trigger sync-connection", { error, connectionId: connectionData.id });
+          logger("Failed to trigger sync-connection", {
+            error,
+            connectionId: connectionData.id,
+          });
         }
 
         break;

@@ -1,8 +1,8 @@
 import { useTRPC } from "@/trpc/client";
 import { getColorFromName } from "@/utils/categories";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { ComboboxDropdown } from "@vendcfo/ui/combobox-dropdown";
 import { Spinner } from "@vendcfo/ui/spinner";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { CategoryColor } from "./category";
 
 type Selected = {

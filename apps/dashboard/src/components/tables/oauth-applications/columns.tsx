@@ -1,6 +1,6 @@
 import type { RouterOutputs } from "@api/trpc/routers/_app";
-import { Button } from "@vendcfo/ui/button";
 import type { ColumnDef } from "@tanstack/react-table";
+import { Button } from "@vendcfo/ui/button";
 import * as React from "react";
 import "@tanstack/react-table";
 import { useOAuthApplicationParams } from "@/hooks/use-oauth-application-params";

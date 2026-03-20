@@ -13,6 +13,8 @@ type AccountWithBalances = RouterOutputs["institutions"]["accounts"][number] & {
   available_balance?: number | null;
   credit_limit?: number | null;
 };
+import { useQuery } from "@tanstack/react-query";
+import { useMutation } from "@tanstack/react-query";
 import { Avatar, AvatarFallback } from "@vendcfo/ui/avatar";
 import { Button } from "@vendcfo/ui/button";
 import {
@@ -37,8 +39,6 @@ import { Tabs, TabsContent } from "@vendcfo/ui/tabs";
 import { Textarea } from "@vendcfo/ui/textarea";
 import { useToast } from "@vendcfo/ui/use-toast";
 import { getInitials } from "@vendcfo/utils/format";
-import { useQuery } from "@tanstack/react-query";
-import { useMutation } from "@tanstack/react-query";
 import { Loader2 } from "lucide-react";
 import { useAction } from "next-safe-action/hooks";
 import { useEffect, useState } from "react";

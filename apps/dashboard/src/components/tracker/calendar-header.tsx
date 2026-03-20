@@ -1,5 +1,5 @@
-import type { BillableHoursResult } from "@vendcfo/db/queries";
 import NumberFlow from "@number-flow/react";
+import type { BillableHoursResult } from "@vendcfo/db/queries";
 import { TotalEarnings } from "../total-earnings";
 import { TrackerCalendarType } from "../tracker-calendar-type";
 import { TrackerPeriodSelect } from "../tracker-period-select";

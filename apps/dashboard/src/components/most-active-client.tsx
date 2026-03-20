@@ -1,8 +1,8 @@
 "use client";
 
 import { useTRPC } from "@/trpc/client";
-import { Card, CardContent, CardHeader, CardTitle } from "@vendcfo/ui/card";
 import { useSuspenseQuery } from "@tanstack/react-query";
+import { Card, CardContent, CardHeader, CardTitle } from "@vendcfo/ui/card";
 
 export function MostActiveClient() {
   const trpc = useTRPC();

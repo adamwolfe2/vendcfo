@@ -105,7 +105,10 @@ export default async function Transactions(props: Props) {
       console.error("[TransactionsPage] Failed to prefetch reviewTab:", e);
     }
   } catch (error) {
-    console.error("[TransactionsPage] Failed to prefetch via direct caller:", error);
+    console.error(
+      "[TransactionsPage] Failed to prefetch via direct caller:",
+      error,
+    );
   }
 
   return (

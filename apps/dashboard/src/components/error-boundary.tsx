@@ -51,9 +51,7 @@ export class ErrorBoundary extends Component<
 
       // Default minimal error fallback
       return (
-        <div className="text-xs text-[#707070] p-2">
-          Error loading content
-        </div>
+        <div className="text-xs text-[#707070] p-2">Error loading content</div>
       );
     }
 

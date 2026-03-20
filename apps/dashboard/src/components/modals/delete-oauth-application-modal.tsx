@@ -2,6 +2,7 @@
 
 import { useOAuthApplicationParams } from "@/hooks/use-oauth-application-params";
 import { useTRPC } from "@/trpc/client";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -14,7 +15,6 @@ import {
 } from "@vendcfo/ui/alert-dialog";
 import { Input } from "@vendcfo/ui/input";
 import { Label } from "@vendcfo/ui/label";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Loader2 } from "lucide-react";
 import { useState } from "react";
 

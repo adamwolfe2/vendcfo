@@ -3,6 +3,7 @@
 import { useTemplateUpdate } from "@/hooks/use-template-update";
 import { useUserQuery } from "@/hooks/use-user";
 import { useTRPC } from "@/trpc/client";
+import { useMutation } from "@tanstack/react-query";
 import {
   getFrequencyLabel,
   localDateToUTCMidnight,
@@ -23,7 +24,6 @@ import {
 import { Icons } from "@vendcfo/ui/icons";
 import { Input } from "@vendcfo/ui/input";
 import { SubmitButton as BaseSubmitButton } from "@vendcfo/ui/submit-button";
-import { useMutation } from "@tanstack/react-query";
 import {
   addHours,
   addMilliseconds,

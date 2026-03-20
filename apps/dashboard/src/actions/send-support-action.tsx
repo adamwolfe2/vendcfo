@@ -1,7 +1,7 @@
 "use server";
 
-import { LogEvents } from "@vendcfo/events/events";
 import { PlainClient, ThreadFieldSchemaType } from "@team-plain/typescript-sdk";
+import { LogEvents } from "@vendcfo/events/events";
 import { z } from "zod";
 import { authActionClient } from "./safe-action";
 

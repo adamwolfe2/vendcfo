@@ -17,6 +17,7 @@ import { useTransactionFilterParams } from "@/hooks/use-transaction-filter-param
 import { useTransactionFilterParamsWithPersistence } from "@/hooks/use-transaction-filter-params-with-persistence";
 import { useTRPC } from "@/trpc/client";
 import { formatAccountName } from "@/utils/format";
+import { useQuery } from "@tanstack/react-query";
 import { cn } from "@vendcfo/ui/cn";
 import {
   DropdownMenu,
@@ -31,7 +32,6 @@ import {
 } from "@vendcfo/ui/dropdown-menu";
 import { Icons } from "@vendcfo/ui/icons";
 import { Input } from "@vendcfo/ui/input";
-import { useQuery } from "@tanstack/react-query";
 import { formatISO } from "date-fns";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useHotkeys } from "react-hotkeys-hook";

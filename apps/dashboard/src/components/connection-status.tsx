@@ -7,6 +7,7 @@ import {
   buildConnectionIssues,
   getHighestSeverity,
 } from "@/utils/connection-status";
+import { useQuery } from "@tanstack/react-query";
 import { Button } from "@vendcfo/ui/button";
 import {
   HoverCard,
@@ -14,7 +15,6 @@ import {
   HoverCardTrigger,
 } from "@vendcfo/ui/hover-card";
 import { Icons } from "@vendcfo/ui/icons";
-import { useQuery } from "@tanstack/react-query";
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 

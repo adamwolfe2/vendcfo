@@ -182,13 +182,20 @@ export const institutionsRouter = createTRPCRouter({
     .query(async ({ input }) => {
       try {
         // For Plaid, call the Plaid API directly instead of the engine
-        if (input.provider === "plaid" && input.accessToken && input.institutionId) {
+        if (
+          input.provider === "plaid" &&
+          input.accessToken &&
+          input.institutionId
+        ) {
           const data = await fetchPlaidAccounts(
             input.accessToken,
             input.institutionId,
           );
-          return data.sort((a: { balance: { amount: number } }, b: { balance: { amount: number } }) =>
-            b.balance.amount - a.balance.amount,
+          return data.sort(
+            (
+              a: { balance: { amount: number } },
+              b: { balance: { amount: number } },
+            ) => b.balance.amount - a.balance.amount,
           );
         }
 

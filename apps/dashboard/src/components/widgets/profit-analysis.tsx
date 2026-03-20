@@ -7,8 +7,8 @@ import { useTRPC } from "@/trpc/client";
 import { formatAmount } from "@/utils/format";
 import { getPeriodLabel } from "@/utils/metrics-date-utils";
 import { useChatActions, useChatId } from "@ai-sdk-tools/store";
-import { Icons } from "@vendcfo/ui/icons";
 import { useQuery } from "@tanstack/react-query";
+import { Icons } from "@vendcfo/ui/icons";
 import { format, parseISO } from "date-fns";
 import {
   Bar,

@@ -29,10 +29,7 @@ export default async function Layout({
     user = await caller.user.me();
 
     if (user) {
-      queryClient.setQueryData(
-        trpc.user.me.queryOptions().queryKey,
-        user,
-      );
+      queryClient.setQueryData(trpc.user.me.queryOptions().queryKey, user);
     }
 
     const [teamData, invoiceDefaults] = await Promise.allSettled([
@@ -56,11 +53,17 @@ export default async function Layout({
   } catch (error) {
     const msg = error instanceof Error ? error.message : String(error);
     // NEXT_REDIRECT is thrown by Next.js redirect() — rethrow, don't catch
-    if (msg === "NEXT_REDIRECT" || (error as any)?.digest?.startsWith("NEXT_REDIRECT")) {
+    if (
+      msg === "NEXT_REDIRECT" ||
+      (error as any)?.digest?.startsWith("NEXT_REDIRECT")
+    ) {
       throw error;
     }
     console.error("[sidebar/layout] TRPC error:", msg);
-    console.error("[sidebar/layout] Stack:", error instanceof Error ? error.stack : "no stack");
+    console.error(
+      "[sidebar/layout] Stack:",
+      error instanceof Error ? error.stack : "no stack",
+    );
 
     // Only redirect to /login for actual auth errors.
     // For all other errors (DB, network, etc.), show the error to the user
@@ -80,8 +83,8 @@ export default async function Layout({
         <div className="max-w-lg w-full text-center px-4">
           <h2 className="text-lg font-medium mb-4">Unable to load dashboard</h2>
           <p className="text-sm text-[#878787] mb-4">
-            The server encountered an error connecting to backend services.
-            This is usually temporary.
+            The server encountered an error connecting to backend services. This
+            is usually temporary.
           </p>
           <pre className="text-xs text-left bg-[#f5f5f5] p-4 rounded mb-6 overflow-auto max-h-40 whitespace-pre-wrap">
             {callerError}

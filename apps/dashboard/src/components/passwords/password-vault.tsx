@@ -1,21 +1,21 @@
 "use client";
 
+import { decryptPassword, encryptPassword } from "@/utils/vault-crypto";
 import { createClient } from "@vendcfo/supabase/client";
-import { encryptPassword, decryptPassword } from "@/utils/vault-crypto";
 import {
   Copy,
+  ExternalLink,
   Eye,
   EyeOff,
-  ExternalLink,
   KeyRound,
   Lock,
   Pencil,
   Plus,
+  RefreshCw,
   Search,
   Shield,
   Trash2,
   X,
-  RefreshCw,
 } from "lucide-react";
 import { useCallback, useEffect, useMemo, useState } from "react";
 
@@ -427,7 +427,7 @@ function PasswordModal({
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               required
-              placeholder='e.g. Company WiFi, Supplier Portal'
+              placeholder="e.g. Company WiFi, Supplier Portal"
               className="w-full rounded-md border border-[#d0d0d0] bg-white px-3 py-2 text-sm text-[#111] placeholder-[#aaa] outline-none transition-colors focus:border-[#888]"
             />
           </div>
@@ -459,7 +459,9 @@ function PasswordModal({
                   onChange={(e) => setPassword(e.target.value)}
                   required
                   disabled={loadingExisting}
-                  placeholder={loadingExisting ? "Decrypting..." : "Enter password"}
+                  placeholder={
+                    loadingExisting ? "Decrypting..." : "Enter password"
+                  }
                   className="w-full rounded-md border border-[#d0d0d0] bg-white py-2 pl-3 pr-9 text-sm text-[#111] placeholder-[#aaa] outline-none transition-colors focus:border-[#888] disabled:opacity-50 min-h-[44px]"
                 />
                 <button
@@ -564,7 +566,11 @@ function PasswordModal({
               disabled={saving || !title.trim() || !password.trim()}
               className="rounded-md bg-[#111] px-4 py-2 min-h-[44px] text-sm font-medium text-white transition-colors hover:bg-[#333] disabled:opacity-50 w-full sm:w-auto"
             >
-              {saving ? "Saving..." : mode === "add" ? "Add Entry" : "Save Changes"}
+              {saving
+                ? "Saving..."
+                : mode === "add"
+                  ? "Add Entry"
+                  : "Save Changes"}
             </button>
           </div>
         </form>
@@ -591,8 +597,8 @@ function DeleteConfirmModal({
       <div className="relative mx-4 w-full max-w-sm rounded-lg border border-[#e0e0e0] bg-white p-6 shadow-lg">
         <h3 className="text-lg font-semibold text-[#111]">Delete Entry</h3>
         <p className="mt-2 text-sm text-[#666]">
-          Are you sure you want to delete this password entry? This action cannot
-          be undone.
+          Are you sure you want to delete this password entry? This action
+          cannot be undone.
         </p>
         <div className="mt-5 flex justify-end gap-3">
           <button
@@ -698,7 +704,7 @@ export function PasswordVault({
       (e) =>
         e.title.toLowerCase().includes(q) ||
         (e.username && e.username.toLowerCase().includes(q)) ||
-        (e.website_url && e.website_url.toLowerCase().includes(q))
+        (e.website_url && e.website_url.toLowerCase().includes(q)),
     );
   }, [entries, searchQuery]);
 
@@ -707,7 +713,9 @@ export function PasswordVault({
       {/* Header */}
       <div className="mb-2 flex flex-col sm:flex-row sm:items-start justify-between gap-3">
         <div>
-          <h1 className="text-xl sm:text-2xl font-bold text-foreground">Password Vault</h1>
+          <h1 className="text-xl sm:text-2xl font-bold text-foreground">
+            Password Vault
+          </h1>
           <p className="mt-1 text-sm text-muted-foreground">
             Securely store and manage credentials for your team.
           </p>
@@ -726,7 +734,8 @@ export function PasswordVault({
       <div className="mb-6 flex items-center gap-2 rounded-md border border-[#e0e0e0] bg-[#fafafa] px-3 py-2">
         <Shield size={14} strokeWidth={1.5} className="shrink-0 text-[#888]" />
         <span className="text-xs text-[#888]">
-          Passwords are encrypted before storage. Only your team can decrypt them.
+          Passwords are encrypted before storage. Only your team can decrypt
+          them.
         </span>
       </div>
 

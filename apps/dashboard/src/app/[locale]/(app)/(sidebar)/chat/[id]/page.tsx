@@ -30,11 +30,12 @@ export default async function ChatPage(props: Props) {
     const caller = await getServerCaller();
 
     // Fetch widget preferences and chat data via direct caller
-    const [widgetPreferences, chat, suggestedActions] = await Promise.allSettled([
-      caller.widgets.getWidgetPreferences(),
-      caller.chats.get({ chatId: id }),
-      caller.suggestedActions.list({ limit: 6 }),
-    ]);
+    const [widgetPreferences, chat, suggestedActions] =
+      await Promise.allSettled([
+        caller.widgets.getWidgetPreferences(),
+        caller.chats.get({ chatId: id }),
+        caller.suggestedActions.list({ limit: 6 }),
+      ]);
 
     // Populate cache for widget preferences
     if (widgetPreferences.status === "fulfilled") {
@@ -61,7 +62,10 @@ export default async function ChatPage(props: Props) {
     }
 
     const chatData = chat.status === "fulfilled" ? chat.value : null;
-    const widgetPrefsData = widgetPreferences.status === "fulfilled" ? widgetPreferences.value : undefined;
+    const widgetPrefsData =
+      widgetPreferences.status === "fulfilled"
+        ? widgetPreferences.value
+        : undefined;
 
     if (!chatData) {
       redirect("/");

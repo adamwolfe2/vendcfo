@@ -1,8 +1,8 @@
 import { isTeamEligibleForSync } from "@/utils/check-team-eligibility";
 import { validateTellerSignature } from "@/utils/teller";
+import { tasks } from "@trigger.dev/sdk";
 import type { SyncConnectionPayload } from "@vendcfo/jobs/schema";
 import { createClient } from "@vendcfo/supabase/server";
-import { tasks } from "@trigger.dev/sdk";
 import { isAfter, subDays } from "date-fns";
 import { type NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
@@ -88,12 +88,6 @@ export async function POST(req: NextRequest) {
       created_at: connectionData.team.created_at,
     })
   ) {
-    console.log("Team not eligible for sync", {
-      teamId: connectionData.team.id,
-      plan: connectionData.team.plan,
-      createdAt: connectionData.team.created_at,
-    });
-
     return NextResponse.json({ success: true });
   }
 

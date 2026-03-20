@@ -8,8 +8,8 @@ import { VaultRelatedFiles } from "@/components/vault/vault-related-files";
 import { useDocumentParams } from "@/hooks/use-document-params";
 import { useTRPC } from "@/trpc/client";
 import { formatSize } from "@/utils/format";
-import { SheetHeader } from "@vendcfo/ui/sheet";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { SheetHeader } from "@vendcfo/ui/sheet";
 
 export function DocumentDetails() {
   const trpc = useTRPC();

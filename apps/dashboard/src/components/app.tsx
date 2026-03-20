@@ -1,4 +1,5 @@
 import { useTRPC } from "@/trpc/client";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import {
   Accordion,
   AccordionContent,
@@ -9,7 +10,6 @@ import { Button } from "@vendcfo/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@vendcfo/ui/card";
 import { ScrollArea } from "@vendcfo/ui/scroll-area";
 import { Sheet, SheetContent, SheetHeader } from "@vendcfo/ui/sheet";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
 import Image from "next/image";
 import { parseAsBoolean, parseAsString, useQueryStates } from "nuqs";
 import { useState } from "react";
@@ -233,9 +233,10 @@ export function App({
           <div className="absolute bottom-4 pt-8 border-t border-border">
             <p className="text-[10px] text-[#878787]">
               All apps on the VendCFO App Store are open-source and
-              peer-reviewed. VendCFO Labs AB maintains high standards but doesn't
-              endorse third-party apps. Apps published by VendCFO are officially
-              certified. Report any concerns about app content or behavior.
+              peer-reviewed. VendCFO Labs AB maintains high standards but
+              doesn't endorse third-party apps. Apps published by VendCFO are
+              officially certified. Report any concerns about app content or
+              behavior.
             </p>
 
             <a

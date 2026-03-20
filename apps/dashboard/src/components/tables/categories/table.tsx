@@ -2,15 +2,6 @@
 
 import { useCategoryParams } from "@/hooks/use-category-params";
 import { useTRPC } from "@/trpc/client";
-import { cn } from "@vendcfo/ui/cn";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@vendcfo/ui/table";
 import {
   useMutation,
   useQueryClient,
@@ -21,6 +12,15 @@ import {
   getCoreRowModel,
   useReactTable,
 } from "@tanstack/react-table";
+import { cn } from "@vendcfo/ui/cn";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@vendcfo/ui/table";
 import React from "react";
 import {
   type CategoriesTableMeta,

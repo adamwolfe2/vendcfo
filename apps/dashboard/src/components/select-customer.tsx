@@ -3,6 +3,7 @@
 import { useCustomerParams } from "@/hooks/use-customer-params";
 import { useInvoiceParams } from "@/hooks/use-invoice-params";
 import { useTRPC } from "@/trpc/client";
+import { useQuery } from "@tanstack/react-query";
 import { Button } from "@vendcfo/ui/button";
 import {
   Command,
@@ -13,7 +14,6 @@ import {
   CommandList,
 } from "@vendcfo/ui/command";
 import { Popover, PopoverContent, PopoverTrigger } from "@vendcfo/ui/popover";
-import { useQuery } from "@tanstack/react-query";
 import React from "react";
 
 export function SelectCustomer() {

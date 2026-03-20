@@ -19,10 +19,7 @@ export default async function Page() {
     user = await caller.user.me();
 
     if (user) {
-      queryClient.setQueryData(
-        trpc.user.me.queryOptions().queryKey,
-        user,
-      );
+      queryClient.setQueryData(trpc.user.me.queryOptions().queryKey, user);
     }
   } catch {
     return redirect("/login");

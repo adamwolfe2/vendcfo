@@ -12,6 +12,7 @@ import { useUserQuery } from "@/hooks/use-user";
 import { downloadFile } from "@/lib/download";
 import { useSearchStore } from "@/store/search";
 import { useTRPC } from "@/trpc/client";
+import { useQuery } from "@tanstack/react-query";
 import { Window, emit, invoke, listen } from "@vendcfo/desktop-client/core";
 import { isDesktopApp } from "@vendcfo/desktop-client/platform";
 import {
@@ -25,7 +26,6 @@ import {
 import { Icons } from "@vendcfo/ui/icons";
 import { Spinner } from "@vendcfo/ui/spinner";
 import { formatDate } from "@vendcfo/utils/format";
-import { useQuery } from "@tanstack/react-query";
 import { formatISO } from "date-fns";
 import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useRef, useState } from "react";
@@ -385,9 +385,7 @@ const SearchResultItemDisplay = ({
       case "customer": {
         onSelect = () => nav.navigateToCustomer({ customerId: item.id });
 
-        icon = (
-          <Icons.Customers className="size-4 text-[#666] text-primary" />
-        );
+        icon = <Icons.Customers className="size-4 text-[#666] text-primary" />;
         resultDisplay = (
           <div className="flex items-center w-full">
             <div className="flex-grow truncate flex gap-2 items-center">
@@ -409,9 +407,7 @@ const SearchResultItemDisplay = ({
         onSelect = () =>
           nav.navigateToInvoice({ invoiceId: item.id, type: "details" });
 
-        icon = (
-          <Icons.Invoice className="size-4 text-[#666] text-primary" />
-        );
+        icon = <Icons.Invoice className="size-4 text-[#666] text-primary" />;
         resultDisplay = (
           <div className="flex items-center w-full">
             <div className="flex-grow truncate flex gap-2 items-center">
@@ -434,9 +430,7 @@ const SearchResultItemDisplay = ({
       case "inbox": {
         onSelect = () => nav.navigateToPath(`/inbox?inboxId=${item.id}`);
 
-        icon = (
-          <Icons.Inbox2 size={14} className="text-[#666] text-primary" />
-        );
+        icon = <Icons.Inbox2 size={14} className="text-[#666] text-primary" />;
         resultDisplay = (
           <div className="flex items-center justify-between w-full">
             <div className="flex-grow truncate flex gap-2 items-center">

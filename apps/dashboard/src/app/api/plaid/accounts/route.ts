@@ -163,8 +163,7 @@ export async function POST(req: NextRequest) {
             logo: getLogoURL(institutionId),
             provider: "plaid",
           },
-          resource_id:
-            account.persistent_account_id || account.mask || null,
+          resource_id: account.persistent_account_id || account.mask || null,
           expires_at: null,
           iban: null,
           subtype: account.subtype || null,

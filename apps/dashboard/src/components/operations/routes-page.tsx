@@ -1,14 +1,7 @@
 "use client";
 
 import { createClient } from "@vendcfo/supabase/client";
-import {
-  MapPin,
-  Pencil,
-  Plus,
-  Route,
-  Trash2,
-  X,
-} from "lucide-react";
+import { MapPin, Pencil, Plus, Route, Trash2, X } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
 
 // ---------------------------------------------------------------------------
@@ -194,7 +187,11 @@ function RouteModal({
               disabled={saving || !name.trim()}
               className="rounded-md bg-[#111] px-4 py-2 min-h-[44px] text-sm font-medium text-white transition-colors hover:bg-[#333] disabled:opacity-50 w-full sm:w-auto"
             >
-              {saving ? "Saving..." : mode === "add" ? "Add Route" : "Save Changes"}
+              {saving
+                ? "Saving..."
+                : mode === "add"
+                  ? "Add Route"
+                  : "Save Changes"}
             </button>
           </div>
         </form>
@@ -221,7 +218,8 @@ function DeleteConfirmModal({
       <div className="relative mx-4 w-full max-w-sm rounded-lg border border-[#e0e0e0] bg-white p-6 shadow-lg">
         <h3 className="text-lg font-semibold text-[#111]">Delete Route</h3>
         <p className="mt-2 text-sm text-[#666]">
-          Are you sure you want to delete this route? This action cannot be undone.
+          Are you sure you want to delete this route? This action cannot be
+          undone.
         </p>
         <div className="mt-5 flex justify-end gap-3">
           <button
@@ -291,7 +289,9 @@ export function RoutesPage({
       {/* Header */}
       <div className="mb-6 flex flex-col sm:flex-row sm:items-start justify-between gap-3">
         <div>
-          <h1 className="text-xl sm:text-2xl font-bold text-foreground">Routes</h1>
+          <h1 className="text-xl sm:text-2xl font-bold text-foreground">
+            Routes
+          </h1>
           <p className="mt-1 text-sm text-muted-foreground">
             Manage your service routes and track location assignments.
           </p>
@@ -323,12 +323,24 @@ export function RoutesPage({
           <table className="w-full text-sm">
             <thead>
               <tr className="border-b border-[#e0e0e0] bg-[#fafafa]">
-                <th className="px-4 py-3 text-left font-medium text-[#555]">Route Name</th>
-                <th className="px-4 py-3 text-left font-medium text-[#555]">Description</th>
-                <th className="px-4 py-3 text-center font-medium text-[#555]">Locations</th>
-                <th className="px-4 py-3 text-center font-medium text-[#555]">Status</th>
-                <th className="px-4 py-3 text-center font-medium text-[#555]">Created</th>
-                <th className="px-4 py-3 text-right font-medium text-[#555]">Actions</th>
+                <th className="px-4 py-3 text-left font-medium text-[#555]">
+                  Route Name
+                </th>
+                <th className="px-4 py-3 text-left font-medium text-[#555]">
+                  Description
+                </th>
+                <th className="px-4 py-3 text-center font-medium text-[#555]">
+                  Locations
+                </th>
+                <th className="px-4 py-3 text-center font-medium text-[#555]">
+                  Status
+                </th>
+                <th className="px-4 py-3 text-center font-medium text-[#555]">
+                  Created
+                </th>
+                <th className="px-4 py-3 text-right font-medium text-[#555]">
+                  Actions
+                </th>
               </tr>
             </thead>
             <tbody>
@@ -342,7 +354,9 @@ export function RoutesPage({
                       <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-[#f5f5f5] text-[#666]">
                         <Route size={16} strokeWidth={1.5} />
                       </div>
-                      <span className="font-semibold text-[#111]">{route.name}</span>
+                      <span className="font-semibold text-[#111]">
+                        {route.name}
+                      </span>
                     </div>
                   </td>
                   <td className="px-4 py-3 text-[#666] max-w-xs truncate">
@@ -350,7 +364,11 @@ export function RoutesPage({
                   </td>
                   <td className="px-4 py-3 text-center">
                     <span className="inline-flex items-center gap-1 text-[#555]">
-                      <MapPin size={14} strokeWidth={1.5} className="text-[#999]" />
+                      <MapPin
+                        size={14}
+                        strokeWidth={1.5}
+                        className="text-[#999]"
+                      />
                       {route.locations?.[0]?.count ?? 0}
                     </span>
                   </td>

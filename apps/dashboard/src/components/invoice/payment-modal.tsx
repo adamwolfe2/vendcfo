@@ -2,6 +2,14 @@
 
 import { useSuccessSound } from "@/hooks/use-success-sound";
 import { downloadFile } from "@/lib/download";
+import {
+  Elements,
+  PaymentElement,
+  useElements,
+  useStripe,
+} from "@stripe/react-stripe-js";
+import type { Appearance } from "@stripe/stripe-js";
+import { loadStripe } from "@stripe/stripe-js";
 import { fromStripeAmount } from "@vendcfo/invoice/currency";
 import { Button } from "@vendcfo/ui/button";
 import { cn } from "@vendcfo/ui/cn";
@@ -11,14 +19,6 @@ import { Icons } from "@vendcfo/ui/icons";
 import { Skeleton } from "@vendcfo/ui/skeleton";
 import { Spinner } from "@vendcfo/ui/spinner";
 import { SubmitButton } from "@vendcfo/ui/submit-button";
-import {
-  Elements,
-  PaymentElement,
-  useElements,
-  useStripe,
-} from "@stripe/react-stripe-js";
-import type { Appearance } from "@stripe/stripe-js";
-import { loadStripe } from "@stripe/stripe-js";
 import { motion } from "framer-motion";
 import { useTheme } from "next-themes";
 import { type RefObject, useEffect, useMemo, useRef, useState } from "react";

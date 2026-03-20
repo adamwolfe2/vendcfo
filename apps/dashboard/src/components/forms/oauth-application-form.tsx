@@ -15,6 +15,7 @@ import {
   scopePresets,
   scopesToName,
 } from "@api/utils/scopes";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import {
   Accordion,
   AccordionContent,
@@ -38,7 +39,6 @@ import { Switch } from "@vendcfo/ui/switch";
 import { Tabs, TabsList, TabsTrigger } from "@vendcfo/ui/tabs";
 import { Textarea } from "@vendcfo/ui/textarea";
 import { useToast } from "@vendcfo/ui/use-toast";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { nanoid } from "nanoid";
 import { useEffect, useState } from "react";
 import { useDropzone } from "react-dropzone";

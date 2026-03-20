@@ -1,6 +1,11 @@
 "use client";
 
 import { useStickyColumns } from "@/hooks/use-sticky-columns";
+import type {
+  ColumnDef,
+  ColumnSizingState,
+  VisibilityState,
+} from "@tanstack/react-table";
 import { cn } from "@vendcfo/ui/cn";
 import { Skeleton } from "@vendcfo/ui/skeleton";
 import {
@@ -11,11 +16,6 @@ import {
   TableHeader,
   TableRow,
 } from "@vendcfo/ui/table";
-import type {
-  ColumnDef,
-  ColumnSizingState,
-  VisibilityState,
-} from "@tanstack/react-table";
 import { useMemo } from "react";
 import { SkeletonCell } from "./skeleton-cell";
 import { type TableColumnMeta, getColumnId, getHeaderLabel } from "./types";

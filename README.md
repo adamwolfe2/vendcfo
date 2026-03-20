@@ -1,5 +1,3 @@
-![hero](github.png)
-
 <p align="center">
 	<h1 align="center"><b>VendCFO</b></h1>
 <p align="center">

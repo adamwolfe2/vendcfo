@@ -1,6 +1,6 @@
+import type { SupabaseClient } from "@supabase/supabase-js";
 import { createClient } from "@vendcfo/supabase/client";
 import { upload } from "@vendcfo/supabase/storage";
-import type { SupabaseClient } from "@supabase/supabase-js";
 import { useState } from "react";
 
 interface UploadParams {

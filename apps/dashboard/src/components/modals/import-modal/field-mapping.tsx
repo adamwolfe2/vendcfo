@@ -7,6 +7,7 @@ import { useUserQuery } from "@/hooks/use-user";
 import { useTRPC } from "@/trpc/client";
 import { formatAmount } from "@/utils/format";
 import { readStreamableValue } from "@ai-sdk/rsc";
+import { useQuery } from "@tanstack/react-query";
 import { formatAmountValue, formatDate } from "@vendcfo/import";
 import {
   Accordion,
@@ -33,7 +34,6 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@vendcfo/ui/tooltip";
-import { useQuery } from "@tanstack/react-query";
 import { capitalCase } from "change-case";
 import { useEffect, useRef, useState } from "react";
 import { Controller, useWatch } from "react-hook-form";

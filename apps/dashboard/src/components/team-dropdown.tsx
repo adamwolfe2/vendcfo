@@ -3,6 +3,7 @@
 import { revalidateAfterTeamChange } from "@/actions/revalidate-action";
 import { useUserQuery } from "@/hooks/use-user";
 import { useTRPC } from "@/trpc/client";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Avatar, AvatarFallback, AvatarImageNext } from "@vendcfo/ui/avatar";
 import { Button } from "@vendcfo/ui/button";
 import { cn } from "@vendcfo/ui/cn";
@@ -14,7 +15,6 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@vendcfo/ui/tooltip";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { AnimatePresence, motion } from "framer-motion";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
