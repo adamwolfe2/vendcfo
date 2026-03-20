@@ -26,6 +26,8 @@ export default async function Layout({
   let user: any = null;
   let callerError: string | null = null;
 
+  let reviewCount: number | null = null;
+
   try {
     const caller = await getServerCaller();
     user = await caller.user.me();
@@ -34,10 +36,19 @@ export default async function Layout({
       queryClient.setQueryData(trpc.user.me.queryOptions().queryKey, user);
     }
 
-    const [teamData, invoiceDefaults] = await Promise.allSettled([
-      caller.team.current(),
-      caller.invoice.defaultSettings(),
-    ]);
+    // Parallelize all independent data fetches (team, invoice defaults,
+    // and the onboarding review-count check) into a single Promise.allSettled.
+    const [teamData, invoiceDefaults, reviewCountResult] =
+      await Promise.allSettled([
+        caller.team.current(),
+        caller.invoice.defaultSettings(),
+        // Only fetch review count if the team was recently created (for onboarding check).
+        // This avoids an extra sequential DB call later.
+        user?.team?.createdAt &&
+        new Date(user.team.createdAt) > new Date(Date.now() - 60 * 60 * 1000)
+          ? caller.transactions.getReviewCount()
+          : Promise.resolve(null),
+      ]);
 
     if (teamData.status === "fulfilled") {
       queryClient.setQueryData(
@@ -51,6 +62,10 @@ export default async function Layout({
         trpc.invoice.defaultSettings.queryOptions().queryKey,
         invoiceDefaults.value,
       );
+    }
+
+    if (reviewCountResult.status === "fulfilled") {
+      reviewCount = reviewCountResult.value;
     }
   } catch (error) {
     const msg = error instanceof Error ? error.message : String(error);
@@ -116,25 +131,10 @@ export default async function Layout({
     redirect("/teams");
   }
 
-  // Check if this is a brand-new team that should see onboarding
-  let shouldShowOnboarding = false;
-  try {
-    const teamCreatedAt = user.team?.createdAt
-      ? new Date(user.team.createdAt)
-      : null;
-    const oneHourAgo = new Date(Date.now() - 60 * 60 * 1000);
-
-    if (teamCreatedAt && teamCreatedAt > oneHourAgo) {
-      // Team was created within the last hour — check for transactions
-      const caller = await getServerCaller();
-      const reviewCount = await caller.transactions.getReviewCount();
-      if (typeof reviewCount === "number" && reviewCount === 0) {
-        shouldShowOnboarding = true;
-      }
-    }
-  } catch {
-    // If we can't determine, don't block the dashboard
-  }
+  // Check if this is a brand-new team that should see onboarding.
+  // reviewCount was already fetched in parallel above for recent teams.
+  const shouldShowOnboarding =
+    typeof reviewCount === "number" && reviewCount === 0;
 
   return (
     <HydrateClient>
