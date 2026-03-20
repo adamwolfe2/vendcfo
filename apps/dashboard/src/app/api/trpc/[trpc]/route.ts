@@ -4,14 +4,42 @@ import type { NextRequest } from "next/server";
 // Force dynamic — skip static page data collection at build time
 export const dynamic = "force-dynamic";
 
+// ── Module-level cache for heavy imports ──
+// These load once per serverless instance (warm start = zero import cost).
+let _appRouter: any;
+let _verifyAccessToken: any;
+let _createClient: any;
+let _db: any;
+let _createDashboardSupabase: any;
+
+async function getModules() {
+  if (!_appRouter) {
+    const [appModule, authModule, clientModule, dbModule, supabaseModule] =
+      await Promise.all([
+        import("@vendcfo/api/trpc/routers/_app"),
+        import("@vendcfo/api/utils/auth"),
+        import("@vendcfo/api/services/supabase"),
+        import("@vendcfo/db/client"),
+        import("@vendcfo/supabase/server"),
+      ]);
+    _appRouter = appModule.appRouter;
+    _verifyAccessToken = authModule.verifyAccessToken;
+    _createClient = clientModule.createClient;
+    _db = dbModule.db;
+    _createDashboardSupabase = supabaseModule.createClient;
+  }
+  return {
+    appRouter: _appRouter,
+    verifyAccessToken: _verifyAccessToken,
+    createClient: _createClient,
+    db: _db,
+    createDashboardSupabase: _createDashboardSupabase,
+  };
+}
+
 const handler = async (req: NextRequest) => {
-  const { appRouter } = await import("@vendcfo/api/trpc/routers/_app");
-  const { verifyAccessToken } = await import("@vendcfo/api/utils/auth");
-  const { createClient } = await import("@vendcfo/api/services/supabase");
-  const { db } = await import("@vendcfo/db/client");
-  const { createClient: createDashboardSupabase } = await import(
-    "@vendcfo/supabase/server"
-  );
+  const { appRouter, verifyAccessToken, createClient, db, createDashboardSupabase } =
+    await getModules();
 
   return fetchRequestHandler({
     endpoint: "/api/trpc",

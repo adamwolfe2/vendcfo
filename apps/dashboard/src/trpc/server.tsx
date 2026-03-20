@@ -34,15 +34,42 @@ const getAccessToken = cache(async (): Promise<string | undefined> => {
 /**
  * Create a direct server-side TRPC caller that bypasses HTTP entirely.
  * This avoids the serverless self-call problem on Vercel.
+ *
+ * Heavy module imports are cached at the module level so they only load
+ * once per serverless instance (not per request). React cache() still
+ * deduplicates within a single request/render.
  */
+let _serverModules: {
+  appRouter: any;
+  createCallerFactory: any;
+  verifyAccessToken: any;
+  createApiSupabase: any;
+  db: any;
+} | null = null;
+
+async function getServerModules() {
+  if (!_serverModules) {
+    const [appMod, initMod, authMod, supaMod, dbMod] = await Promise.all([
+      import("@vendcfo/api/trpc/routers/_app"),
+      import("@vendcfo/api/trpc/init"),
+      import("@vendcfo/api/utils/auth"),
+      import("@vendcfo/api/services/supabase"),
+      import("@vendcfo/db/client"),
+    ]);
+    _serverModules = {
+      appRouter: appMod.appRouter,
+      createCallerFactory: initMod.createCallerFactory,
+      verifyAccessToken: authMod.verifyAccessToken,
+      createApiSupabase: supaMod.createClient,
+      db: dbMod.db,
+    };
+  }
+  return _serverModules;
+}
+
 const getServerCaller = cache(async () => {
-  const { appRouter } = await import("@vendcfo/api/trpc/routers/_app");
-  const { createCallerFactory } = await import("@vendcfo/api/trpc/init");
-  const { verifyAccessToken } = await import("@vendcfo/api/utils/auth");
-  const { createClient: createApiSupabase } = await import(
-    "@vendcfo/api/services/supabase"
-  );
-  const { db } = await import("@vendcfo/db/client");
+  const { appRouter, createCallerFactory, verifyAccessToken, createApiSupabase, db } =
+    await getServerModules();
 
   const accessToken = await getAccessToken();
   let session = await verifyAccessToken(accessToken);

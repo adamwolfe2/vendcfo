@@ -36,18 +36,18 @@ export default async function Layout({
       queryClient.setQueryData(trpc.user.me.queryOptions().queryKey, user);
     }
 
-    // Only fetch team data (critical for layout). Invoice defaults and review
-    // count are deferred — they're not needed for initial page render.
-    const [teamData] = await Promise.allSettled([
-      caller.team.current(),
-    ]);
-
-    if (teamData.status === "fulfilled") {
-      queryClient.setQueryData(
-        trpc.team.current.queryOptions().queryKey,
-        teamData.value,
-      );
-    }
+    // team.current() is NOT awaited here — user.me() already returns teamId
+    // and team data. Prefetch it for client hydration without blocking render.
+    caller.team.current().then((teamData: any) => {
+      if (teamData) {
+        queryClient.setQueryData(
+          trpc.team.current.queryOptions().queryKey,
+          teamData,
+        );
+      }
+    }).catch(() => {
+      // Non-critical — client will fetch on demand
+    });
 
     // Invoice defaults loaded client-side on demand (not blocking layout)
   } catch (error) {
@@ -114,10 +114,8 @@ export default async function Layout({
     redirect("/teams");
   }
 
-  // Check if this is a brand-new team that should see onboarding.
-  // reviewCount was already fetched in parallel above for recent teams.
-  const shouldShowOnboarding =
-    typeof reviewCount === "number" && reviewCount === 0;
+  // Onboarding redirect is handled client-side now (no blocking query needed)
+  const shouldShowOnboarding = false;
 
   return (
     <HydrateClient>
