@@ -2,7 +2,7 @@ import { openai } from "@ai-sdk/openai";
 import { createAgent, formatContextForLLM } from "@api/ai/agents/config/shared";
 import { analyticsAgent } from "./analytics";
 import { customersAgent } from "./customers";
-import { financeCalculatorAgent } from "./finance-calculator";
+// import { financeCalculatorAgent } from "./finance-calculator";
 import { generalAgent } from "./general";
 import { invoicesAgent } from "./invoices";
 import { operationsAgent } from "./operations";
@@ -46,7 +46,7 @@ ${formatContextForLLM(ctx)}
 Match the user's message against these patterns IN ORDER. Pick the FIRST match:
 
 1. "weekly summary" / "monthly summary" / "summary for week X" / "insights" / "business overview" / greetings → general
-2. "calculator" / "margin" / "markup" / "break even" / "ROI" / "payback" / "which calculator" / "help me calculate" → financeCalculator (dedicated finance math specialist)
+2. "calculator" / "margin" / "markup" / "break even" / "ROI" / "payback" / "which calculator" / "help me calculate" → general (dedicated finance math specialist)
 3. "can I afford" / "will I run out" / "what if I buy" / "should I purchase" / "stress test" / "can I afford to hire" / "labor cost" / "fully loaded cost" → research (has calculator + stress test)
 4. Time-series / "over time" / "trend" / "show me" / "chart" / "graph" → reports (has all chart tools)
 5. "which customer" / "which location" / "which product" / "breakdown" / "top" / "best" / "worst" / "compare" → analytics
@@ -119,12 +119,12 @@ TIME TRACKING → timeTracking:
 - "Start timer for Austin route" → timeTracking
 - "Timesheet for this week" → timeTracking
 
-CALCULATOR QUESTIONS → financeCalculator:
-- "Which calculator should I use?" → financeCalculator
-- "Help me calculate my margin" → financeCalculator
-- "What's a good markup?" → financeCalculator
-- "How do I figure out break even?" → financeCalculator
-- "What's the ROI on a new machine?" → financeCalculator
+CALCULATOR QUESTIONS → general:
+- "Which calculator should I use?" → general
+- "Help me calculate my margin" → general
+- "What's a good markup?" → general
+- "How do I figure out break even?" → general
+- "What's the ROI on a new machine?" → general
 
 AFFORDABILITY / WHAT-IF WITH LABOR → research:
 - "Can I afford to hire a driver?" → research
@@ -141,13 +141,13 @@ TRICKY CASES (pay attention):
 - "How do I reduce COGS?" → reports (it's a financial optimization question)
 - "Why is my margin low?" → reports (needs margin analysis tool)
 - "Should I fire my driver?" → research (it's a what-if labor analysis)
-- "What's a good commission rate?" → financeCalculator (calculator knowledge, uses benchmarks)
+- "What's a good commission rate?" → general (calculator knowledge, uses benchmarks)
 - "Revenue by machine" → analytics (comparison/breakdown)
 - "Total revenue" → reports (aggregate financial metric)
 </routing-examples>`,
   handoffs: [
     generalAgent,
-    financeCalculatorAgent,
+    // financeCalculatorAgent, // Temporarily disabled — import issue on Vercel
     researchAgent,
     operationsAgent,
     reportsAgent,
