@@ -34,10 +34,11 @@ type Props = {
 };
 
 export function ChatInterface({ geo }: Props) {
-  const { chatId: routeChatId, isHome } = useChatInterface();
+  const { chatId: routeChatId, isHome, setChatId } = useChatInterface();
   const chatId = useMemo(() => routeChatId ?? generateId(), [routeChatId]);
-  const { reset } = useChatActions();
+  const { reset, sendMessage } = useChatActions();
   const prevChatIdRef = useRef<string | null>(routeChatId);
+  const autoPromptSentRef = useRef(false);
   const [, clearSuggestions] = useDataPart<{ prompts: string[] }>(
     "suggestions",
   );
@@ -60,6 +61,44 @@ export function ChatInterface({ geo }: Props) {
     // Update the ref for next comparison
     prevChatIdRef.current = currentChatId;
   }, [routeChatId, reset, clearSuggestions]);
+
+  // Auto-send pre-composed prompt from sessionStorage (e.g. from onboarding)
+  useEffect(() => {
+    if (autoPromptSentRef.current) return;
+    try {
+      const prompt = sessionStorage.getItem("vendcfo-chat-prompt");
+      if (prompt) {
+        sessionStorage.removeItem("vendcfo-chat-prompt");
+        autoPromptSentRef.current = true;
+        if (chatId) {
+          setChatId(chatId);
+        }
+        sendMessage({ text: prompt });
+      }
+    } catch {
+      // sessionStorage may not be available
+    }
+  }, [chatId, setChatId, sendMessage]);
+
+  // Listen for auto-send events from OnboardingChatPrompt (same page)
+  useEffect(() => {
+    const handler = (e: Event) => {
+      const detail = (e as CustomEvent).detail;
+      if (detail?.prompt) {
+        try {
+          sessionStorage.removeItem("vendcfo-chat-prompt");
+        } catch {
+          // ignore
+        }
+        if (chatId) {
+          setChatId(chatId);
+        }
+        sendMessage({ text: detail.prompt });
+      }
+    };
+    window.addEventListener("vendcfo-chat-auto-send", handler);
+    return () => window.removeEventListener("vendcfo-chat-auto-send", handler);
+  }, [chatId, setChatId, sendMessage]);
 
   const authenticatedFetch = useMemo(
     () =>

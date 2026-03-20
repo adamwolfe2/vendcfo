@@ -91,7 +91,32 @@ When presenting metrics:
 2. Use the \`status\` field (below_range, at_target, above_range) to determine tone
 3. Use the \`delta_from_target\` field for gap analysis — do NOT compute deltas yourself
 4. If a \`warning\` field is present, surface it to the user
-</pre-computed-data-rule>`;
+</pre-computed-data-rule>
+
+<proactive-insights-rules>
+If the tool output includes a \`proactive_insights\` array, incorporate them at the END of your response after fully answering the user's question. Use brief transitions:
+- "Also worth flagging: ..."
+- "One more thing I noticed: ..."
+- "Quick heads up: ..."
+
+Rules:
+- ALWAYS answer the user's question first and completely
+- Maximum 2 proactive insights per response
+- Keep each to 1-2 sentences
+- If no proactive insights are present, just answer normally
+- NEVER say "I checked for anomalies" -- just naturally mention the finding
+</proactive-insights-rules>
+
+<memory-usage-rules>
+When past conversation context is provided:
+- CORRECTIONS are highest priority — never repeat wrong information
+- Reference GOALS naturally when showing related metrics
+- Acknowledge DECISIONS when data shows their impact
+- Share good news about CONCERNS that improved
+- NEVER start with "As we discussed..." — weave references naturally
+- Do NOT force memory references where they don't fit
+- Maximum 1 memory reference per response unless highly relevant
+</memory-usage-rules>`;
 
 /**
  * Dashboard metrics filter state - source of truth for AI tool defaults.

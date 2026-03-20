@@ -57,6 +57,9 @@ export async function POST(req: NextRequest) {
       { getUserContext },
       { buildBusinessContext },
       { smoothStream },
+      { extractConversationInsights, deduplicateInsights },
+      { getRelevantInsights, buildMemoryContext },
+      { getInsightsForTeam, saveInsights },
     ] = await Promise.all([
       import("@vendcfo/api/schemas/chat") as any,
       import("@vendcfo/api/ai/agents/main") as any,
@@ -64,6 +67,9 @@ export async function POST(req: NextRequest) {
       import("@vendcfo/api/ai/utils/get-user-context") as any,
       import("@vendcfo/api/ai/context/build-context") as any,
       import("ai"),
+      import("@vendcfo/api/ai/memory/extract-insights") as any,
+      import("@vendcfo/api/ai/memory/insight-relevance") as any,
+      import("@vendcfo/api/ai/memory/insight-store") as any,
     ]);
 
     // 5. Validate request body
@@ -112,7 +118,33 @@ export async function POST(req: NextRequest) {
       };
     }
 
-    // 8. Build app context and stream response
+    // 8. Extract insights from user message and build memory context
+    const existingInsights = await getInsightsForTeam(teamId);
+
+    // Fire-and-forget: extract new insights from the user's message
+    const extractionPromise = (async () => {
+      try {
+        const newInsights = await extractConversationInsights(
+          message,
+          "",
+          existingInsights,
+        );
+        if (newInsights.length > 0) {
+          const merged = deduplicateInsights(existingInsights, newInsights);
+          await saveInsights(teamId, merged);
+        }
+      } catch (err) {
+        console.error("[chat/route] Insight extraction failed:", err);
+      }
+    })();
+    // Don't await — let it run in background
+    void extractionPromise;
+
+    // Score relevance and build memory context for this message
+    const relevantInsights = getRelevantInsights(existingInsights, message);
+    const memoryContext = buildMemoryContext(relevantInsights);
+
+    // 9. Build app context and stream response
     const appContext = buildAppContext(userContext, id, {
       metricsFilter,
       forcedToolCall,
@@ -120,6 +152,12 @@ export async function POST(req: NextRequest) {
 
     // Attach live business context so the agent can reference it
     (appContext as any).businessContext = businessContext;
+
+    // Inject memory context from past conversations
+    if (memoryContext) {
+      (appContext as any).businessContext =
+        ((appContext as any).businessContext || "") + memoryContext;
+    }
 
     return mainAgent.toUIMessageStream({
       message,

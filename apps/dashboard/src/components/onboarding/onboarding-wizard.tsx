@@ -393,8 +393,14 @@ export function OnboardingWizard() {
 
   const handleFinish = useCallback(() => {
     markComplete();
-    router.push("/");
-  }, [router, markComplete]);
+    // Store that onboarding just completed so the dashboard can show a chat prompt
+    try {
+      sessionStorage.setItem("vendcfo-onboarding-just-completed", "true");
+    } catch {
+      // sessionStorage may not be available
+    }
+    window.location.href = "/";
+  }, [markComplete]);
 
   return (
     <div>

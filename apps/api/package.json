@@ -22,7 +22,11 @@
     "./ai/context/build-context": "./src/ai/context/build-context.ts",
     "./ai/compute/benchmark-compare": "./src/ai/compute/benchmark-compare.ts",
     "./ai/compute/machine-pnl": "./src/ai/compute/machine-pnl.ts",
-    "./ai/compute/smart-alerts": "./src/ai/compute/smart-alerts.ts"
+    "./ai/compute/smart-alerts": "./src/ai/compute/smart-alerts.ts",
+    "./ai/compute/proactive-insights": "./src/ai/compute/proactive-insights.ts",
+    "./ai/memory/extract-insights": "./src/ai/memory/extract-insights.ts",
+    "./ai/memory/insight-relevance": "./src/ai/memory/insight-relevance.ts",
+    "./ai/memory/insight-store": "./src/ai/memory/insight-store.ts"
   },
   "dependencies": {
     "@ai-sdk-tools/agents": "^1.2.0",

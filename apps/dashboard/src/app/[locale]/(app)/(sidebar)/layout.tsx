@@ -1,6 +1,7 @@
 import { ExportStatus } from "@/components/export-status";
 import { GlobalTimerProvider } from "@/components/global-timer-provider";
 import { Header } from "@/components/header";
+import { OnboardingChatPrompt } from "@/components/onboarding/onboarding-chat-prompt";
 import { OnboardingRedirect } from "@/components/onboarding/onboarding-redirect";
 import { GlobalSheetsProvider } from "@/components/sheets/global-sheets-provider";
 import { Sidebar } from "@/components/sidebar";
@@ -155,6 +156,7 @@ export default async function Layout({
         <GlobalSheetsProvider />
         <GlobalTimerProvider />
         <TimezoneDetector />
+        <OnboardingChatPrompt />
       </div>
     </HydrateClient>
   );
