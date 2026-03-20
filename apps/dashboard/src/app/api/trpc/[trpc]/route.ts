@@ -20,28 +20,30 @@ const handler = async (req: NextRequest) => {
     createContext: async ({ req }) => {
       const authHeader = req.headers.get("authorization");
       const accessToken = authHeader?.split(" ")[1];
-      let session = await verifyAccessToken(accessToken);
 
-      // Fallback: if JWT verification failed, try cookie-based auth
-      // This handles cases where SUPABASE_JWT_SECRET is wrong/missing
-      if (!session) {
-        try {
-          const supabaseAuth = await createDashboardSupabase();
-          const {
-            data: { user },
-          } = await supabaseAuth.auth.getUser();
-          if (user) {
-            session = {
-              user: {
-                id: user.id,
-                email: user.email,
-                full_name: user.user_metadata?.full_name,
-              },
-            };
-          }
-        } catch {
-          // Cookie auth failed too
+      // Primary auth: cookie-based (most reliable, works regardless of JWT_SECRET)
+      let session = null;
+      try {
+        const supabaseAuth = await createDashboardSupabase();
+        const {
+          data: { user },
+        } = await supabaseAuth.auth.getUser();
+        if (user) {
+          session = {
+            user: {
+              id: user.id,
+              email: user.email,
+              full_name: user.user_metadata?.full_name,
+            },
+          };
         }
+      } catch {
+        // Cookie auth failed, try JWT fallback
+      }
+
+      // Fallback: JWT verification from Bearer token
+      if (!session && accessToken) {
+        session = await verifyAccessToken(accessToken);
       }
 
       const supabase = await createClient(accessToken);
