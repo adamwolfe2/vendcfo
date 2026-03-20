@@ -19,12 +19,14 @@ export function getSharedRedisClient(): RedisClientType {
     return {
       get: async () => null,
       set: async () => null,
+      setEx: async () => null,
       del: async () => null,
       exists: async () => 0,
       expire: async () => false,
       keys: async () => [],
       connect: async () => {},
       disconnect: async () => {},
+      ping: async () => "PONG",
       isOpen: false,
       on: () => {},
     } as any;

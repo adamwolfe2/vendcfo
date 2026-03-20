@@ -7,6 +7,7 @@ import {
   CalendarDays,
   GraduationCap,
   KeyRound,
+  LayoutGrid,
   Route,
   Users,
 } from "lucide-react";
@@ -24,6 +25,7 @@ const icons = {
   "/customers": () => <Users size={20} strokeWidth={1.5} />,
   "/apps": () => <Icons.Apps size={20} />,
   // Vending section
+  "/operations": () => <LayoutGrid size={20} strokeWidth={1.5} />,
   "/routes": () => <Route size={20} strokeWidth={1.5} />,
   "/locations": () => <Icons.Tracker size={20} />,
   "/machines": () => <Icons.Settings size={20} />,
@@ -48,7 +50,7 @@ const items = [
   { path: "/customers", name: "Customers" },
   // ─── VendCFO Operations ───
   {
-    path: "/routes",
+    path: "/operations",
     name: "Operations",
     children: [
       { path: "/routes", name: "Routes" },
@@ -268,6 +270,7 @@ export function MainMenu({ onSelect, isExpanded = false }: Props) {
 
   // Vending operation paths that should highlight the Operations parent
   const vendingOpPaths = [
+    "/operations",
     "/routes",
     "/logistics",
     "/locations",
@@ -287,7 +290,7 @@ export function MainMenu({ onSelect, isExpanded = false }: Props) {
             const isActive =
               (pathname === "/" && item.path === "/") ||
               (item.path === "/" && isChatPage) ||
-              (item.path === "/routes" &&
+              (item.path === "/operations" &&
                 vendingOpPaths.some((p) => pathname?.startsWith(p))) ||
               (item.path === "/calculators" &&
                 vendingAnalyticsPaths.some((p) => pathname?.startsWith(p))) ||

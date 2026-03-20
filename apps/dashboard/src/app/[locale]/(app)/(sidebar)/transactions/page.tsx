@@ -1,4 +1,5 @@
 import { AddTransactions } from "@/components/add-transactions";
+import { ErrorFallback } from "@/components/error-fallback";
 import { ScrollableContent } from "@/components/scrollable-content";
 import { DataTable } from "@/components/tables/transactions/data-table";
 import { Loading } from "@/components/tables/transactions/loading";
@@ -13,6 +14,7 @@ import { HydrateClient, getQueryClient, trpc } from "@/trpc/server";
 import { getServerCaller } from "@/trpc/server";
 import { getInitialTableSettings } from "@/utils/columns";
 import type { Metadata } from "next";
+import { ErrorBoundary } from "next/dist/client/components/error-boundary";
 import type { SearchParams } from "nuqs/server";
 import { Suspense } from "react";
 
@@ -126,17 +128,19 @@ export default async function Transactions(props: Props) {
             </div>
           </div>
 
-          <Suspense
-            fallback={
-              <Loading
-                columnVisibility={initialSettings.columns}
-                columnSizing={initialSettings.sizing}
-                columnOrder={initialSettings.order}
-              />
-            }
-          >
-            <DataTable initialSettings={initialSettings} initialTab={tab} />
-          </Suspense>
+          <ErrorBoundary errorComponent={ErrorFallback}>
+            <Suspense
+              fallback={
+                <Loading
+                  columnVisibility={initialSettings.columns}
+                  columnSizing={initialSettings.sizing}
+                  columnOrder={initialSettings.order}
+                />
+              }
+            >
+              <DataTable initialSettings={initialSettings} initialTab={tab} />
+            </Suspense>
+          </ErrorBoundary>
         </TransactionsUploadZone>
       </ScrollableContent>
     </HydrateClient>
