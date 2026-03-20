@@ -133,16 +133,31 @@ export function ChatInterface({ geo }: Props) {
         const agentChoice = lastMessage.metadata?.agentChoice;
         const toolChoice = lastMessage.metadata?.toolChoice;
 
+        // Convert UIMessage (parts-based) to the format expected by
+        // the AI SDK streamText route (role + content string).
+        const aiMessages = messages.map((m: any) => ({
+          role: m.role,
+          content:
+            Array.isArray(m.parts)
+              ? m.parts
+                  .filter((p: any) => p.type === "text")
+                  .map((p: any) => p.text)
+                  .join("\n")
+              : typeof m.content === "string"
+                ? m.content
+                : "",
+        }));
+
         return {
           body: {
             id,
+            messages: aiMessages,
             country: geo?.country,
             city: geo?.city,
             message: lastMessage,
             agentChoice,
             toolChoice,
             timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
-            // Dashboard metrics filter state - source of truth for AI tool defaults
             metricsFilter: { period, from, to, currency, revenueType },
           },
         };
