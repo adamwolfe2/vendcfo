@@ -45,9 +45,9 @@ export function RevShareCalculator() {
         <div className="bg-secondary p-4 rounded-lg border border-border">
           <h3 className="text-sm font-bold text-foreground uppercase tracking-wider mb-3">Payout & Impact</h3>
           <div className="space-y-3 font-mono text-sm">
-            <div className="flex justify-between"><span className="text-muted-foreground">Total Payout:</span><span className="font-bold text-red-500 dark:text-red-400">${results.totalPayoutToLocation.toLocaleString()}</span></div>
-            <div className="flex justify-between"><span className="text-muted-foreground">Net Retained:</span><span className="text-green-600 dark:text-green-400">${results.netRevenueRetainedByOperator.toLocaleString()}</span></div>
-            <div className="flex justify-between pt-2 border-t border-border"><span className="text-muted-foreground">Margin Risk:</span><span className={`font-medium ${results.revShareAsPctOfGrossMargin > 30 ? 'text-red-500 dark:text-red-400' : 'text-foreground'}`}>{results.revShareAsPctOfGrossMargin.toFixed(1)}% of Gross Profit</span></div>
+            <div className="flex justify-between"><span className="text-muted-foreground">Total Payout:</span><span className="font-bold text-red-500">${results.totalPayoutToLocation.toLocaleString()}</span></div>
+            <div className="flex justify-between"><span className="text-muted-foreground">Net Retained:</span><span className="text-green-600">${results.netRevenueRetainedByOperator.toLocaleString()}</span></div>
+            <div className="flex justify-between pt-2 border-t border-border"><span className="text-muted-foreground">Margin Risk:</span><span className={`font-medium ${results.revShareAsPctOfGrossMargin > 30 ? 'text-red-500' : 'text-foreground'}`}>{results.revShareAsPctOfGrossMargin.toFixed(1)}% of Gross Profit</span></div>
           </div>
         </div>
       </CardContent>

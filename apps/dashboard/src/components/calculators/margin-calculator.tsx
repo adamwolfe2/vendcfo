@@ -52,9 +52,9 @@ export function MarginCalculator() {
           <h3 className="text-sm font-bold text-foreground uppercase tracking-wider mb-3">Results</h3>
           <div className="grid grid-cols-2 gap-y-3 font-mono text-sm">
             <div className="text-muted-foreground">Net Profit</div>
-            <div className="text-right font-medium text-green-600 dark:text-green-400">${results.netProfitPerUnit}</div>
+            <div className="text-right font-medium text-green-600">${results.netProfitPerUnit}</div>
             <div className="text-muted-foreground">Gross Margin</div>
-            <div className={`text-right font-bold ${results.grossMarginPct < 30 ? 'text-red-500 dark:text-red-400' : 'text-green-600 dark:text-green-400'}`}>
+            <div className={`text-right font-bold ${results.grossMarginPct < 30 ? 'text-red-500' : 'text-green-600'}`}>
               {results.grossMarginPct}%
             </div>
             <div className="text-muted-foreground">Break Even</div>
@@ -62,7 +62,7 @@ export function MarginCalculator() {
           </div>
           
           {results.grossMarginPct < 30 && (
-            <div className="mt-3 text-xs text-red-600 dark:text-red-400 bg-red-500/10 p-2 rounded">
+            <div className="mt-3 text-xs text-red-600 bg-red-500/10 p-2 rounded">
               Warning: Margin below 30%. Raise price to ${results.suggestedPrices.margin35} for 35%.
             </div>
           )}

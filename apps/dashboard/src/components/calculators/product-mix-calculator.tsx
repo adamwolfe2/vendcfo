@@ -39,7 +39,7 @@ export function ProductMixCalculator() {
           <h3 className="text-sm font-bold text-foreground uppercase tracking-wider mb-3">Blended Analysis</h3>
           <div className="space-y-3 font-mono text-sm">
             <div className="flex justify-between"><span className="text-muted-foreground">Total Units:</span><span className="text-foreground">{totalUnits}</span></div>
-            <div className="flex justify-between pt-2 border-t border-border"><span className="text-muted-foreground">Weighted Margin:</span><span className={`font-bold ${weightedMargin < 35 ? 'text-red-500 dark:text-red-400' : 'text-green-600 dark:text-green-400'}`}>{weightedMargin.toFixed(1)}%</span></div>
+            <div className="flex justify-between pt-2 border-t border-border"><span className="text-muted-foreground">Weighted Margin:</span><span className={`font-bold ${weightedMargin < 35 ? 'text-red-500' : 'text-green-600'}`}>{weightedMargin.toFixed(1)}%</span></div>
           </div>
         </div>
       </CardContent>

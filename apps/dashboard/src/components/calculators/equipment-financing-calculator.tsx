@@ -40,8 +40,8 @@ export function EquipmentFinancingCalculator() {
         <div className="bg-secondary p-4 rounded-lg border border-border">
           <h3 className="text-sm font-bold text-foreground uppercase tracking-wider mb-3">Investment Analysis</h3>
           <div className="space-y-3 font-mono text-sm">
-            <div className="flex justify-between"><span className="text-muted-foreground">Monthly Payment:</span><span className="font-medium text-red-500 dark:text-red-400">${results.monthlyPayment.toLocaleString()}</span></div>
-            <div className="flex justify-between"><span className="text-muted-foreground">Net Cash Impact / Mo:</span><span className={`font-bold ${results.cashOnCashMonthlyImpact > 0 ? 'text-green-600 dark:text-green-400' : 'text-red-500 dark:text-red-400'}`}>{results.cashOnCashMonthlyImpact > 0 ? '+' : ''}${results.cashOnCashMonthlyImpact.toLocaleString()}</span></div>
+            <div className="flex justify-between"><span className="text-muted-foreground">Monthly Payment:</span><span className="font-medium text-red-500">${results.monthlyPayment.toLocaleString()}</span></div>
+            <div className="flex justify-between"><span className="text-muted-foreground">Net Cash Impact / Mo:</span><span className={`font-bold ${results.cashOnCashMonthlyImpact > 0 ? 'text-green-600' : 'text-red-500'}`}>{results.cashOnCashMonthlyImpact > 0 ? '+' : ''}${results.cashOnCashMonthlyImpact.toLocaleString()}</span></div>
             <div className="flex justify-between pt-2 border-t border-border"><span className="text-muted-foreground">ROI Payback:</span><span className="font-medium text-foreground">{results.monthsToPayback === Infinity ? 'Never' : `${results.monthsToPayback.toFixed(1)} months`}</span></div>
           </div>
         </div>

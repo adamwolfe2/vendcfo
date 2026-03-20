@@ -51,7 +51,7 @@ export function RouteProfitCalculator() {
           <h3 className="text-sm font-bold text-foreground uppercase tracking-wider mb-3">Route P&L</h3>
           <div className="space-y-3 font-mono text-sm">
             <div className="flex justify-between"><span className="text-muted-foreground">Gross Revenue:</span><span className="text-foreground">${grossRevenue.toLocaleString()}</span></div>
-            <div className="flex justify-between"><span className="text-muted-foreground">Net Profit:</span><span className={`font-bold ${netProfit > 0 ? 'text-green-600 dark:text-green-400' : 'text-red-500 dark:text-red-400'}`}>{netProfit > 0 ? '+' : ''}${netProfit.toFixed(2)}</span></div>
+            <div className="flex justify-between"><span className="text-muted-foreground">Net Profit:</span><span className={`font-bold ${netProfit > 0 ? 'text-green-600' : 'text-red-500'}`}>{netProfit > 0 ? '+' : ''}${netProfit.toFixed(2)}</span></div>
             <div className="flex justify-between pt-2 border-t border-border"><span className="text-muted-foreground">Profit / Stop:</span><span className="font-medium text-foreground">${profitPerStop.toFixed(2)}</span></div>
           </div>
         </div>

@@ -28,7 +28,7 @@ export function MarkupCalculator() {
           <h3 className="text-sm font-bold text-foreground uppercase tracking-wider mb-3">Results</h3>
           <div className="space-y-3 font-mono text-sm">
             <div className="flex justify-between"><span className="text-muted-foreground">Selling Price:</span><span className="font-bold text-foreground">${sellingPrice.toFixed(2)}</span></div>
-            <div className="flex justify-between"><span className="text-muted-foreground">Gross Profit:</span><span className="text-green-600 dark:text-green-400">${grossProfit.toFixed(2)}</span></div>
+            <div className="flex justify-between"><span className="text-muted-foreground">Gross Profit:</span><span className="text-green-600">${grossProfit.toFixed(2)}</span></div>
             <div className="flex justify-between pt-2 border-t border-border"><span className="text-muted-foreground">Effective Margin:</span><span className="font-medium text-foreground">{marginPct.toFixed(1)}%</span></div>
           </div>
         </div>

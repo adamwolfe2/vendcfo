@@ -35,11 +35,11 @@ export function BreakEvenCalculator() {
         <div className="bg-secondary p-4 rounded-lg border border-border">
           <h3 className="text-sm font-bold text-foreground uppercase tracking-wider mb-3">Break-Even Target</h3>
           <div className="space-y-3 font-mono text-sm">
-            <div className="flex justify-between"><span className="text-muted-foreground">Revenue Required / Mo:</span><span className="font-bold text-blue-600 dark:text-blue-400">${results.totalRevenueRequired.toLocaleString()}</span></div>
+            <div className="flex justify-between"><span className="text-muted-foreground">Revenue Required / Mo:</span><span className="font-bold text-blue-600">${results.totalRevenueRequired.toLocaleString()}</span></div>
             <div className="flex justify-between pt-2 border-t border-border"><span className="text-muted-foreground">Locations Required:</span><span className="font-medium text-foreground">{results.locationsRequiredToBreakEven === Infinity ? 'Unreachable' : Math.ceil(results.locationsRequiredToBreakEven).toLocaleString()}</span></div>
           </div>
           {results.locationsRequiredToBreakEven === Infinity && (
-            <div className="mt-3 text-xs text-red-600 dark:text-red-400 bg-red-500/10 p-2 rounded">
+            <div className="mt-3 text-xs text-red-600 bg-red-500/10 p-2 rounded">
               <strong>Warning:</strong> Locations are losing money on a unit basis. Break-even impossible without margin improvement.
             </div>
           )}

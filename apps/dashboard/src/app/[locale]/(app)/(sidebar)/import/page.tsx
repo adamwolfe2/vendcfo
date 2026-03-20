@@ -67,7 +67,7 @@ export default function ImportPage() {
           {file && (
             <div className="mt-6 flex items-center justify-between bg-secondary p-4 rounded-lg border border-border">
               <div className="flex items-center">
-                <FileType className="text-blue-500 dark:text-blue-400 mr-3" size={24} />
+                <FileType className="text-blue-500 mr-3" size={24} />
                 <div>
                   <p className="font-medium text-sm text-foreground">{file.name}</p>
                   <p className="text-xs text-muted-foreground">Ready to upload</p>

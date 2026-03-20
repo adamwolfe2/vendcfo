@@ -103,7 +103,7 @@ export default async function Teams() {
             </span>
             <Link href="/teams/create" className="w-full">
               <Button className="w-full mt-2" variant="outline">
-                Create team
+                Create Team
               </Button>
             </Link>
           </div>

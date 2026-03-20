@@ -44,7 +44,7 @@ export function CashFlowCalculator() {
         <div className="bg-secondary p-4 rounded-lg border border-border">
           <h3 className="text-sm font-bold text-foreground uppercase tracking-wider mb-3">Forecast</h3>
           <div className="space-y-3 font-mono text-sm">
-            <div className="flex justify-between"><span className="text-muted-foreground">Net Cash Flow / Mo:</span><span className={`font-bold ${monthlyNet > 0 ? 'text-green-600 dark:text-green-400' : 'text-red-500 dark:text-red-400'}`}>{monthlyNet > 0 ? '+' : ''}${monthlyNet.toLocaleString()}</span></div>
+            <div className="flex justify-between"><span className="text-muted-foreground">Net Cash Flow / Mo:</span><span className={`font-bold ${monthlyNet > 0 ? 'text-green-600' : 'text-red-500'}`}>{monthlyNet > 0 ? '+' : ''}${monthlyNet.toLocaleString()}</span></div>
             <div className="flex justify-between"><span className="text-muted-foreground">Annualized:</span><span className="text-foreground">${annualizedCashFlow.toLocaleString()}</span></div>
             <div className="flex justify-between pt-2 border-t border-border"><span className="text-muted-foreground">Cash Runway:</span><span className="font-medium text-foreground">{runwayMonths === Infinity ? '∞ (Positive)' : `${runwayMonths.toFixed(1)} months`}</span></div>
           </div>
