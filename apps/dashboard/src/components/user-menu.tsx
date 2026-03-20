@@ -75,11 +75,6 @@ export function UserMenu({ onlySignOut }: Props) {
             </DropdownMenuGroup>
 
             <DropdownMenuSeparator />
-            <div className="flex flex-row justify-between items-center p-2">
-              <p className="text-xs">Theme</p>
-              <ThemeSwitch />
-            </div>
-            <DropdownMenuSeparator />
           </>
         )}
 
