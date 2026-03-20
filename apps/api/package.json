@@ -18,7 +18,9 @@
     "./ai/agents/main": "./src/ai/agents/main.ts",
     "./ai/agents/config/shared": "./src/ai/agents/config/shared.ts",
     "./ai/utils/get-user-context": "./src/ai/utils/get-user-context.ts",
-    "./schemas/chat": "./src/schemas/chat.ts"
+    "./schemas/chat": "./src/schemas/chat.ts",
+    "./ai/compute/benchmark-compare": "./src/ai/compute/benchmark-compare.ts",
+    "./ai/compute/machine-pnl": "./src/ai/compute/machine-pnl.ts"
   },
   "dependencies": {
     "@ai-sdk-tools/agents": "^1.2.0",

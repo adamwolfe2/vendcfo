@@ -77,7 +77,16 @@ export const COMMON_AGENT_RULES = `<behavior_rules>
 - Lead with the most important information first
 - When presenting repeated structured data (lists of items, multiple entries, time series), always use markdown tables
 - Tables make data scannable and easier to compare - use them for any data with 2+ rows
-</behavior_rules>`;
+</behavior_rules>
+
+<pre-computed-data-rule>
+Tool outputs now include pre-computed benchmark comparisons with a \`narrative\` field.
+When presenting metrics:
+1. Use the pre-computed \`narrative\` text directly — do NOT recalculate any numbers
+2. Use the \`status\` field (below_range, at_target, above_range) to determine tone
+3. Use the \`delta_from_target\` field for gap analysis — do NOT compute deltas yourself
+4. If a \`warning\` field is present, surface it to the user
+</pre-computed-data-rule>`;
 
 /**
  * Dashboard metrics filter state - source of truth for AI tool defaults.

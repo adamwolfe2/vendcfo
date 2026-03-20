@@ -726,6 +726,10 @@
         "typescript": "^5.9.3",
       },
     },
+    "packages/vending-kb": {
+      "name": "@vendcfo/vending-kb",
+      "version": "1.0.0",
+    },
     "packages/workbench": {
       "name": "workbench",
       "version": "0.1.0",
@@ -2240,6 +2244,8 @@
     "@vendcfo/ui": ["@vendcfo/ui@workspace:packages/ui"],
 
     "@vendcfo/utils": ["@vendcfo/utils@workspace:packages/utils"],
+
+    "@vendcfo/vending-kb": ["@vendcfo/vending-kb@workspace:packages/vending-kb"],
 
     "@vendcfo/website": ["@vendcfo/website@workspace:apps/website"],
 

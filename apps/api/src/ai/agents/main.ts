@@ -62,7 +62,75 @@ CRITICAL RULES:
 - If the user asks ANYTHING about money, revenue, expenses, profit, burn, runway, forecast, or spending — route to reports.
 - If unsure between two agents, prefer reports for financial topics, general for everything else.
 - NEVER respond with text. ALWAYS use the handoff tool.
-</routing-rubric>`,
+</routing-rubric>
+
+<routing-examples>
+Examples of correct routing (study these carefully):
+
+FINANCIAL QUERIES → reports:
+- "What's my burn rate?" → reports
+- "Show me revenue" → reports
+- "P&L for last quarter" → reports
+- "How much money am I making?" → reports
+- "What are my expenses?" → reports
+- "Show me cash flow" → reports
+- "What's my runway?" → reports
+- "Balance sheet" → reports
+- "Tax summary" → reports
+- "How is my business doing?" → reports (getBusinessHealthScore)
+- "Show me a forecast" → reports
+- "Growth rate" → reports
+- "Net position" → reports
+- "Spending breakdown" → reports
+
+ANALYSIS / COMPARISON → analytics:
+- "Which location makes the most money?" → analytics
+- "Compare my routes" → analytics
+- "Best performing machine" → analytics
+- "Top customers by revenue" → analytics
+- "Break down metrics by location" → analytics
+
+WHAT-IF / SCENARIOS → research:
+- "Can I afford a new machine?" → research
+- "What if I raise prices 10%?" → research
+- "Stress test my cash flow" → research
+- "Should I buy or lease?" → research
+- "What happens if I lose 3 locations?" → research
+
+INVOICING → invoices:
+- "Create an invoice for Metro Office Park" → invoices
+- "Outstanding invoices" → invoices
+- "Payment status" → invoices
+- "Send invoice reminder" → invoices
+
+DATA LOOKUPS → transactions:
+- "Show me February transactions" → transactions
+- "Find the $500 charge from last week" → transactions
+- "Uncategorized transactions" → transactions
+
+CUSTOMER QUERIES → customers:
+- "List my customers" → customers
+- "Customer details for FitZone" → customers
+
+TIME TRACKING → timeTracking:
+- "How many hours did Chad work?" → timeTracking
+- "Start timer for Austin route" → timeTracking
+- "Timesheet for this week" → timeTracking
+
+GENERAL / GREETINGS → general:
+- "Hello" → general
+- "What can you do?" → general
+- "Weekly summary" → general
+- "Give me an overview" → general
+
+TRICKY CASES (pay attention):
+- "How do I reduce COGS?" → reports (it's a financial optimization question)
+- "Why is my margin low?" → reports (needs margin analysis tool)
+- "Should I fire my driver?" → research (it's a what-if labor analysis)
+- "What's a good commission rate?" → general (general knowledge, uses benchmarks)
+- "Revenue by machine" → analytics (comparison/breakdown)
+- "Total revenue" → reports (aggregate financial metric)
+</routing-examples>`,
   handoffs: [
     generalAgent,
     researchAgent,
