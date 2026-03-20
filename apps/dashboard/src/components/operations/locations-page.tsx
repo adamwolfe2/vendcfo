@@ -1,5 +1,6 @@
 "use client";
 
+import { AskRouteCFO } from "@/components/ask-route-cfo";
 import { createClient } from "@vendcfo/supabase/client";
 import { Building2, Pencil, Plus, Server, Trash2, X } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
@@ -455,14 +456,17 @@ export function LocationsPage({
             Manage location agreements, revenue share, and machine placements.
           </p>
         </div>
-        <button
-          type="button"
-          onClick={() => setShowAddModal(true)}
-          className="inline-flex shrink-0 items-center justify-center gap-1.5 rounded-md bg-[#111] px-3.5 py-2 min-h-[44px] text-sm font-medium text-white transition-colors hover:bg-[#333] w-full sm:w-auto"
-        >
-          <Plus size={16} strokeWidth={1.5} />
-          Add Location
-        </button>
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 w-full sm:w-auto">
+          <AskRouteCFO prompt="Compare my locations by revenue and commission rate. Which ones should I renegotiate?" />
+          <button
+            type="button"
+            onClick={() => setShowAddModal(true)}
+            className="inline-flex shrink-0 items-center justify-center gap-1.5 rounded-md bg-[#111] px-3.5 py-2 min-h-[44px] text-sm font-medium text-white transition-colors hover:bg-[#333] w-full sm:w-auto"
+          >
+            <Plus size={16} strokeWidth={1.5} />
+            Add Location
+          </button>
+        </div>
       </div>
 
       {/* Content */}

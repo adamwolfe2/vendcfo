@@ -55,12 +55,14 @@ export async function POST(req: NextRequest) {
       { mainAgent },
       { buildAppContext },
       { getUserContext },
+      { buildBusinessContext },
       { smoothStream },
     ] = await Promise.all([
       import("@vendcfo/api/schemas/chat") as any,
       import("@vendcfo/api/ai/agents/main") as any,
       import("@vendcfo/api/ai/agents/config/shared") as any,
       import("@vendcfo/api/ai/utils/get-user-context") as any,
+      import("@vendcfo/api/ai/context/build-context") as any,
       import("ai"),
     ]);
 
@@ -95,6 +97,9 @@ export async function POST(req: NextRequest) {
       timezone,
     });
 
+    // 6b. Build live business context for AI prompts
+    const businessContext = await buildBusinessContext(teamId);
+
     // 7. Extract forced tool call from message metadata (widget clicks)
     let forcedToolCall:
       | { toolName: string; toolParams: Record<string, unknown> }
@@ -112,6 +117,9 @@ export async function POST(req: NextRequest) {
       metricsFilter,
       forcedToolCall,
     });
+
+    // Attach live business context so the agent can reference it
+    (appContext as any).businessContext = businessContext;
 
     return mainAgent.toUIMessageStream({
       message,

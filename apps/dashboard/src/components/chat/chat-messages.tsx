@@ -4,6 +4,7 @@ import { ArtifactToggleIcon } from "@/components/chat/artifact-toggle-icon";
 import { ChatMessageActions } from "@/components/chat/chat-message-actions";
 import { ConnectBankMessage } from "@/components/chat/connect-bank-message";
 import { InsightMessage } from "@/components/chat/insight-message";
+import { MessageFeedback } from "@/components/chat/message-feedback";
 import { FaviconStack } from "@/components/favicon-stack";
 import { useUserQuery } from "@/hooks/use-user";
 import {
@@ -243,19 +244,23 @@ export function ChatMessages({
               isMessageFinished &&
               (textContent || insightData) &&
               !bankAccountRequired && (
-                <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-200">
-                  <div className="flex items-center gap-1 mt-3">
-                    {/* Message actions */}
-                    <ChatMessageActions
-                      messageContent={textContent}
-                      messageId={message.id}
-                      insightId={insightData?.id}
-                    />
-                    {/* Artifact toggle icon */}
-                    {artifactType && (
-                      <ArtifactToggleIcon artifactType={artifactType} />
-                    )}
+                <div className="flex flex-col">
+                  <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                    <div className="flex items-center gap-1 mt-3">
+                      {/* Message actions */}
+                      <ChatMessageActions
+                        messageContent={textContent}
+                        messageId={message.id}
+                        insightId={insightData?.id}
+                      />
+                      {/* Artifact toggle icon */}
+                      {artifactType && (
+                        <ArtifactToggleIcon artifactType={artifactType} />
+                      )}
+                    </div>
                   </div>
+                  {/* Detailed feedback with reason selection */}
+                  <MessageFeedback messageId={message.id} />
                 </div>
               )}
           </div>

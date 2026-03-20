@@ -1,5 +1,6 @@
 "use client";
 
+import { AskRouteCFO } from "@/components/ask-route-cfo";
 import { createClient } from "@vendcfo/supabase/client";
 import { MapPin, Pencil, Plus, Route, Trash2, X } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
@@ -296,14 +297,17 @@ export function RoutesPage({
             Manage your service routes and track location assignments.
           </p>
         </div>
-        <button
-          type="button"
-          onClick={() => setShowAddModal(true)}
-          className="inline-flex shrink-0 items-center justify-center gap-1.5 rounded-md bg-[#111] px-3.5 py-2 min-h-[44px] text-sm font-medium text-white transition-colors hover:bg-[#333] w-full sm:w-auto"
-        >
-          <Plus size={16} strokeWidth={1.5} />
-          Add Route
-        </button>
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 w-full sm:w-auto">
+          <AskRouteCFO prompt="Analyze my route performance and tell me which routes need attention" />
+          <button
+            type="button"
+            onClick={() => setShowAddModal(true)}
+            className="inline-flex shrink-0 items-center justify-center gap-1.5 rounded-md bg-[#111] px-3.5 py-2 min-h-[44px] text-sm font-medium text-white transition-colors hover:bg-[#333] w-full sm:w-auto"
+          >
+            <Plus size={16} strokeWidth={1.5} />
+            Add Route
+          </button>
+        </div>
       </div>
 
       {/* Content */}

@@ -58,6 +58,10 @@ function getTitleInstructions(): string {
 }
 
 export function formatContextForLLM(context: AppContext): string {
+  const businessCtx = (context as any).businessContext
+    ? `\n\n${(context as any).businessContext}`
+    : "";
+
   return `<company_info>
 <current_date>${context.currentDateTime}</current_date>
 <timezone>${context.timezone}</timezone>
@@ -65,6 +69,7 @@ export function formatContextForLLM(context: AppContext): string {
 <base_currency>${context.baseCurrency}</base_currency>
 <locale>${context.locale}</locale>
 </company_info>
+${businessCtx}
 
 Important: Use the current date/time above for time-sensitive operations. User-specific information is maintained in your working memory.`;
 }

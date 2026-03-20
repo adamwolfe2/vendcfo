@@ -141,7 +141,7 @@ export function ChatMessageActions({
                 <button
                   type="button"
                   onClick={handlePlayAudio}
-                  className="flex items-center justify-center w-6 h-6 transition-colors duration-200 hover:bg-muted"
+                  className="flex items-center justify-center w-11 h-11 md:w-6 md:h-6 transition-colors duration-200 hover:bg-muted rounded"
                 >
                   <Icons.UnMute className="size-3.5 text-muted-foreground hover:text-foreground" />
                 </button>
@@ -162,7 +162,7 @@ export function ChatMessageActions({
               <button
                 type="button"
                 onClick={copyToClipboard}
-                className="flex items-center justify-center w-6 h-6 transition-colors duration-200 hover:bg-muted"
+                className="flex items-center justify-center w-11 h-11 md:w-6 md:h-6 transition-colors duration-200 hover:bg-muted rounded"
               >
                 {copied ? (
                   <Icons.Check className="size-3.5 animate-in zoom-in-50 duration-200" />
@@ -186,7 +186,7 @@ export function ChatMessageActions({
               <button
                 type="button"
                 onClick={handleRegenerate}
-                className="flex items-center justify-center w-6 h-6 transition-colors duration-200 hover:bg-muted"
+                className="flex items-center justify-center w-11 h-11 md:w-6 md:h-6 transition-colors duration-200 hover:bg-muted rounded"
               >
                 <Icons.Refresh className="size-3.5 text-muted-foreground hover:text-foreground" />
               </button>
@@ -211,7 +211,7 @@ export function ChatMessageActions({
                   deleteFeedbackMutation.isPending
                 }
                 className={cn(
-                  "flex items-center justify-center w-6 h-6 transition-colors duration-200 hover:bg-muted",
+                  "flex items-center justify-center w-11 h-11 md:w-6 md:h-6 transition-colors duration-200 hover:bg-muted rounded",
                   (createFeedbackMutation.isPending ||
                     deleteFeedbackMutation.isPending) &&
                     "opacity-50 cursor-not-allowed",
@@ -251,7 +251,7 @@ export function ChatMessageActions({
                   deleteFeedbackMutation.isPending
                 }
                 className={cn(
-                  "flex items-center justify-center w-6 h-6 transition-colors duration-200 hover:bg-muted",
+                  "flex items-center justify-center w-11 h-11 md:w-6 md:h-6 transition-colors duration-200 hover:bg-muted rounded",
                   (createFeedbackMutation.isPending ||
                     deleteFeedbackMutation.isPending) &&
                     "opacity-50 cursor-not-allowed",

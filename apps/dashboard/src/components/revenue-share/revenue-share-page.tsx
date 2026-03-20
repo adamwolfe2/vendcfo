@@ -1,5 +1,6 @@
 "use client";
 
+import { AskRouteCFO } from "@/components/ask-route-cfo";
 import { createClient } from "@vendcfo/supabase/client";
 import {
   CheckCircle2,
@@ -1037,6 +1038,7 @@ export function RevenueSharePage({ teamId }: { teamId: string }) {
           </p>
         </div>
         <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-3">
+          <AskRouteCFO prompt="Summarize my revenue share obligations and suggest any renegotiations" />
           {/* Period selector */}
           <div className="relative">
             <select
