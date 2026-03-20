@@ -26,7 +26,7 @@ export default async function Layout({
   let user: any = null;
   let callerError: string | null = null;
 
-  let reviewCount: number | null = null;
+  // reviewCount removed — was adding latency to every page load
 
   try {
     const caller = await getServerCaller();
@@ -36,19 +36,11 @@ export default async function Layout({
       queryClient.setQueryData(trpc.user.me.queryOptions().queryKey, user);
     }
 
-    // Parallelize all independent data fetches (team, invoice defaults,
-    // and the onboarding review-count check) into a single Promise.allSettled.
-    const [teamData, invoiceDefaults, reviewCountResult] =
-      await Promise.allSettled([
-        caller.team.current(),
-        caller.invoice.defaultSettings(),
-        // Only fetch review count if the team was recently created (for onboarding check).
-        // This avoids an extra sequential DB call later.
-        user?.team?.createdAt &&
-        new Date(user.team.createdAt) > new Date(Date.now() - 60 * 60 * 1000)
-          ? caller.transactions.getReviewCount()
-          : Promise.resolve(null),
-      ]);
+    // Only fetch team data (critical for layout). Invoice defaults and review
+    // count are deferred — they're not needed for initial page render.
+    const [teamData] = await Promise.allSettled([
+      caller.team.current(),
+    ]);
 
     if (teamData.status === "fulfilled") {
       queryClient.setQueryData(
@@ -57,16 +49,7 @@ export default async function Layout({
       );
     }
 
-    if (invoiceDefaults.status === "fulfilled") {
-      queryClient.setQueryData(
-        trpc.invoice.defaultSettings.queryOptions().queryKey,
-        invoiceDefaults.value,
-      );
-    }
-
-    if (reviewCountResult.status === "fulfilled") {
-      reviewCount = reviewCountResult.value;
-    }
+    // Invoice defaults loaded client-side on demand (not blocking layout)
   } catch (error) {
     const msg = error instanceof Error ? error.message : String(error);
     // NEXT_REDIRECT is thrown by Next.js redirect() — rethrow, don't catch
