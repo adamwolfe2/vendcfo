@@ -3,6 +3,7 @@
 import { formatAmount } from "@/utils/format";
 import {
   Area,
+  Brush,
   CartesianGrid,
   ComposedChart,
   Line,
@@ -66,16 +67,22 @@ const CustomTooltip = ({
         maximumFractionDigits: 0,
       }) ?? `${currency}${amount.toLocaleString()}`;
 
+    const total =
+      typeof current === "number" && typeof average === "number"
+        ? current + average
+        : undefined;
+
     return (
-      <div className="border p-2 text-[10px] font-hedvig-sans bg-white dark:bg-[#0c0c0c] border-[#e6e6e6] dark:border-[#1d1d1d] text-black dark:text-white shadow-sm">
-        <p className="mb-1 text-[#707070] dark:text-[#666666]">{label}</p>
+      <div className="border p-2 text-[10px] font-hedvig-sans bg-white border-[#e6e6e6] text-black shadow-sm">
+        <p className="mb-1 text-[#707070]">{label}</p>
         {typeof current === "number" && (
-          <p className="text-black dark:text-white">
+          <p className="text-black">
             Current: {formatCurrency(current)}
+            {total ? ` (${((current / total) * 100).toFixed(0)}%)` : ""}
           </p>
         )}
         {typeof average === "number" && (
-          <p className="text-black dark:text-white">
+          <p className="text-black">
             Average: {formatCurrency(average)}
           </p>
         )}
@@ -108,6 +115,7 @@ export function BurnRateChart({
         <ResponsiveContainer width="100%" height="100%" debounce={1}>
           <ComposedChart
             data={data}
+            syncId="financeTimeSeries"
             margin={{ top: 6, right: 6, left: -marginLeft, bottom: 6 }}
           >
             <defs>
@@ -188,6 +196,13 @@ export function BurnRateChart({
               strokeDasharray="5 5"
               dot={false}
               isAnimationActive={false}
+            />
+            <Brush
+              dataKey="month"
+              height={28}
+              travellerWidth={8}
+              stroke="#d0d0d0"
+              fill="#f5f5f5"
             />
           </ComposedChart>
         </ResponsiveContainer>

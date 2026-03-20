@@ -105,6 +105,7 @@ export function CashFlowChart({
         <ResponsiveContainer width="100%" height="100%" debounce={1}>
           <ComposedChart
             data={data}
+            syncId="financeTimeSeries"
             margin={{ top: 6, right: 6, left: -marginLeft, bottom: 6 }}
           >
             <defs>
@@ -154,9 +155,18 @@ export function CashFlowChart({
             <Tooltip
               content={({ active, payload, label }) => {
                 if (active && payload && payload.length) {
+                  // Calculate total inflow for percentage display
+                  const inflowEntry = payload.find(
+                    (e) => e.dataKey === "inflow",
+                  );
+                  const totalInflow =
+                    typeof inflowEntry?.value === "number"
+                      ? inflowEntry.value
+                      : 0;
+
                   return (
-                    <div className="p-2 text-[10px] font-sans border bg-white dark:bg-[#0c0c0c] border-gray-200 dark:border-[#1d1d1d] text-black dark:text-white">
-                      <p className="mb-1 text-gray-500 dark:text-[#666666]">
+                    <div className="p-2 text-[10px] font-sans border bg-white border-gray-200 text-black shadow-sm">
+                      <p className="mb-1 text-gray-500">
                         {label}
                       </p>
                       {payload.map((entry, index) => {
@@ -168,12 +178,19 @@ export function CashFlowChart({
                           currency,
                           locale,
                         );
+                        // Show percentage of inflow for outflow and net flow
+                        const pct =
+                          totalInflow > 0 &&
+                          (entry.dataKey === "outflow" ||
+                            entry.dataKey === "netFlow")
+                            ? ` (${((Math.abs(value) / totalInflow) * 100).toFixed(0)}% of inflow)`
+                            : "";
                         return (
                           <p
                             key={`${entry.dataKey}-${index}`}
-                            className="text-black dark:text-white"
+                            className="text-black"
                           >
-                            {name}: {formattedValue}
+                            {name}: {formattedValue}{pct}
                           </p>
                         );
                       })}

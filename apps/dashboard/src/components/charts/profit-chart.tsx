@@ -71,21 +71,49 @@ const CustomTooltip = ({
         maximumFractionDigits: 0,
       }) ?? `${currency}${amount.toLocaleString()}`;
 
+    // Get revenue from the data point for profit margin calculation
+    const dataPoint = payload[0]?.payload;
+    const revenue = dataPoint?.revenue;
+    const profitMargin =
+      typeof thisYear === "number" &&
+      typeof revenue === "number" &&
+      revenue !== 0
+        ? ((thisYear / revenue) * 100).toFixed(1)
+        : null;
+
+    // Year-over-year change
+    const yoyChange =
+      typeof thisYear === "number" &&
+      typeof lastYear === "number" &&
+      lastYear !== 0
+        ? (((thisYear - lastYear) / Math.abs(lastYear)) * 100).toFixed(1)
+        : null;
+
     return (
-      <div className="border p-2 text-[10px] font-hedvig-sans bg-white dark:bg-[#0c0c0c] border-[#e6e6e6] dark:border-[#1d1d1d] text-black dark:text-white shadow-sm">
-        <p className="mb-1 text-[#707070] dark:text-[#666666]">{label}</p>
+      <div className="border p-2 text-[10px] font-hedvig-sans bg-white border-[#e6e6e6] text-black shadow-sm">
+        <p className="mb-1 text-[#707070]">{label}</p>
         {typeof thisYear === "number" && (
-          <p className="text-black dark:text-white">
+          <p className="text-black">
             This Year: {formatCurrency(thisYear)}
           </p>
         )}
         {typeof lastYear === "number" && (
-          <p className="text-black dark:text-white">
+          <p className="text-black">
             Last Year: {formatCurrency(lastYear)}
           </p>
         )}
+        {yoyChange !== null && (
+          <p className="text-[#707070]">
+            YoY Change: {Number(yoyChange) >= 0 ? "+" : ""}{yoyChange}%
+          </p>
+        )}
+        {profitMargin !== null && (
+          <p className="text-[#707070]">
+            Profit Margin: {profitMargin}%
+          </p>
+        )}
         {typeof average === "number" && (
-          <p className="text-black dark:text-white">
+          <p className="text-black">
             Average: {formatCurrency(average)}
           </p>
         )}
@@ -118,6 +146,7 @@ export function ProfitChart({
         <ResponsiveContainer width="100%" height="100%" debounce={1}>
           <ComposedChart
             data={data}
+            syncId="financeTimeSeries"
             margin={{ top: 6, right: 6, left: -marginLeft, bottom: 6 }}
           >
             <CartesianGrid

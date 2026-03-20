@@ -3,6 +3,7 @@
 import { formatAmount } from "@/utils/format";
 import {
   Bar,
+  Brush,
   CartesianGrid,
   ComposedChart,
   Line,
@@ -67,21 +68,34 @@ const CustomTooltip = ({
         maximumFractionDigits: 0,
       }) ?? `${currency}${amount.toLocaleString()}`;
 
+    // Year-over-year change
+    const yoyChange =
+      typeof thisYear === "number" &&
+      typeof lastYear === "number" &&
+      lastYear !== 0
+        ? (((thisYear - lastYear) / lastYear) * 100).toFixed(1)
+        : null;
+
     return (
-      <div className="border p-2 text-[10px] font-hedvig-sans bg-white dark:bg-[#0c0c0c] border-[#e6e6e6] dark:border-[#1d1d1d] text-black dark:text-white shadow-sm">
-        <p className="mb-1 text-[#707070] dark:text-[#666666]">{label}</p>
+      <div className="border p-2 text-[10px] font-hedvig-sans bg-white border-[#e6e6e6] text-black shadow-sm">
+        <p className="mb-1 text-[#707070]">{label}</p>
         {typeof thisYear === "number" && (
-          <p className="text-black dark:text-white">
+          <p className="text-black">
             This Year: {formatCurrency(thisYear)}
           </p>
         )}
         {typeof lastYear === "number" && (
-          <p className="text-black dark:text-white">
+          <p className="text-black">
             Last Year: {formatCurrency(lastYear)}
           </p>
         )}
+        {yoyChange !== null && (
+          <p className="text-[#707070]">
+            YoY Change: {Number(yoyChange) >= 0 ? "+" : ""}{yoyChange}%
+          </p>
+        )}
         {typeof average === "number" && (
-          <p className="text-black dark:text-white">
+          <p className="text-black">
             Average: {formatCurrency(average)}
           </p>
         )}
@@ -113,6 +127,7 @@ export function RevenueTrendChart({
         <ResponsiveContainer width="100%" height="100%" debounce={1}>
           <ComposedChart
             data={data}
+            syncId="financeTimeSeries"
             margin={{ top: 6, right: 6, left: -marginLeft, bottom: 6 }}
           >
             <CartesianGrid
@@ -165,6 +180,13 @@ export function RevenueTrendChart({
               strokeDasharray="5 5"
               dot={false}
               isAnimationActive={false}
+            />
+            <Brush
+              dataKey="month"
+              height={28}
+              travellerWidth={8}
+              stroke="#d0d0d0"
+              fill="#f5f5f5"
             />
           </ComposedChart>
         </ResponsiveContainer>
