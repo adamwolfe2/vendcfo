@@ -27,7 +27,7 @@ const getGrowthRateSchema = z.object({
     .enum(["monthly", "quarterly", "yearly"])
     .default("quarterly")
     .describe("Comparison period: monthly, quarterly (default), or yearly"),
-  showCanvas: z.boolean().default(false).describe("Show visual canvas"),
+  showCanvas: z.boolean().default(true).describe("Show visual canvas"),
 });
 
 export const getGrowthRateTool = tool({

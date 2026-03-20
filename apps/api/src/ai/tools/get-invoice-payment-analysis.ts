@@ -25,7 +25,7 @@ const getInvoicePaymentAnalysisSchema = z.object({
     .describe("Currency code (ISO 4217, e.g. 'USD')")
     .nullable()
     .optional(),
-  showCanvas: z.boolean().default(false).describe("Show visual analytics"),
+  showCanvas: z.boolean().default(true).describe("Show visual analytics"),
 });
 
 export const getInvoicePaymentAnalysisTool = tool({

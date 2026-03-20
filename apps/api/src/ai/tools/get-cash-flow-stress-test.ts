@@ -17,7 +17,7 @@ const getCashFlowStressTestSchema = z.object({
   from: z.string().optional().describe("Start date (yyyy-MM-dd)"),
   to: z.string().optional().describe("End date (yyyy-MM-dd)"),
   currency: z.string().nullable().optional().describe("Currency code"),
-  showCanvas: z.boolean().default(false).describe("Show visual analytics"),
+  showCanvas: z.boolean().default(true).describe("Show visual analytics"),
 });
 
 export const getCashFlowStressTestTool = tool({

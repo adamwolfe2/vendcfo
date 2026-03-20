@@ -22,7 +22,7 @@ const getBalanceSheetSchema = z.object({
     .optional()
     .describe("End date (yyyy-MM-dd) - used as 'as of' date"),
   currency: z.string().nullable().optional().describe("Currency code"),
-  showCanvas: z.boolean().default(false).describe("Show visual canvas"),
+  showCanvas: z.boolean().default(true).describe("Show visual canvas"),
 });
 
 export const getBalanceSheetTool = tool({

@@ -114,6 +114,7 @@ export interface AppContext {
   chatId: string;
   fiscalYearStartMonth?: number | null;
   hasBankAccounts?: boolean;
+  hasTransactions?: boolean;
 
   /**
    * Dashboard metrics filter state (source of truth for defaults).

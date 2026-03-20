@@ -25,7 +25,7 @@ const getCashFlowSchema = z.object({
     .default("monthly")
     .describe("Aggregation: monthly (default) or quarterly")
     .optional(),
-  showCanvas: z.boolean().default(false).describe("Show visual canvas"),
+  showCanvas: z.boolean().default(true).describe("Show visual canvas"),
 });
 
 export const getCashFlowTool = tool({

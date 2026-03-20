@@ -20,7 +20,7 @@ const getProfitAnalysisSchema = z.object({
   to: z.string().optional().describe("End date (yyyy-MM-dd)"),
   currency: z.string().nullable().optional().describe("Currency code"),
   revenueType: z.enum(["gross", "net"]).optional().describe("Revenue type"),
-  showCanvas: z.boolean().default(false).describe("Show visual canvas"),
+  showCanvas: z.boolean().default(true).describe("Show visual canvas"),
 });
 
 export const getProfitAnalysisTool = tool({
