@@ -5,6 +5,7 @@ import {
   formatContextForLLM,
 } from "@api/ai/agents/config/shared";
 import { BENCHMARK_CONTEXT } from "@vendcfo/vending-kb/benchmarks";
+import { CALCULATOR_KNOWLEDGE } from "@vendcfo/vending-kb/calculator-knowledge";
 import { getAnalysisModel } from "@api/ai/models";
 import { getAccountBalancesTool } from "@api/ai/tools/get-account-balances";
 import { getBusinessHealthScoreTool } from "@api/ai/tools/get-business-health-score";
@@ -119,6 +120,8 @@ ${BENCHMARK_CONTEXT}
 When presenting financial data, ALWAYS compare to industry benchmarks.
 Use specific numbers: "Your X is Y%, industry target is Z%."
 Provide 3-5 concrete, actionable recommendations based on where the user's metrics deviate from benchmarks.
+
+${CALCULATOR_KNOWLEDGE}
 
 <response-template>
 Structure EVERY response as:

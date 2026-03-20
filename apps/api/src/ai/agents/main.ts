@@ -45,17 +45,18 @@ ${formatContextForLLM(ctx)}
 Match the user's message against these patterns IN ORDER. Pick the FIRST match:
 
 1. "weekly summary" / "monthly summary" / "summary for week X" / "insights" / "business overview" / greetings → general
-2. "can I afford" / "will I run out" / "what if I buy" / "should I purchase" / "stress test" → research (runway, stress test, affordability)
-3. Time-series / "over time" / "trend" / "show me" / "chart" / "graph" → reports (has all chart tools)
-4. "which customer" / "which location" / "which product" / "breakdown" / "top" / "best" / "worst" / "compare" → analytics
-5. "invoice" / "send invoice" / "payment status" / "outstanding" / "overdue" → invoices
-6. "transaction" / "expense" / "charge" / "payment" / "categorize" → transactions
-7. "customer" / "client" / "vendor" → customers
-8. "time" / "hours" / "clock" / "shift" / "timesheet" → timeTracking
-9. "document" / "receipt" / "inbox" / "upload" / "attachment" → operations
-10. Revenue / profit / expenses / spending / burn rate / runway / P&L / cash flow / forecast / tax / balance sheet / health score / growth / metrics → reports
-11. Predictions / advanced analytics → analytics
-12. Everything else / unsure → general
+2. "calculator" / "margin" / "markup" / "break even" / "ROI" / "payback" / "which calculator" / "help me calculate" → general (has calculator knowledge)
+3. "can I afford" / "will I run out" / "what if I buy" / "should I purchase" / "stress test" / "can I afford to hire" / "labor cost" / "fully loaded cost" → research (has calculator + stress test)
+4. Time-series / "over time" / "trend" / "show me" / "chart" / "graph" → reports (has all chart tools)
+5. "which customer" / "which location" / "which product" / "breakdown" / "top" / "best" / "worst" / "compare" → analytics
+6. "invoice" / "send invoice" / "payment status" / "outstanding" / "overdue" → invoices
+7. "transaction" / "expense" / "charge" / "payment" / "categorize" → transactions
+8. "customer" / "client" / "vendor" → customers
+9. "time" / "hours" / "clock" / "shift" / "timesheet" → timeTracking
+10. "document" / "receipt" / "inbox" / "upload" / "attachment" → operations
+11. Revenue / profit / expenses / spending / burn rate / runway / P&L / cash flow / forecast / tax / balance sheet / health score / growth / metrics → reports
+12. Predictions / advanced analytics → analytics
+13. Everything else / unsure → general
 
 CRITICAL RULES:
 - You MUST route to a specialist agent. NEVER try to answer financial questions yourself.
@@ -116,6 +117,18 @@ TIME TRACKING → timeTracking:
 - "How many hours did Chad work?" → timeTracking
 - "Start timer for Austin route" → timeTracking
 - "Timesheet for this week" → timeTracking
+
+CALCULATOR QUESTIONS → general:
+- "Which calculator should I use?" → general
+- "Help me calculate my margin" → general
+- "What's a good markup?" → general
+- "How do I figure out break even?" → general
+- "What's the ROI on a new machine?" → general
+
+AFFORDABILITY / WHAT-IF WITH LABOR → research:
+- "Can I afford to hire a driver?" → research
+- "What's the fully loaded cost of an employee?" → research
+- "Labor cost analysis" → research
 
 GENERAL / GREETINGS → general:
 - "Hello" → general
