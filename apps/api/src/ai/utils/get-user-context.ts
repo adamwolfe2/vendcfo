@@ -5,6 +5,8 @@ import {
   chatCache,
 } from "@vendcfo/cache/chat-cache";
 import { getBankAccounts, getTeamById, getUserById } from "@vendcfo/db/queries";
+import { transactions } from "@vendcfo/db/schema";
+import { eq } from "drizzle-orm";
 import { logger } from "@vendcfo/logger";
 import { HTTPException } from "hono/http-exception";
 
@@ -37,15 +39,34 @@ export async function getUserContext({
 
   // If team context not cached, fetch bank account status
   if (!teamContext) {
-    const bankAccounts = await getBankAccounts(db, {
-      teamId,
-      enabled: true,
-    });
-    const hasBankAccounts = bankAccounts.length > 0;
+    let hasBankAccounts = false;
+    try {
+      const bankAccounts = await getBankAccounts(db, {
+        teamId,
+        enabled: true,
+      });
+      hasBankAccounts = bankAccounts.length > 0;
+    } catch {
+      // getBankAccounts may fail with relational query — fall back to simple check
+    }
+
+    // Also check if team has any transactions (covers manual imports, CSV uploads)
+    let hasTransactions = false;
+    try {
+      const txnCheck = await db
+        .select({ id: transactions.id })
+        .from(transactions)
+        .where(eq(transactions.teamId, teamId))
+        .limit(1);
+      hasTransactions = txnCheck.length > 0;
+    } catch {
+      // Ignore query errors
+    }
 
     teamContext = {
       teamId,
-      hasBankAccounts,
+      hasBankAccounts: hasBankAccounts || hasTransactions,
+      hasTransactions,
     };
 
     // Cache team context (non-blocking)
