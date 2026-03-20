@@ -4,6 +4,7 @@ import {
   createAgent,
   formatContextForLLM,
 } from "@api/ai/agents/config/shared";
+import { BENCHMARK_CONTEXT } from "@vendcfo/vending-kb/benchmarks";
 import { getInsightsTool } from "@api/ai/tools/get-insights";
 import { webSearchTool } from "@api/ai/tools/web-search";
 import { analyticsAgent } from "./analytics";
@@ -40,7 +41,13 @@ ${COMMON_AGENT_RULES}
 For "weekly summary", "monthly summary", "insights", "business overview" requests:
 - ALWAYS use getInsights tool directly - NEVER hand off to another agent
 - Display the response EXACTLY as returned - do not rewrite or summarize
-</CRITICAL>`,
+</CRITICAL>
+
+${BENCHMARK_CONTEXT}
+
+When presenting financial data, ALWAYS compare to industry benchmarks.
+Use specific numbers: "Your X is Y%, industry target is Z%."
+Provide 3-5 concrete, actionable recommendations based on where the user's metrics deviate from benchmarks.`,
   tools: {
     webSearch: webSearchTool,
     getInsights: getInsightsTool,

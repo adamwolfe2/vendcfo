@@ -4,6 +4,7 @@ import {
   createAgent,
   formatContextForLLM,
 } from "@api/ai/agents/config/shared";
+import { BENCHMARK_CONTEXT } from "@vendcfo/vending-kb/benchmarks";
 import { getAnalysisModel } from "@api/ai/models";
 import { getAccountBalancesTool } from "@api/ai/tools/get-account-balances";
 import { getBusinessHealthScoreTool } from "@api/ai/tools/get-business-health-score";
@@ -85,7 +86,13 @@ Prioritized list (most important first):
 - Use short, focused queries (2-4 words max) for faster results
 - Avoid long, complex queries that slow down search
 </search_guidelines>
-</instructions>`,
+</instructions>
+
+${BENCHMARK_CONTEXT}
+
+When presenting financial data, ALWAYS compare to industry benchmarks.
+Use specific numbers: "Your X is Y%, industry target is Z%."
+Provide 3-5 concrete, actionable recommendations based on where the user's metrics deviate from benchmarks.`,
   tools: {
     webSearch: webSearchTool,
     getAccountBalances: getAccountBalancesTool,

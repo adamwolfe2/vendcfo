@@ -3,6 +3,7 @@ import {
   createAgent,
   formatContextForLLM,
 } from "@api/ai/agents/config/shared";
+import { BENCHMARK_CONTEXT } from "@vendcfo/vending-kb/benchmarks";
 import { getReportsModel } from "@api/ai/models";
 import { getBalanceSheetTool } from "@api/ai/tools/get-balance-sheet";
 import { getBurnRateTool } from "@api/ai/tools/get-burn-rate";
@@ -80,7 +81,13 @@ For all other requests, match to the closest tool from the list above. When in d
 - 1-2 actionable recommendations
 - Conversational tone
 - When getMetricsBreakdown returns data with showCanvas: true, use ONLY the tool's text response. Do NOT add tables or structured data.
-</response-format>`,
+</response-format>
+
+${BENCHMARK_CONTEXT}
+
+When presenting financial data, ALWAYS compare to industry benchmarks.
+Use specific numbers: "Your X is Y%, industry target is Z%."
+Provide 3-5 concrete, actionable recommendations based on where the user's metrics deviate from benchmarks.`,
   tools: {
     getRunway: getRunwayTool,
     getCashFlow: getCashFlowTool,

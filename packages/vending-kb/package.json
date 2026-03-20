@@ -1,0 +1,11 @@
+{
+  "name": "@vendcfo/vending-kb",
+  "version": "1.0.0",
+  "private": true,
+  "main": "./src/benchmarks.ts",
+  "types": "./src/benchmarks.ts",
+  "exports": {
+    ".": "./src/benchmarks.ts",
+    "./benchmarks": "./src/benchmarks.ts"
+  }
+}

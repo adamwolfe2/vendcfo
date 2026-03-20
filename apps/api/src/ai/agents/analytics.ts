@@ -3,6 +3,7 @@ import {
   createAgent,
   formatContextForLLM,
 } from "@api/ai/agents/config/shared";
+import { BENCHMARK_CONTEXT } from "@vendcfo/vending-kb/benchmarks";
 import { getAnalysisModel } from "@api/ai/models";
 import { getBusinessHealthScoreTool } from "@api/ai/tools/get-business-health-score";
 import { getCashFlowStressTestTool } from "@api/ai/tools/get-cash-flow-stress-test";
@@ -39,7 +40,13 @@ If the user asks for something outside these two tools (e.g., revenue details, e
 5. Lead with the key insight or score.
 6. Provide 2-3 actionable focus areas.
 7. Never mention reports or downloads.
-</mandatory-rules>`,
+</mandatory-rules>
+
+${BENCHMARK_CONTEXT}
+
+When presenting financial data, ALWAYS compare to industry benchmarks.
+Use specific numbers: "Your X is Y%, industry target is Z%."
+Provide 3-5 concrete, actionable recommendations based on where the user's metrics deviate from benchmarks.`,
   tools: {
     getBusinessHealthScore: getBusinessHealthScoreTool,
     getCashFlowStressTest: getCashFlowStressTestTool,
