@@ -1,5 +1,6 @@
 "use client";
 
+import { useIsMobile } from "@/hooks/use-is-mobile";
 import { formatAmount } from "@/utils/format";
 import {
   Bar,
@@ -114,6 +115,9 @@ export function RevenueTrendChart({
   onSelectionChange,
   onSelectionComplete,
 }: RevenueTrendChartProps) {
+  const isMobile = useIsMobile();
+  const chartHeight = isMobile ? 200 : height;
+
   // Use the compact tick formatter
   const tickFormatter = createCompactTickFormatter();
 
@@ -123,12 +127,12 @@ export function RevenueTrendChart({
   const chartContent = (
     <div className="w-full">
       {/* Chart */}
-      <div style={{ height }}>
+      <div style={{ height: chartHeight }}>
         <ResponsiveContainer width="100%" height="100%" debounce={1}>
           <ComposedChart
             data={data}
             syncId="financeTimeSeries"
-            margin={{ top: 6, right: 6, left: -marginLeft, bottom: 6 }}
+            margin={{ top: 6, right: isMobile ? 2 : 6, left: -marginLeft, bottom: 6 }}
           >
             <CartesianGrid
               strokeDasharray="3 3"
@@ -138,6 +142,7 @@ export function RevenueTrendChart({
               dataKey="month"
               axisLine={false}
               tickLine={false}
+              interval={isMobile ? "preserveStartEnd" : "equidistantPreserveStart"}
               tick={{
                 fill: "var(--chart-axis-text)",
                 fontSize: 10,
@@ -181,13 +186,15 @@ export function RevenueTrendChart({
               dot={false}
               isAnimationActive={false}
             />
-            <Brush
-              dataKey="month"
-              height={28}
-              travellerWidth={8}
-              stroke="#d0d0d0"
-              fill="#f5f5f5"
-            />
+            {!isMobile && (
+              <Brush
+                dataKey="month"
+                height={28}
+                travellerWidth={8}
+                stroke="#d0d0d0"
+                fill="#f5f5f5"
+              />
+            )}
           </ComposedChart>
         </ResponsiveContainer>
       </div>

@@ -1,5 +1,6 @@
 "use client";
 
+import { useIsMobile } from "@/hooks/use-is-mobile";
 import { formatAmount } from "@/utils/format";
 import {
   Area,
@@ -102,6 +103,9 @@ export function BurnRateChart({
   onSelectionComplete,
   onSelectionStateChange,
 }: BurnRateChartProps) {
+  const isMobile = useIsMobile();
+  const chartHeight = isMobile ? 200 : height;
+
   // Use the compact tick formatter
   const tickFormatter = createCompactTickFormatter();
 
@@ -111,12 +115,12 @@ export function BurnRateChart({
   const chartContent = (
     <div className="w-full">
       {/* Chart */}
-      <div style={{ height }}>
+      <div style={{ height: chartHeight }}>
         <ResponsiveContainer width="100%" height="100%" debounce={1}>
           <ComposedChart
             data={data}
             syncId="financeTimeSeries"
-            margin={{ top: 6, right: 6, left: -marginLeft, bottom: 6 }}
+            margin={{ top: 6, right: isMobile ? 2 : 6, left: -marginLeft, bottom: 6 }}
           >
             <defs>
               <pattern
@@ -148,6 +152,7 @@ export function BurnRateChart({
               dataKey="month"
               axisLine={false}
               tickLine={false}
+              interval={isMobile ? "preserveStartEnd" : "equidistantPreserveStart"}
               tick={{
                 fill: "var(--chart-axis-text)",
                 fontSize: 10,
@@ -178,10 +183,10 @@ export function BurnRateChart({
               dot={{
                 fill: "var(--chart-actual-line)",
                 strokeWidth: 0,
-                r: 3,
+                r: isMobile ? 2 : 3,
               }}
               activeDot={{
-                r: 5,
+                r: isMobile ? 4 : 5,
                 fill: "var(--chart-actual-line)",
                 stroke: "var(--chart-actual-line)",
                 strokeWidth: 2,
@@ -197,13 +202,15 @@ export function BurnRateChart({
               dot={false}
               isAnimationActive={false}
             />
-            <Brush
-              dataKey="month"
-              height={28}
-              travellerWidth={8}
-              stroke="#d0d0d0"
-              fill="#f5f5f5"
-            />
+            {!isMobile && (
+              <Brush
+                dataKey="month"
+                height={28}
+                travellerWidth={8}
+                stroke="#d0d0d0"
+                fill="#f5f5f5"
+              />
+            )}
           </ComposedChart>
         </ResponsiveContainer>
       </div>

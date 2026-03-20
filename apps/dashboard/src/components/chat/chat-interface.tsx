@@ -171,8 +171,8 @@ export function ChatInterface({ geo }: Props) {
     <div
       className={cn(
         "relative flex size-full",
-        isHome && "h-[calc(100vh-764px)] chat-interface-container-scrollable",
-        !isHome && "h-[calc(100vh-88px)] overflow-hidden",
+        isHome && "h-[calc(100vh-764px)] min-h-[300px] chat-interface-container-scrollable",
+        !isHome && "h-[calc(100vh-88px)] sm:h-[calc(100vh-88px)] overflow-hidden",
       )}
     >
       {/* Canvas slides in from right when artifacts are present */}
@@ -212,7 +212,7 @@ export function ChatInterface({ geo }: Props) {
                 </div>
               </div>
               <Conversation>
-                <ConversationContent className="pb-[150px] pt-14">
+                <ConversationContent className="pb-[150px] pt-14 overscroll-contain">
                   <div className="max-w-2xl mx-auto w-full">
                     <ChatMessages
                       messages={messages}

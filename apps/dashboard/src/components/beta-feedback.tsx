@@ -82,14 +82,14 @@ export function BetaFeedback() {
       <button
         type="button"
         onClick={() => setOpen(true)}
-        className="fixed bottom-4 left-4 z-50 bg-white border border-[#d0d0d0] shadow-sm rounded-full px-3 py-2 flex items-center gap-1.5 text-sm text-[#555] hover:text-black hover:border-[#999] transition-colors min-h-[44px]"
+        className="fixed bottom-[calc(1rem+env(safe-area-inset-bottom))] left-4 z-50 bg-white border border-[#d0d0d0] shadow-sm rounded-full px-3 py-2 flex items-center gap-1.5 text-sm text-[#555] hover:text-black hover:border-[#999] transition-colors min-h-[44px]"
       >
         <MessageCircle size={16} />
-        <span>Beta Feedback</span>
+        <span className="hidden sm:inline">Beta Feedback</span>
       </button>
 
       <Dialog open={open} onOpenChange={handleOpenChange}>
-        <DialogContent className="sm:max-w-md">
+        <DialogContent className="max-w-[100vw] h-[100dvh] sm:h-auto sm:max-w-md rounded-none sm:rounded-lg">
           <DialogHeader>
             <DialogTitle className="text-lg font-semibold">
               Share Your Feedback

@@ -1,5 +1,6 @@
 "use client";
 
+import { useIsMobile } from "@/hooks/use-is-mobile";
 import { formatAmount } from "@/utils/format";
 import {
   Bar,
@@ -71,6 +72,8 @@ export function CashFlowChart({
   currency = "USD",
   locale,
 }: CashFlowChartProps) {
+  const isMobile = useIsMobile();
+  const chartHeight = isMobile ? 200 : height;
   const tickFormatter = createYAxisTickFormatter(currency, locale);
   // Calculate margin based on the maximum value across all data points
   const maxValues = data.map((d) => ({
@@ -101,12 +104,12 @@ export function CashFlowChart({
       )}
 
       {/* Chart */}
-      <div style={{ height }}>
+      <div style={{ height: chartHeight }}>
         <ResponsiveContainer width="100%" height="100%" debounce={1}>
           <ComposedChart
             data={data}
             syncId="financeTimeSeries"
-            margin={{ top: 6, right: 6, left: -marginLeft, bottom: 6 }}
+            margin={{ top: 6, right: isMobile ? 2 : 6, left: -marginLeft, bottom: 6 }}
           >
             <defs>
               <pattern
@@ -134,6 +137,7 @@ export function CashFlowChart({
               dataKey="month"
               axisLine={false}
               tickLine={false}
+              interval={isMobile ? "preserveStartEnd" : "equidistantPreserveStart"}
               tick={{
                 fill: "var(--chart-axis-text)",
                 fontSize: 10,

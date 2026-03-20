@@ -176,3 +176,19 @@
 .aria-selected\:text-accent-foreground[aria-selected="true"] {
   border-radius: 0px;
 }
+
+/* Prevent iOS zoom on input focus */
+@media screen and (max-width: 640px) {
+  input, select, textarea {
+    font-size: 16px !important;
+  }
+}
+
+/* Touch optimization */
+button, a, [role="button"] {
+  touch-action: manipulation;
+}
+
+* {
+  -webkit-tap-highlight-color: transparent;
+}

@@ -220,7 +220,7 @@ export function ChatMessages({
             {/* Render text content in message (skip if we rendered insight) */}
             {textParts.length > 0 && !bankAccountRequired && !insightData && (
               <Message from={message.role}>
-                <MessageContent className="max-w-[80%]">
+                <MessageContent className="max-w-full sm:max-w-[80%]">
                   <Response>{textContent}</Response>
                 </MessageContent>
                 {message.role === "user" && user && (
@@ -245,7 +245,7 @@ export function ChatMessages({
               (textContent || insightData) &&
               !bankAccountRequired && (
                 <div className="flex flex-col">
-                  <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                  <div className="sm:opacity-0 sm:group-hover:opacity-100 transition-opacity duration-200">
                     <div className="flex items-center gap-1 mt-3">
                       {/* Message actions */}
                       <ChatMessageActions

@@ -152,7 +152,7 @@ export function SuggestedPrompts() {
         )}
         <div
           ref={scrollableRef}
-          className="flex gap-2 overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+          className="grid grid-cols-2 gap-2 sm:flex sm:overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
         >
           {prompts.map((prompt, index) => (
             <motion.div
@@ -170,7 +170,7 @@ export function SuggestedPrompts() {
                 variant="ghost"
                 size="sm"
                 onClick={() => handlePromptClick(prompt)}
-                className="px-2 py-1 h-auto rounded-full text-xs font-normal border text-[#666] flex-shrink-0 whitespace-nowrap bg-background"
+                className="px-2 py-1 min-h-[44px] h-auto rounded-full text-xs font-normal border text-[#666] flex-shrink-0 whitespace-normal sm:whitespace-nowrap bg-background w-full sm:w-auto text-left active:scale-[0.98] transition-transform"
               >
                 {prompt}
               </Button>

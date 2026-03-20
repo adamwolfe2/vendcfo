@@ -1,5 +1,6 @@
 "use client";
 
+import { useIsMobile } from "@/hooks/use-is-mobile";
 import { formatAmount } from "@/utils/format";
 import {
   Bar,
@@ -133,6 +134,9 @@ export function ProfitChart({
   onSelectionComplete,
   onSelectionStateChange,
 }: ProfitChartProps) {
+  const isMobile = useIsMobile();
+  const chartHeight = isMobile ? 200 : height;
+
   // Use the compact tick formatter
   const tickFormatter = createCompactTickFormatter();
 
@@ -142,12 +146,12 @@ export function ProfitChart({
   const chartContent = (
     <div className="w-full">
       {/* Chart */}
-      <div style={{ height }}>
+      <div style={{ height: chartHeight }}>
         <ResponsiveContainer width="100%" height="100%" debounce={1}>
           <ComposedChart
             data={data}
             syncId="financeTimeSeries"
-            margin={{ top: 6, right: 6, left: -marginLeft, bottom: 6 }}
+            margin={{ top: 6, right: isMobile ? 2 : 6, left: -marginLeft, bottom: 6 }}
           >
             <CartesianGrid
               strokeDasharray="3 3"
@@ -157,6 +161,7 @@ export function ProfitChart({
               dataKey="month"
               axisLine={false}
               tickLine={false}
+              interval={isMobile ? "preserveStartEnd" : "equidistantPreserveStart"}
               tick={{
                 fill: "var(--chart-axis-text)",
                 fontSize: 10,

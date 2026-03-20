@@ -1,5 +1,6 @@
 "use client";
 
+import { useIsMobile } from "@/hooks/use-is-mobile";
 import { formatAmount } from "@/utils/format";
 import { format, parseISO } from "date-fns";
 import { useMemo } from "react";
@@ -212,6 +213,9 @@ export function RevenueForecastChart({
   onSelectionComplete,
   onSelectionStateChange,
 }: RevenueForecastChartProps) {
+  const isMobile = useIsMobile();
+  const chartHeight = isMobile ? 200 : height;
+
   // Normalize data - create a range array for confidence band
   const normalizedData = useMemo(() => {
     if (!data || data.length === 0) return [];
@@ -314,12 +318,12 @@ export function RevenueForecastChart({
   const chartContent = (
     <div className={`w-full ${className}`}>
       {/* Chart */}
-      <div style={{ height }}>
+      <div style={{ height: chartHeight }}>
         <ResponsiveContainer width="100%" height="100%" debounce={1}>
           <ComposedChart
             data={normalizedData}
             syncId="financeTimeSeries"
-            margin={{ top: 20, right: 6, left: -marginLeft, bottom: 6 }}
+            margin={{ top: 20, right: isMobile ? 2 : 6, left: -marginLeft, bottom: 6 }}
           >
             <CartesianGrid
               strokeDasharray="3 3"
@@ -329,6 +333,7 @@ export function RevenueForecastChart({
               dataKey="month"
               axisLine={false}
               tickLine={false}
+              interval={isMobile ? "preserveStartEnd" : "equidistantPreserveStart"}
               tick={{
                 fill: "var(--chart-axis-text)",
                 fontSize: 10,
@@ -437,13 +442,15 @@ export function RevenueForecastChart({
               isAnimationActive={false}
               connectNulls={true}
             />
-            <Brush
-              dataKey="month"
-              height={28}
-              travellerWidth={8}
-              stroke="#d0d0d0"
-              fill="#f5f5f5"
-            />
+            {!isMobile && (
+              <Brush
+                dataKey="month"
+                height={28}
+                travellerWidth={8}
+                stroke="#d0d0d0"
+                fill="#f5f5f5"
+              />
+            )}
           </ComposedChart>
         </ResponsiveContainer>
       </div>

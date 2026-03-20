@@ -121,7 +121,7 @@ export function MessageFeedback({ messageId }: MessageFeedbackProps) {
 
   // Default state: show thumbs up/down on hover (parent has group class)
   return (
-    <div className="flex items-center gap-0.5 mt-1 opacity-0 group-hover:opacity-100 transition-opacity">
+    <div className="flex items-center gap-0.5 mt-1 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity">
       <button
         type="button"
         onClick={handlePositive}

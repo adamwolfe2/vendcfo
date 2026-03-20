@@ -85,12 +85,12 @@ Date,Description,Amount,Category,Machine,Location
 2026-02-05,Wholesale Candy Restock,-180.00,Inventory,,
 2026-02-05,Vending Collections - Location H,245.00,Revenue,SN-2024-008,Downtown Library
 2026-02-06,Vending Collections - Location C,250.00,Revenue,SN-2024-003,Riverside Hospital
-2026-01-18,Insurance Payment,-280.00,Insurance,,
+2026-02-06,Misc,300.00,,,
 2026-02-07,Fuel - Route 1,-47.00,Fuel,,
 2026-02-08,Vending Collections - Location A,500.00,Revenue,SN-2024-001,Metro Office Park
 2026-02-08,Vending Collections - Location D,210.00,Revenue,SN-2024-004,Lakeside Mall
 2026-02-09,Machine Repair - SN-2024-005,-160.00,Repairs,,
-2026-02-10,Location Rent - Metro Office Park,-150.00,Location Rent,,Metro Office Park
+2026-01-10,Location Rent - Metro Office Park,-150.00,Location Rent,,Metro Office Park
 2026-02-03,Vending Collections - Location B,360.00,Revenue,SN-2024-002,FitZone Gym
 2026-02-11,Vending Collections - Location E,415.00,Revenue,SN-2024-005,Tech Campus West
 2026-02-12,Vending Collections - Location F,165.00,Revenue,SN-2024-006,Community Center

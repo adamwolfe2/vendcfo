@@ -34,6 +34,7 @@ import {
   PromptInputToolbar,
   PromptInputTools,
 } from "@vendcfo/ui/prompt-input";
+import { useIsMobile } from "@/hooks/use-is-mobile";
 import { animate, motion, useMotionValue, useTransform } from "framer-motion";
 import { parseAsString, useQueryState } from "nuqs";
 import { useEffect, useRef, useState } from "react";
@@ -63,6 +64,7 @@ function ChatInputContent() {
   const { scrollY } = useWindowScroll();
   const { isOpen: isHistoryOpen, setIsOpen: setHistoryOpen } =
     useChatHistoryContext();
+  const isMobile = useIsMobile();
 
   const [, clearSuggestions] = useDataPart<{ prompts: string[] }>(
     "suggestions",
@@ -363,7 +365,7 @@ function ChatInputContent() {
                   }}
                   onFocus={() => setIsFocused(true)}
                   onBlur={() => setIsFocused(false)}
-                  className="w-full h-full border-none bg-transparent resize-none outline-none whitespace-nowrap overflow-hidden text-ellipsis"
+                  className="w-full h-full border-none bg-transparent resize-none outline-none whitespace-nowrap overflow-hidden text-ellipsis text-[16px] sm:text-sm"
                   onKeyDown={(e) => {
                     // Handle Enter key for commands
                     if (e.key === "Enter" && showCommands) {
@@ -399,7 +401,8 @@ function ChatInputContent() {
                     }
 
                     // Handle Enter key for normal messages - trigger form submission
-                    if (e.key === "Enter" && !showCommands && !e.shiftKey) {
+                    // On mobile, Enter inserts a newline (users tap the send button instead)
+                    if (e.key === "Enter" && !showCommands && !e.shiftKey && !isMobile) {
                       // Don't submit if IME composition is in progress
                       if (e.nativeEvent.isComposing) {
                         return;
@@ -514,6 +517,7 @@ export function ChatInput() {
       transition={{ duration: 0.35, ease: [0.25, 0.1, 0.25, 1] }}
       className={cn(
         "fixed bottom-6 z-[100]",
+        "pb-[env(safe-area-inset-bottom)]",
         !isHome && "transition-all duration-300 ease-in-out",
         "left-0 md:left-[70px] px-4 md:px-6",
         isCanvasVisible ? "right-0 md:right-[603px]" : "right-0",

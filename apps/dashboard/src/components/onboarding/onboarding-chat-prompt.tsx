@@ -41,12 +41,12 @@ export function OnboardingChatPrompt() {
   };
 
   return (
-    <div className="fixed bottom-20 right-6 z-50 max-w-sm animate-in slide-in-from-bottom-4 fade-in duration-500">
+    <div className="fixed bottom-[calc(5rem+env(safe-area-inset-bottom))] left-4 right-4 sm:left-auto sm:right-6 z-50 sm:max-w-sm animate-in slide-in-from-bottom-4 fade-in duration-500">
       <div className="bg-white border border-[#d0d0d0] rounded-lg shadow-lg p-4 relative">
         <button
           type="button"
           onClick={() => setShow(false)}
-          className="absolute top-2 right-2 p-1 hover:bg-[#f0f0f0] rounded"
+          className="absolute top-2 right-2 min-w-[44px] min-h-[44px] flex items-center justify-center hover:bg-[#f0f0f0] rounded"
         >
           <X size={14} className="text-[#999]" />
         </button>
