@@ -1,21 +1,25 @@
 import { anthropic } from "@ai-sdk/anthropic";
 import { openai } from "@ai-sdk/openai";
 
-// Dual-model strategy:
-// - GPT-4o-mini for fast routing and simple tasks
-// - Claude Sonnet for deep financial analysis and report generation
+// Model strategy optimized for SPEED and ACCURACY:
+// - GPT-4o-mini: triage routing (fastest, cheapest, 200ms)
+// - Claude Sonnet 4.6: financial analysis + reports (fast + accurate)
+// - Claude Sonnet 4.6: calculator math (needs precision)
+// - GPT-4o: fallback if no Anthropic key
+
 export const models = {
-  // Fast routing and classification
+  // Fast routing and classification (~200ms)
   fast: openai("gpt-4o-mini"),
-  // Deep financial analysis, reports, insights
+  // Financial analysis — Sonnet 4.6 for speed + accuracy
   analysis: anthropic("claude-sonnet-4-20250514"),
-  // Report narrative generation
+  // Report generation — same model, consistent output
   reports: anthropic("claude-sonnet-4-20250514"),
+  // Calculator specialist — needs mathematical precision
+  calculator: anthropic("claude-sonnet-4-20250514"),
   // Fallback if Anthropic key not set
   fallback: openai("gpt-4o"),
 };
 
-// Use analysis model if ANTHROPIC_API_KEY is set, otherwise fallback to OpenAI
 export function getAnalysisModel() {
   if (process.env.ANTHROPIC_API_KEY) {
     return models.analysis;
@@ -26,6 +30,13 @@ export function getAnalysisModel() {
 export function getReportsModel() {
   if (process.env.ANTHROPIC_API_KEY) {
     return models.reports;
+  }
+  return models.fallback;
+}
+
+export function getCalculatorModel() {
+  if (process.env.ANTHROPIC_API_KEY) {
+    return models.calculator;
   }
   return models.fallback;
 }
