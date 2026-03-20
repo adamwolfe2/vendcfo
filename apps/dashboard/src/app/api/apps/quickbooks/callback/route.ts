@@ -28,8 +28,16 @@ export async function GET(request: NextRequest) {
     );
   }
 
-  // Decrypt and validate state
-  const parsedState = decryptAccountingOAuthState(state);
+  // Decrypt and validate state — catch errors from missing encryption key
+  let parsedState: ReturnType<typeof decryptAccountingOAuthState>;
+  try {
+    parsedState = decryptAccountingOAuthState(state);
+  } catch (err) {
+    console.error("[QuickBooks Callback] Failed to decrypt state:", err);
+    return NextResponse.redirect(
+      `${dashboardUrl}/oauth-callback?status=error&error=invalid_state`,
+    );
+  }
   const source = parsedState?.source;
 
   // Handle OAuth errors (user denied access, etc.)

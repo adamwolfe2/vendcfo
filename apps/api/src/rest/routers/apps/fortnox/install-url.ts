@@ -56,15 +56,27 @@ app.openapi(
       });
     }
 
-    // Encrypt state to prevent tampering with teamId
-    const state = encryptAccountingOAuthState({
-      teamId: session.teamId,
-      userId: session.user.id,
-      provider: "fortnox",
-      source: "apps",
-    });
+    // Check required env vars early
+    if (
+      !process.env.FORTNOX_CLIENT_ID ||
+      !process.env.FORTNOX_CLIENT_SECRET ||
+      !process.env.FORTNOX_OAUTH_REDIRECT_URL
+    ) {
+      throw new HTTPException(501, {
+        message:
+          "Fortnox integration is not configured. Set FORTNOX_CLIENT_ID, FORTNOX_CLIENT_SECRET, and FORTNOX_OAUTH_REDIRECT_URL environment variables.",
+      });
+    }
 
     try {
+      // Encrypt state to prevent tampering with teamId
+      const state = encryptAccountingOAuthState({
+        teamId: session.teamId,
+        userId: session.user.id,
+        provider: "fortnox",
+        source: "apps",
+      });
+
       const provider = getAccountingProvider("fortnox");
       const url = await provider.buildConsentUrl(state);
       return c.json({ url });

@@ -56,15 +56,27 @@ app.openapi(
       });
     }
 
-    // Encrypt state to prevent tampering with teamId
-    const state = encryptAccountingOAuthState({
-      teamId: session.teamId,
-      userId: session.user.id,
-      provider: "xero",
-      source: "apps",
-    });
+    // Check required env vars early
+    if (
+      !process.env.XERO_CLIENT_ID ||
+      !process.env.XERO_CLIENT_SECRET ||
+      !process.env.XERO_OAUTH_REDIRECT_URL
+    ) {
+      throw new HTTPException(501, {
+        message:
+          "Xero integration is not configured. Set XERO_CLIENT_ID, XERO_CLIENT_SECRET, and XERO_OAUTH_REDIRECT_URL environment variables.",
+      });
+    }
 
     try {
+      // Encrypt state to prevent tampering with teamId
+      const state = encryptAccountingOAuthState({
+        teamId: session.teamId,
+        userId: session.user.id,
+        provider: "xero",
+        source: "apps",
+      });
+
       const provider = getAccountingProvider("xero");
       const url = await provider.buildConsentUrl(state);
       return c.json({ url });

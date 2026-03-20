@@ -56,15 +56,27 @@ app.openapi(
       });
     }
 
-    // Encrypt state to prevent tampering with teamId
-    const state = encryptAccountingOAuthState({
-      teamId: session.teamId,
-      userId: session.user.id,
-      provider: "quickbooks",
-      source: "apps",
-    });
+    // Check required env vars early
+    if (
+      !process.env.QUICKBOOKS_CLIENT_ID ||
+      !process.env.QUICKBOOKS_CLIENT_SECRET ||
+      !process.env.QUICKBOOKS_OAUTH_REDIRECT_URL
+    ) {
+      throw new HTTPException(501, {
+        message:
+          "QuickBooks integration is not configured. Set QUICKBOOKS_CLIENT_ID, QUICKBOOKS_CLIENT_SECRET, and QUICKBOOKS_OAUTH_REDIRECT_URL environment variables.",
+      });
+    }
 
     try {
+      // Encrypt state to prevent tampering with teamId
+      const state = encryptAccountingOAuthState({
+        teamId: session.teamId,
+        userId: session.user.id,
+        provider: "quickbooks",
+        source: "apps",
+      });
+
       const provider = getAccountingProvider("quickbooks");
       const url = await provider.buildConsentUrl(state);
       return c.json({ url });

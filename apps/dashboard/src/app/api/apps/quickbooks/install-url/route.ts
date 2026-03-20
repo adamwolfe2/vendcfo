@@ -10,35 +10,51 @@ import { NextResponse } from "next/server";
 export const dynamic = "force-dynamic";
 
 export async function GET() {
-  const {
-    data: { session },
-  } = await getSession();
-
-  if (!session?.user) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
-
-  // Get user record to find their active team
-  const supabase = await createClient();
-  const { data: user } = await getUserQuery(supabase, session.user.id);
-
-  if (!user?.team_id) {
-    return NextResponse.json({ error: "Team not found" }, { status: 401 });
-  }
-
-  // Encrypt state to prevent tampering with teamId
-  const state = encryptAccountingOAuthState({
-    teamId: user.team_id,
-    userId: session.user.id,
-    provider: "quickbooks",
-    source: "apps",
-  });
-
   try {
+    // Check required env vars early
+    if (
+      !process.env.QUICKBOOKS_CLIENT_ID ||
+      !process.env.QUICKBOOKS_CLIENT_SECRET ||
+      !process.env.QUICKBOOKS_OAUTH_REDIRECT_URL
+    ) {
+      return NextResponse.json(
+        {
+          error:
+            "QuickBooks integration is not configured. Set QUICKBOOKS_CLIENT_ID, QUICKBOOKS_CLIENT_SECRET, and QUICKBOOKS_OAUTH_REDIRECT_URL environment variables.",
+        },
+        { status: 501 },
+      );
+    }
+
+    const {
+      data: { session },
+    } = await getSession();
+
+    if (!session?.user) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    // Get user record to find their active team
+    const supabase = await createClient();
+    const { data: user } = await getUserQuery(supabase, session.user.id);
+
+    if (!user?.team_id) {
+      return NextResponse.json({ error: "Team not found" }, { status: 401 });
+    }
+
+    // Encrypt state to prevent tampering with teamId
+    const state = encryptAccountingOAuthState({
+      teamId: user.team_id,
+      userId: session.user.id,
+      provider: "quickbooks",
+      source: "apps",
+    });
+
     const provider = getAccountingProvider("quickbooks");
     const url = await provider.buildConsentUrl(state);
     return NextResponse.json({ url });
   } catch (error) {
+    console.error("[QuickBooks Install URL] Error:", error);
     return NextResponse.json(
       {
         error:

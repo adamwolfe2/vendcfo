@@ -90,7 +90,16 @@ app.openapi(
       process.env.MIDDAY_DASHBOARD_URL || "https://app.vendhub.com";
 
     // Try to decrypt state first to determine redirect target (apps vs settings)
-    const parsedState = decryptAccountingOAuthState(state);
+    let parsedState: ReturnType<typeof decryptAccountingOAuthState>;
+    try {
+      parsedState = decryptAccountingOAuthState(state);
+    } catch (err) {
+      logger.error("Xero OAuth: failed to decrypt state", { error: err });
+      return c.redirect(
+        buildErrorRedirect(dashboardUrl, "invalid_state", "xero"),
+        302,
+      );
+    }
     const source = parsedState?.source;
 
     // Handle OAuth errors (user denied access, etc.)
