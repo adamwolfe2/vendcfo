@@ -1117,9 +1117,17 @@ export function RevenueSharePage({ teamId }: { teamId: string }) {
           <p className="text-sm font-medium text-[#555]">
             No locations with revenue share data
           </p>
-          <p className="mt-1 text-xs text-[#999]">
-            Click "Add Location" to start tracking revenue share.
+          <p className="mt-1 text-xs text-[#999] mb-4">
+            Add a location to start tracking commissions and revenue share payments.
           </p>
+          <button
+            type="button"
+            onClick={() => setShowAddModal(true)}
+            className="inline-flex items-center gap-1.5 rounded-md bg-[#111] px-3.5 py-2 text-sm font-medium text-white transition-colors hover:bg-[#333] min-h-[44px]"
+          >
+            <Plus size={16} strokeWidth={1.5} />
+            Add your first location
+          </button>
         </div>
       ) : (
         <div className="overflow-x-auto rounded-lg border border-[#e0e0e0]">

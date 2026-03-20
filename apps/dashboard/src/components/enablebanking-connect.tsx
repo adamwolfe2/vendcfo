@@ -26,7 +26,7 @@ export function EnableBankingConnect({
       toast({
         duration: 3500,
         variant: "error",
-        title: "Something went wrong please try again.",
+        title: "Could not connect to bank. Please try again.",
       });
     },
   });

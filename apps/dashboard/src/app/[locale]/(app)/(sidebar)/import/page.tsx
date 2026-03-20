@@ -16,6 +16,7 @@ import {
   ArrowLeft,
   ArrowRight,
   CheckCircle,
+  Download,
   FileSpreadsheet,
   FileType,
   Loader2,
@@ -344,6 +345,31 @@ export default function ImportPage() {
     setUploadError("");
   };
 
+  const loadSampleData = useCallback(async () => {
+    setUploadError("");
+    try {
+      const res = await fetch("/sample-transactions.csv");
+      if (!res.ok) throw new Error("Failed to fetch sample CSV");
+      const text = await res.text();
+      const parsed = parseCSV(text);
+
+      if (parsed.headers.length === 0 || parsed.rows.length === 0) {
+        setUploadError("Sample file could not be parsed.");
+        return;
+      }
+
+      const blob = new Blob([text], { type: "text/csv" });
+      const sampleFile = new File([blob], "sample-transactions.csv", {
+        type: "text/csv",
+      });
+
+      setFile(sampleFile);
+      setParsedData(parsed);
+    } catch {
+      setUploadError("Failed to load sample data. Please try uploading a file instead.");
+    }
+  }, []);
+
   // ─── Column Mapping ─────────────────────────────────────────────────────
 
   const startMapping = async () => {
@@ -607,6 +633,28 @@ export default function ImportPage() {
                   <p className="text-sm text-muted-foreground">
                     or click to browse. Supports CSV and TSV files up to 10MB.
                   </p>
+                  <div className="flex items-center gap-4 mt-4 justify-center relative z-10">
+                    <a
+                      href="/sample-transactions.csv"
+                      download
+                      className="text-sm text-[#555] underline hover:text-black min-h-[44px] inline-flex items-center"
+                      onClick={(e) => e.stopPropagation()}
+                    >
+                      Download template CSV
+                    </a>
+                    <span className="text-[#ccc]">or</span>
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        e.preventDefault();
+                        loadSampleData();
+                      }}
+                      className="text-sm text-[#555] underline hover:text-black min-h-[44px]"
+                    >
+                      Try with sample data
+                    </button>
+                  </div>
                 </div>
               ) : (
                 <div>

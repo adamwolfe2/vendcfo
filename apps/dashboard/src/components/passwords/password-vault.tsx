@@ -114,14 +114,22 @@ function CategoryBadge({ category }: { category: string }) {
   );
 }
 
-function EmptyState() {
+function EmptyState({ onAdd }: { onAdd: () => void }) {
   return (
     <div className="flex flex-col items-center justify-center rounded-lg border border-dashed border-[#d0d0d0] bg-[#fafafa] py-20 px-6 text-center">
       <KeyRound size={40} strokeWidth={1.5} className="mb-4 text-[#bbb]" />
       <p className="text-sm font-medium text-[#555]">No passwords stored yet</p>
       <p className="mt-1 text-xs text-[#999]">
-        Click "Add Entry" to store your first credential.
+        Store WiFi codes, supplier portal logins, and other credentials securely.
       </p>
+      <button
+        type="button"
+        onClick={onAdd}
+        className="mt-4 inline-flex items-center gap-1.5 rounded-md bg-[#111] px-3.5 py-2 text-sm font-medium text-white transition-colors hover:bg-[#333] min-h-[44px]"
+      >
+        <Plus size={16} strokeWidth={1.5} />
+        Add your first entry
+      </button>
     </div>
   );
 }
@@ -786,7 +794,7 @@ export function PasswordVault({
           </p>
         </div>
       ) : (
-        <EmptyState />
+        <EmptyState onAdd={() => setShowAddModal(true)} />
       )}
 
       {/* Count */}

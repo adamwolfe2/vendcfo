@@ -75,7 +75,7 @@ export function ImportModal() {
           toast({
             duration: 3500,
             variant: "error",
-            title: "Something went wrong please try again.",
+            title: "Import could not be started. Check the file format and try again.",
           });
         }
       },
@@ -86,7 +86,7 @@ export function ImportModal() {
         toast({
           duration: 3500,
           variant: "error",
-          title: "Something went wrong please try again.",
+          title: "Import failed. Check the file format and try again.",
         });
       },
     }),
@@ -145,7 +145,7 @@ export function ImportModal() {
       toast({
         duration: 3500,
         variant: "error",
-        title: "Something went wrong please try again or contact support.",
+        title: "Import processing failed. Try a smaller file or contact support.",
       });
     }
   }, [status, toast]);

@@ -50,7 +50,7 @@ export function BulkActions({ ids }: Props) {
       },
       onError: () => {
         toast({
-          title: "Something went wrong please try again.",
+          title: "Could not update transactions. Please try again.",
           duration: 3500,
           variant: "error",
         });

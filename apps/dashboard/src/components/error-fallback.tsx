@@ -9,7 +9,7 @@ export function ErrorFallback() {
   return (
     <div className="flex flex-col items-center justify-center h-full space-y-4">
       <div>
-        <h2 className="text-md">Something went wrong</h2>
+        <h2 className="text-md">This section failed to load</h2>
       </div>
       <Button onClick={() => router.refresh()} variant="outline">
         Try again

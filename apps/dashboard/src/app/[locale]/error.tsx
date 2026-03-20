@@ -23,11 +23,11 @@ export default function ErrorPage({
   return (
     <div className="h-[calc(100vh-200px)] w-full flex items-center justify-center">
       <div className="max-w-md w-full text-center px-4">
-        <h2 className="font-medium mb-4">Something went wrong</h2>
+        <h2 className="font-medium mb-4">This page could not be loaded</h2>
         <p className="text-sm text-[#878787] mb-6">
-          We've been notified and are looking into it.
+          A server error prevented the page from rendering. This is usually temporary.
           <br />
-          If this issue persists, please reach out to our support team.
+          Try again, or contact support if the problem continues.
         </p>
 
         <CopyInput value={SUPPORT_EMAIL} />

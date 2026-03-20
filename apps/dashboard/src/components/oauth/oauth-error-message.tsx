@@ -189,7 +189,7 @@ export function OAuthErrorMessage({
           title: "Invalid OAuth Request",
           message:
             customMessage ||
-            "An error occurred while processing your OAuth request.",
+            "The OAuth authorization could not be completed. Go back and try connecting again.",
         };
     }
   };

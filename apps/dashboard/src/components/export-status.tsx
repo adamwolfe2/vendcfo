@@ -104,7 +104,7 @@ export function ExportStatus() {
         toast({
           duration: 2500,
           variant: "error",
-          title: "Something went wrong please try again.",
+          title: "Could not generate share link. Please try again.",
         });
       },
       onSuccess: ({ shortUrl }) => {
@@ -154,7 +154,7 @@ export function ExportStatus() {
       toast({
         duration: 2500,
         variant: "error",
-        title: "Something went wrong please try again.",
+        title: "Export failed. Please try again or use a smaller date range.",
       });
 
       setToastId(null);

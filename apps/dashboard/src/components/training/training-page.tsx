@@ -438,10 +438,19 @@ export function TrainingPage({
               ))}
             </div>
           ) : (
-            <EmptyState
-              message="No training videos yet."
-              sub="Add your first video to get started."
-            />
+            <div className="flex flex-col items-center justify-center rounded-lg border border-dashed border-[#d0d0d0] bg-[#fafafa] py-20 px-6 text-center">
+              <GraduationCap size={40} strokeWidth={1.5} className="mb-4 text-[#bbb]" />
+              <p className="text-sm font-medium text-[#555]">No training videos yet</p>
+              <p className="mt-1 text-xs text-[#999]">Upload videos to train your team on routes, safety, and equipment.</p>
+              <button
+                type="button"
+                onClick={() => setShowAddModal(true)}
+                className="mt-4 inline-flex items-center gap-1.5 rounded-md bg-[#111] px-3.5 py-2 text-sm font-medium text-white transition-colors hover:bg-[#333] min-h-[44px]"
+              >
+                <Plus size={16} strokeWidth={1.5} />
+                Add your first video
+              </button>
+            </div>
           )}
         </>
       )}

@@ -62,7 +62,7 @@ export function TrackerSelectProject({
         toast({
           duration: 3500,
           variant: "error",
-          title: "Something went wrong please try again.",
+          title: "Could not assign project. Please try again.",
         });
       },
     }),

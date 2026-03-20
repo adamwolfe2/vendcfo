@@ -135,7 +135,7 @@ export function VaultUploadZone({ onUpload, children }: Props) {
       toast({
         duration: 2500,
         variant: "error",
-        title: "Something went wrong please try again.",
+        title: "File upload failed. Check the file size and try again.",
       });
     }
   };

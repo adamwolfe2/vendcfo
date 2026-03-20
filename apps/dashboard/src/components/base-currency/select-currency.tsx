@@ -44,7 +44,7 @@ export function SelectCurrency() {
         toast({
           duration: 3500,
           variant: "error",
-          title: "Something went wrong please try again.",
+          title: "Could not update base currency. Please try again.",
         });
       },
     }),
@@ -149,7 +149,7 @@ export function SelectCurrency() {
       toast({
         duration: 3500,
         variant: "error",
-        title: "Something went wrong please try again.",
+        title: "Currency sync failed. Please try again or choose a different currency.",
       });
     }
   }, [status, toastId]);

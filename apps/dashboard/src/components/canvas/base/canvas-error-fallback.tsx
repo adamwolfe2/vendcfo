@@ -20,13 +20,13 @@ export function CanvasErrorFallback() {
       <CanvasHeader title="Error" />
       <CanvasContent>
         <div className="flex flex-col items-center justify-center py-8 h-full">
-          <div className="text-xs text-[#707070] dark:text-[#666666] mb-4">
-            Error loading content
+          <div className="text-xs text-[#707070] mb-4">
+            This content could not be displayed. Try going back and opening it again.
           </div>
           <button
             type="button"
             onClick={handleGoBack}
-            className="flex items-center gap-2 text-xs text-[#707070] dark:text-[#666666] hover:text-foreground transition-colors"
+            className="flex items-center gap-2 text-xs text-[#707070] hover:text-foreground transition-colors"
             aria-label="Go back"
           >
             <Icons.ArrowBack className="size-3" />

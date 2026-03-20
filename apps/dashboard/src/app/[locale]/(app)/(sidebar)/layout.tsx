@@ -1,3 +1,4 @@
+import { BetaFeedback } from "@/components/beta-feedback";
 import { ExportStatus } from "@/components/export-status";
 import { GlobalTimerProvider } from "@/components/global-timer-provider";
 import { Header } from "@/components/header";
@@ -157,6 +158,7 @@ export default async function Layout({
         <GlobalTimerProvider />
         <TimezoneDetector />
         <OnboardingChatPrompt />
+        <BetaFeedback />
       </div>
     </HydrateClient>
   );

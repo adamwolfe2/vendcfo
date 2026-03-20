@@ -69,7 +69,7 @@ function InboxAccountItem({ account }: { account: InboxAccount }) {
         toast({
           duration: 3500,
           variant: "error",
-          title: "Something went wrong please try again.",
+          title: "Could not sync inbox account. Please try again.",
         });
       },
     }),

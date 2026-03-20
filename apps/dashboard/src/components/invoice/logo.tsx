@@ -35,7 +35,7 @@ export function Logo() {
         updateTemplate({ logoUrl: url });
       } catch (error) {
         toast({
-          title: "Something went wrong, please try again.",
+          title: "Could not upload logo. Check the file size and try again.",
           variant: "error",
         });
       }

@@ -66,7 +66,7 @@ export function ReconnectProvider({
       toast({
         duration: 2500,
         variant: "error",
-        title: "Something went wrong please try again.",
+        title: "Could not reconnect bank provider. Please try again.",
       });
     },
     onSuccess: () => {
@@ -86,7 +86,7 @@ export function ReconnectProvider({
         toast({
           duration: 2500,
           variant: "error",
-          title: "Something went wrong please try again.",
+          title: "Could not reconnect bank provider. Please try again.",
         });
       },
       onSuccess: () => {

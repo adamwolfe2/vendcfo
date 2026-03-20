@@ -1,0 +1,101 @@
+Date,Description,Amount,Category,Machine,Location
+2025-12-01,Vending Collections - Location A,485.00,Revenue,SN-2024-001,Metro Office Park
+2025-12-01,Wholesale Snack Restock,-210.00,Inventory,,
+2025-12-02,Vending Collections - Location B,320.50,Revenue,SN-2024-002,FitZone Gym
+2025-12-02,Fuel - Route 1,-45.00,Fuel,,
+2025-12-03,Vending Collections - Location C,275.00,Revenue,SN-2024-003,Riverside Hospital
+2025-12-04,Vending Collections - Location D,190.00,Revenue,SN-2024-004,Lakeside Mall
+2025-12-05,Vending Collections - Location A,510.00,Revenue,SN-2024-001,Metro Office Park
+2025-12-05,Beverage Distributor Invoice,-340.00,Inventory,,
+2025-12-06,Vending Collections - Location E,395.00,Revenue,SN-2024-005,Tech Campus West
+2025-12-07,Vending Collections - Location F,155.00,Revenue,SN-2024-006,Community Center
+2025-12-08,Coin Counter Service,-25.00,Equipment,,
+2025-12-08,Vending Collections - Location B,345.00,Revenue,SN-2024-002,FitZone Gym
+2025-12-09,Vending Collections - Location G,280.00,Revenue,SN-2024-007,Airport Terminal B
+2025-12-10,Location Rent - Metro Office Park,-150.00,Location Rent,,Metro Office Park
+2025-12-10,Vending Collections - Location A,475.00,Revenue,SN-2024-001,Metro Office Park
+2025-12-11,Vending Collections - Location H,225.00,Revenue,SN-2024-008,Downtown Library
+2025-12-12,Machine Repair - SN-2024-003,-185.00,Repairs,,
+2025-12-12,Vending Collections - Location C,260.00,Revenue,SN-2024-003,Riverside Hospital
+2025-12-13,Vending Collections - Location D,205.00,Revenue,SN-2024-004,Lakeside Mall
+2025-12-14,Wholesale Candy Restock,-175.00,Inventory,,
+2025-12-15,Vending Collections - Location A,450.00,Revenue,SN-2024-001,Metro Office Park
+2025-12-15,Vending Collections - Location E,410.00,Revenue,SN-2024-005,Tech Campus West
+2025-12-16,Fuel - Route 2,-52.00,Fuel,,
+2025-12-16,Vending Collections - Location B,320.00,Revenue,SN-2024-002,FitZone Gym
+2025-12-17,Vending Collections - Location F,140.00,Revenue,SN-2024-006,Community Center
+2025-12-18,Insurance Payment,-280.00,Insurance,,
+2025-12-18,Vending Collections - Location G,310.00,Revenue,SN-2024-007,Airport Terminal B
+2025-12-19,Vending Collections - Location H,235.00,Revenue,SN-2024-008,Downtown Library
+2025-12-20,Vending Collections - Location A,530.00,Revenue,SN-2024-001,Metro Office Park
+2025-12-20,Beverage Distributor Invoice,-295.00,Inventory,,
+2025-12-21,Vending Collections - Location C,245.00,Revenue,SN-2024-003,Riverside Hospital
+2025-12-22,Vending Collections - Location D,180.00,Revenue,SN-2024-004,Lakeside Mall
+2025-12-23,Vending Collections - Location B,355.00,Revenue,SN-2024-002,FitZone Gym
+2025-12-24,Fuel - Route 1,-48.00,Fuel,,
+2025-12-26,Vending Collections - Location E,380.00,Revenue,SN-2024-005,Tech Campus West
+2025-12-27,Vending Collections - Location A,495.00,Revenue,SN-2024-001,Metro Office Park
+2025-12-28,Wholesale Snack Restock,-225.00,Inventory,,
+2025-12-29,Vending Collections - Location G,290.00,Revenue,SN-2024-007,Airport Terminal B
+2025-12-30,Location Rent - FitZone Gym,-125.00,Location Rent,,FitZone Gym
+2025-12-31,Vending Collections - Location F,160.00,Revenue,SN-2024-006,Community Center
+2026-01-02,Vending Collections - Location A,520.00,Revenue,SN-2024-001,Metro Office Park
+2026-01-02,Beverage Distributor Invoice,-310.00,Inventory,,
+2026-01-03,Vending Collections - Location B,335.00,Revenue,SN-2024-002,FitZone Gym
+2026-01-04,Vending Collections - Location C,270.00,Revenue,SN-2024-003,Riverside Hospital
+2026-01-04,Fuel - Route 2,-55.00,Fuel,,
+2026-01-05,Vending Collections - Location D,200.00,Revenue,SN-2024-004,Lakeside Mall
+2026-01-06,Vending Collections - Location E,425.00,Revenue,SN-2024-005,Tech Campus West
+2026-01-06,Payment,120.00,,,
+2026-01-07,Vending Collections - Location H,240.00,Revenue,SN-2024-008,Downtown Library
+2026-01-08,Machine Repair - SN-2024-006,-145.00,Repairs,,
+2026-01-08,Vending Collections - Location A,505.00,Revenue,SN-2024-001,Metro Office Park
+2026-01-09,Vending Collections - Location G,300.00,Revenue,SN-2024-007,Airport Terminal B
+2026-01-10,Location Rent - Metro Office Park,-150.00,Location Rent,,Metro Office Park
+2026-01-10,Wholesale Candy Restock,-190.00,Inventory,,
+2026-01-11,Vending Collections - Location B,350.00,Revenue,SN-2024-002,FitZone Gym
+2026-01-12,Vending Collections - Location F,170.00,Revenue,SN-2024-006,Community Center
+2026-01-13,Transfer,250.00,,,
+2026-01-13,Vending Collections - Location C,255.00,Revenue,SN-2024-003,Riverside Hospital
+2026-01-14,Fuel - Route 1,-42.00,Fuel,,
+2026-01-15,Vending Collections - Location A,490.00,Revenue,SN-2024-001,Metro Office Park
+2026-01-15,Vending Collections - Location D,215.00,Revenue,SN-2024-004,Lakeside Mall
+2026-01-16,Beverage Distributor Invoice,-325.00,Inventory,,
+2026-01-17,Vending Collections - Location E,400.00,Revenue,SN-2024-005,Tech Campus West
+2026-01-18,Insurance Payment,-280.00,Insurance,,
+2026-01-19,Vending Collections - Location G,285.00,Revenue,SN-2024-007,Airport Terminal B
+2026-01-20,Misc,-75.00,,,
+2026-01-20,Vending Collections - Location H,230.00,Revenue,SN-2024-008,Downtown Library
+2026-01-21,Vending Collections - Location A,515.00,Revenue,SN-2024-001,Metro Office Park
+2026-01-22,Wholesale Snack Restock,-200.00,Inventory,,
+2026-01-23,Vending Collections - Location B,340.00,Revenue,SN-2024-002,FitZone Gym
+2026-01-24,Vending Collections - Location C,265.00,Revenue,SN-2024-003,Riverside Hospital
+2026-01-25,Machine Repair - SN-2024-001,-220.00,Repairs,,
+2026-01-26,Payment,-95.00,,,
+2026-01-27,Vending Collections - Location F,150.00,Revenue,SN-2024-006,Community Center
+2026-01-28,Fuel - Route 2,-50.00,Fuel,,
+2026-01-29,Vending Collections - Location D,195.00,Revenue,SN-2024-004,Lakeside Mall
+2026-01-30,Location Rent - FitZone Gym,-125.00,Location Rent,,FitZone Gym
+2026-02-01,Vending Collections - Location A,540.00,Revenue,SN-2024-001,Metro Office Park
+2026-02-01,Beverage Distributor Invoice,-350.00,Inventory,,
+2026-02-02,Vending Collections - Location E,430.00,Revenue,SN-2024-005,Tech Campus West
+2026-02-03,Vending Collections - Location B,360.00,Revenue,SN-2024-002,FitZone Gym
+2026-02-01,Vending Collections - Location A,540.00,Revenue,SN-2024-001,Metro Office Park
+2026-02-04,Vending Collections - Location G,295.00,Revenue,SN-2024-007,Airport Terminal B
+2026-02-05,Wholesale Candy Restock,-180.00,Inventory,,
+2026-02-05,Vending Collections - Location H,245.00,Revenue,SN-2024-008,Downtown Library
+2026-02-06,Vending Collections - Location C,250.00,Revenue,SN-2024-003,Riverside Hospital
+2026-01-18,Insurance Payment,-280.00,Insurance,,
+2026-02-07,Fuel - Route 1,-47.00,Fuel,,
+2026-02-08,Vending Collections - Location A,500.00,Revenue,SN-2024-001,Metro Office Park
+2026-02-08,Vending Collections - Location D,210.00,Revenue,SN-2024-004,Lakeside Mall
+2026-02-09,Machine Repair - SN-2024-005,-160.00,Repairs,,
+2026-02-10,Location Rent - Metro Office Park,-150.00,Location Rent,,Metro Office Park
+2026-02-03,Vending Collections - Location B,360.00,Revenue,SN-2024-002,FitZone Gym
+2026-02-11,Vending Collections - Location E,415.00,Revenue,SN-2024-005,Tech Campus West
+2026-02-12,Vending Collections - Location F,165.00,Revenue,SN-2024-006,Community Center
+2026-02-12,Wholesale Snack Restock,-225.00,Inventory,,
+2026-02-13,Vending Collections - Location G,305.00,,SN-2024-007,Airport Terminal B
+2026-02-14,Vending Collections - Location A,525.00,,SN-2024-001,Metro Office Park
+2026-02-15,Beverage Distributor Invoice,-315.00,,,,
+2026-02-15,Vending Collections - Location H,220.00,,SN-2024-008,Downtown Library

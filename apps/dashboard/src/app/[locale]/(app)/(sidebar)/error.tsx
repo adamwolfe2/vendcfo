@@ -12,9 +12,10 @@ export default function SidebarErrorPage({
   return (
     <div className="h-[calc(100vh-200px)] w-full flex items-center justify-center">
       <div className="max-w-md w-full text-center px-4">
-        <h2 className="font-medium mb-4">Something went wrong</h2>
+        <h2 className="font-medium mb-4">Unable to load this page</h2>
         <p className="text-sm text-[#878787] mb-6">
-          Could not load page data. Please try again.
+          The dashboard could not fetch the data for this page. Check your
+          internet connection and try again.
         </p>
 
         {error.digest && (

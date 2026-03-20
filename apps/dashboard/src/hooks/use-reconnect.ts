@@ -74,7 +74,7 @@ export function useReconnect({
       toast({
         duration: 3500,
         variant: "error",
-        title: "Something went wrong please try again.",
+        title: "Bank connection failed. Please try again.",
       });
     },
   });
@@ -96,7 +96,7 @@ export function useReconnect({
       toast({
         duration: 3500,
         variant: "error",
-        title: "Something went wrong please try again.",
+        title: "Bank connection failed. Please try again.",
       });
     },
   });
@@ -161,7 +161,7 @@ export function useReconnect({
       toast({
         duration: 3500,
         variant: "error",
-        title: "Something went wrong please try again.",
+        title: "Bank connection failed. Please try again.",
       });
     }
   }, [status]);

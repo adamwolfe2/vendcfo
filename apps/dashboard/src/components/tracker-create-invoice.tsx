@@ -123,7 +123,7 @@ export function TrackerCreateInvoice({ projectId }: Props) {
       },
       onError: (error) => {
         let title = "Failed to create invoice";
-        let description = "An error occurred while creating the invoice.";
+        let description = "The invoice could not be created. Check your project settings and try again.";
 
         // Handle specific error codes
         switch (error.message) {

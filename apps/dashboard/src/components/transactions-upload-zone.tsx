@@ -187,7 +187,7 @@ export function TransactionsUploadZone({ children }: Props) {
       toast({
         duration: 2500,
         variant: "error",
-        title: "Something went wrong please try again.",
+        title: "Transaction import failed. Check the file format and try again.",
       });
     }
   };

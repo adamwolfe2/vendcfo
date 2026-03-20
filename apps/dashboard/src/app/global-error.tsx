@@ -24,11 +24,11 @@ export default function GlobalError({
       <body className="bg-background text-foreground antialiased">
         <div className="min-h-screen flex items-center justify-center">
           <div className="max-w-md w-full text-center px-4">
-            <h2 className="font-medium mb-4">Something went wrong</h2>
+            <h2 className="font-medium mb-4">VendCFO encountered an unexpected error</h2>
             <p className="text-sm text-[#878787] mb-6">
-              We've been notified and are looking into it.
+              The page failed to render. This is usually a temporary issue.
               <br />
-              If this issue persists, please reach out to our support team.
+              Try refreshing the page, or contact support if it keeps happening.
             </p>
 
             <CopyInput value={SUPPORT_EMAIL} />
