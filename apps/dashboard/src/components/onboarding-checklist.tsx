@@ -1,7 +1,7 @@
 "use client";
 
 import { cn } from "@vendcfo/ui/cn";
-import { CheckCircle2, ChevronDown, ChevronUp, Circle, X } from "lucide-react";
+import { ArrowRight, CheckCircle2, ChevronDown, ChevronUp, Circle, X } from "lucide-react";
 import Link from "next/link";
 import { useCallback, useEffect, useState } from "react";
 
@@ -199,7 +199,7 @@ export function OnboardingChecklist({ isExpanded }: OnboardingChecklistProps) {
               return (
                 <div
                   key={step.id}
-                  className="flex items-center gap-2 group/step"
+                  className="flex items-center gap-2 group/step rounded-md hover:bg-[#f0f0f0] transition-colors px-1"
                 >
                   <button
                     type="button"
@@ -214,7 +214,7 @@ export function OnboardingChecklist({ isExpanded }: OnboardingChecklistProps) {
                   <Link
                     href={step.href}
                     className={cn(
-                      "text-[11px] leading-tight py-2 transition-colors truncate min-h-[36px] flex items-center",
+                      "flex-1 text-[11px] leading-tight py-2 transition-colors truncate min-h-[36px] flex items-center",
                       done
                         ? "text-[#aaa] line-through"
                         : "text-[#666] hover:text-[#333] group-hover/step:text-[#333]",
@@ -222,6 +222,12 @@ export function OnboardingChecklist({ isExpanded }: OnboardingChecklistProps) {
                   >
                     {step.label}
                   </Link>
+                  {!done && (
+                    <ArrowRight
+                      size={14}
+                      className="flex-shrink-0 text-[#ccc] opacity-0 -translate-x-2 group-hover/step:opacity-100 group-hover/step:translate-x-0 transition-all duration-200"
+                    />
+                  )}
                 </div>
               );
             })}

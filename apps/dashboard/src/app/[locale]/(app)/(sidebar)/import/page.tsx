@@ -397,13 +397,23 @@ export default function ImportPage() {
       const data = await res.json();
       setMappings(data.mappings || []);
     } catch (err) {
-      // Fall back to empty mappings so user can map manually
+      // AI failed — fall back to fuzzy keyword matching
       setMappings(
-        parsedData.headers.map((h) => ({
-          header: h,
-          field: "skip",
-          confidence: 0,
-        })),
+        parsedData.headers.map((h) => {
+          const lower = h.toLowerCase().trim();
+          // Fuzzy match common column names to system fields
+          if (/date|time|day|when|period/i.test(lower)) return { header: h, field: "date", confidence: 0.8 };
+          if (/amount|total|sum|price|value|cost|revenue|sales/i.test(lower)) return { header: h, field: "amount", confidence: 0.8 };
+          if (/desc|description|memo|note|detail|name|narration/i.test(lower)) return { header: h, field: "name", confidence: 0.7 };
+          if (/category|type|class|group|dept/i.test(lower)) return { header: h, field: "category", confidence: 0.7 };
+          if (/method|payment|pay.*type|instrument/i.test(lower)) return { header: h, field: "method", confidence: 0.6 };
+          if (/vendor|payee|counterparty|merchant|supplier|customer/i.test(lower)) return { header: h, field: "counterparty", confidence: 0.6 };
+          if (/account|bank|acct/i.test(lower)) return { header: h, field: "account", confidence: 0.6 };
+          if (/ref|reference|check.*no|number|id/i.test(lower)) return { header: h, field: "reference", confidence: 0.5 };
+          if (/machine|serial|sn|unit/i.test(lower)) return { header: h, field: "skip", confidence: 0.3 };
+          if (/location|site|place|address/i.test(lower)) return { header: h, field: "skip", confidence: 0.3 };
+          return { header: h, field: "skip", confidence: 0 };
+        }),
       );
     } finally {
       setIsMappingLoading(false);
