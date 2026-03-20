@@ -89,7 +89,7 @@ export function BetaFeedback() {
       </button>
 
       <Dialog open={open} onOpenChange={handleOpenChange}>
-        <DialogContent className="max-w-[100vw] h-[100dvh] sm:h-auto sm:max-w-md rounded-none sm:rounded-lg">
+        <DialogContent className="max-w-[100vw] h-[100dvh] sm:h-auto sm:max-w-md rounded-none sm:rounded-lg p-6 sm:p-8">
           <DialogHeader>
             <DialogTitle className="text-lg font-semibold">
               Share Your Feedback
