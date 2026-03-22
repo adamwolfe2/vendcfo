@@ -364,7 +364,7 @@ export function ProductAutocomplete({
           "text-primary leading-[18px] invoice-editor overflow-hidden",
           "placeholder:font-sans placeholder:text-muted-foreground",
           showPlaceholder &&
-            "bg-[repeating-linear-gradient(-60deg,#DBDBDB,#DBDBDB_1px,transparent_1px,transparent_5px)] dark:bg-[repeating-linear-gradient(-60deg,#2C2C2C,#2C2C2C_1px,transparent_1px,transparent_5px)]",
+            "bg-[repeating-linear-gradient(-60deg,#DBDBDB,#DBDBDB_1px,transparent_1px,transparent_5px)]",
         )}
       />
 

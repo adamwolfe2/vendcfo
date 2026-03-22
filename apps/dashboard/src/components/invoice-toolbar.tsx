@@ -163,7 +163,7 @@ export default function InvoiceToolbar({
       >
         <div
           data-invoice-toolbar
-          className="backdrop-filter backdrop-blur-lg dark:bg-[#1A1A1A]/80 bg-[#F6F6F3]/80 rounded-full px-2 py-3 h-10 flex items-center justify-center border-[0.5px] border-border gap-1"
+          className="backdrop-filter backdrop-blur-lg bg-[#F6F6F3]/80 rounded-full px-2 py-3 h-10 flex items-center justify-center border-[0.5px] border-border gap-1"
         >
           <TooltipProvider delayDuration={0}>
             <Tooltip>

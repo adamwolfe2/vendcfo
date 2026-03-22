@@ -208,8 +208,8 @@ export function MatchTransaction() {
       <Combobox
         key={data?.transaction?.id}
         placeholder="Select a transaction"
-        className="w-full bg-transparent px-12 h-12 border border-border dark:border-none"
-        classNameList="bottom-[50px] border border-border dark:border-none max-h-[270px]"
+        className="w-full bg-transparent px-12 h-12 border border-border"
+        classNameList="bottom-[50px] border border-border max-h-[270px]"
         onValueChange={handleChange}
         value={selectedValue}
         options={options ?? []}

@@ -145,7 +145,7 @@ export default async function Page(props: Props) {
         invoiceWidth={width}
       >
         <div className="pb-24 md:pb-0">
-          <div className="shadow-[0_24px_48px_-12px_rgba(0,0,0,0.3)] dark:shadow-[0_24px_48px_-12px_rgba(0,0,0,0.6)]">
+          <div className="shadow-[0_24px_48px_-12px_rgba(0,0,0,0.3)]">
             <HtmlTemplate data={invoice} width={width} height={height} />
           </div>
         </div>

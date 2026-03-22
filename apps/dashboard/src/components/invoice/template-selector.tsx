@@ -115,9 +115,9 @@ export function TemplateSelector() {
                 className={cn(
                   "text-xs",
                   currentTemplateId === template.id
-                    ? "dark:bg-[#131313] text-primary"
+                    ? "text-primary"
                     : "text-[#666]",
-                  "hover:dark:bg-[#131313]",
+                  "",
                 )}
               >
                 <span className="flex items-center gap-1">

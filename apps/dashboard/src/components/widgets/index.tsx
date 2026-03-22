@@ -28,7 +28,7 @@ function SuggestedActionsSkeleton() {
         {skeletonWidths.map((width) => (
           <Skeleton
             key={`suggested-actions-skeleton-${width}`}
-            className={`${width} h-[34px] border border-[#e6e6e6] dark:border-[#1d1d1d] flex-shrink-0`}
+            className={`${width} h-[34px] border border-[#e6e6e6] flex-shrink-0`}
           />
         ))}
       </div>

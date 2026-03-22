@@ -165,10 +165,6 @@ export const LiveWaveform = ({
             }
 
             // Notify parent that audio context is ready
-            console.log(
-              "LiveWaveform: Notifying parent of audio context, state:",
-              audioContext.state,
-            );
             onAudioContextReady?.(audioContext);
 
             // Ensure context is running before notifying again
@@ -176,9 +172,6 @@ export const LiveWaveform = ({
               audioContext
                 .resume()
                 .then(() => {
-                  console.log(
-                    "LiveWaveform: Audio context resumed, notifying parent again",
-                  );
                   onAudioContextReady?.(audioContext);
                 })
                 .catch(console.error);

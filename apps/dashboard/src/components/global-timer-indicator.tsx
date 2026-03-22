@@ -19,7 +19,7 @@ export function GlobalTimerIndicator({ className }: GlobalTimerIndicatorProps) {
   return (
     <div
       className={cn(
-        "flex items-center gap-2 px-3 py-1.5 bg-green-50 dark:bg-green-950 border border-green-200 dark:border-green-800 rounded-md text-sm",
+        "flex items-center gap-2 px-3 py-1.5 bg-green-50 border border-green-200 rounded-md text-sm",
         className,
       )}
     >
@@ -27,14 +27,14 @@ export function GlobalTimerIndicator({ className }: GlobalTimerIndicatorProps) {
         <div className="relative">
           <Icons.PlayOutline
             size={14}
-            className="text-green-600 dark:text-green-400"
+            className="text-green-600"
           />
           <span className="absolute -top-0.5 -right-0.5 h-2 w-2 bg-green-500 rounded-full animate-pulse" />
         </div>
-        <span className="text-green-700 dark:text-green-300">
+        <span className="text-green-700">
           {secondsToHoursAndMinutes(elapsedTime)}
         </span>
-        <span className="text-green-600 dark:text-green-400 truncate max-w-[120px]">
+        <span className="text-green-600 truncate max-w-[120px]">
           {currentProject}
         </span>
       </div>

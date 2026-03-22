@@ -116,7 +116,7 @@ export const transformTransactionName = (transaction: Transaction) => {
     return capitalCase(remittanceInformation);
   }
 
-  console.log("No transaction name", transaction);
+  console.warn("No transaction name found");
 
   // When there is no name, we use the proprietary bank transaction code (Service Fee)
   if (transaction.proprietaryBankTransactionCode) {

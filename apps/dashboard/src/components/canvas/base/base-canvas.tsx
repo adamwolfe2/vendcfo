@@ -7,7 +7,7 @@ export function BaseCanvas({ children }: { children: React.ReactNode }) {
     <div
       className={cn(
         "fixed z-30 scrollbar-hide overflow-y-auto",
-        "bg-white dark:bg-[#0c0c0c] border border-[#e6e6e6] dark:border-[#1d1d1d]",
+        "bg-white border border-[#e6e6e6]",
         "overflow-x-hidden transition-transform duration-300 ease-in-out",
         "translate-x-0",
         "top-[88px] bottom-0 left-0 right-0",

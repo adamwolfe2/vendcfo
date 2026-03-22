@@ -183,7 +183,7 @@ export const TrackerEvents = memo(
                 className={cn(
                   "text-xs p-1 w-full text-left min-h-[23px] flex items-center overflow-hidden transition-colors",
                   // Same styling for all events
-                  "bg-[#F0F0F0] dark:bg-[#1D1D1D] text-[#606060] dark:text-[#878787]",
+                  "bg-[#F0F0F0] text-[#606060]",
                   (entry.isContinuation || onEventClick) && "cursor-pointer", // Show cursor for continuation events or when event click is enabled
                   isToday && "!bg-background",
                 )}

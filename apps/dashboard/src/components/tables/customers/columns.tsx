@@ -210,7 +210,7 @@ export const columns: ColumnDef<Customer>[] = [
       skeleton: { type: "avatar-text", width: "w-32" },
       headerLabel: "Name",
       className:
-        "w-[320px] min-w-[240px] md:sticky md:left-0 bg-background group-hover:bg-[#F2F1EF] group-hover:dark:bg-[#0f0f0f] z-20",
+        "w-[320px] min-w-[240px] md:sticky md:left-0 bg-background group-hover:bg-[#F2F1EF] z-20",
     },
     cell: ({ row }) => (
       <NameCell name={row.original.name} website={row.original.website} />
@@ -508,7 +508,7 @@ export const columns: ColumnDef<Customer>[] = [
       skeleton: { type: "icon" },
       headerLabel: "Actions",
       className:
-        "text-right sticky right-0 bg-background group-hover:bg-[#F2F1EF] group-hover:dark:bg-[#0f0f0f] z-30 justify-center !border-l !border-border",
+        "text-right sticky right-0 bg-background group-hover:bg-[#F2F1EF] z-30 justify-center !border-l !border-border",
     },
     cell: ({ row, table }) => (
       <ActionsCell

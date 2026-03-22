@@ -146,7 +146,7 @@ export function MetricsGrid({
         {/* Drag Overlay */}
         <DragOverlay>
           {activeId ? (
-            <div className="shadow-[0_4px_12px_rgba(0,0,0,0.15)] dark:shadow-[0_10px_30px_rgba(0,0,0,0.4)] bg-background cursor-grabbing opacity-90 transform-gpu will-change-transform border border-border p-6 rounded">
+            <div className="shadow-[0_4px_12px_rgba(0,0,0,0.15)] bg-background cursor-grabbing opacity-90 transform-gpu will-change-transform border border-border p-6 rounded">
               {renderChart(activeId as ChartId, 0)}
             </div>
           ) : null}

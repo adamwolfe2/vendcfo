@@ -51,7 +51,7 @@ export const columns: ColumnDef<Invoice>[] = [
       sticky: true,
       skeleton: { type: "checkbox" },
       className:
-        "w-[50px] min-w-[50px] md:sticky md:left-0 bg-background group-hover:bg-[#F2F1EF] group-hover:dark:bg-[#0f0f0f] z-20",
+        "w-[50px] min-w-[50px] md:sticky md:left-0 bg-background group-hover:bg-[#F2F1EF] z-20",
     },
     cell: ({ row }) => (
       <Checkbox
@@ -80,7 +80,7 @@ export const columns: ColumnDef<Invoice>[] = [
       headerLabel: "Invoice no.",
       sortField: "invoice_number",
       className:
-        "w-[180px] min-w-[140px] md:sticky md:left-[50px] bg-background group-hover:bg-[#F2F1EF] group-hover:dark:bg-[#0f0f0f] z-20",
+        "w-[180px] min-w-[140px] md:sticky md:left-[50px] bg-background group-hover:bg-[#F2F1EF] z-20",
     },
     cell: ({ row }) => (
       <span
@@ -640,7 +640,7 @@ export const columns: ColumnDef<Invoice>[] = [
       skeleton: { type: "icon" },
       headerLabel: "Actions",
       className:
-        "w-[100px] min-w-[80px] md:sticky md:right-0 bg-background group-hover:bg-[#F2F1EF] group-hover:dark:bg-[#0f0f0f] z-30 justify-center !border-l !border-border",
+        "w-[100px] min-w-[80px] md:sticky md:right-0 bg-background group-hover:bg-[#F2F1EF] z-30 justify-center !border-l !border-border",
     },
     cell: ({ row }) => {
       return <ActionsMenu row={row.original} />;

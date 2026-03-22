@@ -36,8 +36,8 @@ export function SuggestedActionsButton() {
         className={cn(
           "transition-colors",
           showCommands
-            ? "text-black dark:text-white"
-            : "text-[#707070] hover:text-[#999999] dark:text-[#666666] dark:hover:text-[#999999]",
+            ? "text-black"
+            : "text-[#707070] hover:text-[#999999]",
         )}
       />
     </button>

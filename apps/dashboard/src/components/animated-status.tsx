@@ -62,7 +62,7 @@ export function AnimatedStatus({
               duration: fadeDuration,
               ease: "easeInOut",
             }}
-            className="flex items-center gap-1.5 text-muted-foreground dark:text-[#666666]"
+            className="flex items-center gap-1.5 text-muted-foreground"
           >
             {Icon && <Icon className="h-3 w-3 shrink-0 text-current" />}
             <TextShimmer className={className} duration={shimmerDuration}>

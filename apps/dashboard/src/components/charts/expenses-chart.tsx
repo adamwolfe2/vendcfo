@@ -87,8 +87,8 @@ const pieTooltipFormatter = (
         maximumFractionDigits: 0,
       }) || `${currency}${data.value.toLocaleString()}`;
     return (
-      <div className="p-2 bg-white dark:bg-[#0c0c0c] border border-gray-200 dark:border-[#1d1d1d] text-black dark:text-white text-xs">
-        <p className="mb-1 text-gray-500 dark:text-[#666666]">
+      <div className="p-2 bg-white border border-gray-200 text-black text-xs">
+        <p className="mb-1 text-gray-500">
           {data.payload.name}
         </p>
         <p>{formattedValue}</p>

@@ -43,7 +43,7 @@ import {
 // handles the full loading state with title/icon once the chunk loads.
 function WidgetPlaceholder() {
   return (
-    <div className="dark:bg-[#0c0c0c] bg-background border dark:border-[#1d1d1d] border-[#e6e6e6] h-[210px]" />
+    <div className="bg-background border border-[#e6e6e6] h-[210px]" />
   );
 }
 
@@ -232,7 +232,7 @@ function SortableCard({
       style={style}
       className={`${className} ${wiggleClass || ""} ${
         isDragging
-          ? "opacity-100 z-50 shadow-[0_4px_12px_rgba(0,0,0,0.15)] dark:shadow-[0_10px_30px_rgba(0,0,0,0.4)] scale-105"
+          ? "opacity-100 z-50 shadow-[0_4px_12px_rgba(0,0,0,0.15)] scale-105"
           : ""
       } relative`}
       {...attributes}
@@ -605,7 +605,7 @@ export function WidgetsGrid() {
         {/* Drag Overlay */}
         <DragOverlay>
           {activeId ? (
-            <div className="shadow-[0_4px_12px_rgba(0,0,0,0.15)] dark:shadow-[0_10px_30px_rgba(0,0,0,0.4)] bg-background cursor-grabbing opacity-90 transform-gpu will-change-transform">
+            <div className="shadow-[0_4px_12px_rgba(0,0,0,0.15)] bg-background cursor-grabbing opacity-90 transform-gpu will-change-transform">
               <ErrorBoundary fallback={<WidgetErrorFallback />}>
                 <WidgetComponent />
               </ErrorBoundary>

@@ -84,7 +84,7 @@ export function ExpensesCard({
         </p>
         <div className="flex items-center gap-4 mt-2">
           <div className="flex gap-2 items-center">
-            <div className="w-2 h-2 rounded-full bg-[#C6C6C6] dark:bg-[#606060]" />
+            <div className="w-2 h-2 rounded-full bg-[#C6C6C6]" />
             <span className="text-xs text-muted-foreground">Total</span>
           </div>
           <div className="flex gap-2 items-center">

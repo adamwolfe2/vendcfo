@@ -57,9 +57,9 @@ export function CanvasChart({
                   // Solid line - use color prop or default to black/white
                   const bgColor =
                     lineColor === "white" || lineColor === "#ffffff"
-                      ? "bg-black dark:bg-white"
+                      ? "bg-black"
                       : lineColor === "black" || lineColor === "#000000"
-                        ? "bg-black dark:bg-white"
+                        ? "bg-black"
                         : `bg-[${lineColor}]`;
                   lineElement = (
                     <div className={`w-4 h-0.5 ${bgColor} flex-shrink-0`} />
@@ -71,13 +71,13 @@ export function CanvasChart({
                   lineElement = (
                     <>
                       <div
-                        className="w-4 h-0.5 flex-shrink-0 dark:hidden"
+                        className="w-4 h-0.5 flex-shrink-0"
                         style={{
                           backgroundImage: `repeating-linear-gradient(90deg, ${dashColor} 0px, ${dashColor} 4px, transparent 4px, transparent 8px)`,
                         }}
                       />
                       <div
-                        className="w-4 h-0.5 flex-shrink-0 hidden dark:block"
+                        className="w-4 h-0.5 flex-shrink-0 hidden"
                         style={{
                           backgroundImage: `repeating-linear-gradient(90deg, ${darkDashColor} 0px, ${darkDashColor} 4px, transparent 4px, transparent 8px)`,
                         }}
@@ -87,7 +87,7 @@ export function CanvasChart({
                 } else {
                   // Reference line style (solid grey)
                   lineElement = (
-                    <div className="w-4 h-0.5 bg-[#cccccc] dark:bg-[#999999] flex-shrink-0" />
+                    <div className="w-4 h-0.5 bg-[#cccccc] flex-shrink-0" />
                   );
                 }
 
@@ -97,7 +97,7 @@ export function CanvasChart({
                     className="flex gap-2 items-center"
                   >
                     {lineElement}
-                    <span className="text-[12px] text-[#707070] dark:text-[#666666] leading-none">
+                    <span className="text-[12px] text-[#707070] leading-none">
                       {item.label}
                     </span>
                   </div>
@@ -142,7 +142,7 @@ export function CanvasChart({
                     className={getSquareClasses(item.type, item.color)}
                     style={getSquareStyle(item.type, item.color)}
                   />
-                  <span className="text-[12px] text-[#707070] dark:text-[#666666] leading-none">
+                  <span className="text-[12px] text-[#707070] leading-none">
                     {item.label}
                   </span>
                 </div>

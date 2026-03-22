@@ -149,33 +149,33 @@ export function BalanceSheetCanvas() {
             <div className="mb-6">
               {/* Title */}
               <div className="flex items-center justify-between mb-4">
-                <h4 className="text-[18px] font-normal font-serif text-black dark:text-white">
+                <h4 className="text-[18px] font-normal font-serif text-black">
                   Balance Sheet
                 </h4>
 
                 {asOf && (
-                  <div className="text-[12px] text-[#707070] dark:text-[#666666]">
+                  <div className="text-[12px] text-[#707070]">
                     As of {asOf}
                   </div>
                 )}
               </div>
 
               {/* Balance Sheet Table */}
-              <div className="border bg-white dark:bg-[#0c0c0c] border-[#e6e6e6] dark:border-[#1d1d1d] rounded-none">
+              <div className="border bg-white border-[#e6e6e6] rounded-none">
                 {/* Header */}
-                <div className="flex border-b border-[#e6e6e6] dark:border-[#1d1d1d]">
-                  <div className="w-1/2 px-4 py-3 text-[12px] font-medium text-[#707070] dark:text-[#666666]">
+                <div className="flex border-b border-[#e6e6e6]">
+                  <div className="w-1/2 px-4 py-3 text-[12px] font-medium text-[#707070]">
                     ASSETS
                   </div>
-                  <div className="w-1/2 px-4 py-3 text-[12px] font-medium text-right text-[#707070] dark:text-[#666666]">
+                  <div className="w-1/2 px-4 py-3 text-[12px] font-medium text-right text-[#707070]">
                     Amount
                   </div>
                 </div>
 
                 {/* Current Assets */}
-                <div className="border-b border-[#e6e6e6] dark:border-[#1d1d1d]">
-                  <div className="px-4 py-2 bg-[#f7f7f7] dark:bg-[#131313]">
-                    <div className="text-[12px] font-medium text-black dark:text-white">
+                <div className="border-b border-[#e6e6e6]">
+                  <div className="px-4 py-2 bg-[#f7f7f7]">
+                    <div className="text-[12px] font-medium text-black">
                       Current Assets
                     </div>
                   </div>
@@ -183,7 +183,7 @@ export function BalanceSheetCanvas() {
                     <TooltipProvider delayDuration={0}>
                       <Tooltip>
                         <TooltipTrigger asChild>
-                          <div className="text-[12px] pl-4 text-[#707070] dark:text-[#666666] cursor-help">
+                          <div className="text-[12px] pl-4 text-[#707070] cursor-help">
                             Cash and Cash Equivalents
                           </div>
                         </TooltipTrigger>
@@ -195,7 +195,7 @@ export function BalanceSheetCanvas() {
                         </TooltipContent>
                       </Tooltip>
                     </TooltipProvider>
-                    <div className="text-[12px] font-sans text-black dark:text-white">
+                    <div className="text-[12px] font-sans text-black">
                       {formatAmount({
                         currency,
                         amount: balanceSheet.assets.current.cash,
@@ -207,7 +207,7 @@ export function BalanceSheetCanvas() {
                     <TooltipProvider delayDuration={0}>
                       <Tooltip>
                         <TooltipTrigger asChild>
-                          <div className="text-[12px] pl-4 text-[#707070] dark:text-[#666666] cursor-help">
+                          <div className="text-[12px] pl-4 text-[#707070] cursor-help">
                             Accounts Receivable
                           </div>
                         </TooltipTrigger>
@@ -219,7 +219,7 @@ export function BalanceSheetCanvas() {
                         </TooltipContent>
                       </Tooltip>
                     </TooltipProvider>
-                    <div className="text-[12px] font-sans text-black dark:text-white">
+                    <div className="text-[12px] font-sans text-black">
                       {formatAmount({
                         currency,
                         amount: balanceSheet.assets.current.accountsReceivable,
@@ -231,7 +231,7 @@ export function BalanceSheetCanvas() {
                     <TooltipProvider delayDuration={0}>
                       <Tooltip>
                         <TooltipTrigger asChild>
-                          <div className="text-[12px] pl-4 text-[#707070] dark:text-[#666666] cursor-help">
+                          <div className="text-[12px] pl-4 text-[#707070] cursor-help">
                             {balanceSheet.assets.current.inventoryName ||
                               "Inventory (Cost of Goods Sold)"}
                           </div>
@@ -244,7 +244,7 @@ export function BalanceSheetCanvas() {
                         </TooltipContent>
                       </Tooltip>
                     </TooltipProvider>
-                    <div className="text-[12px] font-sans text-black dark:text-white">
+                    <div className="text-[12px] font-sans text-black">
                       {formatAmount({
                         currency,
                         amount: balanceSheet.assets.current.inventory,
@@ -256,7 +256,7 @@ export function BalanceSheetCanvas() {
                     <TooltipProvider delayDuration={0}>
                       <Tooltip>
                         <TooltipTrigger asChild>
-                          <div className="text-[12px] pl-4 text-[#707070] dark:text-[#666666] cursor-help">
+                          <div className="text-[12px] pl-4 text-[#707070] cursor-help">
                             {balanceSheet.assets.current.prepaidExpensesName ||
                               "Prepaid Expenses"}
                           </div>
@@ -269,7 +269,7 @@ export function BalanceSheetCanvas() {
                         </TooltipContent>
                       </Tooltip>
                     </TooltipProvider>
-                    <div className="text-[12px] font-sans text-black dark:text-white">
+                    <div className="text-[12px] font-sans text-black">
                       {formatAmount({
                         currency,
                         amount: balanceSheet.assets.current.prepaidExpenses,
@@ -277,11 +277,11 @@ export function BalanceSheetCanvas() {
                       })}
                     </div>
                   </div>
-                  <div className="px-4 py-2 flex justify-between border-t border-[#e6e6e6] dark:border-[#1d1d1d] bg-[#f7f7f7] dark:bg-[#131313]">
-                    <div className="text-[12px] font-medium text-black dark:text-white">
+                  <div className="px-4 py-2 flex justify-between border-t border-[#e6e6e6] bg-[#f7f7f7]">
+                    <div className="text-[12px] font-medium text-black">
                       Total Current Assets
                     </div>
-                    <div className="text-[12px] font-sans font-medium text-black dark:text-white">
+                    <div className="text-[12px] font-sans font-medium text-black">
                       {formatAmount({
                         currency,
                         amount: balanceSheet.assets.current.total,
@@ -292,9 +292,9 @@ export function BalanceSheetCanvas() {
                 </div>
 
                 {/* Non-Current Assets */}
-                <div className="border-b border-[#e6e6e6] dark:border-[#1d1d1d]">
-                  <div className="px-4 py-2 bg-[#f7f7f7] dark:bg-[#131313]">
-                    <div className="text-[12px] font-medium text-black dark:text-white">
+                <div className="border-b border-[#e6e6e6]">
+                  <div className="px-4 py-2 bg-[#f7f7f7]">
+                    <div className="text-[12px] font-medium text-black">
                       Non-Current Assets
                     </div>
                   </div>
@@ -302,7 +302,7 @@ export function BalanceSheetCanvas() {
                     <TooltipProvider delayDuration={0}>
                       <Tooltip>
                         <TooltipTrigger asChild>
-                          <div className="text-[12px] pl-4 text-[#707070] dark:text-[#666666] cursor-help">
+                          <div className="text-[12px] pl-4 text-[#707070] cursor-help">
                             {balanceSheet.assets.nonCurrent.fixedAssetsName ||
                               "Fixed Assets (Equipment)"}
                           </div>
@@ -315,7 +315,7 @@ export function BalanceSheetCanvas() {
                         </TooltipContent>
                       </Tooltip>
                     </TooltipProvider>
-                    <div className="text-[12px] font-sans text-black dark:text-white">
+                    <div className="text-[12px] font-sans text-black">
                       {formatAmount({
                         currency,
                         amount: balanceSheet.assets.nonCurrent.fixedAssets,
@@ -327,7 +327,7 @@ export function BalanceSheetCanvas() {
                     <TooltipProvider delayDuration={0}>
                       <Tooltip>
                         <TooltipTrigger asChild>
-                          <div className="text-[12px] pl-4 text-[#707070] dark:text-[#666666] cursor-help">
+                          <div className="text-[12px] pl-4 text-[#707070] cursor-help">
                             Accumulated Depreciation
                           </div>
                         </TooltipTrigger>
@@ -339,7 +339,7 @@ export function BalanceSheetCanvas() {
                         </TooltipContent>
                       </Tooltip>
                     </TooltipProvider>
-                    <div className="text-[12px] font-sans text-black dark:text-white">
+                    <div className="text-[12px] font-sans text-black">
                       {formatAmount({
                         currency,
                         amount:
@@ -353,7 +353,7 @@ export function BalanceSheetCanvas() {
                     <TooltipProvider delayDuration={0}>
                       <Tooltip>
                         <TooltipTrigger asChild>
-                          <div className="text-[12px] pl-4 text-[#707070] dark:text-[#666666] cursor-help">
+                          <div className="text-[12px] pl-4 text-[#707070] cursor-help">
                             {balanceSheet.assets.nonCurrent
                               .softwareTechnologyName ||
                               "Software & Technology"}
@@ -367,7 +367,7 @@ export function BalanceSheetCanvas() {
                         </TooltipContent>
                       </Tooltip>
                     </TooltipProvider>
-                    <div className="text-[12px] font-sans text-black dark:text-white">
+                    <div className="text-[12px] font-sans text-black">
                       {formatAmount({
                         currency,
                         amount:
@@ -380,7 +380,7 @@ export function BalanceSheetCanvas() {
                     <TooltipProvider delayDuration={0}>
                       <Tooltip>
                         <TooltipTrigger asChild>
-                          <div className="text-[12px] pl-4 text-[#707070] dark:text-[#666666] cursor-help">
+                          <div className="text-[12px] pl-4 text-[#707070] cursor-help">
                             {balanceSheet.assets.nonCurrent
                               .longTermInvestmentsName ||
                               "Long-term Investments"}
@@ -394,7 +394,7 @@ export function BalanceSheetCanvas() {
                         </TooltipContent>
                       </Tooltip>
                     </TooltipProvider>
-                    <div className="text-[12px] font-sans text-black dark:text-white">
+                    <div className="text-[12px] font-sans text-black">
                       {formatAmount({
                         currency,
                         amount:
@@ -407,7 +407,7 @@ export function BalanceSheetCanvas() {
                     <TooltipProvider delayDuration={0}>
                       <Tooltip>
                         <TooltipTrigger asChild>
-                          <div className="text-[12px] pl-4 text-[#707070] dark:text-[#666666] cursor-help">
+                          <div className="text-[12px] pl-4 text-[#707070] cursor-help">
                             Other Assets
                           </div>
                         </TooltipTrigger>
@@ -419,7 +419,7 @@ export function BalanceSheetCanvas() {
                         </TooltipContent>
                       </Tooltip>
                     </TooltipProvider>
-                    <div className="text-[12px] font-sans text-black dark:text-white">
+                    <div className="text-[12px] font-sans text-black">
                       {formatAmount({
                         currency,
                         amount: balanceSheet.assets.nonCurrent.otherAssets,
@@ -427,11 +427,11 @@ export function BalanceSheetCanvas() {
                       })}
                     </div>
                   </div>
-                  <div className="px-4 py-2 flex justify-between border-t border-[#e6e6e6] dark:border-[#1d1d1d] bg-[#f7f7f7] dark:bg-[#131313]">
-                    <div className="text-[12px] font-medium text-black dark:text-white">
+                  <div className="px-4 py-2 flex justify-between border-t border-[#e6e6e6] bg-[#f7f7f7]">
+                    <div className="text-[12px] font-medium text-black">
                       Total Non-Current Assets
                     </div>
-                    <div className="text-[12px] font-sans font-medium text-black dark:text-white">
+                    <div className="text-[12px] font-sans font-medium text-black">
                       {formatAmount({
                         currency,
                         amount: balanceSheet.assets.nonCurrent.total,
@@ -442,11 +442,11 @@ export function BalanceSheetCanvas() {
                 </div>
 
                 {/* Total Assets */}
-                <div className="px-4 py-3 flex justify-between border-b border-[#e6e6e6] dark:border-[#1d1d1d] bg-[#f7f7f7] dark:bg-[#0f0f0f]">
-                  <div className="text-[14px] font-medium text-black dark:text-white">
+                <div className="px-4 py-3 flex justify-between border-b border-[#e6e6e6] bg-[#f7f7f7]">
+                  <div className="text-[14px] font-medium text-black">
                     Total Assets
                   </div>
-                  <div className="text-[14px] font-sans font-medium text-black dark:text-white">
+                  <div className="text-[14px] font-sans font-medium text-black">
                     {formatAmount({
                       currency,
                       amount: balanceSheet.assets.total,
@@ -456,19 +456,19 @@ export function BalanceSheetCanvas() {
                 </div>
 
                 {/* Liabilities and Equity Header */}
-                <div className="flex border-b border-[#e6e6e6] dark:border-[#1d1d1d]">
-                  <div className="w-1/2 px-4 py-3 text-[12px] font-medium text-[#707070] dark:text-[#666666]">
+                <div className="flex border-b border-[#e6e6e6]">
+                  <div className="w-1/2 px-4 py-3 text-[12px] font-medium text-[#707070]">
                     LIABILITIES & EQUITY
                   </div>
-                  <div className="w-1/2 px-4 py-3 text-[12px] font-medium text-right text-[#707070] dark:text-[#666666]">
+                  <div className="w-1/2 px-4 py-3 text-[12px] font-medium text-right text-[#707070]">
                     Amount
                   </div>
                 </div>
 
                 {/* Current Liabilities */}
-                <div className="border-b border-[#e6e6e6] dark:border-[#1d1d1d]">
-                  <div className="px-4 py-2 bg-[#f7f7f7] dark:bg-[#131313]">
-                    <div className="text-[12px] font-medium text-black dark:text-white">
+                <div className="border-b border-[#e6e6e6]">
+                  <div className="px-4 py-2 bg-[#f7f7f7]">
+                    <div className="text-[12px] font-medium text-black">
                       Current Liabilities
                     </div>
                   </div>
@@ -476,7 +476,7 @@ export function BalanceSheetCanvas() {
                     <TooltipProvider delayDuration={0}>
                       <Tooltip>
                         <TooltipTrigger asChild>
-                          <div className="text-[12px] pl-4 text-[#707070] dark:text-[#666666] cursor-help">
+                          <div className="text-[12px] pl-4 text-[#707070] cursor-help">
                             Accounts Payable
                           </div>
                         </TooltipTrigger>
@@ -488,7 +488,7 @@ export function BalanceSheetCanvas() {
                         </TooltipContent>
                       </Tooltip>
                     </TooltipProvider>
-                    <div className="text-[12px] font-sans text-black dark:text-white">
+                    <div className="text-[12px] font-sans text-black">
                       {formatAmount({
                         currency,
                         amount:
@@ -501,7 +501,7 @@ export function BalanceSheetCanvas() {
                     <TooltipProvider delayDuration={0}>
                       <Tooltip>
                         <TooltipTrigger asChild>
-                          <div className="text-[12px] pl-4 text-[#707070] dark:text-[#666666] cursor-help">
+                          <div className="text-[12px] pl-4 text-[#707070] cursor-help">
                             {balanceSheet.liabilities.current
                               .accruedExpensesName ||
                               "Accrued Expenses (Operations)"}
@@ -515,7 +515,7 @@ export function BalanceSheetCanvas() {
                         </TooltipContent>
                       </Tooltip>
                     </TooltipProvider>
-                    <div className="text-[12px] font-sans text-black dark:text-white">
+                    <div className="text-[12px] font-sans text-black">
                       {formatAmount({
                         currency,
                         amount:
@@ -528,7 +528,7 @@ export function BalanceSheetCanvas() {
                     <TooltipProvider delayDuration={0}>
                       <Tooltip>
                         <TooltipTrigger asChild>
-                          <div className="text-[12px] pl-4 text-[#707070] dark:text-[#666666] cursor-help">
+                          <div className="text-[12px] pl-4 text-[#707070] cursor-help">
                             Short-term Debt (Banking & Finance)
                           </div>
                         </TooltipTrigger>
@@ -540,7 +540,7 @@ export function BalanceSheetCanvas() {
                         </TooltipContent>
                       </Tooltip>
                     </TooltipProvider>
-                    <div className="text-[12px] font-sans text-black dark:text-white">
+                    <div className="text-[12px] font-sans text-black">
                       {formatAmount({
                         currency,
                         amount: balanceSheet.liabilities.current.shortTermDebt,
@@ -552,7 +552,7 @@ export function BalanceSheetCanvas() {
                     <TooltipProvider delayDuration={0}>
                       <Tooltip>
                         <TooltipTrigger asChild>
-                          <div className="text-[12px] pl-4 text-[#707070] dark:text-[#666666] cursor-help">
+                          <div className="text-[12px] pl-4 text-[#707070] cursor-help">
                             {balanceSheet.liabilities.current
                               .creditCardDebtName || "Credit Card Debt"}
                           </div>
@@ -565,7 +565,7 @@ export function BalanceSheetCanvas() {
                         </TooltipContent>
                       </Tooltip>
                     </TooltipProvider>
-                    <div className="text-[12px] font-sans text-black dark:text-white">
+                    <div className="text-[12px] font-sans text-black">
                       {formatAmount({
                         currency,
                         amount: balanceSheet.liabilities.current.creditCardDebt,
@@ -573,11 +573,11 @@ export function BalanceSheetCanvas() {
                       })}
                     </div>
                   </div>
-                  <div className="px-4 py-2 flex justify-between border-t border-[#e6e6e6] dark:border-[#1d1d1d] bg-[#f7f7f7] dark:bg-[#131313]">
-                    <div className="text-[12px] font-medium text-black dark:text-white">
+                  <div className="px-4 py-2 flex justify-between border-t border-[#e6e6e6] bg-[#f7f7f7]">
+                    <div className="text-[12px] font-medium text-black">
                       Total Current Liabilities
                     </div>
-                    <div className="text-[12px] font-sans font-medium text-black dark:text-white">
+                    <div className="text-[12px] font-sans font-medium text-black">
                       {formatAmount({
                         currency,
                         amount: balanceSheet.liabilities.current.total,
@@ -588,9 +588,9 @@ export function BalanceSheetCanvas() {
                 </div>
 
                 {/* Non-Current Liabilities */}
-                <div className="border-b border-[#e6e6e6] dark:border-[#1d1d1d]">
-                  <div className="px-4 py-2 bg-[#f7f7f7] dark:bg-[#131313]">
-                    <div className="text-[12px] font-medium text-black dark:text-white">
+                <div className="border-b border-[#e6e6e6]">
+                  <div className="px-4 py-2 bg-[#f7f7f7]">
+                    <div className="text-[12px] font-medium text-black">
                       Non-Current Liabilities
                     </div>
                   </div>
@@ -598,7 +598,7 @@ export function BalanceSheetCanvas() {
                     <TooltipProvider delayDuration={0}>
                       <Tooltip>
                         <TooltipTrigger asChild>
-                          <div className="text-[12px] pl-4 text-[#707070] dark:text-[#666666] cursor-help">
+                          <div className="text-[12px] pl-4 text-[#707070] cursor-help">
                             Long-term Debt (Banking & Finance)
                           </div>
                         </TooltipTrigger>
@@ -610,7 +610,7 @@ export function BalanceSheetCanvas() {
                         </TooltipContent>
                       </Tooltip>
                     </TooltipProvider>
-                    <div className="text-[12px] font-sans text-black dark:text-white">
+                    <div className="text-[12px] font-sans text-black">
                       {formatAmount({
                         currency,
                         amount:
@@ -623,7 +623,7 @@ export function BalanceSheetCanvas() {
                     <TooltipProvider delayDuration={0}>
                       <Tooltip>
                         <TooltipTrigger asChild>
-                          <div className="text-[12px] pl-4 text-[#707070] dark:text-[#666666] cursor-help">
+                          <div className="text-[12px] pl-4 text-[#707070] cursor-help">
                             {balanceSheet.liabilities.nonCurrent
                               .deferredRevenueName ||
                               "Deferred Revenue (Liabilities & Debt)"}
@@ -637,7 +637,7 @@ export function BalanceSheetCanvas() {
                         </TooltipContent>
                       </Tooltip>
                     </TooltipProvider>
-                    <div className="text-[12px] font-sans text-black dark:text-white">
+                    <div className="text-[12px] font-sans text-black">
                       {formatAmount({
                         currency,
                         amount:
@@ -650,7 +650,7 @@ export function BalanceSheetCanvas() {
                     <TooltipProvider delayDuration={0}>
                       <Tooltip>
                         <TooltipTrigger asChild>
-                          <div className="text-[12px] pl-4 text-[#707070] dark:text-[#666666] cursor-help">
+                          <div className="text-[12px] pl-4 text-[#707070] cursor-help">
                             {balanceSheet.liabilities.nonCurrent.leasesName ||
                               "Leases"}
                           </div>
@@ -663,7 +663,7 @@ export function BalanceSheetCanvas() {
                         </TooltipContent>
                       </Tooltip>
                     </TooltipProvider>
-                    <div className="text-[12px] font-sans text-black dark:text-white">
+                    <div className="text-[12px] font-sans text-black">
                       {formatAmount({
                         currency,
                         amount: balanceSheet.liabilities.nonCurrent.leases,
@@ -675,7 +675,7 @@ export function BalanceSheetCanvas() {
                     <TooltipProvider delayDuration={0}>
                       <Tooltip>
                         <TooltipTrigger asChild>
-                          <div className="text-[12px] pl-4 text-[#707070] dark:text-[#666666] cursor-help">
+                          <div className="text-[12px] pl-4 text-[#707070] cursor-help">
                             Other Liabilities
                           </div>
                         </TooltipTrigger>
@@ -687,7 +687,7 @@ export function BalanceSheetCanvas() {
                         </TooltipContent>
                       </Tooltip>
                     </TooltipProvider>
-                    <div className="text-[12px] font-sans text-black dark:text-white">
+                    <div className="text-[12px] font-sans text-black">
                       {formatAmount({
                         currency,
                         amount:
@@ -696,11 +696,11 @@ export function BalanceSheetCanvas() {
                       })}
                     </div>
                   </div>
-                  <div className="px-4 py-2 flex justify-between border-t border-[#e6e6e6] dark:border-[#1d1d1d] bg-[#f7f7f7] dark:bg-[#131313]">
-                    <div className="text-[12px] font-medium text-black dark:text-white">
+                  <div className="px-4 py-2 flex justify-between border-t border-[#e6e6e6] bg-[#f7f7f7]">
+                    <div className="text-[12px] font-medium text-black">
                       Total Non-Current Liabilities
                     </div>
-                    <div className="text-[12px] font-sans font-medium text-black dark:text-white">
+                    <div className="text-[12px] font-sans font-medium text-black">
                       {formatAmount({
                         currency,
                         amount: balanceSheet.liabilities.nonCurrent.total,
@@ -711,11 +711,11 @@ export function BalanceSheetCanvas() {
                 </div>
 
                 {/* Total Liabilities */}
-                <div className="px-4 py-3 flex justify-between border-b border-[#e6e6e6] dark:border-[#1d1d1d] bg-[#f7f7f7] dark:bg-[#0f0f0f]">
-                  <div className="text-[14px] font-medium text-black dark:text-white">
+                <div className="px-4 py-3 flex justify-between border-b border-[#e6e6e6] bg-[#f7f7f7]">
+                  <div className="text-[14px] font-medium text-black">
                     Total Liabilities
                   </div>
-                  <div className="text-[14px] font-sans font-medium text-black dark:text-white">
+                  <div className="text-[14px] font-sans font-medium text-black">
                     {formatAmount({
                       currency,
                       amount: balanceSheet.liabilities.total,
@@ -725,9 +725,9 @@ export function BalanceSheetCanvas() {
                 </div>
 
                 {/* Equity */}
-                <div className="border-b border-[#e6e6e6] dark:border-[#1d1d1d]">
-                  <div className="px-4 py-2 bg-[#f7f7f7] dark:bg-[#131313]">
-                    <div className="text-[12px] font-medium text-black dark:text-white">
+                <div className="border-b border-[#e6e6e6]">
+                  <div className="px-4 py-2 bg-[#f7f7f7]">
+                    <div className="text-[12px] font-medium text-black">
                       Equity
                     </div>
                   </div>
@@ -735,7 +735,7 @@ export function BalanceSheetCanvas() {
                     <TooltipProvider delayDuration={0}>
                       <Tooltip>
                         <TooltipTrigger asChild>
-                          <div className="text-[12px] pl-4 text-[#707070] dark:text-[#666666] cursor-help">
+                          <div className="text-[12px] pl-4 text-[#707070] cursor-help">
                             {balanceSheet.equity.capitalInvestmentName ||
                               "Capital Investment"}
                           </div>
@@ -748,7 +748,7 @@ export function BalanceSheetCanvas() {
                         </TooltipContent>
                       </Tooltip>
                     </TooltipProvider>
-                    <div className="text-[12px] font-sans text-black dark:text-white">
+                    <div className="text-[12px] font-sans text-black">
                       {formatAmount({
                         currency,
                         amount: balanceSheet.equity.capitalInvestment,
@@ -760,7 +760,7 @@ export function BalanceSheetCanvas() {
                     <TooltipProvider delayDuration={0}>
                       <Tooltip>
                         <TooltipTrigger asChild>
-                          <div className="text-[12px] pl-4 text-[#707070] dark:text-[#666666] cursor-help">
+                          <div className="text-[12px] pl-4 text-[#707070] cursor-help">
                             {balanceSheet.equity.ownerDrawsName ||
                               "Owner Draws"}
                           </div>
@@ -773,7 +773,7 @@ export function BalanceSheetCanvas() {
                         </TooltipContent>
                       </Tooltip>
                     </TooltipProvider>
-                    <div className="text-[12px] font-sans text-black dark:text-white">
+                    <div className="text-[12px] font-sans text-black">
                       {formatAmount({
                         currency,
                         amount: balanceSheet.equity.ownerDraws,
@@ -785,7 +785,7 @@ export function BalanceSheetCanvas() {
                     <TooltipProvider delayDuration={0}>
                       <Tooltip>
                         <TooltipTrigger asChild>
-                          <div className="text-[12px] pl-4 text-[#707070] dark:text-[#666666] cursor-help">
+                          <div className="text-[12px] pl-4 text-[#707070] cursor-help">
                             Retained Earnings
                           </div>
                         </TooltipTrigger>
@@ -797,7 +797,7 @@ export function BalanceSheetCanvas() {
                         </TooltipContent>
                       </Tooltip>
                     </TooltipProvider>
-                    <div className="text-[12px] font-sans text-black dark:text-white">
+                    <div className="text-[12px] font-sans text-black">
                       {formatAmount({
                         currency,
                         amount: balanceSheet.equity.retainedEarnings,
@@ -805,11 +805,11 @@ export function BalanceSheetCanvas() {
                       })}
                     </div>
                   </div>
-                  <div className="px-4 py-2 flex justify-between border-t border-[#e6e6e6] dark:border-[#1d1d1d] bg-[#f7f7f7] dark:bg-[#131313]">
-                    <div className="text-[12px] font-medium text-black dark:text-white">
+                  <div className="px-4 py-2 flex justify-between border-t border-[#e6e6e6] bg-[#f7f7f7]">
+                    <div className="text-[12px] font-medium text-black">
                       Total Equity
                     </div>
-                    <div className="text-[12px] font-sans font-medium text-black dark:text-white">
+                    <div className="text-[12px] font-sans font-medium text-black">
                       {formatAmount({
                         currency,
                         amount: balanceSheet.equity.total,
@@ -820,11 +820,11 @@ export function BalanceSheetCanvas() {
                 </div>
 
                 {/* Total Liabilities and Equity */}
-                <div className="px-4 py-3 flex justify-between bg-[#f7f7f7] dark:bg-[#0f0f0f]">
-                  <div className="text-[14px] font-medium text-black dark:text-white">
+                <div className="px-4 py-3 flex justify-between bg-[#f7f7f7]">
+                  <div className="text-[14px] font-medium text-black">
                     Total Liabilities & Equity
                   </div>
-                  <div className="text-[14px] font-sans font-medium text-black dark:text-white">
+                  <div className="text-[14px] font-sans font-medium text-black">
                     {formatAmount({
                       currency,
                       amount:
@@ -848,9 +848,9 @@ export function BalanceSheetCanvas() {
               </div>
 
               {/* Balance Sheet Table */}
-              <div className="border bg-white dark:bg-[#0c0c0c] border-[#e6e6e6] dark:border-[#1d1d1d] rounded-none">
+              <div className="border bg-white border-[#e6e6e6] rounded-none">
                 {/* Header */}
-                <div className="flex border-b border-[#e6e6e6] dark:border-[#1d1d1d]">
+                <div className="flex border-b border-[#e6e6e6]">
                   <div className="w-1/2 px-4 py-3">
                     <Skeleton width="3rem" height="0.75rem" />
                   </div>
@@ -864,8 +864,8 @@ export function BalanceSheetCanvas() {
                 </div>
 
                 {/* Current Assets */}
-                <div className="border-b border-[#e6e6e6] dark:border-[#1d1d1d]">
-                  <div className="px-4 py-2 bg-[#f7f7f7] dark:bg-[#131313]">
+                <div className="border-b border-[#e6e6e6]">
+                  <div className="px-4 py-2 bg-[#f7f7f7]">
                     <Skeleton width="5rem" height="0.75rem" />
                   </div>
                   {[1, 2, 3, 4].map((i) => (
@@ -878,15 +878,15 @@ export function BalanceSheetCanvas() {
                       <Skeleton width="4rem" height="0.75rem" />
                     </div>
                   ))}
-                  <div className="px-4 py-2 flex justify-between border-t border-[#e6e6e6] dark:border-[#1d1d1d] bg-[#f7f7f7] dark:bg-[#131313]">
+                  <div className="px-4 py-2 flex justify-between border-t border-[#e6e6e6] bg-[#f7f7f7]">
                     <Skeleton width="6rem" height="0.75rem" />
                     <Skeleton width="4rem" height="0.75rem" />
                   </div>
                 </div>
 
                 {/* Non-Current Assets */}
-                <div className="border-b border-[#e6e6e6] dark:border-[#1d1d1d]">
-                  <div className="px-4 py-2 bg-[#f7f7f7] dark:bg-[#131313]">
+                <div className="border-b border-[#e6e6e6]">
+                  <div className="px-4 py-2 bg-[#f7f7f7]">
                     <Skeleton width="7rem" height="0.75rem" />
                   </div>
                   {[1, 2, 3, 4].map((i) => (
@@ -899,20 +899,20 @@ export function BalanceSheetCanvas() {
                       <Skeleton width="4rem" height="0.75rem" />
                     </div>
                   ))}
-                  <div className="px-4 py-2 flex justify-between border-t border-[#e6e6e6] dark:border-[#1d1d1d] bg-[#f7f7f7] dark:bg-[#131313]">
+                  <div className="px-4 py-2 flex justify-between border-t border-[#e6e6e6] bg-[#f7f7f7]">
                     <Skeleton width="8rem" height="0.75rem" />
                     <Skeleton width="4rem" height="0.75rem" />
                   </div>
                 </div>
 
                 {/* Total Assets */}
-                <div className="px-4 py-3 flex justify-between border-b border-[#e6e6e6] dark:border-[#1d1d1d] bg-[#f7f7f7] dark:bg-[#0f0f0f]">
+                <div className="px-4 py-3 flex justify-between border-b border-[#e6e6e6] bg-[#f7f7f7]">
                   <Skeleton width="5rem" height="0.875rem" />
                   <Skeleton width="4rem" height="0.875rem" />
                 </div>
 
                 {/* Liabilities and Equity Header */}
-                <div className="flex border-b border-[#e6e6e6] dark:border-[#1d1d1d]">
+                <div className="flex border-b border-[#e6e6e6]">
                   <div className="w-1/2 px-4 py-3">
                     <Skeleton width="8rem" height="0.75rem" />
                   </div>
@@ -926,8 +926,8 @@ export function BalanceSheetCanvas() {
                 </div>
 
                 {/* Current Liabilities */}
-                <div className="border-b border-[#e6e6e6] dark:border-[#1d1d1d]">
-                  <div className="px-4 py-2 bg-[#f7f7f7] dark:bg-[#131313]">
+                <div className="border-b border-[#e6e6e6]">
+                  <div className="px-4 py-2 bg-[#f7f7f7]">
                     <Skeleton width="7rem" height="0.75rem" />
                   </div>
                   {[1, 2, 3, 4].map((i) => (
@@ -940,15 +940,15 @@ export function BalanceSheetCanvas() {
                       <Skeleton width="4rem" height="0.75rem" />
                     </div>
                   ))}
-                  <div className="px-4 py-2 flex justify-between border-t border-[#e6e6e6] dark:border-[#1d1d1d] bg-[#f7f7f7] dark:bg-[#131313]">
+                  <div className="px-4 py-2 flex justify-between border-t border-[#e6e6e6] bg-[#f7f7f7]">
                     <Skeleton width="8rem" height="0.75rem" />
                     <Skeleton width="4rem" height="0.75rem" />
                   </div>
                 </div>
 
                 {/* Non-Current Liabilities */}
-                <div className="border-b border-[#e6e6e6] dark:border-[#1d1d1d]">
-                  <div className="px-4 py-2 bg-[#f7f7f7] dark:bg-[#131313]">
+                <div className="border-b border-[#e6e6e6]">
+                  <div className="px-4 py-2 bg-[#f7f7f7]">
                     <Skeleton width="10rem" height="0.75rem" />
                   </div>
                   {[1, 2, 3, 4].map((i) => (
@@ -961,21 +961,21 @@ export function BalanceSheetCanvas() {
                       <Skeleton width="4rem" height="0.75rem" />
                     </div>
                   ))}
-                  <div className="px-4 py-2 flex justify-between border-t border-[#e6e6e6] dark:border-[#1d1d1d] bg-[#f7f7f7] dark:bg-[#131313]">
+                  <div className="px-4 py-2 flex justify-between border-t border-[#e6e6e6] bg-[#f7f7f7]">
                     <Skeleton width="11rem" height="0.75rem" />
                     <Skeleton width="4rem" height="0.75rem" />
                   </div>
                 </div>
 
                 {/* Total Liabilities */}
-                <div className="px-4 py-3 flex justify-between border-b border-[#e6e6e6] dark:border-[#1d1d1d] bg-[#f7f7f7] dark:bg-[#0f0f0f]">
+                <div className="px-4 py-3 flex justify-between border-b border-[#e6e6e6] bg-[#f7f7f7]">
                   <Skeleton width="6rem" height="0.875rem" />
                   <Skeleton width="4rem" height="0.875rem" />
                 </div>
 
                 {/* Equity */}
-                <div className="border-b border-[#e6e6e6] dark:border-[#1d1d1d]">
-                  <div className="px-4 py-2 bg-[#f7f7f7] dark:bg-[#131313]">
+                <div className="border-b border-[#e6e6e6]">
+                  <div className="px-4 py-2 bg-[#f7f7f7]">
                     <Skeleton width="3rem" height="0.75rem" />
                   </div>
                   {[1, 2, 3].map((i) => (
@@ -988,14 +988,14 @@ export function BalanceSheetCanvas() {
                       <Skeleton width="4rem" height="0.75rem" />
                     </div>
                   ))}
-                  <div className="px-4 py-2 flex justify-between border-t border-[#e6e6e6] dark:border-[#1d1d1d] bg-[#f7f7f7] dark:bg-[#131313]">
+                  <div className="px-4 py-2 flex justify-between border-t border-[#e6e6e6] bg-[#f7f7f7]">
                     <Skeleton width="5rem" height="0.75rem" />
                     <Skeleton width="4rem" height="0.75rem" />
                   </div>
                 </div>
 
                 {/* Total Liabilities and Equity */}
-                <div className="px-4 py-3 flex justify-between bg-[#f7f7f7] dark:bg-[#0f0f0f]">
+                <div className="px-4 py-3 flex justify-between bg-[#f7f7f7]">
                   <Skeleton width="11rem" height="0.875rem" />
                   <Skeleton width="4rem" height="0.875rem" />
                 </div>
@@ -1009,16 +1009,16 @@ export function BalanceSheetCanvas() {
               {ratioMetrics.map((item) => (
                 <div
                   key={item.id}
-                  className="border p-3 bg-white dark:bg-[#0c0c0c] border-[#e6e6e6] dark:border-[#1d1d1d] rounded-none"
+                  className="border p-3 bg-white border-[#e6e6e6] rounded-none"
                 >
-                  <div className="text-[12px] mb-1 text-[#707070] dark:text-[#666666]">
+                  <div className="text-[12px] mb-1 text-[#707070]">
                     {item.title}
                   </div>
-                  <div className="text-[18px] font-normal font-sans text-black dark:text-white mb-1">
+                  <div className="text-[18px] font-normal font-sans text-black mb-1">
                     {item.value}
                   </div>
                   {item.subtitle && (
-                    <div className="text-[10px] mt-1 text-[#707070] dark:text-[#666666]">
+                    <div className="text-[10px] mt-1 text-[#707070]">
                       {item.subtitle}
                     </div>
                   )}
@@ -1030,10 +1030,10 @@ export function BalanceSheetCanvas() {
           {/* Summary Section */}
           {data?.analysis?.summary && (
             <div className="mt-8 mb-4">
-              <h3 className="text-[12px] leading-normal mb-3 text-[#707070] dark:text-[#666666]">
+              <h3 className="text-[12px] leading-normal mb-3 text-[#707070]">
                 Summary
               </h3>
-              <div className="text-[12px] leading-[17px] font-sans text-black dark:text-white">
+              <div className="text-[12px] leading-[17px] font-sans text-black">
                 {data.analysis.summary}
               </div>
             </div>

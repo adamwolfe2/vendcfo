@@ -148,7 +148,7 @@ export function SuggestedMatch({
 
         <div className="border border-border overflow-hidden">
           {/* Document Preview Skeleton */}
-          <div className="relative bg-[#F6F6F3] dark:bg-[#1A1A1A] p-4 h-[300px] flex items-center justify-center">
+          <div className="relative bg-[#F6F6F3] p-4 h-[300px] flex items-center justify-center">
             <Skeleton className="w-full h-full max-w-[190px]" />
           </div>
 
@@ -182,7 +182,7 @@ export function SuggestedMatch({
 
       <div className="border border-border overflow-hidden">
         {/* Document Preview */}
-        <div className="relative bg-[#F6F6F3] dark:bg-[#1A1A1A] p-4 h-[300px] flex items-center justify-center">
+        <div className="relative bg-[#F6F6F3] p-4 h-[300px] flex items-center justify-center">
           {filePath && (
             <Button
               variant="ghost"

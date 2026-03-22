@@ -191,9 +191,9 @@ function InsightCardComponent({
         }
         className={cn(
           "absolute inset-0 h-[210px] p-4 flex flex-col justify-between",
-          "dark:bg-[#131313] bg-[#f7f7f7]",
-          "dark:border-[#1d1d1d] border-[#e6e6e6] border",
-          "dark:shadow-[0_6px_16px_rgba(0,0,0,0.3)] shadow-[0px_4px_4px_0px_rgba(0,0,0,0.05)]",
+          "bg-[#f7f7f7]",
+          "border-[#e6e6e6] border",
+          "shadow-[0px_4px_4px_0px_rgba(0,0,0,0.05)]",
           isTopCard && totalCards > 1 && "cursor-grab",
           // Top card (index 0): tilts left, more on hover
           isTopCard &&
@@ -207,11 +207,11 @@ function InsightCardComponent({
           <>
             <div>
               <div className="flex items-center gap-2 mb-3">
-                <h4 className="text-[12px] dark:text-[#666666] text-[#707070] font-medium">
+                <h4 className="text-[12px] text-[#707070] font-medium">
                   {insight.periodLabel}
                 </h4>
               </div>
-              <p className="text-[14px] leading-[19px] dark:text-white text-black mb-8 line-clamp-4">
+              <p className="text-[14px] leading-[19px] text-black mb-8 line-clamp-4">
                 {insight.title}
               </p>
             </div>
@@ -225,9 +225,9 @@ function InsightCardComponent({
                   }}
                   className={cn(
                     "flex items-center gap-1",
-                    "dark:text-[rgba(102,102,102,0.5)] text-[rgba(112,112,112,0.5)]",
+                    "text-[rgba(112,112,112,0.5)]",
                     "transition-colors",
-                    "dark:hover:text-white hover:text-black cursor-pointer",
+                    "hover:text-black cursor-pointer",
                   )}
                 >
                   <Icons.UnMute className="size-3" />
@@ -244,9 +244,9 @@ function InsightCardComponent({
                 }}
                 className={cn(
                   "flex items-center gap-1",
-                  "dark:text-[rgba(102,102,102,0.5)] text-[rgba(112,112,112,0.5)]",
+                  "text-[rgba(112,112,112,0.5)]",
                   "transition-colors",
-                  "dark:hover:text-white hover:text-black cursor-pointer",
+                  "hover:text-black cursor-pointer",
                 )}
               >
                 Dismiss
@@ -463,7 +463,7 @@ export function InsightsWidget() {
         title="Weekly Insights"
         descriptionLines={3}
         showValue={false}
-        className="dark:bg-[#131313] bg-[#f7f7f7] border-[#e6e6e6]"
+        className="bg-[#f7f7f7] border-[#e6e6e6]"
       />
     );
   }
@@ -472,17 +472,17 @@ export function InsightsWidget() {
     return (
       <div
         className={cn(
-          "dark:bg-[#131313] bg-[#f7f7f7] border dark:border-[#1d1d1d] border-[#e6e6e6] p-4 h-[210px]",
+          "bg-[#f7f7f7] border border-[#e6e6e6] p-4 h-[210px]",
           "flex flex-col justify-between",
         )}
       >
         <div>
           <div className="flex items-center gap-2 mb-3">
-            <h4 className="text-[12px] dark:text-[#666666] text-[#707070] font-medium">
+            <h4 className="text-[12px] text-[#707070] font-medium">
               Weekly Insights
             </h4>
           </div>
-          <p className="text-[14px] leading-[19px] dark:text-[#666666] text-[#707070]">
+          <p className="text-[14px] leading-[19px] text-[#707070]">
             No new insights available. Every Monday you'll receive a summary of
             the previous week's performance.
           </p>

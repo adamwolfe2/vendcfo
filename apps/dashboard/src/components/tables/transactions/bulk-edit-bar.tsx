@@ -76,7 +76,7 @@ export function BulkEditBar() {
             <div className="relative pointer-events-auto min-w-[400px] h-12">
               {/* Blur layer fades in separately to avoid backdrop-filter animation issues */}
               <motion.div
-                className="absolute inset-0 backdrop-filter backdrop-blur-lg bg-[rgba(247,247,247,0.85)] dark:bg-[rgba(19,19,19,0.7)]"
+                className="absolute inset-0 backdrop-filter backdrop-blur-lg bg-[rgba(247,247,247,0.85)]"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}

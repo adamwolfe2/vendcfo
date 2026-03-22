@@ -293,7 +293,7 @@ export const columns: ColumnDef<Transaction>[] = [
       sticky: true,
       skeleton: { type: "checkbox" },
       className:
-        "w-[50px] min-w-[50px] md:sticky md:left-[var(--stick-left)] bg-background group-hover:bg-[#F2F1EF] group-hover:dark:bg-[#0f0f0f] z-10",
+        "w-[50px] min-w-[50px] md:sticky md:left-[var(--stick-left)] bg-background group-hover:bg-[#F2F1EF] z-10",
     },
     cell: ({ row, table }) => {
       const meta = table.options.meta;
@@ -340,7 +340,7 @@ export const columns: ColumnDef<Transaction>[] = [
       skeleton: { type: "text", width: "w-16" },
       headerLabel: "Date",
       className:
-        "w-[110px] min-w-[110px] md:sticky md:left-[var(--stick-left)] bg-background group-hover:bg-[#F2F1EF] group-hover:dark:bg-[#0f0f0f] z-10",
+        "w-[110px] min-w-[110px] md:sticky md:left-[var(--stick-left)] bg-background group-hover:bg-[#F2F1EF] z-10",
     },
     cell: ({ row, table }) => (
       <DateCell
@@ -362,7 +362,7 @@ export const columns: ColumnDef<Transaction>[] = [
       skeleton: { type: "text", width: "w-40" },
       headerLabel: "Description",
       className:
-        "w-[320px] min-w-[200px] md:sticky md:left-[var(--stick-left)] bg-background group-hover:bg-[#F2F1EF] group-hover:dark:bg-[#0f0f0f] z-10",
+        "w-[320px] min-w-[200px] md:sticky md:left-[var(--stick-left)] bg-background group-hover:bg-[#F2F1EF] z-10",
     },
     cell: ({ row }) => (
       <DescriptionCell
@@ -622,7 +622,7 @@ export const columns: ColumnDef<Transaction>[] = [
       skeleton: { type: "icon" },
       headerLabel: "Actions",
       className:
-        "w-[100px] min-w-[100px] md:sticky md:right-0 bg-background group-hover:bg-[#F2F1EF] group-hover:dark:bg-[#0f0f0f] z-10 justify-center !border-l !border-border",
+        "w-[100px] min-w-[100px] md:sticky md:right-0 bg-background group-hover:bg-[#F2F1EF] z-10 justify-center !border-l !border-border",
     },
     cell: ({ row, table }) => {
       const meta = table.options.meta;

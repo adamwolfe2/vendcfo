@@ -59,12 +59,12 @@ export function SpendingCanvas() {
           {showTransactions ? (
             <div className="mb-6">
               <div className="flex items-center justify-between mb-4">
-                <h4 className="text-[18px] font-normal font-serif text-black dark:text-white">
+                <h4 className="text-[18px] font-normal font-serif text-black">
                   Largest transactions
                 </h4>
                 <Link
                   href="/transactions"
-                  className="text-[12px] text-[#707070] dark:text-[#666666] hover:underline"
+                  className="text-[12px] text-[#707070] hover:underline"
                 >
                   View all transactions
                 </Link>
@@ -74,19 +74,19 @@ export function SpendingCanvas() {
                 <Table>
                   <TableHeader>
                     <TableRow className="border-b-0">
-                      <TableHead className="text-[12px] text-[#707070] dark:text-[#666666] font-normal">
+                      <TableHead className="text-[12px] text-[#707070] font-normal">
                         Date
                       </TableHead>
-                      <TableHead className="text-[12px] text-[#707070] dark:text-[#666666] font-normal">
+                      <TableHead className="text-[12px] text-[#707070] font-normal">
                         Vendor
                       </TableHead>
-                      <TableHead className="text-[12px] text-[#707070] dark:text-[#666666] font-normal">
+                      <TableHead className="text-[12px] text-[#707070] font-normal">
                         Category
                       </TableHead>
-                      <TableHead className="text-right text-[12px] text-[#707070] dark:text-[#666666] font-normal">
+                      <TableHead className="text-right text-[12px] text-[#707070] font-normal">
                         Amount
                       </TableHead>
-                      <TableHead className="text-right text-[12px] text-[#707070] dark:text-[#666666] font-normal">
+                      <TableHead className="text-right text-[12px] text-[#707070] font-normal">
                         Share
                       </TableHead>
                     </TableRow>
@@ -99,28 +99,28 @@ export function SpendingCanvas() {
                           setParams({ transactionId: transaction.id })
                         }
                         className={cn(
-                          "cursor-pointer hover:bg-[#F2F1EF] dark:hover:bg-[#0f0f0f] transition-colors",
+                          "cursor-pointer hover:bg-[#F2F1EF] transition-colors",
                           index === transactions.slice(0, 10).length - 1 &&
                             "border-b-0",
                         )}
                       >
-                        <TableCell className="text-[12px] text-black dark:text-white">
+                        <TableCell className="text-[12px] text-black">
                           {transaction.date}
                         </TableCell>
-                        <TableCell className="text-[12px] text-black dark:text-white">
+                        <TableCell className="text-[12px] text-black">
                           {transaction.vendor}
                         </TableCell>
-                        <TableCell className="text-[12px] text-black dark:text-white">
+                        <TableCell className="text-[12px] text-black">
                           {transaction.category}
                         </TableCell>
-                        <TableCell className="text-right text-[12px] text-black dark:text-white font-sans">
+                        <TableCell className="text-right text-[12px] text-black font-sans">
                           {formatAmount({
                             currency,
                             amount: transaction.amount,
                             locale,
                           })}
                         </TableCell>
-                        <TableCell className="text-right text-[12px] text-[#707070] dark:text-[#666666]">
+                        <TableCell className="text-right text-[12px] text-[#707070]">
                           {transaction.share.toFixed(1)}%
                         </TableCell>
                       </TableRow>
@@ -128,7 +128,7 @@ export function SpendingCanvas() {
                   </TableBody>
                 </Table>
               ) : (
-                <div className="text-[12px] text-[#707070] dark:text-[#666666] py-8 text-center">
+                <div className="text-[12px] text-[#707070] py-8 text-center">
                   No transactions found
                 </div>
               )}
@@ -139,7 +139,7 @@ export function SpendingCanvas() {
                 <Skeleton width="8rem" height="1.125rem" />
                 <Skeleton width="6rem" height="0.875rem" />
               </div>
-              <div className="border border-[#e6e6e6] dark:border-[#1d1d1d]">
+              <div className="border border-[#e6e6e6]">
                 <div className="p-3 space-y-3">
                   {Array.from(
                     { length: 5 },
@@ -155,11 +155,11 @@ export function SpendingCanvas() {
           {/* Two summary cards */}
           {showCards ? (
             <div className="grid grid-cols-2 gap-3 mb-6">
-              <div className="border p-3 bg-white dark:bg-[#0c0c0c] border-[#e6e6e6] dark:border-[#1d1d1d]">
-                <div className="text-[12px] text-[#707070] dark:text-[#666666] mb-1">
+              <div className="border p-3 bg-white border-[#e6e6e6]">
+                <div className="text-[12px] text-[#707070] mb-1">
                   Spending this month
                 </div>
-                <div className="text-[18px] font-normal font-sans text-black dark:text-white mb-1">
+                <div className="text-[18px] font-normal font-sans text-black mb-1">
                   {metrics?.currentMonthSpending
                     ? formatAmount({
                         currency,
@@ -172,17 +172,17 @@ export function SpendingCanvas() {
                         locale,
                       })}
                 </div>
-                <div className="text-[10px] text-[#707070] dark:text-[#666666]">
+                <div className="text-[10px] text-[#707070]">
                   Across {transactions.length} high-value transaction
                   {transactions.length !== 1 ? "s" : ""}
                 </div>
               </div>
 
-              <div className="border p-3 bg-white dark:bg-[#0c0c0c] border-[#e6e6e6] dark:border-[#1d1d1d]">
-                <div className="text-[12px] text-[#707070] dark:text-[#666666] mb-1">
+              <div className="border p-3 bg-white border-[#e6e6e6]">
+                <div className="text-[12px] text-[#707070] mb-1">
                   Top category
                 </div>
-                <div className="text-[18px] font-normal font-sans text-black dark:text-white mb-1">
+                <div className="text-[18px] font-normal font-sans text-black mb-1">
                   {metrics?.topCategory
                     ? `${metrics.topCategory.name} — ${formatAmount({
                         currency,
@@ -191,7 +191,7 @@ export function SpendingCanvas() {
                       })}`
                     : "—"}
                 </div>
-                <div className="text-[10px] text-[#707070] dark:text-[#666666]">
+                <div className="text-[10px] text-[#707070]">
                   Largest share of monthly spend
                 </div>
               </div>

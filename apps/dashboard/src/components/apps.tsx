@@ -190,7 +190,7 @@ export function Apps() {
 
         {!search && !filteredApps.length && (
           <div className="col-span-full flex flex-col items-center justify-center h-[calc(100vh-400px)]">
-            <h3 className="text-lg font-semibold text-[#1D1D1D] dark:text-[#F2F1EF]">
+            <h3 className="text-lg font-semibold text-[#1D1D1D]">
               No apps installed
             </h3>
             <p className="mt-2 text-sm text-[#878787] text-center max-w-md">
@@ -202,7 +202,7 @@ export function Apps() {
 
         {search && !filteredApps.length && (
           <div className="col-span-full flex flex-col items-center justify-center h-[calc(100vh-400px)]">
-            <h3 className="text-lg font-semibold text-[#1D1D1D] dark:text-[#F2F1EF]">
+            <h3 className="text-lg font-semibold text-[#1D1D1D]">
               No apps found
             </h3>
             <p className="mt-2 text-sm text-[#878787] text-center max-w-md">

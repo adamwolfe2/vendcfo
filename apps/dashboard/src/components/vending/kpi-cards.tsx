@@ -27,7 +27,7 @@ export function KpiCards() {
       value: `$${metrics.revenue.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`,
       icon: DollarSign,
       iconBg:
-        "bg-blue-500/10 text-blue-500 dark:bg-blue-400/10 dark:text-blue-400",
+        "bg-blue-500/10 text-blue-500",
       trend: "+12%",
       trendUp: true,
     },
@@ -36,7 +36,7 @@ export function KpiCards() {
       value: `$${metrics.profit.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`,
       icon: TrendingUp,
       iconBg:
-        "bg-green-500/10 text-green-500 dark:bg-green-400/10 dark:text-green-400",
+        "bg-green-500/10 text-green-500",
       trend: "+5%",
       trendUp: true,
     },
@@ -45,7 +45,7 @@ export function KpiCards() {
       value: `${metrics.margin.toFixed(1)}%`,
       icon: Percent,
       iconBg:
-        "bg-purple-500/10 text-purple-500 dark:bg-purple-400/10 dark:text-purple-400",
+        "bg-purple-500/10 text-purple-500",
       trend: "-1.2%",
       trendUp: false,
     },
@@ -54,7 +54,7 @@ export function KpiCards() {
       value: `$${metrics.cash.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`,
       icon: Wallet,
       iconBg:
-        "bg-orange-500/10 text-orange-500 dark:bg-orange-400/10 dark:text-orange-400",
+        "bg-orange-500/10 text-orange-500",
       trend: "4.5mo runway",
       trendUp: true,
     },
@@ -81,7 +81,7 @@ export function KpiCards() {
                 </div>
               </div>
               <p
-                className={`text-sm font-medium flex items-center ${card.trendUp ? "text-green-600 dark:text-green-400" : "text-red-500 dark:text-red-400"}`}
+                className={`text-sm font-medium flex items-center ${card.trendUp ? "text-green-600" : "text-red-500"}`}
               >
                 {card.trendUp ? (
                   <TrendingUp size={14} className="mr-1" />

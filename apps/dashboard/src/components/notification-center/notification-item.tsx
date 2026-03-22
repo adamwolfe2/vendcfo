@@ -89,7 +89,7 @@ export function NotificationItem({
       <Button
         size="icon"
         variant="secondary"
-        className="rounded-full bg-transparent dark:hover:bg-[#1A1A1A] hover:bg-[#F6F6F3]"
+        className="rounded-full bg-transparent hover:bg-[#F6F6F3]"
         onClick={() => markMessageAsRead(id)}
         title={t("notifications.archive_button")}
       >

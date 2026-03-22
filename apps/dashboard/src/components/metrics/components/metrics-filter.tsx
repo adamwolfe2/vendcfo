@@ -131,9 +131,9 @@ export function MetricsFilter() {
                     className={cn(
                       "text-xs py-1.5 pl-4 pr-12 relative [&>svg]:hidden",
                       isCustomPeriod
-                        ? "dark:bg-[#131313] dark:data-[state=open]:bg-[#131313] text-primary"
+                        ? "text-primary"
                         : "text-[#666]",
-                      "hover:dark:bg-[#131313] hover:text-primary",
+                      "hover:text-primary",
                     )}
                     onSelect={(e) => {
                       e.preventDefault();
@@ -200,9 +200,9 @@ export function MetricsFilter() {
                 className={cn(
                   "text-xs",
                   period === option.value
-                    ? "dark:bg-[#131313] text-primary"
+                    ? "text-primary"
                     : "text-[#666]",
-                  "hover:dark:bg-[#131313]",
+                  "",
                 )}
               >
                 {option.label}
@@ -231,8 +231,8 @@ export function MetricsFilter() {
                 className={cn(
                   "text-xs",
                   revenueType === option.value &&
-                    "dark:bg-[#131313] dark:data-[state=checked]:bg-[#131313]",
-                  "hover:dark:bg-[#131313]",
+                    "",
+                  "",
                 )}
               >
                 {option.label}
@@ -261,8 +261,8 @@ export function MetricsFilter() {
                   className={cn(
                     "text-xs",
                     !effectiveCurrency &&
-                      "dark:bg-[#131313] dark:data-[state=checked]:bg-[#131313]",
-                    "hover:dark:bg-[#131313]",
+                      "",
+                    "",
                   )}
                 >
                   Base currency{baseCurrency ? ` (${baseCurrency})` : ""}
@@ -274,8 +274,8 @@ export function MetricsFilter() {
                     className={cn(
                       "text-xs",
                       effectiveCurrency === curr &&
-                        "dark:bg-[#131313] dark:data-[state=checked]:bg-[#131313]",
-                      "hover:dark:bg-[#131313]",
+                        "",
+                      "",
                     )}
                   >
                     {curr}

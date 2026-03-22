@@ -80,7 +80,7 @@ export const columns: ColumnDef<Document>[] = [
       sticky: true,
       skeleton: { type: "checkbox" },
       className:
-        "w-[50px] min-w-[50px] md:sticky md:left-0 bg-background group-hover:bg-[#F2F1EF] group-hover:dark:bg-[#0f0f0f] z-20",
+        "w-[50px] min-w-[50px] md:sticky md:left-0 bg-background group-hover:bg-[#F2F1EF] z-20",
     },
     cell: ({ row }) => (
       <Checkbox
@@ -108,7 +108,7 @@ export const columns: ColumnDef<Document>[] = [
       skeleton: { type: "text", width: "w-52" },
       headerLabel: "Name",
       className:
-        "w-[250px] min-w-[180px] md:sticky md:left-[50px] bg-background group-hover:bg-[#F2F1EF] group-hover:dark:bg-[#0f0f0f] z-20",
+        "w-[250px] min-w-[180px] md:sticky md:left-[50px] bg-background group-hover:bg-[#F2F1EF] z-20",
     },
     cell: ({ row }) => {
       // @ts-expect-error - mimetype is not typed (JSONB)
@@ -146,7 +146,7 @@ export const columns: ColumnDef<Document>[] = [
             isSupported && isFailed && "text-destructive",
             isSupported &&
               (needsClassification || staleProcessing) &&
-              "text-amber-600 dark:text-amber-500",
+              "text-amber-600",
           )}
         >
           {displayName}
@@ -241,7 +241,7 @@ export const columns: ColumnDef<Document>[] = [
       skeleton: { type: "icon" },
       headerLabel: "Actions",
       className:
-        "w-[100px] min-w-[80px] md:sticky md:right-0 bg-background group-hover:bg-[#F2F1EF] group-hover:dark:bg-[#0f0f0f] z-30 justify-center !border-l !border-border",
+        "w-[100px] min-w-[80px] md:sticky md:right-0 bg-background group-hover:bg-[#F2F1EF] z-30 justify-center !border-l !border-border",
     },
     cell: ({ row, table }) => {
       const { setParams } = useDocumentParams();

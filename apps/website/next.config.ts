@@ -30,10 +30,10 @@ const config = {
     deviceSizes: [640, 750, 828, 1080, 1200],
     qualities: [50, 80],
     remotePatterns: [
-      {
-        protocol: "https",
-        hostname: "**",
-      },
+      { hostname: "cvkffwnljbfueseaumcw.supabase.co" },
+      { hostname: "*.supabase.co" },
+      { hostname: "lh3.googleusercontent.com" },
+      { hostname: "img.logo.dev" },
     ],
   },
   async redirects() {

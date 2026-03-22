@@ -100,8 +100,6 @@ await client.connect(transport);
 
 // List available tools
 const tools = await client.listTools();
-console.log(tools);
-
 // Call a tool
 const result = await client.callTool({
   name: "transactions_list",
@@ -110,7 +108,6 @@ const result = await client.callTool({
     type: "expense",
   },
 });
-console.log(result);
 
 await client.close();`;
   }, [apiKey]);

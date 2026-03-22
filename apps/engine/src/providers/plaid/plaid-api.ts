@@ -60,11 +60,8 @@ export class PlaidApi {
   }
 
   #generateWebhookUrl(environment: "sandbox" | "production") {
-    if (environment === "sandbox") {
-      return "https://staging.app.vendhub.com/api/webhook/plaid";
-    }
-
-    return "https://app.vendhub.com/api/webhook/plaid";
+    const baseUrl = process.env.APP_URL || "https://vendcfo.vercel.app";
+    return `${baseUrl}/api/webhook/plaid`;
   }
 
   async getHealthCheck() {

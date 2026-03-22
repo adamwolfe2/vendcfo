@@ -512,7 +512,6 @@ async function run() {
     codeChallenge: "E9Melhoa2OwvFrEMTJguCHaoeK1t8URWbuGJSstw-cM",
   });
 
-  console.log(result);
 }
 
 run();`}

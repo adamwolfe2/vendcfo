@@ -28,18 +28,18 @@ const donutTooltipFormatter = ({
   if (active && payload && payload.length) {
     const data = payload[0].payload;
     return (
-      <div className="border p-2 text-[10px] bg-white dark:bg-[#0c0c0c] border-[#e6e6e6] dark:border-[#1d1d1d] text-black dark:text-white shadow-sm">
-        <p className="mb-1 text-[#707070] dark:text-[#666666]">
+      <div className="border p-2 text-[10px] bg-white border-[#e6e6e6] text-black shadow-sm">
+        <p className="mb-1 text-[#707070]">
           {data.category}
         </p>
-        <p className="text-black dark:text-white">
+        <p className="text-black">
           {formatAmount({
             amount: data.amount,
             currency,
             locale,
           })}
         </p>
-        <p className="text-[#707070] dark:text-[#666666]">
+        <p className="text-[#707070]">
           {data.percentage.toFixed(1)}%
         </p>
       </div>
@@ -81,7 +81,7 @@ export function CategoryExpenseDonutChart({
       <div className="relative" style={{ height }}>
         {/* Dotted background */}
         <div
-          className="absolute inset-0 dark:hidden"
+          className="absolute inset-0"
           style={{
             backgroundImage:
               "radial-gradient(circle, rgba(0,0,0,0.03) 1px, transparent 1px)",
@@ -89,7 +89,7 @@ export function CategoryExpenseDonutChart({
           }}
         />
         <div
-          className="absolute inset-0 hidden dark:block"
+          className="absolute inset-0 hidden"
           style={{
             backgroundImage:
               "radial-gradient(circle, rgba(255,255,255,0.07) 1px, transparent 1px)",

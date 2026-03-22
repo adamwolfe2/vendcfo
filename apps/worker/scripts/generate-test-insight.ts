@@ -59,7 +59,7 @@ async function main() {
   const db = getWorkerDb();
   const team = await getTeamById(db, teamId);
   if (!team) {
-    console.error(`❌ Team not found: ${teamId}`);
+    console.error(`Team not found: ${teamId}`);
     process.exit(1);
   }
 
@@ -78,14 +78,14 @@ async function main() {
     periodNumber = period.periodNumber;
   }
 
-  console.log("\n🔍 Generating test insight with parameters:");
+  console.log("\nGenerating test insight with parameters:");
   console.log(`   Team ID: ${teamId}`);
   console.log(`   Period Type: ${periodType}`);
   console.log(`   Period Year: ${periodYear}`);
   console.log(`   Period Number: ${periodNumber}`);
   console.log(`   Currency: ${currency} (from team settings)`);
   if (skipDataQualityCheck) {
-    console.log("   ⚠️  Force mode: bypassing data quality checks");
+    console.log("   [WARN] Force mode: bypassing data quality checks");
   }
   console.log();
 
@@ -93,7 +93,7 @@ async function main() {
   const redisUrl = process.env.REDIS_URL;
 
   if (!redisUrl) {
-    console.error("❌ REDIS_URL environment variable is required");
+    console.error("REDIS_URL environment variable is required");
     process.exit(1);
   }
 
@@ -107,7 +107,7 @@ async function main() {
   try {
     const jobId = `test-insights-${teamId}-${periodType}-${periodYear}-${periodNumber}-${Date.now()}`;
 
-    console.log("📤 Adding job to insights queue...");
+    console.log("Adding job to insights queue...");
 
     const job = await insightsQueue.add(
       "generate-team-insights",
@@ -125,11 +125,11 @@ async function main() {
       },
     );
 
-    console.log("✅ Job added successfully!");
+    console.log("Job added successfully!");
     console.log(`   Job ID: ${job.id}`);
     console.log(`   Job Name: ${job.name}`);
     console.log();
-    console.log("💡 The job will be processed by the worker.");
+    console.log("The job will be processed by the worker.");
     console.log(
       "   Make sure the worker is running: bun run dev (in apps/worker)",
     );
@@ -138,7 +138,7 @@ async function main() {
       "   To monitor progress, check the worker logs or the insights table.",
     );
   } catch (error) {
-    console.error("❌ Error:", error);
+    console.error("Error:", error);
     process.exit(1);
   } finally {
     await insightsQueue.close();

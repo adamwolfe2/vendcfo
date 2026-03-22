@@ -80,12 +80,12 @@ export function RouteTable() {
                 </TableCell>
                 <TableCell className="text-right font-medium">
                   {route.profit > 0 ? (
-                    <span className="text-green-600 dark:text-green-400 flex items-center justify-end">
+                    <span className="text-green-600 flex items-center justify-end">
                       <ArrowUpRight size={14} className="mr-1" />$
                       {route.profit.toLocaleString()}
                     </span>
                   ) : (
-                    <span className="text-red-500 dark:text-red-400 flex items-center justify-end">
+                    <span className="text-red-500 flex items-center justify-end">
                       <ArrowDownRight size={14} className="mr-1" />
                       -${Math.abs(route.profit).toLocaleString()}
                     </span>
@@ -98,10 +98,10 @@ export function RouteTable() {
                   <span
                     className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
                       route.status === "green"
-                        ? "bg-green-500/10 text-green-600 dark:text-green-400"
+                        ? "bg-green-500/10 text-green-600"
                         : route.status === "yellow"
-                          ? "bg-yellow-500/10 text-yellow-600 dark:text-yellow-400"
-                          : "bg-red-500/10 text-red-600 dark:text-red-400"
+                          ? "bg-yellow-500/10 text-yellow-600"
+                          : "bg-red-500/10 text-red-600"
                     }`}
                   >
                     {route.status === "red" && (

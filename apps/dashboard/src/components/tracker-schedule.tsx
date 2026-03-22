@@ -1372,7 +1372,7 @@ export function TrackerSchedule() {
               className={cn(
                 "absolute transition-colors",
                 // Same styling for all events
-                "bg-[#F0F0F0]/[0.95] dark:bg-[#1D1D1D]/[0.95] text-[#606060] dark:text-[#878787] border-t border-border",
+                "bg-[#F0F0F0]/[0.95]/[0.95] text-[#606060] border-t border-border",
                 selectedEvent?.id === event.id && "!text-primary",
                 event.id !== NEW_EVENT_ID && "cursor-move",
                 event.totalColumns > 1 && event.column > 0

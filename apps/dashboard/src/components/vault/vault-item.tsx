@@ -129,7 +129,7 @@ export function VaultItem({ data, small }: Props) {
   return (
     <div
       className={cn(
-        "h-72 border relative flex text-muted-foreground p-4 flex-col gap-3 hover:bg-muted dark:hover:bg-[#141414] transition-colors duration-200 group cursor-pointer",
+        "h-72 border relative flex text-muted-foreground p-4 flex-col gap-3 hover:bg-muted transition-colors duration-200 group cursor-pointer",
         small && "h-48",
       )}
       onClick={() => {
@@ -139,7 +139,7 @@ export function VaultItem({ data, small }: Props) {
       {/* Status badge - top right */}
       {showRetry && !showSkeleton && (
         <div className="absolute top-4 right-4 z-10">
-          <span className="px-2 py-0.5 rounded-full text-[11px] bg-[#FFD02B]/10 text-[#FFD02B] dark:bg-[#FFD02B]/10 dark:text-[#FFD02B]">
+          <span className="px-2 py-0.5 rounded-full text-[11px] bg-[#FFD02B]/10 text-[#FFD02B]">
             Processing incomplete
           </span>
         </div>

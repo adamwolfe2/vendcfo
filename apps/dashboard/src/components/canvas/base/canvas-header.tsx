@@ -34,7 +34,9 @@ export function CanvasHeader({ title }: CanvasHeaderProps) {
         filename,
         theme: resolvedTheme,
       });
-    } catch {}
+    } catch (error) {
+      console.error("Failed to generate PDF report:", error);
+    }
   };
 
   const handleShareReport = async () => {
@@ -75,7 +77,7 @@ export function CanvasHeader({ title }: CanvasHeaderProps) {
   };
 
   return (
-    <div className="flex items-center justify-between bg-gray-50 dark:bg-[#131313]">
+    <div className="flex items-center justify-between bg-gray-50">
       <ArtifactTabs />
 
       <div className="flex justify-end mr-1.5">

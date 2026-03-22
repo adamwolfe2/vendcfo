@@ -265,7 +265,7 @@ export function ArtifactTabs() {
             className={cn(
               "group flex items-center px-3 h-10 text-xs font-medium transition-all whitespace-nowrap",
               isActive
-                ? "bg-white dark:bg-[#0c0c0c]"
+                ? "bg-white"
                 : "bg-transparent text-muted-foreground hover:text-foreground",
             )}
           >

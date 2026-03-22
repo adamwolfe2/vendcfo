@@ -48,12 +48,12 @@ const ToolTipContent = ({
     }) ?? `${current.currency}${amount.toLocaleString()}`;
 
   return (
-    <div className="border p-2 text-[10px] font-hedvig-sans bg-white dark:bg-[#0c0c0c] border-[#e6e6e6] dark:border-[#1d1d1d] text-black dark:text-white shadow-sm">
-      <p className="mb-1 text-[#707070] dark:text-[#666666]">{label}</p>
-      <p className="text-black dark:text-white">
+    <div className="border p-2 text-[10px] font-hedvig-sans bg-white border-[#e6e6e6] text-black shadow-sm">
+      <p className="mb-1 text-[#707070]">{label}</p>
+      <p className="text-black">
         Total: {formatCurrency(current.total)}
       </p>
-      <p className="text-black dark:text-white">
+      <p className="text-black">
         Recurring: {formatCurrency(current.recurring)}
       </p>
     </div>
@@ -116,75 +116,75 @@ export function StackedBarChart({
                 <rect
                   width="64"
                   height="64"
-                  className="dark:fill-[#323232] fill-[#C6C6C6]"
+                  className="fill-[#C6C6C6]"
                 />
                 <path
                   d="M-106 110L22 -18"
-                  className="stroke-[#323232] dark:stroke-white"
+                  className="stroke-[#323232]"
                 />
                 <path
                   d="M-98 110L30 -18"
-                  className="stroke-[#323232] dark:stroke-white"
+                  className="stroke-[#323232]"
                 />
                 <path
                   d="M-90 110L38 -18"
-                  className="stroke-[#323232] dark:stroke-white"
+                  className="stroke-[#323232]"
                 />
                 <path
                   d="M-82 110L46 -18"
-                  className="stroke-[#323232] dark:stroke-white"
+                  className="stroke-[#323232]"
                 />
                 <path
                   d="M-74 110L54 -18"
-                  className="stroke-[#323232] dark:stroke-white"
+                  className="stroke-[#323232]"
                 />
                 <path
                   d="M-66 110L62 -18"
-                  className="stroke-[#323232] dark:stroke-white"
+                  className="stroke-[#323232]"
                 />
                 <path
                   d="M-58 110L70 -18"
-                  className="stroke-[#323232] dark:stroke-white"
+                  className="stroke-[#323232]"
                 />
                 <path
                   d="M-50 110L78 -18"
-                  className="stroke-[#323232] dark:stroke-white"
+                  className="stroke-[#323232]"
                 />
                 <path
                   d="M-42 110L86 -18"
-                  className="stroke-[#323232] dark:stroke-white"
+                  className="stroke-[#323232]"
                 />
                 <path
                   d="M-34 110L94 -18"
-                  className="stroke-[#323232] dark:stroke-white"
+                  className="stroke-[#323232]"
                 />
                 <path
                   d="M-26 110L102 -18"
-                  className="stroke-[#323232] dark:stroke-white"
+                  className="stroke-[#323232]"
                 />
                 <path
                   d="M-18 110L110 -18"
-                  className="stroke-[#323232] dark:stroke-white"
+                  className="stroke-[#323232]"
                 />
                 <path
                   d="M-10 110L118 -18"
-                  className="stroke-[#323232] dark:stroke-white"
+                  className="stroke-[#323232]"
                 />
                 <path
                   d="M-2 110L126 -18"
-                  className="stroke-[#323232] dark:stroke-white"
+                  className="stroke-[#323232]"
                 />
                 <path
                   d="M6 110L134 -18"
-                  className="stroke-[#323232] dark:stroke-white"
+                  className="stroke-[#323232]"
                 />
                 <path
                   d="M14 110L142 -18"
-                  className="stroke-[#323232] dark:stroke-white"
+                  className="stroke-[#323232]"
                 />
                 <path
                   d="M22 110L150 -18"
-                  className="stroke-[#323232] dark:stroke-white"
+                  className="stroke-[#323232]"
                 />
               </pattern>
             </defs>
@@ -230,7 +230,7 @@ export function StackedBarChart({
               barSize={16}
               dataKey="value"
               stackId="a"
-              className="dark:fill-[#323232] fill-[#C6C6C6]"
+              className="fill-[#C6C6C6]"
             />
 
             <Line

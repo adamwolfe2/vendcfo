@@ -46,7 +46,7 @@ export function InvoiceSuccess() {
       <InvoiceSheetHeader invoiceId={invoiceId!} />
 
       <div className="flex flex-col justify-center h-[calc(100vh-260px)]">
-        <div className="bg-[#F2F2F2] dark:bg-[#121212] p-6 relative">
+        <div className="bg-[#F2F2F2] p-6 relative">
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -168,7 +168,7 @@ export function InvoiceSuccess() {
             {Array.from({ length: 10 }).map((_, index) => (
               <div
                 key={index.toString()}
-                className="size-[30px] rounded-full bg-[#fcfcfc] dark:bg-[#121212]"
+                className="size-[30px] rounded-full bg-[#fcfcfc]"
               />
             ))}
           </motion.div>

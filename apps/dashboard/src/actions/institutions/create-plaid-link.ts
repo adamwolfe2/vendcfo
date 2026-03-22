@@ -7,10 +7,7 @@ const PLAID_BASE_URL =
     ? "https://sandbox.plaid.com"
     : "https://production.plaid.com";
 
-const WEBHOOK_URL =
-  process.env.NEXT_PUBLIC_PLAID_ENVIRONMENT === "sandbox"
-    ? "https://vendcfo.vercel.app/api/webhook/plaid"
-    : "https://vendcfo.vercel.app/api/webhook/plaid";
+const WEBHOOK_URL = `${process.env.NEXT_PUBLIC_APP_URL || "https://vendcfo.vercel.app"}/api/webhook/plaid`;
 
 export const createPlaidLinkTokenAction = async (accessToken?: string) => {
   const {

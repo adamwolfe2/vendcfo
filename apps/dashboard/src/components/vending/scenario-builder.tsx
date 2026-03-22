@@ -167,14 +167,14 @@ export function ScenarioBuilder() {
                         Based on calculated volume drop
                       </p>
                     </div>
-                    <div className="p-3 bg-blue-500/10 text-blue-600 dark:text-blue-400 rounded-xl">
+                    <div className="p-3 bg-blue-500/10 text-blue-600 rounded-xl">
                       <DollarSign size={24} />
                     </div>
                   </div>
 
                   <div className="grid grid-cols-2 gap-4">
                     <div className="bg-card p-4 rounded-lg border border-red-500/20 shadow-sm">
-                      <p className="text-xs text-red-500 dark:text-red-400 font-semibold uppercase tracking-wider mb-2">
+                      <p className="text-xs text-red-500 font-semibold uppercase tracking-wider mb-2">
                         Downside Risk
                       </p>
                       <p className="text-xl font-bold text-foreground">
@@ -186,7 +186,7 @@ export function ScenarioBuilder() {
                     </div>
 
                     <div className="bg-card p-4 rounded-lg border border-green-500/20 shadow-sm">
-                      <p className="text-xs text-green-600 dark:text-green-400 font-semibold uppercase tracking-wider mb-2">
+                      <p className="text-xs text-green-600 font-semibold uppercase tracking-wider mb-2">
                         Upside Target
                       </p>
                       <p className="text-xl font-bold text-foreground">
@@ -204,14 +204,14 @@ export function ScenarioBuilder() {
                 {priceResults.recommendation === "raise" ? (
                   <div className="bg-green-500/10 border border-green-500/20 p-4 rounded-lg flex items-start">
                     <TrendingUp
-                      className="text-green-600 dark:text-green-400 mt-0.5 mr-3 flex-shrink-0"
+                      className="text-green-600 mt-0.5 mr-3 flex-shrink-0"
                       size={20}
                     />
                     <div>
-                      <h5 className="font-semibold text-green-700 dark:text-green-300 text-sm">
+                      <h5 className="font-semibold text-green-700 text-sm">
                         Recommendation: Raise Price
                       </h5>
-                      <p className="text-sm text-green-700 dark:text-green-400 mt-1">
+                      <p className="text-sm text-green-700 mt-1">
                         The proposed price hike is highly likely to increase
                         gross profit, even accounting for moderate volume
                         declines.
@@ -221,14 +221,14 @@ export function ScenarioBuilder() {
                 ) : priceResults.recommendation === "lower" ? (
                   <div className="bg-yellow-500/10 border border-yellow-500/20 p-4 rounded-lg flex items-start">
                     <AlertTriangle
-                      className="text-yellow-600 dark:text-yellow-400 mt-0.5 mr-3 flex-shrink-0"
+                      className="text-yellow-600 mt-0.5 mr-3 flex-shrink-0"
                       size={20}
                     />
                     <div>
-                      <h5 className="font-semibold text-yellow-700 dark:text-yellow-300 text-sm">
+                      <h5 className="font-semibold text-yellow-700 text-sm">
                         Recommendation: Lower Price
                       </h5>
-                      <p className="text-sm text-yellow-700 dark:text-yellow-400 mt-1">
+                      <p className="text-sm text-yellow-700 mt-1">
                         Lowering the price may increase total gross profit by
                         driving significantly higher volume.
                       </p>
@@ -237,14 +237,14 @@ export function ScenarioBuilder() {
                 ) : (
                   <div className="bg-orange-500/10 border border-orange-500/20 p-4 rounded-lg flex items-start">
                     <AlertTriangle
-                      className="text-orange-600 dark:text-orange-400 mt-0.5 mr-3 flex-shrink-0"
+                      className="text-orange-600 mt-0.5 mr-3 flex-shrink-0"
                       size={20}
                     />
                     <div>
-                      <h5 className="font-semibold text-orange-700 dark:text-orange-300 text-sm">
+                      <h5 className="font-semibold text-orange-700 text-sm">
                         Recommendation: Hold Price
                       </h5>
-                      <p className="text-sm text-orange-700 dark:text-orange-400 mt-1">
+                      <p className="text-sm text-orange-700 mt-1">
                         The expected drop in unit sales negates the margin
                         increase. Hold the current price to avoid risking market
                         share.

@@ -246,7 +246,7 @@ export function TransactionDetails() {
       <div className="flex justify-between mb-8">
         <div className="flex-1 flex-col">
           {isLoading ? (
-            <div className="flex items-center justify-between  mt-1 mb-6">
+            <div className="flex items-center justify-between mt-1 mb-6">
               <div className="flex space-x-2 items-center">
                 <Skeleton className="h-5 w-5 rounded-full" />
                 <Skeleton className="w-[100px] h-[14px] rounded-full" />
@@ -310,7 +310,7 @@ export function TransactionDetails() {
       </div>
 
       {data?.description && (
-        <div className="border dark:bg-[#1A1A1A]/95 px-4 py-3 text-sm text-popover-foreground select-text">
+        <div className="border px-4 py-3 text-sm text-popover-foreground select-text">
           {data.description}
         </div>
       )}

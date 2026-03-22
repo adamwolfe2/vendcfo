@@ -49,7 +49,7 @@ export function SkeletonCard({
   return (
     <div
       className={cn(
-        "border p-3 bg-white dark:bg-[#0c0c0c] border-[#e6e6e6] dark:border-[#1d1d1d] rounded-none",
+        "border p-3 bg-white border-[#e6e6e6] rounded-none",
         className,
       )}
     >

@@ -38,12 +38,12 @@ export function InvoiceStatus({
       <span
         className={cn(
           (status === "draft" || status === "canceled") &&
-            "text-[#878787] dark:text-[#878787]",
-          status === "overdue" && "text-[#FFD02B] dark:text-[#FFD02B]",
-          status === "paid" && "text-[#00C969] dark:text-[#00C969]",
-          status === "unpaid" && "text-[#1D1D1D] dark:text-[#F5F5F3]",
-          status === "scheduled" && "text-[#1F6FEB] dark:text-[#1F6FEB]",
-          status === "refunded" && "text-[#F97316] dark:text-[#F97316]",
+            "text-[#878787]",
+          status === "overdue" && "text-[#FFD02B]",
+          status === "paid" && "text-[#00C969]",
+          status === "unpaid" && "text-[#1D1D1D]",
+          status === "scheduled" && "text-[#1F6FEB]",
+          status === "refunded" && "text-[#F97316]",
           className,
         )}
       >
@@ -57,17 +57,17 @@ export function InvoiceStatus({
       className={cn(
         "px-2 py-0.5 rounded-full cursor-default inline-flex max-w-full text-[11px]",
         (status === "draft" || status === "canceled") &&
-          "text-[#878787] bg-[#F2F1EF] text-[10px] dark:text-[#878787] dark:bg-[#1D1D1D]",
+          "text-[#878787] bg-[#F2F1EF] text-[10px]",
         status === "overdue" &&
-          "bg-[#FFD02B]/10 text-[#FFD02B] dark:bg-[#FFD02B]/10 dark:text-[#FFD02B]",
+          "bg-[#FFD02B]/10 text-[#FFD02B]",
         status === "paid" &&
-          "text-[#00C969] bg-[#DDF1E4] dark:text-[#00C969] dark:bg-[#00C969]/10",
+          "text-[#00C969] bg-[#DDF1E4]",
         status === "unpaid" &&
-          "text-[#1D1D1D] bg-[#878787]/10 dark:text-[#F5F5F3] dark:bg-[#F5F5F3]/10",
+          "text-[#1D1D1D] bg-[#878787]/10",
         status === "scheduled" &&
-          "text-[#1F6FEB] bg-[#DDEBFF] dark:text-[#1F6FEB] dark:bg-[#1F6FEB]/10",
+          "text-[#1F6FEB] bg-[#DDEBFF]",
         status === "refunded" &&
-          "text-[#F97316] bg-[#FFEDD5] dark:text-[#F97316] dark:bg-[#F97316]/10",
+          "text-[#F97316] bg-[#FFEDD5]",
         className,
       )}
     >

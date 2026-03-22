@@ -36,7 +36,7 @@ export function SortableChartCard({
       style={style}
       className={`${className} ${wiggleClass || ""} ${
         isDragging
-          ? "opacity-100 z-50 shadow-[0_4px_12px_rgba(0,0,0,0.15)] dark:shadow-[0_10px_30px_rgba(0,0,0,0.4)] scale-105"
+          ? "opacity-100 z-50 shadow-[0_4px_12px_rgba(0,0,0,0.15)] scale-105"
           : ""
       } relative`}
       {...attributes}

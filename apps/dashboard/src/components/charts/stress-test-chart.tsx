@@ -53,20 +53,20 @@ const ProjectionTooltip = ({
     const bestCase = payload.find((p) => p.dataKey === "bestCase")?.value;
 
     return (
-      <div className="border p-2 text-[10px] font-hedvig-sans bg-white dark:bg-[#0c0c0c] border-[#e6e6e6] dark:border-[#1d1d1d] text-black dark:text-white shadow-sm">
-        <p className="mb-1 text-[#707070] dark:text-[#666666]">Month {label}</p>
+      <div className="border p-2 text-[10px] font-hedvig-sans bg-white border-[#e6e6e6] text-black shadow-sm">
+        <p className="mb-1 text-[#707070]">Month {label}</p>
         {typeof baseCase === "number" && (
-          <p className="text-black dark:text-white">
+          <p className="text-black">
             Base Case: {formatCurrency(baseCase)}
           </p>
         )}
         {typeof worstCase === "number" && (
-          <p className="text-black dark:text-white">
+          <p className="text-black">
             Worst Case: {formatCurrency(worstCase)}
           </p>
         )}
         {typeof bestCase === "number" && (
-          <p className="text-black dark:text-white">
+          <p className="text-black">
             Best Case: {formatCurrency(bestCase)}
           </p>
         )}

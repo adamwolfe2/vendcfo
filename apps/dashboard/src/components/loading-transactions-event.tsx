@@ -85,7 +85,7 @@ export function LoadingTransactionsEvent({
       <ul className="text-md text-[#878787] space-y-4 transition-all">
         <li
           className={cn(
-            "opacity-50 dark:opacity-20",
+            "opacity-50",
             step > 0 && "!opacity-100",
           )}
         >
@@ -94,7 +94,7 @@ export function LoadingTransactionsEvent({
         </li>
         <li
           className={cn(
-            "opacity-50 dark:opacity-20",
+            "opacity-50",
             step > 1 && "!opacity-100",
           )}
         >
@@ -103,7 +103,7 @@ export function LoadingTransactionsEvent({
         </li>
         <li
           className={cn(
-            "opacity-50 dark:opacity-20",
+            "opacity-50",
             step > 2 && "!opacity-100",
           )}
         >

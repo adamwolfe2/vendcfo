@@ -69,7 +69,7 @@ export function TransactionsModal({
                     height={251}
                     alt="Overview"
                     className={cn(
-                      "w-full opacity-0 absolute transition-all hidden dark:block",
+                      "w-full opacity-0 absolute transition-all hidden",
                       image.id === activeId && "opacity-1",
                     )}
                   />
@@ -81,7 +81,7 @@ export function TransactionsModal({
                     height={251}
                     alt="Overview"
                     className={cn(
-                      "w-full opacity-0 absolute transition-all block dark:hidden",
+                      "w-full opacity-0 absolute transition-all block",
                       image.id === activeId && "opacity-1",
                     )}
                   />
@@ -98,7 +98,7 @@ export function TransactionsModal({
                     onClick={() => setActive(image.id)}
                     key={image.id}
                     className={cn(
-                      "w-[16px] h-[6px] rounded-full bg-[#1D1D1D] dark:bg-[#D9D9D9] opacity-30 transition-all cursor-pointer",
+                      "w-[16px] h-[6px] rounded-full bg-[#1D1D1D] opacity-30 transition-all cursor-pointer",
                       image.id === activeId && "opacity-1",
                     )}
                   />

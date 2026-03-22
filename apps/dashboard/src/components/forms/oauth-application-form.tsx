@@ -640,7 +640,7 @@ export function OAuthApplicationForm({ data }: Props) {
                   type="button"
                   variant="outline"
                   onClick={() => append({ url: "" })}
-                  className="border-none bg-[#F2F1EF] text-[11px] dark:bg-[#1D1D1D] mt-2"
+                  className="border-none bg-[#F2F1EF] text-[11px] mt-2"
                 >
                   Add more
                 </Button>
@@ -842,7 +842,7 @@ export function OAuthApplicationForm({ data }: Props) {
           </Accordion>
         </div>
 
-        <div className="sticky bottom-0 bg-[#FAFAF9] dark:bg-[#0C0C0C] border-t pt-3 mt-4">
+        <div className="sticky bottom-0 bg-[#FAFAF9] border-t pt-3 mt-4">
           <SubmitButton
             type="submit"
             className="w-full"

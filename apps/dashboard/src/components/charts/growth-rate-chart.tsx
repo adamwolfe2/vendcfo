@@ -55,24 +55,24 @@ const CustomTooltip = ({
       }) ?? `${currency}${amount.toLocaleString()}`;
 
     return (
-      <div className="border p-2 text-[10px] font-hedvig-sans bg-white dark:bg-[#0c0c0c] border-[#e6e6e6] dark:border-[#1d1d1d] text-black dark:text-white shadow-sm">
-        <p className="mb-1 text-[#707070] dark:text-[#666666]">{label}</p>
+      <div className="border p-2 text-[10px] font-hedvig-sans bg-white border-[#e6e6e6] text-black shadow-sm">
+        <p className="mb-1 text-[#707070]">{label}</p>
         {typeof current === "number" && (
-          <p className="text-black dark:text-white">
+          <p className="text-black">
             Current: {formatCurrency(current)}
           </p>
         )}
         {typeof previous === "number" && (
-          <p className="text-black dark:text-white">
+          <p className="text-black">
             Previous: {formatCurrency(previous)}
           </p>
         )}
         {typeof growthRate === "number" && (
           <p
-            className={`text-black dark:text-white ${
+            className={`text-black ${
               growthRate >= 0
-                ? "text-green-600 dark:text-green-400"
-                : "text-red-600 dark:text-red-400"
+                ? "text-green-600"
+                : "text-red-600"
             }`}
           >
             Growth Rate: {growthRate > 0 ? "+" : ""}

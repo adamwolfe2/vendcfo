@@ -59,16 +59,16 @@ export function CanvasGrid({
         {displayItems.map((item, index) => (
           <div
             key={item.id}
-            className="border p-3 bg-white dark:bg-[#0c0c0c] border-[#e6e6e6] dark:border-[#1d1d1d]"
+            className="border p-3 bg-white border-[#e6e6e6]"
           >
-            <div className="text-[12px] text-[#707070] dark:text-[#666666] mb-1">
+            <div className="text-[12px] text-[#707070] mb-1">
               {item.title}
             </div>
-            <div className="text-[18px] font-normal font-sans text-black dark:text-white mb-1">
+            <div className="text-[18px] font-normal font-sans text-black mb-1">
               {item.value}
             </div>
             {item.subtitle && (
-              <div className="text-[10px] text-[#707070] dark:text-[#666666]">
+              <div className="text-[10px] text-[#707070]">
                 {item.subtitle}
               </div>
             )}
@@ -77,8 +77,8 @@ export function CanvasGrid({
                 className={cn(
                   "text-[10px] mt-1",
                   item.trend.isPositive
-                    ? "text-green-600 dark:text-green-400"
-                    : "text-red-600 dark:text-red-400",
+                    ? "text-green-600"
+                    : "text-red-600",
                 )}
               >
                 {item.trend.value}

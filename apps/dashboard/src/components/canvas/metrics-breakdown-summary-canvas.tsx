@@ -135,13 +135,13 @@ export function MetricsBreakdownSummaryCanvas() {
           {showData && transactions.length > 0 && (
             <div className="mb-6">
               <div className="flex items-center justify-between mb-4">
-                <h4 className="text-[18px] font-normal font-serif text-black dark:text-white">
+                <h4 className="text-[18px] font-normal font-serif text-black">
                   Transactions — {monthLabel}
                 </h4>
                 {data?.from && data?.to && (
                   <Link
                     href={`/transactions?start=${data.from}&end=${data.to}`}
-                    className="text-[#707070] text-xs dark:text-[#666666] hover:underline mt-auto"
+                    className="text-[#707070] text-xs hover:underline mt-auto"
                   >
                     View all transactions
                   </Link>
@@ -150,19 +150,19 @@ export function MetricsBreakdownSummaryCanvas() {
               <Table>
                 <TableHeader>
                   <TableRow className="border-b-0">
-                    <TableHead className="text-[12px] text-[#707070] dark:text-[#666666] font-normal">
+                    <TableHead className="text-[12px] text-[#707070] font-normal">
                       Date
                     </TableHead>
-                    <TableHead className="text-[12px] text-[#707070] dark:text-[#666666] font-normal">
+                    <TableHead className="text-[12px] text-[#707070] font-normal">
                       Name
                     </TableHead>
-                    <TableHead className="text-[12px] text-[#707070] dark:text-[#666666] font-normal">
+                    <TableHead className="text-[12px] text-[#707070] font-normal">
                       Category
                     </TableHead>
-                    <TableHead className="text-right text-[12px] text-[#707070] dark:text-[#666666] font-normal">
+                    <TableHead className="text-right text-[12px] text-[#707070] font-normal">
                       Amount
                     </TableHead>
-                    <TableHead className="text-right text-[12px] text-[#707070] dark:text-[#666666] font-normal">
+                    <TableHead className="text-right text-[12px] text-[#707070] font-normal">
                       Share
                     </TableHead>
                   </TableRow>
@@ -173,11 +173,11 @@ export function MetricsBreakdownSummaryCanvas() {
                       key={tx.id}
                       onClick={() => setParams({ transactionId: tx.id })}
                       className={cn(
-                        "h-10 cursor-pointer hover:bg-[#F2F1EF] dark:hover:bg-[#0f0f0f] transition-colors",
+                        "h-10 cursor-pointer hover:bg-[#F2F1EF] transition-colors",
                         index === array.length - 1 && "border-b-0",
                       )}
                     >
-                      <TableCell className="text-[12px] text-black dark:text-white py-0 px-3 align-middle">
+                      <TableCell className="text-[12px] text-black py-0 px-3 align-middle">
                         <div
                           className="truncate whitespace-nowrap"
                           title={tx.date}
@@ -185,12 +185,12 @@ export function MetricsBreakdownSummaryCanvas() {
                           {tx.date}
                         </div>
                       </TableCell>
-                      <TableCell className="text-[12px] text-black dark:text-white py-0 px-3 align-middle max-w-[200px]">
+                      <TableCell className="text-[12px] text-black py-0 px-3 align-middle max-w-[200px]">
                         <div className="truncate" title={tx.name}>
                           {tx.name}
                         </div>
                       </TableCell>
-                      <TableCell className="text-[12px] text-[#707070] dark:text-[#666666] py-0 px-3 align-middle max-w-[150px]">
+                      <TableCell className="text-[12px] text-[#707070] py-0 px-3 align-middle max-w-[150px]">
                         <div className="truncate" title={tx.category}>
                           {tx.category}
                         </div>
@@ -199,8 +199,8 @@ export function MetricsBreakdownSummaryCanvas() {
                         className={cn(
                           "text-right text-[12px] font-medium py-0 px-3 align-middle",
                           tx.type === "income"
-                            ? "text-green-600 dark:text-green-400"
-                            : "text-black dark:text-white",
+                            ? "text-green-600"
+                            : "text-black",
                         )}
                       >
                         <div className="truncate whitespace-nowrap">
@@ -208,7 +208,7 @@ export function MetricsBreakdownSummaryCanvas() {
                           {tx.formattedAmount}
                         </div>
                       </TableCell>
-                      <TableCell className="text-right text-[12px] text-[#707070] dark:text-[#666666] py-0 px-3 align-middle">
+                      <TableCell className="text-right text-[12px] text-[#707070] py-0 px-3 align-middle">
                         <div className="truncate whitespace-nowrap">
                           {tx.percentage?.toFixed(1)}%
                         </div>
@@ -224,27 +224,27 @@ export function MetricsBreakdownSummaryCanvas() {
           {showData && summary && (
             <div className="grid grid-cols-2 gap-3 mb-6">
               {/* Total Spending Card */}
-              <div className="border p-3 bg-white dark:bg-[#0c0c0c] border-[#e6e6e6] dark:border-[#1d1d1d]">
-                <div className="text-[12px] text-[#707070] dark:text-[#666666] mb-1">
+              <div className="border p-3 bg-white border-[#e6e6e6]">
+                <div className="text-[12px] text-[#707070] mb-1">
                   {monthLabel
                     ? `Total spending in ${monthLabel}`
                     : "Total spending"}
                 </div>
-                <div className="text-[18px] font-normal font-sans text-black dark:text-white mb-1">
+                <div className="text-[18px] font-normal font-sans text-black mb-1">
                   {formatCurrencyAmount(summary.expenses, currency, locale)}
                 </div>
-                <div className="text-[10px] text-[#707070] dark:text-[#666666]">
+                <div className="text-[10px] text-[#707070]">
                   Across {summary.transactionCount} transaction
                   {summary.transactionCount !== 1 ? "s" : ""}
                 </div>
               </div>
 
               {/* Top Category Card */}
-              <div className="border p-3 bg-white dark:bg-[#0c0c0c] border-[#e6e6e6] dark:border-[#1d1d1d]">
-                <div className="text-[12px] text-[#707070] dark:text-[#666666] mb-1">
+              <div className="border p-3 bg-white border-[#e6e6e6]">
+                <div className="text-[12px] text-[#707070] mb-1">
                   Top category
                 </div>
-                <div className="text-[18px] font-normal font-sans text-black dark:text-white mb-1">
+                <div className="text-[18px] font-normal font-sans text-black mb-1">
                   {topCategory
                     ? `${topCategory.name} — ${formatAmount({
                         currency,
@@ -253,7 +253,7 @@ export function MetricsBreakdownSummaryCanvas() {
                       })}`
                     : "—"}
                 </div>
-                <div className="text-[10px] text-[#707070] dark:text-[#666666]">
+                <div className="text-[10px] text-[#707070]">
                   {topCategoryPercentage > 0
                     ? `${topCategoryPercentage.toFixed(1)}% of total expenses`
                     : "Largest share of monthly spend"}
