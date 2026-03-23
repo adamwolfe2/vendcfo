@@ -17,49 +17,42 @@ const operationsCards = [
     description: "Manage your vending routes and service schedules",
     href: "/routes",
     icon: Route,
-    color: "#22c55e",
   },
   {
     title: "Logistics",
     description: "Weekly schedule grid with operator assignments",
     href: "/logistics",
     icon: CalendarDays,
-    color: "#3b82f6",
   },
   {
     title: "Locations",
     description: "Manage locations, rev share, and machine placements",
     href: "/locations",
     icon: MapPin,
-    color: "#f59e0b",
   },
   {
     title: "Machines",
     description: "Track all vending machines, status, and performance",
     href: "/machines",
     icon: Server,
-    color: "#8b5cf6",
   },
   {
     title: "Products & SKUs",
     description: "Product catalog with costs, prices, and margins",
     href: "/skus",
     icon: PackageOpen,
-    color: "#ef4444",
   },
   {
     title: "Revenue Share",
     description: "Track location commissions and send partner reports",
     href: "/revenue-share",
     icon: DollarSign,
-    color: "#06b6d4",
   },
   {
     title: "Import Data",
     description: "Upload CSV files with AI-powered column mapping",
     href: "/import",
     icon: FileSpreadsheet,
-    color: "#64748b",
   },
 ];
 
@@ -111,13 +104,10 @@ export function OperationsDashboard({ stats }: OperationsDashboardProps) {
             className="group border border-[#e0e0e0] rounded-lg p-5 hover:border-[#999] hover:shadow-sm transition-all"
           >
             <div className="flex items-start gap-3">
-              <div
-                className="p-2 rounded-lg"
-                style={{ backgroundColor: `${card.color}15` }}
-              >
+              <div className="p-2 rounded-lg bg-[#f5f5f5]">
                 <card.icon
                   size={20}
-                  style={{ color: card.color }}
+                  className="text-black"
                   strokeWidth={1.5}
                 />
               </div>
