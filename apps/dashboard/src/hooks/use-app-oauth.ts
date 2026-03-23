@@ -118,7 +118,10 @@ export function useAppOAuth({
 
       if (!response.ok) {
         popup?.close();
-        throw new Error(`Failed to get install URL: ${response.statusText}`);
+        const body = await response.json().catch(() => null);
+        const message =
+          body?.error || `Failed to get install URL: ${response.statusText}`;
+        throw new Error(message);
       }
 
       const { url } = await response.json();

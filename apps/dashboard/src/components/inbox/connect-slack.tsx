@@ -24,7 +24,7 @@ export function ConnectSlack() {
   );
 
   const { connect, isLoading } = useAppOAuth({
-    installUrlEndpoint: "/apps/slack/install-url",
+    installUrlEndpoint: "/api/apps/slack/install-url",
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: trpc.apps.get.queryKey() });
     },

@@ -185,7 +185,7 @@ export function SettingsMenu() {
   );
 
   const stripeOAuth = useAppOAuth({
-    installUrlEndpoint: "/invoice-payments/connect-stripe",
+    installUrlEndpoint: "/api/invoice-payments/connect-stripe",
     onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: trpc.invoicePayments.stripeStatus.queryKey(),

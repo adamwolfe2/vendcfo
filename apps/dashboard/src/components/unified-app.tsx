@@ -36,17 +36,20 @@ const oauthAppConfig: Record<
   string,
   { endpoint: string; queryKey: "apps" | "inboxAccounts" | "stripeStatus" }
 > = {
-  slack: { endpoint: "/apps/slack/install-url", queryKey: "apps" },
-  gmail: { endpoint: "/apps/gmail/install-url", queryKey: "inboxAccounts" },
-  outlook: { endpoint: "/apps/outlook/install-url", queryKey: "inboxAccounts" },
-  xero: { endpoint: "/apps/xero/install-url", queryKey: "apps" },
+  slack: { endpoint: "/api/apps/slack/install-url", queryKey: "apps" },
+  gmail: { endpoint: "/api/apps/gmail/install-url", queryKey: "inboxAccounts" },
+  outlook: {
+    endpoint: "/api/apps/outlook/install-url",
+    queryKey: "inboxAccounts",
+  },
+  xero: { endpoint: "/api/apps/xero/install-url", queryKey: "apps" },
   quickbooks: {
     endpoint: "/api/apps/quickbooks/install-url",
     queryKey: "apps",
   },
-  fortnox: { endpoint: "/apps/fortnox/install-url", queryKey: "apps" },
+  fortnox: { endpoint: "/api/apps/fortnox/install-url", queryKey: "apps" },
   "stripe-payments": {
-    endpoint: "/invoice-payments/connect-stripe",
+    endpoint: "/api/invoice-payments/connect-stripe",
     queryKey: "stripeStatus",
   },
 };
@@ -145,11 +148,10 @@ export function UnifiedAppComponent({ app }: UnifiedAppProps) {
       }
       setLoading(false);
     },
-    onError: () => {
-      // Show toast notification - error details are also visible in the popup window
+    onError: (error: Error) => {
       toast({
         title: "Connection failed",
-        description: `Failed to connect ${app.name}. Please try again.`,
+        description: error.message || `Failed to connect ${app.name}. Please try again.`,
         variant: "error",
       });
       setLoading(false);
