@@ -2,8 +2,7 @@ import {
   encryptAccountingOAuthState,
   getAccountingProvider,
 } from "@vendcfo/accounting";
-import { getSession } from "@vendcfo/supabase/cached-queries";
-import { getUserQuery } from "@vendcfo/supabase/queries";
+import { db } from "@vendcfo/db/client";
 import { createClient } from "@vendcfo/supabase/server";
 import { NextResponse } from "next/server";
 
@@ -11,7 +10,6 @@ export const dynamic = "force-dynamic";
 
 export async function GET() {
   try {
-    // Check required env vars early
     if (
       !process.env.QUICKBOOKS_CLIENT_ID ||
       !process.env.QUICKBOOKS_CLIENT_SECRET ||
@@ -26,26 +24,28 @@ export async function GET() {
       );
     }
 
+    const supabase = await createClient();
     const {
-      data: { session },
-    } = await getSession();
+      data: { user: authUser },
+    } = await supabase.auth.getUser();
 
-    if (!session?.user) {
+    if (!authUser) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    // Get user record to find their active team
-    const supabase = await createClient();
-    const { data: user } = await getUserQuery(supabase, session.user.id);
+    // Use Drizzle directly to bypass RLS on users table
+    const user = await db.query.users.findFirst({
+      where: (users, { eq }) => eq(users.id, authUser.id),
+      columns: { teamId: true },
+    });
 
-    if (!user?.team_id) {
+    if (!user?.teamId) {
       return NextResponse.json({ error: "Team not found" }, { status: 401 });
     }
 
-    // Encrypt state to prevent tampering with teamId
     const state = encryptAccountingOAuthState({
-      teamId: user.team_id,
-      userId: session.user.id,
+      teamId: user.teamId,
+      userId: authUser.id,
       provider: "quickbooks",
       source: "apps",
     });

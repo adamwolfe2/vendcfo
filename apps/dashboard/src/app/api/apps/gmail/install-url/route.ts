@@ -1,8 +1,6 @@
 import { db } from "@vendcfo/db/client";
 import { InboxConnector } from "@vendcfo/inbox/connector";
 import { encryptOAuthState } from "@vendcfo/inbox/utils";
-import { getSession } from "@vendcfo/supabase/cached-queries";
-import { getUserQuery } from "@vendcfo/supabase/queries";
 import { createClient } from "@vendcfo/supabase/server";
 import { NextResponse } from "next/server";
 
@@ -20,23 +18,27 @@ export async function GET() {
   }
 
   try {
+    const supabase = await createClient();
     const {
-      data: { session },
-    } = await getSession();
+      data: { user: authUser },
+    } = await supabase.auth.getUser();
 
-    if (!session?.user) {
+    if (!authUser) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const supabase = await createClient();
-    const { data: user } = await getUserQuery(supabase, session.user.id);
+    // Use Drizzle directly to bypass RLS on users table
+    const user = await db.query.users.findFirst({
+      where: (users, { eq }) => eq(users.id, authUser.id),
+      columns: { teamId: true },
+    });
 
-    if (!user?.team_id) {
+    if (!user?.teamId) {
       return NextResponse.json({ error: "Team not found" }, { status: 401 });
     }
 
     const state = encryptOAuthState({
-      teamId: user.team_id,
+      teamId: user.teamId,
       provider: "gmail",
       source: "apps",
     });
