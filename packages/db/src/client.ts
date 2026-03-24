@@ -46,13 +46,28 @@ function createPool(connectionString: string) {
   return pool;
 }
 
-const primaryPool = createPool(
-  process.env.DATABASE_PRIMARY_URL || process.env.DATABASE_URL!,
-);
+const dbUrl = process.env.DATABASE_PRIMARY_URL || process.env.DATABASE_URL;
+if (!dbUrl) {
+  throw new Error("DATABASE_PRIMARY_URL or DATABASE_URL must be set");
+}
+// Log connection target (host only, no credentials) for debugging
+try {
+  const parsed = new URL(dbUrl);
+  console.info(`[db] Connecting to ${parsed.hostname}:${parsed.port}${parsed.pathname}`);
+} catch {
+  console.info("[db] Connecting with non-URL connection string");
+}
+const primaryPool = createPool(dbUrl);
+
+// Add error event handler to surface actual Postgres errors
+primaryPool.on("error", (err) => {
+  console.error("[db pool] Unexpected error:", err.message);
+});
 
 export const primaryDb = drizzle(primaryPool, {
   schema,
   casing: "snake_case",
+  logger: process.env.NODE_ENV !== "production" ? true : undefined,
 });
 
 const hasReplicas = Boolean(
