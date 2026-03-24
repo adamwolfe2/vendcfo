@@ -4,12 +4,16 @@ import { useChatInterface } from "@/hooks/use-chat-interface";
 import { cn } from "@vendcfo/ui/cn";
 import { Icons } from "@vendcfo/ui/icons";
 import {
+  BarChart3,
   CalendarDays,
+  FileBarChart,
   GraduationCap,
   KeyRound,
   LayoutGrid,
   Route,
+  UserCheck,
   Users,
+  UsersRound,
 } from "lucide-react";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -35,8 +39,12 @@ const icons = {
   "/alerts": () => <Icons.Transactions size={20} />,
   "/import": () => <Icons.Files size={20} />,
   "/logistics": () => <CalendarDays size={20} strokeWidth={1.5} />,
+  "/employees": () => <UserCheck size={20} strokeWidth={1.5} />,
   "/training": () => <GraduationCap size={20} strokeWidth={1.5} />,
   "/passwords": () => <KeyRound size={20} strokeWidth={1.5} />,
+  "/reports": () => <FileBarChart size={20} strokeWidth={1.5} />,
+  "/finance": () => <BarChart3 size={20} strokeWidth={1.5} />,
+  "/capacity": () => <UsersRound size={20} strokeWidth={1.5} />,
 } as const;
 
 const items = [
@@ -66,11 +74,16 @@ const items = [
     path: "/calculators",
     name: "Analytics",
     children: [
+      { path: "/finance", name: "Finance" },
+      { path: "/capacity", name: "Capacity" },
       { path: "/calculators", name: "Calculators" },
+      { path: "/reports", name: "Reports" },
       { path: "/scenarios", name: "Scenario Builder" },
       { path: "/alerts", name: "Alerts" },
     ],
   },
+  // ─── VendCFO Workforce ───
+  { path: "/employees", name: "Workforce" },
   // ─── Training & Security ───
   { path: "/training", name: "Training" },
   { path: "/passwords", name: "Passwords" },
@@ -278,7 +291,7 @@ export function MainMenu({ onSelect, isExpanded = false }: Props) {
     "/skus",
     "/import",
   ];
-  const vendingAnalyticsPaths = ["/calculators", "/scenarios", "/alerts"];
+  const vendingAnalyticsPaths = ["/calculators", "/finance", "/capacity", "/reports", "/scenarios", "/alerts"];
 
   return (
     <div className="mt-6 w-full">

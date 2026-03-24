@@ -233,3 +233,104 @@ export const serviceLogs = pgTable("service_logs", {
     .defaultNow()
     .notNull(),
 });
+
+export const employees = pgTable("employees", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  business_id: uuid("business_id")
+    .references(() => teams.id)
+    .notNull(),
+  user_id: uuid("user_id").references(() => users.id),
+  name: text("name").notNull(),
+  email: text("email"),
+  phone: text("phone"),
+  role: text("role"),
+  employment_type: text("employment_type").default("w2").notNull(),
+  max_weekly_hours: decimal("max_weekly_hours", { precision: 5, scale: 2 })
+    .default("40")
+    .notNull(),
+  hourly_rate: decimal("hourly_rate", { precision: 8, scale: 2 })
+    .default("25.00")
+    .notNull(),
+  hire_date: date("hire_date"),
+  is_active: boolean("is_active").default(true).notNull(),
+  bank_routing_number: text("bank_routing_number"),
+  bank_account_number: text("bank_account_number"),
+  bank_account_type: text("bank_account_type").default("checking"),
+  created_at: timestamp("created_at", { withTimezone: true })
+    .defaultNow()
+    .notNull(),
+});
+
+export const compensationPlans = pgTable("compensation_plans", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  business_id: uuid("business_id")
+    .references(() => teams.id)
+    .notNull(),
+  employee_id: uuid("employee_id")
+    .references(() => employees.id)
+    .notNull(),
+  name: text("name").notNull(),
+  pay_model: text("pay_model").default("hourly").notNull(),
+  hourly_rate: decimal("hourly_rate", { precision: 8, scale: 2 }),
+  per_machine_rate: decimal("per_machine_rate", { precision: 8, scale: 2 }),
+  per_stop_rate: decimal("per_stop_rate", { precision: 8, scale: 2 }),
+  revenue_share_pct: decimal("revenue_share_pct", { precision: 5, scale: 2 }),
+  effective_from: date("effective_from").defaultNow().notNull(),
+  effective_to: date("effective_to"),
+  is_active: boolean("is_active").default(true).notNull(),
+  created_at: timestamp("created_at", { withTimezone: true })
+    .defaultNow()
+    .notNull(),
+});
+
+export const revenueRecords = pgTable("revenue_records", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  business_id: uuid("business_id")
+    .references(() => teams.id)
+    .notNull(),
+  location_id: uuid("location_id").references(() => locations.id),
+  period_start: date("period_start").notNull(),
+  period_end: date("period_end").notNull(),
+  gross_revenue: decimal("gross_revenue", { precision: 12, scale: 2 })
+    .default("0")
+    .notNull(),
+  processing_fees: decimal("processing_fees", { precision: 12, scale: 2 })
+    .default("0")
+    .notNull(),
+  net_deposited: decimal("net_deposited", { precision: 12, scale: 2 })
+    .default("0")
+    .notNull(),
+  cash_revenue: decimal("cash_revenue", { precision: 12, scale: 2 })
+    .default("0")
+    .notNull(),
+  card_revenue: decimal("card_revenue", { precision: 12, scale: 2 })
+    .default("0")
+    .notNull(),
+  transaction_count: integer("transaction_count").default(0).notNull(),
+  created_at: timestamp("created_at", { withTimezone: true })
+    .defaultNow()
+    .notNull(),
+});
+
+export const capacityAlerts = pgTable("capacity_alerts", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  business_id: uuid("business_id")
+    .references(() => teams.id)
+    .notNull(),
+  employee_id: uuid("employee_id")
+    .references(() => employees.id)
+    .notNull(),
+  alert_type: text("alert_type").notNull(),
+  message: text("message").notNull(),
+  current_utilization: decimal("current_utilization", {
+    precision: 5,
+    scale: 2,
+  }).notNull(),
+  threshold: decimal("threshold", { precision: 5, scale: 2 })
+    .default("85")
+    .notNull(),
+  is_dismissed: boolean("is_dismissed").default(false).notNull(),
+  created_at: timestamp("created_at", { withTimezone: true })
+    .defaultNow()
+    .notNull(),
+});

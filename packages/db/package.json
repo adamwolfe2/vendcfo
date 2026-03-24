@@ -22,6 +22,7 @@
     "./errors": "./src/errors.ts",
     "./schema": "./src/schema.ts",
     "./schema/vending": "./src/schema/vending.ts",
+    "./schema/reporting": "./src/schema/reporting.ts",
     "./sql": "./src/sql.ts",
     "./utils/api-keys": "./src/utils/api-keys.ts",
     "./utils/search-query": "./src/utils/search-query.ts",
