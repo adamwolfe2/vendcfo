@@ -5,15 +5,8 @@
     {
       "idx": 0,
       "version": "7",
-      "when": 1760882469701,
-      "tag": "0000_silly_sage",
-      "breakpoints": true
-    },
-    {
-      "idx": 1,
-      "version": "7",
-      "when": 1773791565326,
-      "tag": "0001_blue_pixie",
+      "when": 1774379033090,
+      "tag": "0000_init",
       "breakpoints": true
     }
   ]

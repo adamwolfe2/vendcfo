@@ -1,9 +1,234 @@
 {
-  "id": "ffd83524-3d65-4a77-bb4e-e9ab9a912890",
+  "id": "c13f4124-e5ef-47f5-b7c0-012858ae06c5",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
   "tables": {
+    "public.accounting_sync_records": {
+      "name": "accounting_sync_records",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "transaction_id": {
+          "name": "transaction_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "team_id": {
+          "name": "team_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "provider": {
+          "name": "provider",
+          "type": "accounting_provider",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "provider_tenant_id": {
+          "name": "provider_tenant_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "provider_transaction_id": {
+          "name": "provider_transaction_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "synced_attachment_mapping": {
+          "name": "synced_attachment_mapping",
+          "type": "jsonb",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'{}'::jsonb"
+        },
+        "synced_at": {
+          "name": "synced_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "sync_type": {
+          "name": "sync_type",
+          "type": "accounting_sync_type",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "status": {
+          "name": "status",
+          "type": "accounting_sync_status",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'synced'"
+        },
+        "error_message": {
+          "name": "error_message",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "error_code": {
+          "name": "error_code",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "provider_entity_type": {
+          "name": "provider_entity_type",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {
+        "idx_accounting_sync_transaction": {
+          "name": "idx_accounting_sync_transaction",
+          "columns": [
+            {
+              "expression": "transaction_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "idx_accounting_sync_team_provider": {
+          "name": "idx_accounting_sync_team_provider",
+          "columns": [
+            {
+              "expression": "team_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            },
+            {
+              "expression": "provider",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "idx_accounting_sync_status": {
+          "name": "idx_accounting_sync_status",
+          "columns": [
+            {
+              "expression": "team_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            },
+            {
+              "expression": "status",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "accounting_sync_records_transaction_id_fkey": {
+          "name": "accounting_sync_records_transaction_id_fkey",
+          "tableFrom": "accounting_sync_records",
+          "tableTo": "transactions",
+          "columnsFrom": [
+            "transaction_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "accounting_sync_records_team_id_fkey": {
+          "name": "accounting_sync_records_team_id_fkey",
+          "tableFrom": "accounting_sync_records",
+          "tableTo": "teams",
+          "columnsFrom": [
+            "team_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "accounting_sync_records_transaction_provider_key": {
+          "name": "accounting_sync_records_transaction_provider_key",
+          "nullsNotDistinct": false,
+          "columns": [
+            "transaction_id",
+            "provider"
+          ]
+        }
+      },
+      "policies": {
+        "Team members can view their sync records": {
+          "name": "Team members can view their sync records",
+          "as": "PERMISSIVE",
+          "for": "SELECT",
+          "to": [
+            "public"
+          ]
+        },
+        "Team members can insert sync records": {
+          "name": "Team members can insert sync records",
+          "as": "PERMISSIVE",
+          "for": "INSERT",
+          "to": [
+            "public"
+          ],
+          "withCheck": "(team_id IN ( SELECT private.get_teams_for_authenticated_user() AS get_teams_for_authenticated_user))"
+        },
+        "Team members can update sync records": {
+          "name": "Team members can update sync records",
+          "as": "PERMISSIVE",
+          "for": "UPDATE",
+          "to": [
+            "public"
+          ]
+        }
+      },
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
     "public.activities": {
       "name": "activities",
       "schema": "",
@@ -218,8 +443,12 @@
           "name": "activities_team_id_fkey",
           "tableFrom": "activities",
           "tableTo": "teams",
-          "columnsFrom": ["team_id"],
-          "columnsTo": ["id"],
+          "columnsFrom": [
+            "team_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
@@ -227,8 +456,12 @@
           "name": "activities_user_id_fkey",
           "tableFrom": "activities",
           "tableTo": "users",
-          "columnsFrom": ["user_id"],
-          "columnsTo": ["id"],
+          "columnsFrom": [
+            "user_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
           "onDelete": "set null",
           "onUpdate": "no action"
         }
@@ -356,8 +589,12 @@
           "name": "api_keys_user_id_fkey",
           "tableFrom": "api_keys",
           "tableTo": "users",
-          "columnsFrom": ["user_id"],
-          "columnsTo": ["id"],
+          "columnsFrom": [
+            "user_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
@@ -365,8 +602,12 @@
           "name": "api_keys_team_id_fkey",
           "tableFrom": "api_keys",
           "tableTo": "teams",
-          "columnsFrom": ["team_id"],
-          "columnsTo": ["id"],
+          "columnsFrom": [
+            "team_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -376,7 +617,9 @@
         "api_keys_key_unique": {
           "name": "api_keys_key_unique",
           "nullsNotDistinct": false,
-          "columns": ["key_hash"]
+          "columns": [
+            "key_hash"
+          ]
         }
       },
       "policies": {},
@@ -440,8 +683,12 @@
           "name": "apps_created_by_fkey",
           "tableFrom": "apps",
           "tableTo": "users",
-          "columnsFrom": ["created_by"],
-          "columnsTo": ["id"],
+          "columnsFrom": [
+            "created_by"
+          ],
+          "columnsTo": [
+            "id"
+          ],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
@@ -449,8 +696,12 @@
           "name": "integrations_team_id_fkey",
           "tableFrom": "apps",
           "tableTo": "teams",
-          "columnsFrom": ["team_id"],
-          "columnsTo": ["id"],
+          "columnsFrom": [
+            "team_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -460,7 +711,10 @@
         "unique_app_id_team_id": {
           "name": "unique_app_id_team_id",
           "nullsNotDistinct": false,
-          "columns": ["team_id", "app_id"]
+          "columns": [
+            "team_id",
+            "app_id"
+          ]
         }
       },
       "policies": {
@@ -468,26 +722,34 @@
           "name": "Apps can be deleted by a member of the team",
           "as": "PERMISSIVE",
           "for": "DELETE",
-          "to": ["public"],
+          "to": [
+            "public"
+          ],
           "using": "(team_id IN ( SELECT private.get_teams_for_authenticated_user() AS get_teams_for_authenticated_user))"
         },
         "Apps can be inserted by a member of the team": {
           "name": "Apps can be inserted by a member of the team",
           "as": "PERMISSIVE",
           "for": "INSERT",
-          "to": ["public"]
+          "to": [
+            "public"
+          ]
         },
         "Apps can be selected by a member of the team": {
           "name": "Apps can be selected by a member of the team",
           "as": "PERMISSIVE",
           "for": "SELECT",
-          "to": ["public"]
+          "to": [
+            "public"
+          ]
         },
         "Apps can be updated by a member of the team": {
           "name": "Apps can be updated by a member of the team",
           "as": "PERMISSIVE",
           "for": "UPDATE",
-          "to": ["public"]
+          "to": [
+            "public"
+          ]
         }
       },
       "checkConstraints": {},
@@ -604,6 +866,60 @@
           "type": "text",
           "primaryKey": false,
           "notNull": false
+        },
+        "iban": {
+          "name": "iban",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "subtype": {
+          "name": "subtype",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "bic": {
+          "name": "bic",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "routing_number": {
+          "name": "routing_number",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "wire_routing_number": {
+          "name": "wire_routing_number",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "account_number": {
+          "name": "account_number",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "sort_code": {
+          "name": "sort_code",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "availableBalance": {
+          "name": "availableBalance",
+          "type": "numeric(10, 2)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "creditLimit": {
+          "name": "creditLimit",
+          "type": "numeric(10, 2)",
+          "primaryKey": false,
+          "notNull": false
         }
       },
       "indexes": {
@@ -661,8 +977,12 @@
           "name": "bank_accounts_bank_connection_id_fkey",
           "tableFrom": "bank_accounts",
           "tableTo": "bank_connections",
-          "columnsFrom": ["bank_connection_id"],
-          "columnsTo": ["id"],
+          "columnsFrom": [
+            "bank_connection_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
@@ -670,8 +990,12 @@
           "name": "bank_accounts_created_by_fkey",
           "tableFrom": "bank_accounts",
           "tableTo": "users",
-          "columnsFrom": ["created_by"],
-          "columnsTo": ["id"],
+          "columnsFrom": [
+            "created_by"
+          ],
+          "columnsTo": [
+            "id"
+          ],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
@@ -679,8 +1003,12 @@
           "name": "public_bank_accounts_team_id_fkey",
           "tableFrom": "bank_accounts",
           "tableTo": "teams",
-          "columnsFrom": ["team_id"],
-          "columnsTo": ["id"],
+          "columnsFrom": [
+            "team_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -692,26 +1020,34 @@
           "name": "Bank Accounts can be created by a member of the team",
           "as": "PERMISSIVE",
           "for": "INSERT",
-          "to": ["public"],
+          "to": [
+            "public"
+          ],
           "withCheck": "(team_id IN ( SELECT private.get_teams_for_authenticated_user() AS get_teams_for_authenticated_user))"
         },
         "Bank Accounts can be deleted by a member of the team": {
           "name": "Bank Accounts can be deleted by a member of the team",
           "as": "PERMISSIVE",
           "for": "DELETE",
-          "to": ["public"]
+          "to": [
+            "public"
+          ]
         },
         "Bank Accounts can be selected by a member of the team": {
           "name": "Bank Accounts can be selected by a member of the team",
           "as": "PERMISSIVE",
           "for": "SELECT",
-          "to": ["public"]
+          "to": [
+            "public"
+          ]
         },
         "Bank Accounts can be updated by a member of the team": {
           "name": "Bank Accounts can be updated by a member of the team",
           "as": "PERMISSIVE",
           "for": "UPDATE",
-          "to": ["public"]
+          "to": [
+            "public"
+          ]
         }
       },
       "checkConstraints": {},
@@ -841,8 +1177,12 @@
           "name": "bank_connections_team_id_fkey",
           "tableFrom": "bank_connections",
           "tableTo": "teams",
-          "columnsFrom": ["team_id"],
-          "columnsTo": ["id"],
+          "columnsFrom": [
+            "team_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -852,7 +1192,10 @@
         "unique_bank_connections": {
           "name": "unique_bank_connections",
           "nullsNotDistinct": false,
-          "columns": ["institution_id", "team_id"]
+          "columns": [
+            "institution_id",
+            "team_id"
+          ]
         }
       },
       "policies": {
@@ -860,26 +1203,34 @@
           "name": "Bank Connections can be created by a member of the team",
           "as": "PERMISSIVE",
           "for": "INSERT",
-          "to": ["public"],
+          "to": [
+            "public"
+          ],
           "withCheck": "(team_id IN ( SELECT private.get_teams_for_authenticated_user() AS get_teams_for_authenticated_user))"
         },
         "Bank Connections can be deleted by a member of the team": {
           "name": "Bank Connections can be deleted by a member of the team",
           "as": "PERMISSIVE",
           "for": "DELETE",
-          "to": ["public"]
+          "to": [
+            "public"
+          ]
         },
         "Bank Connections can be selected by a member of the team": {
           "name": "Bank Connections can be selected by a member of the team",
           "as": "PERMISSIVE",
           "for": "SELECT",
-          "to": ["public"]
+          "to": [
+            "public"
+          ]
         },
         "Bank Connections can be updated by a member of the team": {
           "name": "Bank Connections can be updated by a member of the team",
           "as": "PERMISSIVE",
           "for": "UPDATE",
-          "to": ["public"]
+          "to": [
+            "public"
+          ]
         }
       },
       "checkConstraints": {},
@@ -928,8 +1279,12 @@
           "name": "customer_tags_customer_id_fkey",
           "tableFrom": "customer_tags",
           "tableTo": "customers",
-          "columnsFrom": ["customer_id"],
-          "columnsTo": ["id"],
+          "columnsFrom": [
+            "customer_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
@@ -937,8 +1292,12 @@
           "name": "customer_tags_tag_id_fkey",
           "tableFrom": "customer_tags",
           "tableTo": "tags",
-          "columnsFrom": ["tag_id"],
-          "columnsTo": ["id"],
+          "columnsFrom": [
+            "tag_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
@@ -946,8 +1305,12 @@
           "name": "customer_tags_team_id_fkey",
           "tableFrom": "customer_tags",
           "tableTo": "teams",
-          "columnsFrom": ["team_id"],
-          "columnsTo": ["id"],
+          "columnsFrom": [
+            "team_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -957,7 +1320,10 @@
         "unique_customer_tag": {
           "name": "unique_customer_tag",
           "nullsNotDistinct": false,
-          "columns": ["customer_id", "tag_id"]
+          "columns": [
+            "customer_id",
+            "tag_id"
+          ]
         }
       },
       "policies": {
@@ -965,7 +1331,9 @@
           "name": "Tags can be handled by a member of the team",
           "as": "PERMISSIVE",
           "for": "ALL",
-          "to": ["public"],
+          "to": [
+            "public"
+          ],
           "using": "(team_id IN ( SELECT private.get_teams_for_authenticated_user() AS get_teams_for_authenticated_user))"
         }
       },
@@ -1094,6 +1462,190 @@
           "primaryKey": false,
           "notNull": false
         },
+        "status": {
+          "name": "status",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "'active'"
+        },
+        "preferred_currency": {
+          "name": "preferred_currency",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "default_payment_terms": {
+          "name": "default_payment_terms",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "is_archived": {
+          "name": "is_archived",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": false,
+          "default": false
+        },
+        "source": {
+          "name": "source",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "'manual'"
+        },
+        "external_id": {
+          "name": "external_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "logo_url": {
+          "name": "logo_url",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "description": {
+          "name": "description",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "industry": {
+          "name": "industry",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "company_type": {
+          "name": "company_type",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "employee_count": {
+          "name": "employee_count",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "founded_year": {
+          "name": "founded_year",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "estimated_revenue": {
+          "name": "estimated_revenue",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "funding_stage": {
+          "name": "funding_stage",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "total_funding": {
+          "name": "total_funding",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "headquarters_location": {
+          "name": "headquarters_location",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "timezone": {
+          "name": "timezone",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "linkedin_url": {
+          "name": "linkedin_url",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "twitter_url": {
+          "name": "twitter_url",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "instagram_url": {
+          "name": "instagram_url",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "facebook_url": {
+          "name": "facebook_url",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "ceo_name": {
+          "name": "ceo_name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "finance_contact": {
+          "name": "finance_contact",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "finance_contact_email": {
+          "name": "finance_contact_email",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "primary_language": {
+          "name": "primary_language",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "fiscal_year_end": {
+          "name": "fiscal_year_end",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "enrichment_status": {
+          "name": "enrichment_status",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "enriched_at": {
+          "name": "enriched_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "portal_enabled": {
+          "name": "portal_enabled",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": false,
+          "default": false
+        },
+        "portal_id": {
+          "name": "portal_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
         "fts": {
           "name": "fts",
           "type": "tsvector",
@@ -1121,6 +1673,117 @@
           "concurrently": false,
           "method": "gin",
           "with": {}
+        },
+        "idx_customers_status": {
+          "name": "idx_customers_status",
+          "columns": [
+            {
+              "expression": "status",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "idx_customers_is_archived": {
+          "name": "idx_customers_is_archived",
+          "columns": [
+            {
+              "expression": "is_archived",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "idx_customers_enrichment_status": {
+          "name": "idx_customers_enrichment_status",
+          "columns": [
+            {
+              "expression": "enrichment_status",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "idx_customers_website": {
+          "name": "idx_customers_website",
+          "columns": [
+            {
+              "expression": "website",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "idx_customers_industry": {
+          "name": "idx_customers_industry",
+          "columns": [
+            {
+              "expression": "industry",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "customers_team_id_idx": {
+          "name": "customers_team_id_idx",
+          "columns": [
+            {
+              "expression": "team_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "customers_team_created_at_idx": {
+          "name": "customers_team_created_at_idx",
+          "columns": [
+            {
+              "expression": "team_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            },
+            {
+              "expression": "created_at",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
         }
       },
       "foreignKeys": {
@@ -1128,8 +1791,12 @@
           "name": "customers_team_id_fkey",
           "tableFrom": "customers",
           "tableTo": "teams",
-          "columnsFrom": ["team_id"],
-          "columnsTo": ["id"],
+          "columnsFrom": [
+            "team_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -1141,7 +1808,9 @@
           "name": "Customers can be handled by members of the team",
           "as": "PERMISSIVE",
           "for": "ALL",
-          "to": ["public"],
+          "to": [
+            "public"
+          ],
           "using": "(team_id IN ( SELECT private.get_teams_for_authenticated_user() AS get_teams_for_authenticated_user))"
         }
       },
@@ -1210,8 +1879,12 @@
           "name": "document_tag_assignments_document_id_fkey",
           "tableFrom": "document_tag_assignments",
           "tableTo": "documents",
-          "columnsFrom": ["document_id"],
-          "columnsTo": ["id"],
+          "columnsFrom": [
+            "document_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
@@ -1219,8 +1892,12 @@
           "name": "document_tag_assignments_tag_id_fkey",
           "tableFrom": "document_tag_assignments",
           "tableTo": "document_tags",
-          "columnsFrom": ["tag_id"],
-          "columnsTo": ["id"],
+          "columnsFrom": [
+            "tag_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
@@ -1228,8 +1905,12 @@
           "name": "document_tag_assignments_team_id_fkey",
           "tableFrom": "document_tag_assignments",
           "tableTo": "teams",
-          "columnsFrom": ["team_id"],
-          "columnsTo": ["id"],
+          "columnsFrom": [
+            "team_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -1237,14 +1918,20 @@
       "compositePrimaryKeys": {
         "document_tag_assignments_pkey": {
           "name": "document_tag_assignments_pkey",
-          "columns": ["document_id", "tag_id"]
+          "columns": [
+            "document_id",
+            "tag_id"
+          ]
         }
       },
       "uniqueConstraints": {
         "document_tag_assignments_unique": {
           "name": "document_tag_assignments_unique",
           "nullsNotDistinct": false,
-          "columns": ["document_id", "tag_id"]
+          "columns": [
+            "document_id",
+            "tag_id"
+          ]
         }
       },
       "policies": {
@@ -1252,7 +1939,9 @@
           "name": "Tags can be handled by a member of the team",
           "as": "PERMISSIVE",
           "for": "ALL",
-          "to": ["public"],
+          "to": [
+            "public"
+          ],
           "using": "(team_id IN ( SELECT private.get_teams_for_authenticated_user() AS get_teams_for_authenticated_user))"
         }
       },
@@ -1318,7 +2007,9 @@
           "name": "Enable insert for authenticated users only",
           "as": "PERMISSIVE",
           "for": "INSERT",
-          "to": ["authenticated"],
+          "to": [
+            "authenticated"
+          ],
           "withCheck": "true"
         }
       },
@@ -1368,8 +2059,12 @@
           "name": "document_tags_team_id_fkey",
           "tableFrom": "document_tags",
           "tableTo": "teams",
-          "columnsFrom": ["team_id"],
-          "columnsTo": ["id"],
+          "columnsFrom": [
+            "team_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -1379,7 +2074,10 @@
         "unique_slug_per_team": {
           "name": "unique_slug_per_team",
           "nullsNotDistinct": false,
-          "columns": ["slug", "team_id"]
+          "columns": [
+            "slug",
+            "team_id"
+          ]
         }
       },
       "policies": {
@@ -1387,7 +2085,9 @@
           "name": "Tags can be handled by a member of the team",
           "as": "PERMISSIVE",
           "for": "ALL",
-          "to": ["public"],
+          "to": [
+            "public"
+          ],
           "using": "(team_id IN ( SELECT private.get_teams_for_authenticated_user() AS get_teams_for_authenticated_user))"
         }
       },
@@ -1589,6 +2289,73 @@
           "method": "btree",
           "with": {}
         },
+        "documents_team_id_created_at_idx": {
+          "name": "documents_team_id_created_at_idx",
+          "columns": [
+            {
+              "expression": "team_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last",
+              "opclass": "uuid_ops"
+            },
+            {
+              "expression": "created_at",
+              "isExpression": false,
+              "asc": false,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "documents_team_id_date_idx": {
+          "name": "documents_team_id_date_idx",
+          "columns": [
+            {
+              "expression": "team_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last",
+              "opclass": "uuid_ops"
+            },
+            {
+              "expression": "date",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "documents_team_id_name_idx": {
+          "name": "documents_team_id_name_idx",
+          "columns": [
+            {
+              "expression": "team_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last",
+              "opclass": "uuid_ops"
+            },
+            {
+              "expression": "name",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last",
+              "opclass": "text_ops"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
         "idx_documents_fts_english": {
           "name": "idx_documents_fts_english",
           "columns": [
@@ -1675,8 +2442,12 @@
           "name": "documents_created_by_fkey",
           "tableFrom": "documents",
           "tableTo": "users",
-          "columnsFrom": ["owner_id"],
-          "columnsTo": ["id"],
+          "columnsFrom": [
+            "owner_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
           "onDelete": "set null",
           "onUpdate": "no action"
         },
@@ -1684,8 +2455,12 @@
           "name": "storage_team_id_fkey",
           "tableFrom": "documents",
           "tableTo": "teams",
-          "columnsFrom": ["team_id"],
-          "columnsTo": ["id"],
+          "columnsFrom": [
+            "team_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -1697,26 +2472,34 @@
           "name": "Documents can be deleted by a member of the team",
           "as": "PERMISSIVE",
           "for": "ALL",
-          "to": ["public"],
+          "to": [
+            "public"
+          ],
           "using": "(team_id IN ( SELECT private.get_teams_for_authenticated_user() AS get_teams_for_authenticated_user))"
         },
         "Documents can be selected by a member of the team": {
           "name": "Documents can be selected by a member of the team",
           "as": "PERMISSIVE",
           "for": "ALL",
-          "to": ["public"]
+          "to": [
+            "public"
+          ]
         },
         "Documents can be updated by a member of the team": {
           "name": "Documents can be updated by a member of the team",
           "as": "PERMISSIVE",
           "for": "UPDATE",
-          "to": ["public"]
+          "to": [
+            "public"
+          ]
         },
         "Enable insert for authenticated users only": {
           "name": "Enable insert for authenticated users only",
           "as": "PERMISSIVE",
           "for": "INSERT",
-          "to": ["authenticated"]
+          "to": [
+            "authenticated"
+          ]
         }
       },
       "checkConstraints": {},
@@ -1789,7 +2572,10 @@
         "unique_rate": {
           "name": "unique_rate",
           "nullsNotDistinct": false,
-          "columns": ["base", "target"]
+          "columns": [
+            "base",
+            "target"
+          ]
         }
       },
       "policies": {
@@ -1797,7 +2583,9 @@
           "name": "Enable read access for authenticated users",
           "as": "PERMISSIVE",
           "for": "SELECT",
-          "to": ["public"],
+          "to": [
+            "public"
+          ],
           "using": "true"
         }
       },
@@ -1914,6 +2702,12 @@
           "primaryKey": false,
           "notNull": false
         },
+        "sender_email": {
+          "name": "sender_email",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
         "display_name": {
           "name": "display_name",
           "type": "text",
@@ -1975,6 +2769,18 @@
         },
         "inbox_account_id": {
           "name": "inbox_account_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "invoice_number": {
+          "name": "invoice_number",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "grouped_inbox_id": {
+          "name": "grouped_inbox_id",
           "type": "uuid",
           "primaryKey": false,
           "notNull": false
@@ -2060,6 +2866,65 @@
           "concurrently": false,
           "method": "btree",
           "with": {}
+        },
+        "inbox_invoice_number_idx": {
+          "name": "inbox_invoice_number_idx",
+          "columns": [
+            {
+              "expression": "invoice_number",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last",
+              "opclass": "text_ops"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "inbox_grouped_inbox_id_idx": {
+          "name": "inbox_grouped_inbox_id_idx",
+          "columns": [
+            {
+              "expression": "grouped_inbox_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last",
+              "opclass": "uuid_ops"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "inbox_team_status_created_at_idx": {
+          "name": "inbox_team_status_created_at_idx",
+          "columns": [
+            {
+              "expression": "team_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            },
+            {
+              "expression": "status",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            },
+            {
+              "expression": "created_at",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
         }
       },
       "foreignKeys": {
@@ -2067,8 +2932,12 @@
           "name": "inbox_attachment_id_fkey",
           "tableFrom": "inbox",
           "tableTo": "transaction_attachments",
-          "columnsFrom": ["attachment_id"],
-          "columnsTo": ["id"],
+          "columnsFrom": [
+            "attachment_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
           "onDelete": "set null",
           "onUpdate": "no action"
         },
@@ -2076,8 +2945,12 @@
           "name": "public_inbox_team_id_fkey",
           "tableFrom": "inbox",
           "tableTo": "teams",
-          "columnsFrom": ["team_id"],
-          "columnsTo": ["id"],
+          "columnsFrom": [
+            "team_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
@@ -2085,8 +2958,12 @@
           "name": "public_inbox_transaction_id_fkey",
           "tableFrom": "inbox",
           "tableTo": "transactions",
-          "columnsFrom": ["transaction_id"],
-          "columnsTo": ["id"],
+          "columnsFrom": [
+            "transaction_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
           "onDelete": "set null",
           "onUpdate": "no action"
         },
@@ -2094,8 +2971,12 @@
           "name": "inbox_inbox_account_id_fkey",
           "tableFrom": "inbox",
           "tableTo": "inbox_accounts",
-          "columnsFrom": ["inbox_account_id"],
-          "columnsTo": ["id"],
+          "columnsFrom": [
+            "inbox_account_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
           "onDelete": "set null",
           "onUpdate": "no action"
         }
@@ -2105,7 +2986,9 @@
         "inbox_reference_id_key": {
           "name": "inbox_reference_id_key",
           "nullsNotDistinct": false,
-          "columns": ["reference_id"]
+          "columns": [
+            "reference_id"
+          ]
         }
       },
       "policies": {
@@ -2113,20 +2996,26 @@
           "name": "Inbox can be deleted by a member of the team",
           "as": "PERMISSIVE",
           "for": "DELETE",
-          "to": ["public"],
+          "to": [
+            "public"
+          ],
           "using": "(team_id IN ( SELECT private.get_teams_for_authenticated_user() AS get_teams_for_authenticated_user))"
         },
         "Inbox can be selected by a member of the team": {
           "name": "Inbox can be selected by a member of the team",
           "as": "PERMISSIVE",
           "for": "SELECT",
-          "to": ["public"]
+          "to": [
+            "public"
+          ]
         },
         "Inbox can be updated by a member of the team": {
           "name": "Inbox can be updated by a member of the team",
           "as": "PERMISSIVE",
           "for": "UPDATE",
-          "to": ["public"]
+          "to": [
+            "public"
+          ]
         }
       },
       "checkConstraints": {},
@@ -2226,8 +3115,12 @@
           "name": "inbox_accounts_team_id_fkey",
           "tableFrom": "inbox_accounts",
           "tableTo": "teams",
-          "columnsFrom": ["team_id"],
-          "columnsTo": ["id"],
+          "columnsFrom": [
+            "team_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -2237,12 +3130,16 @@
         "inbox_accounts_email_key": {
           "name": "inbox_accounts_email_key",
           "nullsNotDistinct": false,
-          "columns": ["email"]
+          "columns": [
+            "email"
+          ]
         },
         "inbox_accounts_external_id_key": {
           "name": "inbox_accounts_external_id_key",
           "nullsNotDistinct": false,
-          "columns": ["external_id"]
+          "columns": [
+            "external_id"
+          ]
         }
       },
       "policies": {
@@ -2250,20 +3147,124 @@
           "name": "Inbox accounts can be deleted by a member of the team",
           "as": "PERMISSIVE",
           "for": "DELETE",
-          "to": ["public"],
+          "to": [
+            "public"
+          ],
           "using": "(team_id IN ( SELECT private.get_teams_for_authenticated_user() AS get_teams_for_authenticated_user))"
         },
         "Inbox accounts can be selected by a member of the team": {
           "name": "Inbox accounts can be selected by a member of the team",
           "as": "PERMISSIVE",
           "for": "SELECT",
-          "to": ["public"]
+          "to": [
+            "public"
+          ]
         },
         "Inbox accounts can be updated by a member of the team": {
           "name": "Inbox accounts can be updated by a member of the team",
           "as": "PERMISSIVE",
           "for": "UPDATE",
-          "to": ["public"]
+          "to": [
+            "public"
+          ]
+        }
+      },
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.inbox_blocklist": {
+      "name": "inbox_blocklist",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "team_id": {
+          "name": "team_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "type": {
+          "name": "type",
+          "type": "inbox_blocklist_type",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "value": {
+          "name": "value",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "inbox_blocklist_team_id_fkey": {
+          "name": "inbox_blocklist_team_id_fkey",
+          "tableFrom": "inbox_blocklist",
+          "tableTo": "teams",
+          "columnsFrom": [
+            "team_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "inbox_blocklist_team_id_type_value_key": {
+          "name": "inbox_blocklist_team_id_type_value_key",
+          "nullsNotDistinct": false,
+          "columns": [
+            "team_id",
+            "type",
+            "value"
+          ]
+        }
+      },
+      "policies": {
+        "Inbox blocklist can be deleted by a member of the team": {
+          "name": "Inbox blocklist can be deleted by a member of the team",
+          "as": "PERMISSIVE",
+          "for": "DELETE",
+          "to": [
+            "public"
+          ],
+          "using": "(team_id IN ( SELECT private.get_teams_for_authenticated_user() AS get_teams_for_authenticated_user))"
+        },
+        "Inbox blocklist can be inserted by a member of the team": {
+          "name": "Inbox blocklist can be inserted by a member of the team",
+          "as": "PERMISSIVE",
+          "for": "INSERT",
+          "to": [
+            "public"
+          ],
+          "withCheck": "(team_id IN ( SELECT private.get_teams_for_authenticated_user() AS get_teams_for_authenticated_user))"
+        },
+        "Inbox blocklist can be selected by a member of the team": {
+          "name": "Inbox blocklist can be selected by a member of the team",
+          "as": "PERMISSIVE",
+          "for": "SELECT",
+          "to": [
+            "public"
+          ],
+          "using": "(team_id IN ( SELECT private.get_teams_for_authenticated_user() AS get_teams_for_authenticated_user))"
         }
       },
       "checkConstraints": {},
@@ -2374,8 +3375,12 @@
           "name": "inbox_embeddings_inbox_id_fkey",
           "tableFrom": "inbox_embeddings",
           "tableTo": "inbox",
-          "columnsFrom": ["inbox_id"],
-          "columnsTo": ["id"],
+          "columnsFrom": [
+            "inbox_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
@@ -2383,8 +3388,12 @@
           "name": "inbox_embeddings_team_id_fkey",
           "tableFrom": "inbox_embeddings",
           "tableTo": "teams",
-          "columnsFrom": ["team_id"],
-          "columnsTo": ["id"],
+          "columnsFrom": [
+            "team_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -2394,10 +3403,366 @@
         "inbox_embeddings_unique": {
           "name": "inbox_embeddings_unique",
           "nullsNotDistinct": false,
-          "columns": ["inbox_id"]
+          "columns": [
+            "inbox_id"
+          ]
         }
       },
       "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.insight_user_status": {
+      "name": "insight_user_status",
+      "schema": "",
+      "columns": {
+        "insight_id": {
+          "name": "insight_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "user_id": {
+          "name": "user_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "read_at": {
+          "name": "read_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "dismissed_at": {
+          "name": "dismissed_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {
+        "insight_user_status_user_idx": {
+          "name": "insight_user_status_user_idx",
+          "columns": [
+            {
+              "expression": "user_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "insight_user_status_insight_idx": {
+          "name": "insight_user_status_insight_idx",
+          "columns": [
+            {
+              "expression": "insight_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "insight_user_status_insight_id_insights_id_fk": {
+          "name": "insight_user_status_insight_id_insights_id_fk",
+          "tableFrom": "insight_user_status",
+          "tableTo": "insights",
+          "columnsFrom": [
+            "insight_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "insight_user_status_user_id_users_id_fk": {
+          "name": "insight_user_status_user_id_users_id_fk",
+          "tableFrom": "insight_user_status",
+          "tableTo": "users",
+          "columnsFrom": [
+            "user_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {
+        "insight_user_status_insight_id_user_id_pk": {
+          "name": "insight_user_status_insight_id_user_id_pk",
+          "columns": [
+            "insight_id",
+            "user_id"
+          ]
+        }
+      },
+      "uniqueConstraints": {},
+      "policies": {
+        "Users can manage their own insight status": {
+          "name": "Users can manage their own insight status",
+          "as": "PERMISSIVE",
+          "for": "ALL",
+          "to": [
+            "public"
+          ]
+        }
+      },
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.insights": {
+      "name": "insights",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "team_id": {
+          "name": "team_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "period_type": {
+          "name": "period_type",
+          "type": "insight_period_type",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "period_start": {
+          "name": "period_start",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "period_end": {
+          "name": "period_end",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "period_year": {
+          "name": "period_year",
+          "type": "smallint",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "period_number": {
+          "name": "period_number",
+          "type": "smallint",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "status": {
+          "name": "status",
+          "type": "insight_status",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'pending'"
+        },
+        "selected_metrics": {
+          "name": "selected_metrics",
+          "type": "jsonb",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "all_metrics": {
+          "name": "all_metrics",
+          "type": "jsonb",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "anomalies": {
+          "name": "anomalies",
+          "type": "jsonb",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "expense_anomalies": {
+          "name": "expense_anomalies",
+          "type": "jsonb",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "milestones": {
+          "name": "milestones",
+          "type": "jsonb",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "activity": {
+          "name": "activity",
+          "type": "jsonb",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "currency": {
+          "name": "currency",
+          "type": "varchar(3)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "title": {
+          "name": "title",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "content": {
+          "name": "content",
+          "type": "jsonb",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "predictions": {
+          "name": "predictions",
+          "type": "jsonb",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "audio_path": {
+          "name": "audio_path",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "generated_at": {
+          "name": "generated_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {
+        "insights_team_id_idx": {
+          "name": "insights_team_id_idx",
+          "columns": [
+            {
+              "expression": "team_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "insights_team_period_type_idx": {
+          "name": "insights_team_period_type_idx",
+          "columns": [
+            {
+              "expression": "team_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            },
+            {
+              "expression": "period_type",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            },
+            {
+              "expression": "generated_at",
+              "isExpression": false,
+              "asc": false,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "insights_team_id_teams_id_fk": {
+          "name": "insights_team_id_teams_id_fk",
+          "tableFrom": "insights",
+          "tableTo": "teams",
+          "columnsFrom": [
+            "team_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "insights_team_period_unique": {
+          "name": "insights_team_period_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "team_id",
+            "period_type",
+            "period_year",
+            "period_number"
+          ]
+        }
+      },
+      "policies": {
+        "Team members can view their insights": {
+          "name": "Team members can view their insights",
+          "as": "PERMISSIVE",
+          "for": "SELECT",
+          "to": [
+            "public"
+          ]
+        }
+      },
       "checkConstraints": {},
       "isRLSEnabled": false
     },
@@ -2492,6 +3857,12 @@
         "unit": {
           "name": "unit",
           "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "tax_rate": {
+          "name": "tax_rate",
+          "type": "numeric(10, 2)",
           "primaryKey": false,
           "notNull": false
         },
@@ -2644,8 +4015,12 @@
           "name": "invoice_products_team_id_fkey",
           "tableFrom": "invoice_products",
           "tableTo": "teams",
-          "columnsFrom": ["team_id"],
-          "columnsTo": ["id"],
+          "columnsFrom": [
+            "team_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
@@ -2653,8 +4028,12 @@
           "name": "invoice_products_created_by_fkey",
           "tableFrom": "invoice_products",
           "tableTo": "users",
-          "columnsFrom": ["created_by"],
-          "columnsTo": ["id"],
+          "columnsFrom": [
+            "created_by"
+          ],
+          "columnsTo": [
+            "id"
+          ],
           "onDelete": "set null",
           "onUpdate": "no action"
         }
@@ -2664,7 +4043,12 @@
         "invoice_products_team_name_currency_price_unique": {
           "name": "invoice_products_team_name_currency_price_unique",
           "nullsNotDistinct": false,
-          "columns": ["team_id", "name", "currency", "price"]
+          "columns": [
+            "team_id",
+            "name",
+            "currency",
+            "price"
+          ]
         }
       },
       "policies": {
@@ -2672,29 +4056,404 @@
           "name": "Enable read access for team members",
           "as": "PERMISSIVE",
           "for": "SELECT",
-          "to": ["public"],
+          "to": [
+            "public"
+          ],
           "using": "team_id = (select auth.jwt() ->> 'team_id')::uuid"
         },
         "Enable insert access for team members": {
           "name": "Enable insert access for team members",
           "as": "PERMISSIVE",
           "for": "INSERT",
-          "to": ["public"],
+          "to": [
+            "public"
+          ],
           "withCheck": "team_id = (select auth.jwt() ->> 'team_id')::uuid"
         },
         "Enable update access for team members": {
           "name": "Enable update access for team members",
           "as": "PERMISSIVE",
           "for": "UPDATE",
-          "to": ["public"],
+          "to": [
+            "public"
+          ],
           "using": "team_id = (select auth.jwt() ->> 'team_id')::uuid"
         },
         "Enable delete access for team members": {
           "name": "Enable delete access for team members",
           "as": "PERMISSIVE",
           "for": "DELETE",
-          "to": ["public"],
+          "to": [
+            "public"
+          ],
           "using": "team_id = (select auth.jwt() ->> 'team_id')::uuid"
+        }
+      },
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.invoice_recurring": {
+      "name": "invoice_recurring",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "now()"
+        },
+        "team_id": {
+          "name": "team_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "user_id": {
+          "name": "user_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "customer_id": {
+          "name": "customer_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "frequency": {
+          "name": "frequency",
+          "type": "invoice_recurring_frequency",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "frequency_day": {
+          "name": "frequency_day",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "frequency_week": {
+          "name": "frequency_week",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "frequency_interval": {
+          "name": "frequency_interval",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "end_type": {
+          "name": "end_type",
+          "type": "invoice_recurring_end_type",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "end_date": {
+          "name": "end_date",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "end_count": {
+          "name": "end_count",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "status": {
+          "name": "status",
+          "type": "invoice_recurring_status",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'active'"
+        },
+        "invoices_generated": {
+          "name": "invoices_generated",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "default": 0
+        },
+        "consecutive_failures": {
+          "name": "consecutive_failures",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "default": 0
+        },
+        "next_scheduled_at": {
+          "name": "next_scheduled_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "last_generated_at": {
+          "name": "last_generated_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "timezone": {
+          "name": "timezone",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "due_date_offset": {
+          "name": "due_date_offset",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "default": 30
+        },
+        "amount": {
+          "name": "amount",
+          "type": "numeric(10, 2)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "currency": {
+          "name": "currency",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "line_items": {
+          "name": "line_items",
+          "type": "jsonb",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "template": {
+          "name": "template",
+          "type": "jsonb",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "payment_details": {
+          "name": "payment_details",
+          "type": "jsonb",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "from_details": {
+          "name": "from_details",
+          "type": "jsonb",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "note_details": {
+          "name": "note_details",
+          "type": "jsonb",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "customer_name": {
+          "name": "customer_name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "vat": {
+          "name": "vat",
+          "type": "numeric(10, 2)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "tax": {
+          "name": "tax",
+          "type": "numeric(10, 2)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "discount": {
+          "name": "discount",
+          "type": "numeric(10, 2)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "subtotal": {
+          "name": "subtotal",
+          "type": "numeric(10, 2)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "top_block": {
+          "name": "top_block",
+          "type": "jsonb",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "bottom_block": {
+          "name": "bottom_block",
+          "type": "jsonb",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "template_id": {
+          "name": "template_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "upcoming_notification_sent_at": {
+          "name": "upcoming_notification_sent_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {
+        "invoice_recurring_team_id_idx": {
+          "name": "invoice_recurring_team_id_idx",
+          "columns": [
+            {
+              "expression": "team_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last",
+              "opclass": "uuid_ops"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "invoice_recurring_next_scheduled_at_idx": {
+          "name": "invoice_recurring_next_scheduled_at_idx",
+          "columns": [
+            {
+              "expression": "next_scheduled_at",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last",
+              "opclass": "timestamptz_ops"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "invoice_recurring_status_idx": {
+          "name": "invoice_recurring_status_idx",
+          "columns": [
+            {
+              "expression": "status",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "invoice_recurring_active_scheduled_idx": {
+          "name": "invoice_recurring_active_scheduled_idx",
+          "columns": [
+            {
+              "expression": "next_scheduled_at",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last",
+              "opclass": "timestamptz_ops"
+            }
+          ],
+          "isUnique": false,
+          "where": "status = 'active'",
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "invoice_recurring_team_id_fkey": {
+          "name": "invoice_recurring_team_id_fkey",
+          "tableFrom": "invoice_recurring",
+          "tableTo": "teams",
+          "columnsFrom": [
+            "team_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "invoice_recurring_user_id_fkey": {
+          "name": "invoice_recurring_user_id_fkey",
+          "tableFrom": "invoice_recurring",
+          "tableTo": "users",
+          "columnsFrom": [
+            "user_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "invoice_recurring_customer_id_fkey": {
+          "name": "invoice_recurring_customer_id_fkey",
+          "tableFrom": "invoice_recurring",
+          "tableTo": "customers",
+          "columnsFrom": [
+            "customer_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "set null",
+          "onUpdate": "no action"
+        },
+        "invoice_recurring_template_id_fkey": {
+          "name": "invoice_recurring_template_id_fkey",
+          "tableFrom": "invoice_recurring",
+          "tableTo": "invoice_templates",
+          "columnsFrom": [
+            "template_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "set null",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {
+        "Invoice recurring can be handled by a member of the team": {
+          "name": "Invoice recurring can be handled by a member of the team",
+          "as": "PERMISSIVE",
+          "for": "ALL",
+          "to": [
+            "public"
+          ],
+          "using": "(team_id IN ( SELECT private.get_teams_for_authenticated_user() AS get_teams_for_authenticated_user))"
         }
       },
       "checkConstraints": {},
@@ -2723,6 +4482,20 @@
           "type": "uuid",
           "primaryKey": false,
           "notNull": true
+        },
+        "name": {
+          "name": "name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'Default'"
+        },
+        "is_default": {
+          "name": "is_default",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": false,
+          "default": false
         },
         "customer_label": {
           "name": "customer_label",
@@ -2937,34 +4710,77 @@
           "type": "boolean",
           "primaryKey": false,
           "notNull": false
+        },
+        "include_line_item_tax": {
+          "name": "include_line_item_tax",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": false,
+          "default": false
+        },
+        "line_item_tax_label": {
+          "name": "line_item_tax_label",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "payment_enabled": {
+          "name": "payment_enabled",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": false,
+          "default": false
+        },
+        "payment_terms_days": {
+          "name": "payment_terms_days",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false,
+          "default": 30
         }
       },
-      "indexes": {},
+      "indexes": {
+        "idx_invoice_templates_team_id": {
+          "name": "idx_invoice_templates_team_id",
+          "columns": [
+            {
+              "expression": "team_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
       "foreignKeys": {
         "invoice_settings_team_id_fkey": {
           "name": "invoice_settings_team_id_fkey",
           "tableFrom": "invoice_templates",
           "tableTo": "teams",
-          "columnsFrom": ["team_id"],
-          "columnsTo": ["id"],
+          "columnsFrom": [
+            "team_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
       },
       "compositePrimaryKeys": {},
-      "uniqueConstraints": {
-        "invoice_templates_team_id_key": {
-          "name": "invoice_templates_team_id_key",
-          "nullsNotDistinct": false,
-          "columns": ["team_id"]
-        }
-      },
+      "uniqueConstraints": {},
       "policies": {
         "Invoice templates can be handled by a member of the team": {
           "name": "Invoice templates can be handled by a member of the team",
           "as": "PERMISSIVE",
           "for": "ALL",
-          "to": ["public"],
+          "to": [
+            "public"
+          ],
           "using": "(team_id IN ( SELECT private.get_teams_for_authenticated_user() AS get_teams_for_authenticated_user))"
         }
       },
@@ -3224,6 +5040,36 @@
           "type": "text",
           "primaryKey": false,
           "notNull": false
+        },
+        "template_id": {
+          "name": "template_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "payment_intent_id": {
+          "name": "payment_intent_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "refunded_at": {
+          "name": "refunded_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "invoice_recurring_id": {
+          "name": "invoice_recurring_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "recurring_sequence": {
+          "name": "recurring_sequence",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
         }
       },
       "indexes": {
@@ -3274,6 +5120,108 @@
           "concurrently": false,
           "method": "btree",
           "with": {}
+        },
+        "invoices_template_id_idx": {
+          "name": "invoices_template_id_idx",
+          "columns": [
+            {
+              "expression": "template_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last",
+              "opclass": "uuid_ops"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "invoices_team_sent_at_idx": {
+          "name": "invoices_team_sent_at_idx",
+          "columns": [
+            {
+              "expression": "team_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            },
+            {
+              "expression": "sent_at",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "invoices_team_status_paid_at_idx": {
+          "name": "invoices_team_status_paid_at_idx",
+          "columns": [
+            {
+              "expression": "team_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            },
+            {
+              "expression": "status",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            },
+            {
+              "expression": "paid_at",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "invoices_invoice_recurring_id_idx": {
+          "name": "invoices_invoice_recurring_id_idx",
+          "columns": [
+            {
+              "expression": "invoice_recurring_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last",
+              "opclass": "uuid_ops"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "invoices_recurring_sequence_unique_idx": {
+          "name": "invoices_recurring_sequence_unique_idx",
+          "columns": [
+            {
+              "expression": "invoice_recurring_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            },
+            {
+              "expression": "recurring_sequence",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": true,
+          "where": "invoice_recurring_id IS NOT NULL",
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
         }
       },
       "foreignKeys": {
@@ -3281,8 +5229,12 @@
           "name": "invoices_created_by_fkey",
           "tableFrom": "invoices",
           "tableTo": "users",
-          "columnsFrom": ["user_id"],
-          "columnsTo": ["id"],
+          "columnsFrom": [
+            "user_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
@@ -3290,8 +5242,12 @@
           "name": "invoices_customer_id_fkey",
           "tableFrom": "invoices",
           "tableTo": "customers",
-          "columnsFrom": ["customer_id"],
-          "columnsTo": ["id"],
+          "columnsFrom": [
+            "customer_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
           "onDelete": "set null",
           "onUpdate": "no action"
         },
@@ -3299,9 +5255,39 @@
           "name": "invoices_team_id_fkey",
           "tableFrom": "invoices",
           "tableTo": "teams",
-          "columnsFrom": ["team_id"],
-          "columnsTo": ["id"],
+          "columnsFrom": [
+            "team_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
           "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "invoices_template_id_fkey": {
+          "name": "invoices_template_id_fkey",
+          "tableFrom": "invoices",
+          "tableTo": "invoice_templates",
+          "columnsFrom": [
+            "template_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "set null",
+          "onUpdate": "no action"
+        },
+        "invoices_invoice_recurring_id_fkey": {
+          "name": "invoices_invoice_recurring_id_fkey",
+          "tableFrom": "invoices",
+          "tableTo": "invoice_recurring",
+          "columnsFrom": [
+            "invoice_recurring_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "set null",
           "onUpdate": "no action"
         }
       },
@@ -3310,7 +5296,9 @@
         "invoices_scheduled_job_id_key": {
           "name": "invoices_scheduled_job_id_key",
           "nullsNotDistinct": false,
-          "columns": ["scheduled_job_id"]
+          "columns": [
+            "scheduled_job_id"
+          ]
         }
       },
       "policies": {
@@ -3318,7 +5306,9 @@
           "name": "Invoices can be handled by a member of the team",
           "as": "PERMISSIVE",
           "for": "ALL",
-          "to": ["public"],
+          "to": [
+            "public"
+          ],
           "using": "(team_id IN ( SELECT private.get_teams_for_authenticated_user() AS get_teams_for_authenticated_user))"
         }
       },
@@ -3431,8 +5421,12 @@
           "name": "notification_settings_user_id_fkey",
           "tableFrom": "notification_settings",
           "tableTo": "users",
-          "columnsFrom": ["user_id"],
-          "columnsTo": ["id"],
+          "columnsFrom": [
+            "user_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
@@ -3440,8 +5434,12 @@
           "name": "notification_settings_team_id_fkey",
           "tableFrom": "notification_settings",
           "tableTo": "teams",
-          "columnsFrom": ["team_id"],
-          "columnsTo": ["id"],
+          "columnsFrom": [
+            "team_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -3451,7 +5449,12 @@
         "notification_settings_user_team_type_channel_key": {
           "name": "notification_settings_user_team_type_channel_key",
           "nullsNotDistinct": false,
-          "columns": ["user_id", "team_id", "notification_type", "channel"]
+          "columns": [
+            "user_id",
+            "team_id",
+            "notification_type",
+            "channel"
+          ]
         }
       },
       "policies": {
@@ -3459,7 +5462,9 @@
           "name": "Users can manage their own notification settings",
           "as": "PERMISSIVE",
           "for": "ALL",
-          "to": ["public"],
+          "to": [
+            "public"
+          ],
           "using": "(user_id = auth.uid())"
         }
       },
@@ -3623,8 +5628,12 @@
           "name": "oauth_access_tokens_application_id_fkey",
           "tableFrom": "oauth_access_tokens",
           "tableTo": "oauth_applications",
-          "columnsFrom": ["application_id"],
-          "columnsTo": ["id"],
+          "columnsFrom": [
+            "application_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
@@ -3632,8 +5641,12 @@
           "name": "oauth_access_tokens_user_id_fkey",
           "tableFrom": "oauth_access_tokens",
           "tableTo": "users",
-          "columnsFrom": ["user_id"],
-          "columnsTo": ["id"],
+          "columnsFrom": [
+            "user_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
@@ -3641,8 +5654,12 @@
           "name": "oauth_access_tokens_team_id_fkey",
           "tableFrom": "oauth_access_tokens",
           "tableTo": "teams",
-          "columnsFrom": ["team_id"],
-          "columnsTo": ["id"],
+          "columnsFrom": [
+            "team_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -3652,12 +5669,16 @@
         "oauth_access_tokens_token_unique": {
           "name": "oauth_access_tokens_token_unique",
           "nullsNotDistinct": false,
-          "columns": ["token"]
+          "columns": [
+            "token"
+          ]
         },
         "oauth_access_tokens_refresh_token_unique": {
           "name": "oauth_access_tokens_refresh_token_unique",
           "nullsNotDistinct": false,
-          "columns": ["refresh_token"]
+          "columns": [
+            "refresh_token"
+          ]
         }
       },
       "policies": {},
@@ -3858,8 +5879,12 @@
           "name": "oauth_applications_team_id_fkey",
           "tableFrom": "oauth_applications",
           "tableTo": "teams",
-          "columnsFrom": ["team_id"],
-          "columnsTo": ["id"],
+          "columnsFrom": [
+            "team_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
@@ -3867,8 +5892,12 @@
           "name": "oauth_applications_created_by_fkey",
           "tableFrom": "oauth_applications",
           "tableTo": "users",
-          "columnsFrom": ["created_by"],
-          "columnsTo": ["id"],
+          "columnsFrom": [
+            "created_by"
+          ],
+          "columnsTo": [
+            "id"
+          ],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -3878,12 +5907,16 @@
         "oauth_applications_slug_unique": {
           "name": "oauth_applications_slug_unique",
           "nullsNotDistinct": false,
-          "columns": ["slug"]
+          "columns": [
+            "slug"
+          ]
         },
         "oauth_applications_client_id_unique": {
           "name": "oauth_applications_client_id_unique",
           "nullsNotDistinct": false,
-          "columns": ["client_id"]
+          "columns": [
+            "client_id"
+          ]
         }
       },
       "policies": {
@@ -3891,7 +5924,9 @@
           "name": "OAuth applications can be managed by team members",
           "as": "PERMISSIVE",
           "for": "ALL",
-          "to": ["public"],
+          "to": [
+            "public"
+          ],
           "using": "(team_id IN ( SELECT private.get_teams_for_authenticated_user() AS get_teams_for_authenticated_user))"
         }
       },
@@ -4033,8 +6068,12 @@
           "name": "oauth_authorization_codes_application_id_fkey",
           "tableFrom": "oauth_authorization_codes",
           "tableTo": "oauth_applications",
-          "columnsFrom": ["application_id"],
-          "columnsTo": ["id"],
+          "columnsFrom": [
+            "application_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
@@ -4042,8 +6081,12 @@
           "name": "oauth_authorization_codes_user_id_fkey",
           "tableFrom": "oauth_authorization_codes",
           "tableTo": "users",
-          "columnsFrom": ["user_id"],
-          "columnsTo": ["id"],
+          "columnsFrom": [
+            "user_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
@@ -4051,8 +6094,12 @@
           "name": "oauth_authorization_codes_team_id_fkey",
           "tableFrom": "oauth_authorization_codes",
           "tableTo": "teams",
-          "columnsFrom": ["team_id"],
-          "columnsTo": ["id"],
+          "columnsFrom": [
+            "team_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -4062,7 +6109,9 @@
         "oauth_authorization_codes_code_unique": {
           "name": "oauth_authorization_codes_code_unique",
           "nullsNotDistinct": false,
-          "columns": ["code"]
+          "columns": [
+            "code"
+          ]
         }
       },
       "policies": {},
@@ -4166,8 +6215,12 @@
           "name": "public_reports_created_by_fkey",
           "tableFrom": "reports",
           "tableTo": "users",
-          "columnsFrom": ["created_by"],
-          "columnsTo": ["id"],
+          "columnsFrom": [
+            "created_by"
+          ],
+          "columnsTo": [
+            "id"
+          ],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
@@ -4175,8 +6228,12 @@
           "name": "reports_team_id_fkey",
           "tableFrom": "reports",
           "tableTo": "teams",
-          "columnsFrom": ["team_id"],
-          "columnsTo": ["id"],
+          "columnsFrom": [
+            "team_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -4188,26 +6245,34 @@
           "name": "Reports can be created by a member of the team",
           "as": "PERMISSIVE",
           "for": "INSERT",
-          "to": ["public"],
+          "to": [
+            "public"
+          ],
           "withCheck": "(team_id IN ( SELECT private.get_teams_for_authenticated_user() AS get_teams_for_authenticated_user))"
         },
         "Reports can be deleted by a member of the team": {
           "name": "Reports can be deleted by a member of the team",
           "as": "PERMISSIVE",
           "for": "DELETE",
-          "to": ["public"]
+          "to": [
+            "public"
+          ]
         },
         "Reports can be selected by a member of the team": {
           "name": "Reports can be selected by a member of the team",
           "as": "PERMISSIVE",
           "for": "SELECT",
-          "to": ["public"]
+          "to": [
+            "public"
+          ]
         },
         "Reports can be updated by member of team": {
           "name": "Reports can be updated by member of team",
           "as": "PERMISSIVE",
           "for": "UPDATE",
-          "to": ["public"]
+          "to": [
+            "public"
+          ]
         }
       },
       "checkConstraints": {},
@@ -4341,8 +6406,12 @@
           "name": "short_links_user_id_fkey",
           "tableFrom": "short_links",
           "tableTo": "users",
-          "columnsFrom": ["user_id"],
-          "columnsTo": ["id"],
+          "columnsFrom": [
+            "user_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
@@ -4350,8 +6419,12 @@
           "name": "short_links_team_id_fkey",
           "tableFrom": "short_links",
           "tableTo": "teams",
-          "columnsFrom": ["team_id"],
-          "columnsTo": ["id"],
+          "columnsFrom": [
+            "team_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -4361,7 +6434,9 @@
         "short_links_short_id_unique": {
           "name": "short_links_short_id_unique",
           "nullsNotDistinct": false,
-          "columns": ["short_id"]
+          "columns": [
+            "short_id"
+          ]
         }
       },
       "policies": {
@@ -4369,28 +6444,36 @@
           "name": "Short links can be created by a member of the team",
           "as": "PERMISSIVE",
           "for": "INSERT",
-          "to": ["authenticated"],
+          "to": [
+            "authenticated"
+          ],
           "withCheck": "(team_id IN ( SELECT private.get_teams_for_authenticated_user() AS get_teams_for_authenticated_user))"
         },
         "Short links can be selected by a member of the team": {
           "name": "Short links can be selected by a member of the team",
           "as": "PERMISSIVE",
           "for": "SELECT",
-          "to": ["authenticated"],
+          "to": [
+            "authenticated"
+          ],
           "using": "(team_id IN ( SELECT private.get_teams_for_authenticated_user() AS get_teams_for_authenticated_user))"
         },
         "Short links can be updated by a member of the team": {
           "name": "Short links can be updated by a member of the team",
           "as": "PERMISSIVE",
           "for": "UPDATE",
-          "to": ["authenticated"],
+          "to": [
+            "authenticated"
+          ],
           "using": "(team_id IN ( SELECT private.get_teams_for_authenticated_user() AS get_teams_for_authenticated_user))"
         },
         "Short links can be deleted by a member of the team": {
           "name": "Short links can be deleted by a member of the team",
           "as": "PERMISSIVE",
           "for": "DELETE",
-          "to": ["authenticated"],
+          "to": [
+            "authenticated"
+          ],
           "using": "(team_id IN ( SELECT private.get_teams_for_authenticated_user() AS get_teams_for_authenticated_user))"
         }
       },
@@ -4451,8 +6534,12 @@
           "name": "tags_team_id_fkey",
           "tableFrom": "tags",
           "tableTo": "teams",
-          "columnsFrom": ["team_id"],
-          "columnsTo": ["id"],
+          "columnsFrom": [
+            "team_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -4462,7 +6549,10 @@
         "unique_tag_name": {
           "name": "unique_tag_name",
           "nullsNotDistinct": false,
-          "columns": ["team_id", "name"]
+          "columns": [
+            "team_id",
+            "name"
+          ]
         }
       },
       "policies": {
@@ -4470,7 +6560,9 @@
           "name": "Tags can be handled by a member of the team",
           "as": "PERMISSIVE",
           "for": "ALL",
-          "to": ["public"],
+          "to": [
+            "public"
+          ],
           "using": "(team_id IN ( SELECT private.get_teams_for_authenticated_user() AS get_teams_for_authenticated_user))"
         }
       },
@@ -4545,6 +6637,12 @@
           "primaryKey": false,
           "notNull": false
         },
+        "fiscal_year_start_month": {
+          "name": "fiscal_year_start_month",
+          "type": "smallint",
+          "primaryKey": false,
+          "notNull": false
+        },
         "document_classification": {
           "name": "document_classification",
           "type": "boolean",
@@ -4572,9 +6670,28 @@
           "notNull": true,
           "default": "'trial'"
         },
+        "subscription_status": {
+          "name": "subscription_status",
+          "type": "subscription_status",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": false
+        },
         "export_settings": {
           "name": "export_settings",
           "type": "jsonb",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "stripe_account_id": {
+          "name": "stripe_account_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "stripe_connect_status": {
+          "name": "stripe_connect_status",
+          "type": "text",
           "primaryKey": false,
           "notNull": false
         }
@@ -4586,7 +6703,9 @@
         "teams_inbox_id_key": {
           "name": "teams_inbox_id_key",
           "nullsNotDistinct": false,
-          "columns": ["inbox_id"]
+          "columns": [
+            "inbox_id"
+          ]
         }
       },
       "policies": {
@@ -4594,32 +6713,42 @@
           "name": "Enable insert for authenticated users only",
           "as": "PERMISSIVE",
           "for": "INSERT",
-          "to": ["authenticated"],
+          "to": [
+            "authenticated"
+          ],
           "withCheck": "true"
         },
         "Invited users can select team if they are invited.": {
           "name": "Invited users can select team if they are invited.",
           "as": "PERMISSIVE",
           "for": "SELECT",
-          "to": ["public"]
+          "to": [
+            "public"
+          ]
         },
         "Teams can be deleted by a member of the team": {
           "name": "Teams can be deleted by a member of the team",
           "as": "PERMISSIVE",
           "for": "DELETE",
-          "to": ["public"]
+          "to": [
+            "public"
+          ]
         },
         "Teams can be selected by a member of the team": {
           "name": "Teams can be selected by a member of the team",
           "as": "PERMISSIVE",
           "for": "SELECT",
-          "to": ["public"]
+          "to": [
+            "public"
+          ]
         },
         "Teams can be updated by a member of the team": {
           "name": "Teams can be updated by a member of the team",
           "as": "PERMISSIVE",
           "for": "UPDATE",
-          "to": ["public"]
+          "to": [
+            "public"
+          ]
         }
       },
       "checkConstraints": {},
@@ -4728,6 +6857,27 @@
           "concurrently": false,
           "method": "btree",
           "with": {}
+        },
+        "tracker_entries_team_date_idx": {
+          "name": "tracker_entries_team_date_idx",
+          "columns": [
+            {
+              "expression": "team_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            },
+            {
+              "expression": "date",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
         }
       },
       "foreignKeys": {
@@ -4735,8 +6885,12 @@
           "name": "tracker_entries_assigned_id_fkey",
           "tableFrom": "tracker_entries",
           "tableTo": "users",
-          "columnsFrom": ["assigned_id"],
-          "columnsTo": ["id"],
+          "columnsFrom": [
+            "assigned_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
           "onDelete": "set null",
           "onUpdate": "no action"
         },
@@ -4744,8 +6898,12 @@
           "name": "tracker_entries_project_id_fkey",
           "tableFrom": "tracker_entries",
           "tableTo": "tracker_projects",
-          "columnsFrom": ["project_id"],
-          "columnsTo": ["id"],
+          "columnsFrom": [
+            "project_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
@@ -4753,8 +6911,12 @@
           "name": "tracker_entries_team_id_fkey",
           "tableFrom": "tracker_entries",
           "tableTo": "teams",
-          "columnsFrom": ["team_id"],
-          "columnsTo": ["id"],
+          "columnsFrom": [
+            "team_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -4766,26 +6928,34 @@
           "name": "Entries can be created by a member of the team",
           "as": "PERMISSIVE",
           "for": "INSERT",
-          "to": ["authenticated"],
+          "to": [
+            "authenticated"
+          ],
           "withCheck": "(team_id IN ( SELECT private.get_teams_for_authenticated_user() AS get_teams_for_authenticated_user))"
         },
         "Entries can be deleted by a member of the team": {
           "name": "Entries can be deleted by a member of the team",
           "as": "PERMISSIVE",
           "for": "DELETE",
-          "to": ["authenticated"]
+          "to": [
+            "authenticated"
+          ]
         },
         "Entries can be selected by a member of the team": {
           "name": "Entries can be selected by a member of the team",
           "as": "PERMISSIVE",
           "for": "SELECT",
-          "to": ["authenticated"]
+          "to": [
+            "authenticated"
+          ]
         },
         "Entries can be updated by a member of the team": {
           "name": "Entries can be updated by a member of the team",
           "as": "PERMISSIVE",
           "for": "UPDATE",
-          "to": ["authenticated"]
+          "to": [
+            "authenticated"
+          ]
         }
       },
       "checkConstraints": {},
@@ -4881,8 +7051,12 @@
           "name": "project_tags_tag_id_fkey",
           "tableFrom": "tracker_project_tags",
           "tableTo": "tags",
-          "columnsFrom": ["tag_id"],
-          "columnsTo": ["id"],
+          "columnsFrom": [
+            "tag_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
@@ -4890,8 +7064,12 @@
           "name": "project_tags_tracker_project_id_fkey",
           "tableFrom": "tracker_project_tags",
           "tableTo": "tracker_projects",
-          "columnsFrom": ["tracker_project_id"],
-          "columnsTo": ["id"],
+          "columnsFrom": [
+            "tracker_project_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
@@ -4899,8 +7077,12 @@
           "name": "tracker_project_tags_team_id_fkey",
           "tableFrom": "tracker_project_tags",
           "tableTo": "teams",
-          "columnsFrom": ["team_id"],
-          "columnsTo": ["id"],
+          "columnsFrom": [
+            "team_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -4910,7 +7092,10 @@
         "unique_project_tag": {
           "name": "unique_project_tag",
           "nullsNotDistinct": false,
-          "columns": ["tracker_project_id", "tag_id"]
+          "columns": [
+            "tracker_project_id",
+            "tag_id"
+          ]
         }
       },
       "policies": {
@@ -4918,7 +7103,9 @@
           "name": "Tags can be handled by a member of the team",
           "as": "PERMISSIVE",
           "for": "ALL",
-          "to": ["public"],
+          "to": [
+            "public"
+          ],
           "using": "(team_id IN ( SELECT private.get_teams_for_authenticated_user() AS get_teams_for_authenticated_user))"
         }
       },
@@ -5050,8 +7237,12 @@
           "name": "tracker_projects_customer_id_fkey",
           "tableFrom": "tracker_projects",
           "tableTo": "customers",
-          "columnsFrom": ["customer_id"],
-          "columnsTo": ["id"],
+          "columnsFrom": [
+            "customer_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
@@ -5059,8 +7250,12 @@
           "name": "tracker_projects_team_id_fkey",
           "tableFrom": "tracker_projects",
           "tableTo": "teams",
-          "columnsFrom": ["team_id"],
-          "columnsTo": ["id"],
+          "columnsFrom": [
+            "team_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -5072,26 +7267,34 @@
           "name": "Projects can be created by a member of the team",
           "as": "PERMISSIVE",
           "for": "INSERT",
-          "to": ["authenticated"],
+          "to": [
+            "authenticated"
+          ],
           "withCheck": "(team_id IN ( SELECT private.get_teams_for_authenticated_user() AS get_teams_for_authenticated_user))"
         },
         "Projects can be deleted by a member of the team": {
           "name": "Projects can be deleted by a member of the team",
           "as": "PERMISSIVE",
           "for": "DELETE",
-          "to": ["authenticated"]
+          "to": [
+            "authenticated"
+          ]
         },
         "Projects can be selected by a member of the team": {
           "name": "Projects can be selected by a member of the team",
           "as": "PERMISSIVE",
           "for": "SELECT",
-          "to": ["authenticated"]
+          "to": [
+            "authenticated"
+          ]
         },
         "Projects can be updated by a member of the team": {
           "name": "Projects can be updated by a member of the team",
           "as": "PERMISSIVE",
           "for": "UPDATE",
-          "to": ["authenticated"]
+          "to": [
+            "authenticated"
+          ]
         }
       },
       "checkConstraints": {},
@@ -5171,8 +7374,12 @@
           "name": "public_tracker_reports_created_by_fkey",
           "tableFrom": "tracker_reports",
           "tableTo": "users",
-          "columnsFrom": ["created_by"],
-          "columnsTo": ["id"],
+          "columnsFrom": [
+            "created_by"
+          ],
+          "columnsTo": [
+            "id"
+          ],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
@@ -5180,8 +7387,12 @@
           "name": "public_tracker_reports_project_id_fkey",
           "tableFrom": "tracker_reports",
           "tableTo": "tracker_projects",
-          "columnsFrom": ["project_id"],
-          "columnsTo": ["id"],
+          "columnsFrom": [
+            "project_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
           "onDelete": "cascade",
           "onUpdate": "cascade"
         },
@@ -5189,8 +7400,12 @@
           "name": "tracker_reports_team_id_fkey",
           "tableFrom": "tracker_reports",
           "tableTo": "teams",
-          "columnsFrom": ["team_id"],
-          "columnsTo": ["id"],
+          "columnsFrom": [
+            "team_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
           "onDelete": "cascade",
           "onUpdate": "cascade"
         }
@@ -5202,7 +7417,9 @@
           "name": "Reports can be handled by a member of the team",
           "as": "PERMISSIVE",
           "for": "ALL",
-          "to": ["public"],
+          "to": [
+            "public"
+          ],
           "using": "(team_id IN ( SELECT private.get_teams_for_authenticated_user() AS get_teams_for_authenticated_user))"
         }
       },
@@ -5303,8 +7520,12 @@
           "name": "public_transaction_attachments_team_id_fkey",
           "tableFrom": "transaction_attachments",
           "tableTo": "teams",
-          "columnsFrom": ["team_id"],
-          "columnsTo": ["id"],
+          "columnsFrom": [
+            "team_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
@@ -5312,8 +7533,12 @@
           "name": "public_transaction_attachments_transaction_id_fkey",
           "tableFrom": "transaction_attachments",
           "tableTo": "transactions",
-          "columnsFrom": ["transaction_id"],
-          "columnsTo": ["id"],
+          "columnsFrom": [
+            "transaction_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
           "onDelete": "set null",
           "onUpdate": "no action"
         }
@@ -5325,26 +7550,34 @@
           "name": "Transaction Attachments can be created by a member of the team",
           "as": "PERMISSIVE",
           "for": "INSERT",
-          "to": ["public"],
+          "to": [
+            "public"
+          ],
           "withCheck": "(team_id IN ( SELECT private.get_teams_for_authenticated_user() AS get_teams_for_authenticated_user))"
         },
         "Transaction Attachments can be deleted by a member of the team": {
           "name": "Transaction Attachments can be deleted by a member of the team",
           "as": "PERMISSIVE",
           "for": "DELETE",
-          "to": ["public"]
+          "to": [
+            "public"
+          ]
         },
         "Transaction Attachments can be selected by a member of the team": {
           "name": "Transaction Attachments can be selected by a member of the team",
           "as": "PERMISSIVE",
           "for": "SELECT",
-          "to": ["public"]
+          "to": [
+            "public"
+          ]
         },
         "Transaction Attachments can be updated by a member of the team": {
           "name": "Transaction Attachments can be updated by a member of the team",
           "as": "PERMISSIVE",
           "for": "UPDATE",
-          "to": ["public"]
+          "to": [
+            "public"
+          ]
         }
       },
       "checkConstraints": {},
@@ -5476,8 +7709,12 @@
           "name": "transaction_categories_team_id_fkey",
           "tableFrom": "transaction_categories",
           "tableTo": "teams",
-          "columnsFrom": ["team_id"],
-          "columnsTo": ["id"],
+          "columnsFrom": [
+            "team_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
@@ -5485,8 +7722,12 @@
           "name": "transaction_categories_parent_id_fkey",
           "tableFrom": "transaction_categories",
           "tableTo": "transaction_categories",
-          "columnsFrom": ["parent_id"],
-          "columnsTo": ["id"],
+          "columnsFrom": [
+            "parent_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
           "onDelete": "set null",
           "onUpdate": "no action"
         }
@@ -5494,14 +7735,20 @@
       "compositePrimaryKeys": {
         "transaction_categories_pkey": {
           "name": "transaction_categories_pkey",
-          "columns": ["team_id", "slug"]
+          "columns": [
+            "team_id",
+            "slug"
+          ]
         }
       },
       "uniqueConstraints": {
         "unique_team_slug": {
           "name": "unique_team_slug",
           "nullsNotDistinct": false,
-          "columns": ["team_id", "slug"]
+          "columns": [
+            "team_id",
+            "slug"
+          ]
         }
       },
       "policies": {
@@ -5509,7 +7756,9 @@
           "name": "Users on team can manage categories",
           "as": "PERMISSIVE",
           "for": "ALL",
-          "to": ["public"],
+          "to": [
+            "public"
+          ],
           "using": "(team_id IN ( SELECT private.get_teams_for_authenticated_user() AS get_teams_for_authenticated_user))"
         }
       },
@@ -5606,21 +7855,27 @@
           "name": "Enable read access for authenticated users",
           "as": "PERMISSIVE",
           "for": "SELECT",
-          "to": ["authenticated"],
+          "to": [
+            "authenticated"
+          ],
           "using": "true"
         },
         "Enable insert for authenticated users only": {
           "name": "Enable insert for authenticated users only",
           "as": "PERMISSIVE",
           "for": "INSERT",
-          "to": ["authenticated"],
+          "to": [
+            "authenticated"
+          ],
           "withCheck": "true"
         },
         "Enable update for authenticated users only": {
           "name": "Enable update for authenticated users only",
           "as": "PERMISSIVE",
           "for": "UPDATE",
-          "to": ["authenticated"],
+          "to": [
+            "authenticated"
+          ],
           "using": "true"
         }
       },
@@ -5732,8 +7987,12 @@
           "name": "transaction_embeddings_transaction_id_fkey",
           "tableFrom": "transaction_embeddings",
           "tableTo": "transactions",
-          "columnsFrom": ["transaction_id"],
-          "columnsTo": ["id"],
+          "columnsFrom": [
+            "transaction_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
@@ -5741,8 +8000,12 @@
           "name": "transaction_embeddings_team_id_fkey",
           "tableFrom": "transaction_embeddings",
           "tableTo": "teams",
-          "columnsFrom": ["team_id"],
-          "columnsTo": ["id"],
+          "columnsFrom": [
+            "team_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -5752,7 +8015,9 @@
         "transaction_embeddings_unique": {
           "name": "transaction_embeddings_unique",
           "nullsNotDistinct": false,
-          "columns": ["transaction_id"]
+          "columns": [
+            "transaction_id"
+          ]
         }
       },
       "policies": {},
@@ -5833,8 +8098,14 @@
           "name": "transaction_enrichments_category_slug_team_id_fkey",
           "tableFrom": "transaction_enrichments",
           "tableTo": "transaction_categories",
-          "columnsFrom": ["team_id", "category_slug"],
-          "columnsTo": ["team_id", "slug"],
+          "columnsFrom": [
+            "team_id",
+            "category_slug"
+          ],
+          "columnsTo": [
+            "team_id",
+            "slug"
+          ],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
@@ -5842,8 +8113,12 @@
           "name": "transaction_enrichments_team_id_fkey",
           "tableFrom": "transaction_enrichments",
           "tableTo": "teams",
-          "columnsFrom": ["team_id"],
-          "columnsTo": ["id"],
+          "columnsFrom": [
+            "team_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -5853,7 +8128,10 @@
         "unique_team_name": {
           "name": "unique_team_name",
           "nullsNotDistinct": false,
-          "columns": ["name", "team_id"]
+          "columns": [
+            "name",
+            "team_id"
+          ]
         }
       },
       "policies": {
@@ -5861,14 +8139,18 @@
           "name": "Enable insert for authenticated users only",
           "as": "PERMISSIVE",
           "for": "INSERT",
-          "to": ["authenticated"],
+          "to": [
+            "authenticated"
+          ],
           "withCheck": "true"
         },
         "Enable update for authenticated users only": {
           "name": "Enable update for authenticated users only",
           "as": "PERMISSIVE",
           "for": "UPDATE",
-          "to": ["authenticated"]
+          "to": [
+            "authenticated"
+          ]
         }
       },
       "checkConstraints": {},
@@ -6101,8 +8383,12 @@
           "name": "transaction_match_suggestions_inbox_id_fkey",
           "tableFrom": "transaction_match_suggestions",
           "tableTo": "inbox",
-          "columnsFrom": ["inbox_id"],
-          "columnsTo": ["id"],
+          "columnsFrom": [
+            "inbox_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
@@ -6110,8 +8396,12 @@
           "name": "transaction_match_suggestions_transaction_id_fkey",
           "tableFrom": "transaction_match_suggestions",
           "tableTo": "transactions",
-          "columnsFrom": ["transaction_id"],
-          "columnsTo": ["id"],
+          "columnsFrom": [
+            "transaction_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
@@ -6119,8 +8409,12 @@
           "name": "transaction_match_suggestions_team_id_fkey",
           "tableFrom": "transaction_match_suggestions",
           "tableTo": "teams",
-          "columnsFrom": ["team_id"],
-          "columnsTo": ["id"],
+          "columnsFrom": [
+            "team_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
@@ -6128,8 +8422,12 @@
           "name": "transaction_match_suggestions_user_id_fkey",
           "tableFrom": "transaction_match_suggestions",
           "tableTo": "users",
-          "columnsFrom": ["user_id"],
-          "columnsTo": ["id"],
+          "columnsFrom": [
+            "user_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
           "onDelete": "set null",
           "onUpdate": "no action"
         }
@@ -6139,7 +8437,10 @@
         "transaction_match_suggestions_unique": {
           "name": "transaction_match_suggestions_unique",
           "nullsNotDistinct": false,
-          "columns": ["inbox_id", "transaction_id"]
+          "columns": [
+            "inbox_id",
+            "transaction_id"
+          ]
         }
       },
       "policies": {},
@@ -6252,8 +8553,12 @@
           "name": "transaction_tags_tag_id_fkey",
           "tableFrom": "transaction_tags",
           "tableTo": "tags",
-          "columnsFrom": ["tag_id"],
-          "columnsTo": ["id"],
+          "columnsFrom": [
+            "tag_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
@@ -6261,8 +8566,12 @@
           "name": "transaction_tags_team_id_fkey",
           "tableFrom": "transaction_tags",
           "tableTo": "teams",
-          "columnsFrom": ["team_id"],
-          "columnsTo": ["id"],
+          "columnsFrom": [
+            "team_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
@@ -6270,8 +8579,12 @@
           "name": "transaction_tags_transaction_id_fkey",
           "tableFrom": "transaction_tags",
           "tableTo": "transactions",
-          "columnsFrom": ["transaction_id"],
-          "columnsTo": ["id"],
+          "columnsFrom": [
+            "transaction_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -6281,7 +8594,10 @@
         "unique_tag": {
           "name": "unique_tag",
           "nullsNotDistinct": false,
-          "columns": ["tag_id", "transaction_id"]
+          "columns": [
+            "tag_id",
+            "transaction_id"
+          ]
         }
       },
       "policies": {
@@ -6289,7 +8605,9 @@
           "name": "Transaction Tags can be handled by a member of the team",
           "as": "PERMISSIVE",
           "for": "ALL",
-          "to": ["public"],
+          "to": [
+            "public"
+          ],
           "using": "(team_id IN ( SELECT private.get_teams_for_authenticated_user() AS get_teams_for_authenticated_user))"
         }
       },
@@ -6446,8 +8764,8 @@
           "primaryKey": false,
           "notNull": false
         },
-        "taxRate": {
-          "name": "taxRate",
+        "tax_rate": {
+          "name": "tax_rate",
           "type": "numeric(10, 2)",
           "primaryKey": false,
           "notNull": false
@@ -6483,6 +8801,18 @@
           "primaryKey": false,
           "notNull": false,
           "default": false
+        },
+        "machine_id": {
+          "name": "machine_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "location_id": {
+          "name": "location_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": false
         },
         "fts_vector": {
           "name": "fts_vector",
@@ -6768,8 +9098,12 @@
           "name": "public_transactions_assigned_id_fkey",
           "tableFrom": "transactions",
           "tableTo": "users",
-          "columnsFrom": ["assigned_id"],
-          "columnsTo": ["id"],
+          "columnsFrom": [
+            "assigned_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
           "onDelete": "set null",
           "onUpdate": "no action"
         },
@@ -6777,8 +9111,12 @@
           "name": "public_transactions_team_id_fkey",
           "tableFrom": "transactions",
           "tableTo": "teams",
-          "columnsFrom": ["team_id"],
-          "columnsTo": ["id"],
+          "columnsFrom": [
+            "team_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
@@ -6786,8 +9124,12 @@
           "name": "transactions_bank_account_id_fkey",
           "tableFrom": "transactions",
           "tableTo": "bank_accounts",
-          "columnsFrom": ["bank_account_id"],
-          "columnsTo": ["id"],
+          "columnsFrom": [
+            "bank_account_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
@@ -6795,8 +9137,14 @@
           "name": "transactions_category_slug_team_id_fkey",
           "tableFrom": "transactions",
           "tableTo": "transaction_categories",
-          "columnsFrom": ["team_id", "category_slug"],
-          "columnsTo": ["team_id", "slug"],
+          "columnsFrom": [
+            "team_id",
+            "category_slug"
+          ],
+          "columnsTo": [
+            "team_id",
+            "slug"
+          ],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -6806,7 +9154,9 @@
         "transactions_internal_id_key": {
           "name": "transactions_internal_id_key",
           "nullsNotDistinct": false,
-          "columns": ["internal_id"]
+          "columns": [
+            "internal_id"
+          ]
         }
       },
       "policies": {
@@ -6814,26 +9164,34 @@
           "name": "Transactions can be created by a member of the team",
           "as": "PERMISSIVE",
           "for": "INSERT",
-          "to": ["public"],
+          "to": [
+            "public"
+          ],
           "withCheck": "(team_id IN ( SELECT private.get_teams_for_authenticated_user() AS get_teams_for_authenticated_user))"
         },
         "Transactions can be deleted by a member of the team": {
           "name": "Transactions can be deleted by a member of the team",
           "as": "PERMISSIVE",
           "for": "DELETE",
-          "to": ["public"]
+          "to": [
+            "public"
+          ]
         },
         "Transactions can be selected by a member of the team": {
           "name": "Transactions can be selected by a member of the team",
           "as": "PERMISSIVE",
           "for": "SELECT",
-          "to": ["public"]
+          "to": [
+            "public"
+          ]
         },
         "Transactions can be updated by a member of the team": {
           "name": "Transactions can be updated by a member of the team",
           "as": "PERMISSIVE",
           "for": "UPDATE",
-          "to": ["public"]
+          "to": [
+            "public"
+          ]
         }
       },
       "checkConstraints": {},
@@ -6913,8 +9271,12 @@
           "name": "public_user_invites_team_id_fkey",
           "tableFrom": "user_invites",
           "tableTo": "teams",
-          "columnsFrom": ["team_id"],
-          "columnsTo": ["id"],
+          "columnsFrom": [
+            "team_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
@@ -6922,8 +9284,12 @@
           "name": "user_invites_invited_by_fkey",
           "tableFrom": "user_invites",
           "tableTo": "users",
-          "columnsFrom": ["invited_by"],
-          "columnsTo": ["id"],
+          "columnsFrom": [
+            "invited_by"
+          ],
+          "columnsTo": [
+            "id"
+          ],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -6933,12 +9299,17 @@
         "unique_team_invite": {
           "name": "unique_team_invite",
           "nullsNotDistinct": false,
-          "columns": ["team_id", "email"]
+          "columns": [
+            "team_id",
+            "email"
+          ]
         },
         "user_invites_code_key": {
           "name": "user_invites_code_key",
           "nullsNotDistinct": false,
-          "columns": ["code"]
+          "columns": [
+            "code"
+          ]
         }
       },
       "policies": {
@@ -6946,38 +9317,50 @@
           "name": "Enable select for users based on email",
           "as": "PERMISSIVE",
           "for": "SELECT",
-          "to": ["public"],
+          "to": [
+            "public"
+          ],
           "using": "((auth.jwt() ->> 'email'::text) = email)"
         },
         "User Invites can be created by a member of the team": {
           "name": "User Invites can be created by a member of the team",
           "as": "PERMISSIVE",
           "for": "INSERT",
-          "to": ["public"]
+          "to": [
+            "public"
+          ]
         },
         "User Invites can be deleted by a member of the team": {
           "name": "User Invites can be deleted by a member of the team",
           "as": "PERMISSIVE",
           "for": "DELETE",
-          "to": ["public"]
+          "to": [
+            "public"
+          ]
         },
         "User Invites can be deleted by invited email": {
           "name": "User Invites can be deleted by invited email",
           "as": "PERMISSIVE",
           "for": "DELETE",
-          "to": ["public"]
+          "to": [
+            "public"
+          ]
         },
         "User Invites can be selected by a member of the team": {
           "name": "User Invites can be selected by a member of the team",
           "as": "PERMISSIVE",
           "for": "SELECT",
-          "to": ["public"]
+          "to": [
+            "public"
+          ]
         },
         "User Invites can be updated by a member of the team": {
           "name": "User Invites can be updated by a member of the team",
           "as": "PERMISSIVE",
           "for": "UPDATE",
-          "to": ["public"]
+          "to": [
+            "public"
+          ]
         }
       },
       "checkConstraints": {},
@@ -7088,8 +9471,12 @@
           "name": "users_id_fkey",
           "tableFrom": "users",
           "tableTo": "users",
-          "columnsFrom": ["id"],
-          "columnsTo": ["id"],
+          "columnsFrom": [
+            "id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
@@ -7097,8 +9484,12 @@
           "name": "users_team_id_fkey",
           "tableFrom": "users",
           "tableTo": "teams",
-          "columnsFrom": ["team_id"],
-          "columnsTo": ["id"],
+          "columnsFrom": [
+            "team_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
           "onDelete": "set null",
           "onUpdate": "no action"
         }
@@ -7110,26 +9501,34 @@
           "name": "Users can insert their own profile.",
           "as": "PERMISSIVE",
           "for": "INSERT",
-          "to": ["public"],
+          "to": [
+            "public"
+          ],
           "withCheck": "(auth.uid() = id)"
         },
         "Users can select their own profile.": {
           "name": "Users can select their own profile.",
           "as": "PERMISSIVE",
           "for": "SELECT",
-          "to": ["public"]
+          "to": [
+            "public"
+          ]
         },
         "Users can select users if they are in the same team": {
           "name": "Users can select users if they are in the same team",
           "as": "PERMISSIVE",
           "for": "SELECT",
-          "to": ["authenticated"]
+          "to": [
+            "authenticated"
+          ]
         },
         "Users can update own profile.": {
           "name": "Users can update own profile.",
           "as": "PERMISSIVE",
           "for": "UPDATE",
-          "to": ["public"]
+          "to": [
+            "public"
+          ]
         }
       },
       "checkConstraints": {},
@@ -7419,44 +9818,60 @@
       "compositePrimaryKeys": {
         "users_pkey": {
           "name": "users_pkey",
-          "columns": ["id"]
+          "columns": [
+            "id"
+          ]
         }
       },
       "uniqueConstraints": {
         "users_phone_key": {
           "name": "users_phone_key",
           "nullsNotDistinct": false,
-          "columns": ["phone"]
+          "columns": [
+            "phone"
+          ]
         },
         "confirmation_token_idx": {
           "name": "confirmation_token_idx",
           "nullsNotDistinct": false,
-          "columns": ["confirmation_token"]
+          "columns": [
+            "confirmation_token"
+          ]
         },
         "email_change_token_current_idx": {
           "name": "email_change_token_current_idx",
           "nullsNotDistinct": false,
-          "columns": ["email_change_token_current"]
+          "columns": [
+            "email_change_token_current"
+          ]
         },
         "email_change_token_new_idx": {
           "name": "email_change_token_new_idx",
           "nullsNotDistinct": false,
-          "columns": ["email_change_token_new"]
+          "columns": [
+            "email_change_token_new"
+          ]
         },
         "reauthentication_token_idx": {
           "name": "reauthentication_token_idx",
           "nullsNotDistinct": false,
-          "columns": ["reauthentication_token"]
+          "columns": [
+            "reauthentication_token"
+          ]
         },
         "recovery_token_idx": {
           "name": "recovery_token_idx",
           "nullsNotDistinct": false,
-          "columns": ["recovery_token"]
+          "columns": [
+            "recovery_token"
+          ]
         },
         "users_email_partial_key": {
           "name": "users_email_partial_key",
           "nullsNotDistinct": false,
-          "columns": ["email"]
+          "columns": [
+            "email"
+          ]
         }
       },
       "policies": {},
@@ -7540,8 +9955,12 @@
           "name": "users_on_team_team_id_fkey",
           "tableFrom": "users_on_team",
           "tableTo": "teams",
-          "columnsFrom": ["team_id"],
-          "columnsTo": ["id"],
+          "columnsFrom": [
+            "team_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
           "onDelete": "cascade",
           "onUpdate": "cascade"
         },
@@ -7549,8 +9968,12 @@
           "name": "users_on_team_user_id_fkey",
           "tableFrom": "users_on_team",
           "tableTo": "users",
-          "columnsFrom": ["user_id"],
-          "columnsTo": ["id"],
+          "columnsFrom": [
+            "user_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -7558,7 +9981,11 @@
       "compositePrimaryKeys": {
         "members_pkey": {
           "name": "members_pkey",
-          "columns": ["user_id", "team_id", "id"]
+          "columns": [
+            "user_id",
+            "team_id",
+            "id"
+          ]
         }
       },
       "uniqueConstraints": {},
@@ -7567,26 +9994,34 @@
           "name": "Enable insert for authenticated users only",
           "as": "PERMISSIVE",
           "for": "INSERT",
-          "to": ["authenticated"],
+          "to": [
+            "authenticated"
+          ],
           "withCheck": "true"
         },
         "Enable updates for users on team": {
           "name": "Enable updates for users on team",
           "as": "PERMISSIVE",
           "for": "UPDATE",
-          "to": ["authenticated"]
+          "to": [
+            "authenticated"
+          ]
         },
         "Select for current user teams": {
           "name": "Select for current user teams",
           "as": "PERMISSIVE",
           "for": "SELECT",
-          "to": ["authenticated"]
+          "to": [
+            "authenticated"
+          ]
         },
         "Users on team can be deleted by a member of the team": {
           "name": "Users on team can be deleted by a member of the team",
           "as": "PERMISSIVE",
           "for": "DELETE",
-          "to": ["public"]
+          "to": [
+            "public"
+          ]
         }
       },
       "checkConstraints": {},
@@ -7605,15 +10040,49 @@
         "other_liability"
       ]
     },
+    "public.accounting_provider": {
+      "name": "accounting_provider",
+      "schema": "public",
+      "values": [
+        "xero",
+        "quickbooks",
+        "fortnox"
+      ]
+    },
+    "public.accounting_sync_status": {
+      "name": "accounting_sync_status",
+      "schema": "public",
+      "values": [
+        "synced",
+        "failed",
+        "pending",
+        "partial"
+      ]
+    },
+    "public.accounting_sync_type": {
+      "name": "accounting_sync_type",
+      "schema": "public",
+      "values": [
+        "auto",
+        "manual"
+      ]
+    },
     "public.activity_source": {
       "name": "activity_source",
       "schema": "public",
-      "values": ["system", "user"]
+      "values": [
+        "system",
+        "user"
+      ]
     },
     "public.activity_status": {
       "name": "activity_status",
       "schema": "public",
-      "values": ["unread", "read", "archived"]
+      "values": [
+        "unread",
+        "read",
+        "archived"
+      ]
     },
     "public.activity_type": {
       "name": "activity_type",
@@ -7629,6 +10098,11 @@
         "invoice_overdue",
         "invoice_sent",
         "inbox_match_confirmed",
+        "invoice_refunded",
+        "recurring_series_started",
+        "recurring_series_completed",
+        "recurring_series_paused",
+        "recurring_invoice_upcoming",
         "document_uploaded",
         "document_processed",
         "invoice_duplicated",
@@ -7644,33 +10118,62 @@
         "transaction_attachment_created",
         "transaction_category_created",
         "transactions_exported",
-        "customer_created"
+        "customer_created",
+        "insight_ready"
       ]
     },
     "public.bank_providers": {
       "name": "bank_providers",
       "schema": "public",
-      "values": ["gocardless", "plaid", "teller", "enablebanking"]
+      "values": [
+        "gocardless",
+        "plaid",
+        "teller",
+        "enablebanking"
+      ]
     },
     "public.connection_status": {
       "name": "connection_status",
       "schema": "public",
-      "values": ["disconnected", "connected", "unknown"]
+      "values": [
+        "disconnected",
+        "connected",
+        "unknown"
+      ]
     },
     "public.document_processing_status": {
       "name": "document_processing_status",
       "schema": "public",
-      "values": ["pending", "processing", "completed", "failed"]
+      "values": [
+        "pending",
+        "processing",
+        "completed",
+        "failed"
+      ]
     },
     "public.inbox_account_providers": {
       "name": "inbox_account_providers",
       "schema": "public",
-      "values": ["gmail", "outlook"]
+      "values": [
+        "gmail",
+        "outlook"
+      ]
     },
     "public.inbox_account_status": {
       "name": "inbox_account_status",
       "schema": "public",
-      "values": ["connected", "disconnected"]
+      "values": [
+        "connected",
+        "disconnected"
+      ]
+    },
+    "public.inbox_blocklist_type": {
+      "name": "inbox_blocklist_type",
+      "schema": "public",
+      "values": [
+        "email",
+        "domain"
+      ]
     },
     "public.inbox_status": {
       "name": "inbox_status",
@@ -7684,61 +10187,149 @@
         "suggested_match",
         "no_match",
         "done",
-        "deleted"
+        "deleted",
+        "other"
       ]
     },
     "public.inbox_type": {
       "name": "inbox_type",
       "schema": "public",
-      "values": ["invoice", "expense"]
+      "values": [
+        "invoice",
+        "expense",
+        "other"
+      ]
+    },
+    "public.insight_period_type": {
+      "name": "insight_period_type",
+      "schema": "public",
+      "values": [
+        "weekly",
+        "monthly",
+        "quarterly",
+        "yearly"
+      ]
+    },
+    "public.insight_status": {
+      "name": "insight_status",
+      "schema": "public",
+      "values": [
+        "pending",
+        "generating",
+        "completed",
+        "failed"
+      ]
     },
     "public.invoice_delivery_type": {
       "name": "invoice_delivery_type",
       "schema": "public",
-      "values": ["create", "create_and_send", "scheduled"]
+      "values": [
+        "create",
+        "create_and_send",
+        "scheduled"
+      ]
+    },
+    "public.invoice_recurring_end_type": {
+      "name": "invoice_recurring_end_type",
+      "schema": "public",
+      "values": [
+        "never",
+        "on_date",
+        "after_count"
+      ]
+    },
+    "public.invoice_recurring_frequency": {
+      "name": "invoice_recurring_frequency",
+      "schema": "public",
+      "values": [
+        "weekly",
+        "biweekly",
+        "monthly_date",
+        "monthly_weekday",
+        "monthly_last_day",
+        "quarterly",
+        "semi_annual",
+        "annual",
+        "custom"
+      ]
+    },
+    "public.invoice_recurring_status": {
+      "name": "invoice_recurring_status",
+      "schema": "public",
+      "values": [
+        "active",
+        "paused",
+        "completed",
+        "canceled"
+      ]
     },
     "public.invoice_size": {
       "name": "invoice_size",
       "schema": "public",
-      "values": ["a4", "letter"]
+      "values": [
+        "a4",
+        "letter"
+      ]
     },
     "public.invoice_status": {
       "name": "invoice_status",
       "schema": "public",
-      "values": ["draft", "overdue", "paid", "unpaid", "canceled", "scheduled"]
+      "values": [
+        "draft",
+        "overdue",
+        "paid",
+        "unpaid",
+        "canceled",
+        "scheduled",
+        "refunded"
+      ]
     },
     "public.plans": {
       "name": "plans",
       "schema": "public",
-      "values": ["trial", "starter", "pro"]
+      "values": [
+        "trial",
+        "starter",
+        "pro"
+      ]
     },
     "public.reportTypes": {
       "name": "reportTypes",
       "schema": "public",
-      "values": ["profit", "revenue", "burn_rate", "expense"]
+      "values": [
+        "profit",
+        "revenue",
+        "burn_rate",
+        "expense",
+        "monthly_revenue",
+        "revenue_forecast",
+        "runway",
+        "category_expenses"
+      ]
     },
     "public.subscription_status": {
       "name": "subscription_status",
       "schema": "public",
       "values": [
         "active",
-        "canceled",
-        "past_due",
-        "unpaid",
-        "trialing",
-        "incomplete",
-        "incomplete_expired"
+        "past_due"
       ]
     },
     "public.teamRoles": {
       "name": "teamRoles",
       "schema": "public",
-      "values": ["owner", "member"]
+      "values": [
+        "owner",
+        "member"
+      ]
     },
     "public.trackerStatus": {
       "name": "trackerStatus",
       "schema": "public",
-      "values": ["in_progress", "completed"]
+      "values": [
+        "in_progress",
+        "completed"
+      ]
     },
     "public.transaction_frequency": {
       "name": "transaction_frequency",
@@ -7773,7 +10364,14 @@
     "public.transactionStatus": {
       "name": "transactionStatus",
       "schema": "public",
-      "values": ["posted", "pending", "excluded", "completed", "archived"]
+      "values": [
+        "posted",
+        "pending",
+        "excluded",
+        "completed",
+        "archived",
+        "exported"
+      ]
     }
   },
   "schemas": {},

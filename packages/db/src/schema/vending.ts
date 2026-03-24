@@ -4,6 +4,7 @@ import {
   decimal,
   integer,
   pgTable,
+  smallint,
   text,
   timestamp,
   uuid,
@@ -42,6 +43,13 @@ export const locations = pgTable("locations", {
   contact_email: text("contact_email"),
   monthly_rent: decimal("monthly_rent", { precision: 12, scale: 2 }),
   service_frequency_days: integer("service_frequency_days"),
+  stock_hours: decimal("stock_hours", { precision: 5, scale: 2 }),
+  pick_hours: decimal("pick_hours", { precision: 5, scale: 2 }),
+  machine_count: integer("machine_count"),
+  machine_type_label: text("machine_type_label"),
+  software_web: text("software_web"),
+  software_type: text("software_type"),
+  access_hours: text("access_hours"),
   is_active: boolean("is_active").default(true).notNull(),
   created_at: timestamp("created_at", { withTimezone: true })
     .defaultNow()
@@ -99,6 +107,105 @@ export const financing = pgTable("financing", {
   start_date: date("start_date").notNull(),
   monthly_payment: decimal("monthly_payment", { precision: 12, scale: 2 }),
   lender_name: text("lender_name"),
+  created_at: timestamp("created_at", { withTimezone: true })
+    .defaultNow()
+    .notNull(),
+});
+
+export const serviceSchedule = pgTable("service_schedule", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  business_id: uuid("business_id")
+    .references(() => teams.id)
+    .notNull(),
+  location_id: uuid("location_id")
+    .references(() => locations.id)
+    .notNull(),
+  day_of_week: smallint("day_of_week").notNull(), // 0=Mon, 5=Sat
+  action: text("action").notNull(), // 'pick', 'stock', 'pick_stock', 'nothing'
+  created_at: timestamp("created_at", { withTimezone: true })
+    .defaultNow()
+    .notNull(),
+});
+
+export const operatorWeeklyPlan = pgTable("operator_weekly_plan", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  business_id: uuid("business_id")
+    .references(() => teams.id)
+    .notNull(),
+  operator_id: uuid("operator_id")
+    .references(() => users.id)
+    .notNull(),
+  week_start: date("week_start").notNull(),
+  day_of_week: smallint("day_of_week").notNull(), // 0=Mon, 5=Sat
+  planned_stops: integer("planned_stops"),
+  planned_driving_hrs: decimal("planned_driving_hrs", {
+    precision: 5,
+    scale: 2,
+  }),
+  planned_gas_tolls_hrs: decimal("planned_gas_tolls_hrs", {
+    precision: 5,
+    scale: 2,
+  }),
+  planned_warehouse_hrs: decimal("planned_warehouse_hrs", {
+    precision: 5,
+    scale: 2,
+  }),
+  planned_load_van_hrs: decimal("planned_load_van_hrs", {
+    precision: 5,
+    scale: 2,
+  }),
+  planned_stock_hrs: decimal("planned_stock_hrs", {
+    precision: 5,
+    scale: 2,
+  }),
+  planned_pick_hrs: decimal("planned_pick_hrs", {
+    precision: 5,
+    scale: 2,
+  }),
+  actual_stops: integer("actual_stops"),
+  actual_driving_hrs: decimal("actual_driving_hrs", {
+    precision: 5,
+    scale: 2,
+  }),
+  actual_gas_tolls_hrs: decimal("actual_gas_tolls_hrs", {
+    precision: 5,
+    scale: 2,
+  }),
+  actual_warehouse_hrs: decimal("actual_warehouse_hrs", {
+    precision: 5,
+    scale: 2,
+  }),
+  actual_load_van_hrs: decimal("actual_load_van_hrs", {
+    precision: 5,
+    scale: 2,
+  }),
+  actual_stock_hrs: decimal("actual_stock_hrs", {
+    precision: 5,
+    scale: 2,
+  }),
+  actual_pick_hrs: decimal("actual_pick_hrs", {
+    precision: 5,
+    scale: 2,
+  }),
+  created_at: timestamp("created_at", { withTimezone: true })
+    .defaultNow()
+    .notNull(),
+});
+
+export const operatorRates = pgTable("operator_rates", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  business_id: uuid("business_id")
+    .references(() => teams.id)
+    .notNull(),
+  operator_id: uuid("operator_id")
+    .references(() => users.id)
+    .notNull(),
+  hourly_rate: decimal("hourly_rate", { precision: 8, scale: 2 })
+    .default("25.00")
+    .notNull(),
+  gas_rate_per_hr: decimal("gas_rate_per_hr", { precision: 8, scale: 2 })
+    .default("0.00")
+    .notNull(),
   created_at: timestamp("created_at", { withTimezone: true })
     .defaultNow()
     .notNull(),
