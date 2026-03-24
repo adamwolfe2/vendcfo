@@ -1,4 +1,5 @@
 import { getPdfImage } from "@/utils/pdf-to-img";
+import { db } from "@vendcfo/db/client";
 import { getSession } from "@vendcfo/supabase/cached-queries";
 import { createClient } from "@vendcfo/supabase/server";
 import { type NextRequest, NextResponse } from "next/server";
@@ -42,6 +43,19 @@ export const GET = async (req: NextRequest) => {
 
   if (!session?.user?.id) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  // Verify the authenticated user belongs to the team whose files they're accessing
+  const userRecord = await db.query.users.findFirst({
+    where: (users, { eq }) => eq(users.id, session.user.id),
+    columns: { teamId: true },
+  });
+
+  if (!userRecord?.teamId || userRecord.teamId !== pathTeamId) {
+    return NextResponse.json(
+      { error: "You do not have access to this team's files" },
+      { status: 403 },
+    );
   }
 
   const supabase = await createClient();

@@ -72,7 +72,7 @@ export const TrialExpiringEmail = ({ fullName = "" }: Props) => {
             claim it before your trial ends.
           </Text>
           <Section className="text-center mt-[50px] mb-[50px]">
-            <Button href="https://app.vendhub.com/settings/billing">
+            <Button href="https://vendcfo.vercel.app/settings/billing">
               Claim your discount
             </Button>
           </Section>

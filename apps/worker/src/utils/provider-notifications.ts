@@ -270,7 +270,7 @@ async function sendSlackNotification<T extends ProviderNotificationType>(
               {
                 type: "button",
                 text: { type: "plain_text", text: "View transactions" },
-                url: "https://app.vendhub.com/transactions",
+                url: `${process.env.VENDCFO_DASHBOARD_URL || process.env.MIDDAY_DASHBOARD_URL || "https://vendcfo.vercel.app"}/transactions`,
                 action_id: "button_click",
               },
             ],

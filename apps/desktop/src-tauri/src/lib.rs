@@ -355,7 +355,7 @@ fn get_app_url() -> String {
             url
         },
         "production" | "prod" => {
-            let url = "https://app.vendhub.com".to_string();
+            let url = "https://vendcfo.vercel.app".to_string();
             println!("🌍 Using production URL: {}", url);
             url
         },

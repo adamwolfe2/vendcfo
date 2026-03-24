@@ -47,7 +47,7 @@ export function getWelcomeMessage(isPrivateChannel = false) {
           text: "⚙️ Notification Settings",
           emoji: true,
         },
-        url: "https://app.vendhub.com/apps?app=slack&settings=true",
+        url: `${process.env.VENDCFO_DASHBOARD_URL || process.env.MIDDAY_DASHBOARD_URL || "https://vendcfo.vercel.app"}/apps?app=slack&settings=true`,
         action_id: "view_settings",
       },
     ],

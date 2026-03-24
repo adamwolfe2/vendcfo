@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import { AskRouteCFO } from "@/components/ask-route-cfo";
 import { BreakEvenCalculator } from "@/components/calculators/break-even-calculator";
 import { CashFlowCalculator } from "@/components/calculators/cash-flow-calculator";
@@ -8,6 +9,8 @@ import { MarkupCalculator } from "@/components/calculators/markup-calculator";
 import { ProductMixCalculator } from "@/components/calculators/product-mix-calculator";
 import { RevShareCalculator } from "@/components/calculators/rev-share-calculator";
 import { RouteProfitCalculator } from "@/components/calculators/route-profit-calculator";
+
+export const metadata: Metadata = { title: "Calculators | VendCFO" };
 
 export default function CalculatorsPage() {
   return (

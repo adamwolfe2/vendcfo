@@ -386,7 +386,7 @@ export function MCP() {
             </p>
             <div className="flex flex-wrap justify-center gap-4">
               <Button asChild className="h-11 px-6 text-sm font-sans">
-                <Link href="https://app.vendhub.com/settings/developer">
+                <Link href="https://vendcfo.vercel.app/settings/developer">
                   Get API key
                 </Link>
               </Button>

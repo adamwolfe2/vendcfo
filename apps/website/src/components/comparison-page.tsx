@@ -199,7 +199,7 @@ export function ComparisonPage({ competitor }: Props) {
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
                 <Button asChild className="btn-inverse h-11 px-6">
-                  <a href="https://app.vendhub.com/">Start your free trial</a>
+                  <a href="https://vendcfo.vercel.app/">Start your free trial</a>
                 </Button>
                 <Button asChild variant="outline" className="bg-background h-11 px-6">
                   <Link href="/pricing">View pricing</Link>

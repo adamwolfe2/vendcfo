@@ -1200,11 +1200,11 @@ export const draftInvoiceResponseSchema = z
     }),
     pdfUrl: z.string().nullable().openapi({
       description: "Direct URL to download the invoice PDF",
-      example: "https://app.vendhub.com/api/download/invoice?token=eyJ...",
+      example: "https://vendcfo.vercel.app/api/download/invoice?token=eyJ...",
     }),
     previewUrl: z.string().nullable().openapi({
       description: "Direct URL to preview the invoice in browser",
-      example: "https://app.vendhub.com/i/eyJ...",
+      example: "https://vendcfo.vercel.app/i/eyJ...",
     }),
   })
   .openapi({
@@ -1329,12 +1329,12 @@ export const invoiceResponseSchema = z
     pdfUrl: z.string().url().nullable().openapi({
       description: "URL to download the invoice PDF, or null if not generated",
       example:
-        "https://app.vendhub.com/api/download/invoice?token=eef58951-1682-4062-b010-425866032390",
+        "https://vendcfo.vercel.app/api/download/invoice?token=eef58951-1682-4062-b010-425866032390",
     }),
     previewUrl: z.string().url().nullable().openapi({
       description:
         "URL to preview the invoice in the browser, or null if not generated",
-      example: "https://app.vendhub.com/i/eef58951-1682-4062-b010-425866032390",
+      example: "https://vendcfo.vercel.app/i/eef58951-1682-4062-b010-425866032390",
     }),
   })
   .openapi({

@@ -16,7 +16,7 @@ export function IntegrationDetailPage({ app }: Props) {
     .slice(0, 3);
 
   const dashboardUrl = app.active
-    ? `https://app.vendhub.com/apps?app=${app.id}`
+    ? `https://vendcfo.vercel.app/apps?app=${app.id}`
     : undefined;
 
   return (

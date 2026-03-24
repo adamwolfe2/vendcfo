@@ -109,7 +109,9 @@ export function TrackerEntriesForm({
         const userTzDate = new TZDate(now, timezone);
         baseDate = startOfDay(userTzDate);
       } catch (error) {
-        console.warn("TZDate failed in form, using browser date:", error);
+        if (process.env.NODE_ENV === "development") {
+          console.warn("TZDate failed in form, using browser date:", error);
+        }
         baseDate = startOfDay(new Date());
       }
 

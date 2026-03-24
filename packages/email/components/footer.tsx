@@ -235,7 +235,7 @@ export function Footer() {
 
       <Link
         className={`text-[14px] block ${themeClasses.mutedLink}`}
-        href="https://app.vendhub.com/settings/notifications"
+        href="https://vendcfo.vercel.app/settings/notifications"
         title="Unsubscribe"
         style={{ color: lightStyles.mutedText.color }}
       >

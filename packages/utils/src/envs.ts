@@ -8,7 +8,7 @@ export function getAppUrl() {
     process.env.VERCEL_ENV === "production" ||
     process.env.NODE_ENV === "production"
   ) {
-    return "https://app.vendhub.com";
+    return "https://vendcfo.vercel.app";
   }
 
   if (process.env.VERCEL_ENV === "preview") {

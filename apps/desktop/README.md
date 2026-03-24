@@ -14,7 +14,7 @@ The desktop app supports three environments, each loading a different URL:
 
 - **Development**: `http://localhost:3001`
 - **Staging**: `https://beta.vendhub.com`
-- **Production**: `https://app.vendhub.com`
+- **Production**: `https://vendcfo.vercel.app`
 
 ## Running the App
 
@@ -32,7 +32,7 @@ bun run tauri:staging
 
 ### Production Mode
 ```bash
-# Run in production environment (loads app.vendhub.com)
+# Run in production environment (loads vendcfo.vercel.app)
 bun run tauri:prod
 ```
 
@@ -59,7 +59,7 @@ The environment is controlled by the `MIDDAY_ENV` environment variable:
 
 - `development` or `dev` → `http://localhost:3001`
 - `staging` → `https://beta.vendhub.com`
-- `production` or `prod` → `https://app.vendhub.com`
+- `production` or `prod` → `https://vendcfo.vercel.app`
 
 If no environment is specified, it defaults to development mode.
 

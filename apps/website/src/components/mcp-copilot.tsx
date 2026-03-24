@@ -151,7 +151,7 @@ Header Value: Bearer ${key}`;
                 <p className="font-sans text-xs text-muted-foreground">
                   Don't have an API key?{" "}
                   <Link
-                    href="https://app.vendhub.com/settings/developer"
+                    href="https://vendcfo.vercel.app/settings/developer"
                     className="underline hover:text-foreground"
                   >
                     Create one in Settings → Developer

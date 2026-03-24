@@ -62,12 +62,14 @@ const userTimeToUTC = (
     // Return as a regular Date object (which is in UTC)
     return new Date(userDate.getTime());
   } catch (error) {
-    console.warn("Timezone conversion failed, falling back to UTC:", {
-      dateStr,
-      timeStr,
-      timezone,
-      error,
-    });
+    if (process.env.NODE_ENV === "development") {
+      console.warn("Timezone conversion failed, falling back to UTC:", {
+        dateStr,
+        timeStr,
+        timezone,
+        error,
+      });
+    }
     // Safe fallback: treat input as UTC using UTCDate
     return new UTCDate(`${dateStr}T${timeStr}:00Z`);
   }
@@ -89,7 +91,9 @@ const displayInUserTimezone = (utcDate: Date, timezone: string): string => {
       minute: "2-digit",
     });
   } catch (error) {
-    console.warn("Timezone display failed, using UTC:", { timezone, error });
+    if (process.env.NODE_ENV === "development") {
+      console.warn("Timezone display failed, using UTC:", { timezone, error });
+    }
     // Fallback to UTC formatting
     return utcDate.toLocaleString("en-US", {
       hour12: false,
@@ -123,10 +127,12 @@ const safeGetSlot = (dateStr: string | null, userTimezone?: string): number => {
 
     return slot;
   } catch (error) {
-    console.warn("Slot calculation failed, using native API:", {
-      timezone,
-      error,
-    });
+    if (process.env.NODE_ENV === "development") {
+      console.warn("Slot calculation failed, using native API:", {
+        timezone,
+        error,
+      });
+    }
     // Fallback to native toLocaleString
     const userTimeStr = utcDate.toLocaleString("en-US", {
       timeZone: timezone,
@@ -174,7 +180,9 @@ const safeFormatTime = (
 
     return format(tzDate, "HH:mm");
   } catch (error) {
-    console.warn("Time formatting with tz() failed, using native API:", error);
+    if (process.env.NODE_ENV === "development") {
+      console.warn("Time formatting with tz() failed, using native API:", error);
+    }
     // Fallback to displayInUserTimezone
     return displayInUserTimezone(
       createSafeDate(dateStr),
@@ -415,7 +423,9 @@ const createNewEvent = (
       baseDate = startOfDay(userTzDate);
       dateStr = format(userTzDate, "yyyy-MM-dd"); // Format in user's timezone
     } catch (error) {
-      console.warn("Today calculation failed, using system date:", error);
+      if (process.env.NODE_ENV === "development") {
+        console.warn("Today calculation failed, using system date:", error);
+      }
       baseDate = new Date();
       dateStr = format(baseDate, "yyyy-MM-dd");
     }
@@ -696,7 +706,9 @@ export function TrackerSchedule() {
         const userTzDate = new TZDate(now, timezone);
         currentHour = userTzDate.getHours();
       } catch (error) {
-        console.warn("TZDate current hour calculation failed:", error);
+        if (process.env.NODE_ENV === "development") {
+          console.warn("TZDate current hour calculation failed:", error);
+        }
         currentHour = new Date().getHours();
       }
 
@@ -733,7 +745,9 @@ export function TrackerSchedule() {
       const userTzDate = new TZDate(now, userTimezone);
       return startOfDay(userTzDate);
     } catch (error) {
-      console.warn("TZDate today calculation failed:", error);
+      if (process.env.NODE_ENV === "development") {
+        console.warn("TZDate today calculation failed:", error);
+      }
       return startOfDay(new Date());
     }
   }, [selectedDate, user]);
@@ -779,7 +793,9 @@ export function TrackerSchedule() {
       const stopDate = userTimeToUTC(stopDateStr, formValues.stop, timezone);
 
       if (!isValid(startDate) || !isValid(stopDate)) {
-        console.warn("Invalid dates created:", { startDate, stopDate });
+        if (process.env.NODE_ENV === "development") {
+          console.warn("Invalid dates created:", { startDate, stopDate });
+        }
         return;
       }
 
@@ -1246,7 +1262,9 @@ export function TrackerSchedule() {
 
           spansMidnight = startDateStr !== endDateStr;
         } catch (error) {
-          console.warn("TZDate midnight detection failed:", error);
+          if (process.env.NODE_ENV === "development") {
+            console.warn("TZDate midnight detection failed:", error);
+          }
           // Fallback to toLocaleString
           startDateStr = startDate.toLocaleString("en-CA", {
             timeZone: timezone,
@@ -1276,7 +1294,9 @@ export function TrackerSchedule() {
               const userTzDate = new TZDate(now, timezone);
               currentSelectedDate = format(userTzDate, "yyyy-MM-dd");
             } catch (error) {
-              console.warn("TZDate today formatting failed:", error);
+              if (process.env.NODE_ENV === "development") {
+                console.warn("TZDate today formatting failed:", error);
+              }
               currentSelectedDate = format(new Date(), "yyyy-MM-dd");
             }
           }

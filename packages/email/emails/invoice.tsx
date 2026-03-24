@@ -30,7 +30,7 @@ interface Props {
 export const InvoiceEmail = ({
   customerName = "Customer",
   teamName = "VendCFO",
-  link = "https://app.vendhub.com/i/1234567890",
+  link = "https://vendcfo.vercel.app/i/1234567890",
   invoiceNumber,
   amount,
   currency,

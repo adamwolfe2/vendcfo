@@ -64,7 +64,7 @@ async function fetchPlaidAccounts(accessToken: string, institutionId: string) {
   const plaidSecret = process.env.PLAID_SECRET;
 
   if (!plaidClientId || !plaidSecret) {
-    throw new Error("Plaid credentials not configured");
+    throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Plaid credentials not configured" });
   }
 
   // Fetch accounts from Plaid
@@ -81,7 +81,7 @@ async function fetchPlaidAccounts(accessToken: string, institutionId: string) {
   if (!accountsResponse.ok) {
     const errorData = await accountsResponse.json().catch(() => ({}));
     console.error("[plaid/accounts] Plaid API error:", errorData);
-    throw new Error("Failed to get Plaid accounts");
+    throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Failed to get Plaid accounts" });
   }
 
   const accountsData = await accountsResponse.json();
@@ -163,7 +163,7 @@ export const institutionsRouter = createTRPCRouter({
       });
 
       if (!institutionsResponse.ok) {
-        throw new Error("Failed to get institutions");
+        throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Failed to get institutions" });
       }
 
       const { data } = await institutionsResponse.json();
@@ -205,7 +205,7 @@ export const institutionsRouter = createTRPCRouter({
         });
 
         if (!accountsResponse.ok) {
-          throw new Error("Failed to get accounts");
+          throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Failed to get accounts" });
         }
 
         const { data } = await accountsResponse.json();
@@ -227,7 +227,7 @@ export const institutionsRouter = createTRPCRouter({
       });
 
       if (!usageResponse.ok) {
-        throw new Error("Failed to update institution usage");
+        throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Failed to update institution usage" });
       }
 
       return usageResponse.json();

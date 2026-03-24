@@ -79,7 +79,7 @@ export async function sendSlackTransactionNotifications({
                 type: "plain_text",
                 text: "View transactions",
               },
-              url: "https://app.vendhub.com/transactions",
+              url: "https://vendcfo.vercel.app/transactions",
               action_id: "button_click",
             },
           ],

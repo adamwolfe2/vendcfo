@@ -8,6 +8,7 @@ import {
   protectedProcedure,
   publicProcedure,
 } from "@api/trpc/init";
+import { TRPCError } from "@trpc/server";
 import {
   createShortLink,
   getDocumentById,
@@ -27,12 +28,12 @@ export const shortLinksRouter = createTRPCRouter({
       });
 
       if (!result) {
-        throw new Error("Failed to create short link");
+        throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Failed to create short link" });
       }
 
       return {
         ...result,
-        shortUrl: `${process.env.MIDDAY_DASHBOARD_URL}/s/${result.shortId}`,
+        shortUrl: `${process.env.VENDCFO_DASHBOARD_URL || process.env.MIDDAY_DASHBOARD_URL}/s/${result.shortId}`,
       };
     }),
 
@@ -46,7 +47,7 @@ export const shortLinksRouter = createTRPCRouter({
       });
 
       if (!document) {
-        throw new Error("Document not found");
+        throw new TRPCError({ code: "NOT_FOUND", message: "Document not found" });
       }
 
       // First create the signed URL for the file
@@ -60,7 +61,7 @@ export const shortLinksRouter = createTRPCRouter({
       });
 
       if (!response.data?.signedUrl) {
-        throw new Error("Failed to create signed URL for file");
+        throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Failed to create signed URL for file" });
       }
 
       // Then create a short link for the signed URL
@@ -80,12 +81,12 @@ export const shortLinksRouter = createTRPCRouter({
       });
 
       if (!result) {
-        throw new Error("Failed to create short link");
+        throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Failed to create short link" });
       }
 
       return {
         ...result,
-        shortUrl: `${process.env.MIDDAY_DASHBOARD_URL}/s/${result.shortId}`,
+        shortUrl: `${process.env.VENDCFO_DASHBOARD_URL || process.env.MIDDAY_DASHBOARD_URL}/s/${result.shortId}`,
         originalUrl: response.data.signedUrl,
       };
     }),

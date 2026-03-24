@@ -25,6 +25,7 @@ import {
   updateTransaction,
   updateTransactions,
 } from "@vendcfo/db/queries";
+import { TRPCError } from "@trpc/server";
 import { formatAmountValue } from "@vendcfo/import";
 import { triggerJob } from "@vendcfo/job-client";
 
@@ -131,7 +132,7 @@ export const transactionsRouter = createTRPCRouter({
     .input(exportTransactionsSchema)
     .mutation(async ({ input, ctx: { teamId, session } }) => {
       if (!teamId) {
-        throw new Error("Team not found");
+        throw new TRPCError({ code: "NOT_FOUND", message: "Team not found" });
       }
 
       return triggerJob(
@@ -152,7 +153,7 @@ export const transactionsRouter = createTRPCRouter({
     .input(importTransactionsSchema)
     .mutation(async ({ input, ctx: { db, teamId } }) => {
       if (!teamId) {
-        throw new Error("Team not found");
+        throw new TRPCError({ code: "NOT_FOUND", message: "Team not found" });
       }
 
       // Update currency for account
@@ -185,7 +186,7 @@ export const transactionsRouter = createTRPCRouter({
     .input(moveToReviewSchema)
     .mutation(async ({ input, ctx: { db, teamId } }) => {
       if (!teamId) {
-        throw new Error("Team not found");
+        throw new TRPCError({ code: "NOT_FOUND", message: "Team not found" });
       }
 
       await moveTransactionToReview(db, {

@@ -2,6 +2,7 @@ import { db } from "@vendcfo/db/client";
 import {
   transactions,
   invoices,
+  invoiceStatusEnum,
   customers,
   bankAccounts,
   trackerProjects,
@@ -76,6 +77,7 @@ async function queryFinancialData(
   },
   teamId: string,
 ): Promise<string> {
+  try {
   const { from, to } = getDateRange(input.period);
 
   if (input.query_type === "revenue") {
@@ -274,6 +276,9 @@ async function queryFinancialData(
       "growth_rate",
     ],
   });
+  } catch (error) {
+    return `Unable to retrieve data: ${error instanceof Error ? error.message : "An unexpected error occurred"}. Please try again.`;
+  }
 }
 
 async function queryOperationsData(
@@ -284,6 +289,7 @@ async function queryOperationsData(
   },
   teamId: string,
 ): Promise<string> {
+  try {
   if (input.entity === "machines") {
     const results = await db
       .select({
@@ -297,7 +303,8 @@ async function queryOperationsData(
       })
       .from(machines)
       .leftJoin(locations, eq(machines.location_id, locations.id))
-      .where(eq(machines.business_id, teamId));
+      .where(eq(machines.business_id, teamId))
+      .limit(50);
 
     return JSON.stringify({
       entity: "machines",
@@ -320,7 +327,8 @@ async function queryOperationsData(
       })
       .from(locations)
       .leftJoin(routes, eq(locations.route_id, routes.id))
-      .where(eq(locations.business_id, teamId));
+      .where(eq(locations.business_id, teamId))
+      .limit(50);
 
     return JSON.stringify({
       entity: "locations",
@@ -338,7 +346,8 @@ async function queryOperationsData(
         isActive: routes.is_active,
       })
       .from(routes)
-      .where(eq(routes.business_id, teamId));
+      .where(eq(routes.business_id, teamId))
+      .limit(50);
 
     return JSON.stringify({
       entity: "routes",
@@ -359,7 +368,8 @@ async function queryOperationsData(
         supplier: skus.supplier,
       })
       .from(skus)
-      .where(eq(skus.business_id, teamId));
+      .where(eq(skus.business_id, teamId))
+      .limit(50);
 
     return JSON.stringify({
       entity: "products",
@@ -369,6 +379,16 @@ async function queryOperationsData(
   }
 
   return JSON.stringify({ error: "Unknown entity" });
+  } catch (error) {
+    return `Unable to retrieve data: ${error instanceof Error ? error.message : "An unexpected error occurred"}. Please try again.`;
+  }
+}
+
+const validInvoiceStatuses = invoiceStatusEnum.enumValues;
+type InvoiceStatus = (typeof validInvoiceStatuses)[number];
+
+function isValidInvoiceStatus(value: string): value is InvoiceStatus {
+  return (validInvoiceStatuses as readonly string[]).includes(value);
 }
 
 async function queryInvoiceData(
@@ -378,10 +398,17 @@ async function queryInvoiceData(
   },
   teamId: string,
 ): Promise<string> {
+  try {
   const conditions: ReturnType<typeof eq>[] = [eq(invoices.teamId, teamId)];
 
   if (input.status && input.status !== "all") {
-    conditions.push(eq(invoices.status, input.status as any));
+    if (!isValidInvoiceStatus(input.status)) {
+      return JSON.stringify({
+        error: "Invalid invoice status",
+        available: validInvoiceStatuses,
+      });
+    }
+    conditions.push(eq(invoices.status, input.status));
   }
 
   const results = await db
@@ -407,6 +434,9 @@ async function queryInvoiceData(
       amount: Number(r.total),
     })),
   });
+  } catch (error) {
+    return `Unable to retrieve data: ${error instanceof Error ? error.message : "An unexpected error occurred"}. Please try again.`;
+  }
 }
 
 async function queryCustomerData(
@@ -416,6 +446,7 @@ async function queryCustomerData(
   },
   teamId: string,
 ): Promise<string> {
+  try {
   if (input.query_type === "top_by_revenue") {
     // Join with invoices to get revenue per customer
     const results = await db
@@ -479,6 +510,9 @@ async function queryCustomerData(
     count: results.length,
     customers: results,
   });
+  } catch (error) {
+    return `Unable to retrieve data: ${error instanceof Error ? error.message : "An unexpected error occurred"}. Please try again.`;
+  }
 }
 
 async function queryTrackerData(
@@ -488,6 +522,7 @@ async function queryTrackerData(
   },
   teamId: string,
 ): Promise<string> {
+  try {
   const projects = await db
     .select({
       id: trackerProjects.id,
@@ -514,12 +549,16 @@ async function queryTrackerData(
     total_hours: Number(totalHours.toFixed(1)),
     total_entries: Number(hoursSummary?.entryCount || 0),
   });
+  } catch (error) {
+    return `Unable to retrieve data: ${error instanceof Error ? error.message : "An unexpected error occurred"}. Please try again.`;
+  }
 }
 
 function executeCalculation(input: {
   calculator: string;
   inputs: Record<string, number>;
 }): string {
+  try {
   const { calculator, inputs } = input;
 
   if (calculator === "margin") {
@@ -696,6 +735,9 @@ function executeCalculation(input: {
       "revenue_share",
     ],
   });
+  } catch (error) {
+    return `Unable to retrieve data: ${error instanceof Error ? error.message : "An unexpected error occurred"}. Please try again.`;
+  }
 }
 
 // ─── Tool definitions using Vercel AI SDK ───────────────────────────

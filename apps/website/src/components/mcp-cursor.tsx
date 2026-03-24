@@ -160,7 +160,7 @@ export function MCPCursor() {
                 <code className="font-mono">YOUR_API_KEY</code> in{" "}
                 <code className="font-mono">~/.cursor/mcp.json</code> with your{" "}
                 <Link
-                  href="https://app.vendhub.com/settings/developer"
+                  href="https://vendcfo.vercel.app/settings/developer"
                   className="underline hover:text-foreground"
                 >
                   API key
@@ -204,7 +204,7 @@ export function MCPCursor() {
                   <span className="font-sans text-sm text-muted-foreground pt-0.5">
                     Get an API key from{" "}
                     <Link
-                      href="https://app.vendhub.com/settings/developer"
+                      href="https://vendcfo.vercel.app/settings/developer"
                       className="underline hover:text-foreground"
                     >
                       Settings → Developer

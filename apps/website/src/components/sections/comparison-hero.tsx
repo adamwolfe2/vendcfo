@@ -35,7 +35,7 @@ export function ComparisonHero({ competitor, differentiators, sections }: Props)
         {/* CTA Buttons */}
         <div className="flex flex-col sm:flex-row gap-3 mb-12">
           <Button asChild className="btn-inverse h-11 px-6">
-            <a href="https://app.vendhub.com/">Get started now</a>
+            <a href="https://vendcfo.vercel.app/">Get started now</a>
           </Button>
           <Button asChild variant="outline" className="h-11 px-6">
             <Link href="/pricing">View pricing</Link>

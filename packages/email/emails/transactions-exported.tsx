@@ -23,7 +23,7 @@ interface Props {
 export const TransactionsExportedEmail = ({
   teamName = "VendCFO",
   transactionCount = 100,
-  downloadLink = "https://app.vendhub.com/s/abc123",
+  downloadLink = "https://vendcfo.vercel.app/s/abc123",
 }: Props) => {
   const text = `Transaction Export from ${teamName}`;
   const themeClasses = getEmailThemeClasses();

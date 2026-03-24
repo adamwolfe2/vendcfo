@@ -47,7 +47,7 @@ export const invoicePaymentsRouter = createTRPCRouter({
     }
 
     // Return the REST endpoint URL that handles the OAuth flow
-    const apiUrl = process.env.MIDDAY_API_URL || "https://api.vendhub.com";
+    const apiUrl = process.env.VENDCFO_API_URL || process.env.MIDDAY_API_URL || "https://api.vendhub.com";
     return `${apiUrl}/invoice-payments/connect-stripe`;
   }),
 

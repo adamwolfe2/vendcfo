@@ -36,7 +36,7 @@ export default function imageLoader({
 
   // Existing logic for other URLs
   if (src.startsWith("/_next")) {
-    return `${CDN_URL}/cdn-cgi/image/width=${width},quality=${quality}/https://app.vendhub.com${src}`;
+    return `${CDN_URL}/cdn-cgi/image/width=${width},quality=${quality}/https://vendcfo.vercel.app${src}`;
   }
   return `${CDN_URL}/cdn-cgi/image/width=${width},quality=${quality}/${src}`;
 }

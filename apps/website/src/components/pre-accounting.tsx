@@ -97,7 +97,7 @@ export function PreAccounting() {
                   asChild
                   className="w-full sm:w-auto h-11 px-6 text-sm font-sans"
                 >
-                  <a href="https://app.vendhub.com/">Start free trial</a>
+                  <a href="https://vendcfo.vercel.app/">Start free trial</a>
                 </Button>
                 <Button
                   variant="outline"
@@ -166,7 +166,7 @@ export function PreAccounting() {
             {/* CTA Buttons */}
             <div className="flex gap-6 justify-center">
               <Button asChild className="h-11 px-6 text-sm font-sans">
-                <a href="https://app.vendhub.com/">Start free trial</a>
+                <a href="https://vendcfo.vercel.app/">Start free trial</a>
               </Button>
               <Button
                 variant="outline"

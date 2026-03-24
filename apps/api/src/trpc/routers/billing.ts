@@ -4,6 +4,7 @@ import {
 } from "@api/schemas/billing";
 import { createTRPCRouter, protectedProcedure } from "@api/trpc/init";
 import { api } from "@api/utils/polar";
+import { TRPCError } from "@trpc/server";
 import { getTeamById } from "@vendcfo/db/queries";
 import { getDiscount, getPlans } from "@vendcfo/plans";
 import { z } from "zod";
@@ -18,7 +19,7 @@ export const billingRouter = createTRPCRouter({
       const team = await getTeamById(db, teamId!);
 
       if (!team) {
-        throw new Error("Team not found");
+        throw new TRPCError({ code: "NOT_FOUND", message: "Team not found" });
       }
 
       // Get plan configuration
@@ -26,7 +27,7 @@ export const billingRouter = createTRPCRouter({
       const selectedPlan = plans[plan as keyof typeof plans];
 
       if (!selectedPlan) {
-        throw new Error("Invalid plan");
+        throw new TRPCError({ code: "BAD_REQUEST", message: "Invalid plan" });
       }
 
       // Get discount if applicable
@@ -122,7 +123,7 @@ export const billingRouter = createTRPCRouter({
 
         // Verify the order belongs to the team's customer
         if (order.customer.externalId !== teamId) {
-          throw new Error("Order not found or not authorized");
+          throw new TRPCError({ code: "UNAUTHORIZED", message: "Order not found or not authorized" });
         }
 
         // If invoice doesn't exist, generate it
@@ -154,10 +155,12 @@ export const billingRouter = createTRPCRouter({
           };
         }
       } catch (error) {
+        if (error instanceof TRPCError) throw error;
         console.error("Failed to get invoice download URL:", error);
-        throw new Error(
-          error instanceof Error ? error.message : "Failed to download invoice",
-        );
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: error instanceof Error ? error.message : "Failed to download invoice",
+        });
       }
     }),
 
@@ -171,7 +174,7 @@ export const billingRouter = createTRPCRouter({
 
         // Verify the order belongs to the team's customer
         if (order.customer.externalId !== teamId) {
-          throw new Error("Order not found or not authorized");
+          throw new TRPCError({ code: "UNAUTHORIZED", message: "Order not found or not authorized" });
         }
 
         if (!order.isInvoiceGenerated) {
@@ -195,12 +198,14 @@ export const billingRouter = createTRPCRouter({
           };
         }
       } catch (error) {
+        if (error instanceof TRPCError) throw error;
         console.error("Failed to check invoice status:", error);
-        throw new Error(
-          error instanceof Error
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: error instanceof Error
             ? error.message
             : "Failed to check invoice status",
-        );
+        });
       }
     }),
 

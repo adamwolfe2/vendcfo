@@ -471,7 +471,7 @@ Focus on what was purchased (e.g., "office supplies", "software subscription", "
                   text: "View in VendCFO",
                   emoji: true,
                 },
-                url: `https://app.vendhub.com/inbox?inboxId=${encodeURIComponent(updatedInbox.id)}`,
+                url: `${process.env.VENDCFO_DASHBOARD_URL || process.env.MIDDAY_DASHBOARD_URL || "https://vendcfo.vercel.app"}/inbox?inboxId=${encodeURIComponent(updatedInbox.id)}`,
                 action_id: "view_receipt",
               },
             ],

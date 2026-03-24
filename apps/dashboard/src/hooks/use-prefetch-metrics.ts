@@ -23,42 +23,52 @@ export function usePrefetchMetrics() {
       hasPrefetched.current = true;
 
       // Prefetch all metrics queries with exact same options as cards use
+      const staleTime = 60_000; // 1 minute — avoid refetching on tab switches
+
       Promise.all([
-        queryClient.prefetchQuery(
-          trpc.reports.revenue.queryOptions({
+        queryClient.prefetchQuery({
+          ...trpc.reports.revenue.queryOptions({
             from,
             to,
             currency,
             revenueType,
           }),
-        ),
-        queryClient.prefetchQuery(
-          trpc.reports.expense.queryOptions({ from, to, currency }),
-        ),
-        queryClient.prefetchQuery(
-          trpc.reports.profit.queryOptions({ from, to, currency, revenueType }),
-        ),
-        queryClient.prefetchQuery(
-          trpc.reports.burnRate.queryOptions({ from, to, currency }),
-        ),
-        queryClient.prefetchQuery(
-          trpc.reports.runway.queryOptions({ from, to, currency }),
-        ),
-        queryClient.prefetchQuery(
-          trpc.reports.spending.queryOptions({ from, to, currency }),
-        ),
-        queryClient.prefetchQuery(
-          trpc.reports.revenueForecast.queryOptions({
+          staleTime,
+        }),
+        queryClient.prefetchQuery({
+          ...trpc.reports.expense.queryOptions({ from, to, currency }),
+          staleTime,
+        }),
+        queryClient.prefetchQuery({
+          ...trpc.reports.profit.queryOptions({ from, to, currency, revenueType }),
+          staleTime,
+        }),
+        queryClient.prefetchQuery({
+          ...trpc.reports.burnRate.queryOptions({ from, to, currency }),
+          staleTime,
+        }),
+        queryClient.prefetchQuery({
+          ...trpc.reports.runway.queryOptions({ from, to, currency }),
+          staleTime,
+        }),
+        queryClient.prefetchQuery({
+          ...trpc.reports.spending.queryOptions({ from, to, currency }),
+          staleTime,
+        }),
+        queryClient.prefetchQuery({
+          ...trpc.reports.revenueForecast.queryOptions({
             from,
             to,
             forecastMonths: 6,
             currency,
             revenueType,
           }),
-        ),
-        queryClient.prefetchQuery(
-          trpc.widgets.getAccountBalances.queryOptions({ currency }),
-        ),
+          staleTime,
+        }),
+        queryClient.prefetchQuery({
+          ...trpc.widgets.getAccountBalances.queryOptions({ currency }),
+          staleTime,
+        }),
       ]);
     };
 

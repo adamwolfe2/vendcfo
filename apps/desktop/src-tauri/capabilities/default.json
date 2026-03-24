@@ -44,7 +44,7 @@
     "urls": [
       "http://localhost:3001/**",
       "https://beta.vendhub.com/**",
-      "https://app.vendhub.com/**"
+      "https://vendcfo.vercel.app/**"
     ]
   },
   "platforms": ["macOS"]

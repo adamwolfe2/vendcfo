@@ -67,7 +67,9 @@ export const createWidgetStore = (initialPreferences?: WidgetPreferences) => {
 
         reorderPrimaryWidgets: (newOrder) => {
           if (newOrder.length > 7) {
-            console.warn("Cannot have more than 7 primary widgets");
+            if (process.env.NODE_ENV === "development") {
+              console.warn("Cannot have more than 7 primary widgets");
+            }
             return;
           }
           set({ primaryWidgets: newOrder }, false, "reorderPrimaryWidgets");
@@ -112,7 +114,9 @@ export const createWidgetStore = (initialPreferences?: WidgetPreferences) => {
         swapWithLastPrimary: (widgetId: WidgetType, insertAtIndex: number) => {
           const state = get();
           if (state.primaryWidgets.length < 7) {
-            console.warn("Swap only needed when primary is full");
+            if (process.env.NODE_ENV === "development") {
+              console.warn("Swap only needed when primary is full");
+            }
             return;
           }
 
@@ -120,7 +124,9 @@ export const createWidgetStore = (initialPreferences?: WidgetPreferences) => {
           const lastPrimaryWidget =
             state.primaryWidgets[state.primaryWidgets.length - 1];
           if (!lastPrimaryWidget) {
-            console.warn("No last primary widget found");
+            if (process.env.NODE_ENV === "development") {
+              console.warn("No last primary widget found");
+            }
             return;
           }
 

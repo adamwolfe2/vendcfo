@@ -100,8 +100,8 @@ app.openapi(
     });
 
     const dashboardUrl =
-      process.env.MIDDAY_DASHBOARD_URL || "https://app.vendhub.com";
-    const redirectUri = `${process.env.MIDDAY_API_URL || "https://api.vendhub.com"}/invoice-payments/connect-stripe/callback`;
+      process.env.VENDCFO_DASHBOARD_URL || process.env.MIDDAY_DASHBOARD_URL || "https://vendcfo.vercel.app";
+    const redirectUri = `${process.env.VENDCFO_API_URL || process.env.MIDDAY_API_URL || "https://api.vendhub.com"}/invoice-payments/connect-stripe/callback`;
 
     // Build Stripe Connect OAuth URL (Standard accounts)
     const params = new URLSearchParams({
@@ -183,7 +183,7 @@ app.openapi(
     const db = c.get("db");
     const { code, state, error, error_description } = c.req.valid("query");
     const dashboardUrl =
-      process.env.MIDDAY_DASHBOARD_URL || "https://app.vendhub.com";
+      process.env.VENDCFO_DASHBOARD_URL || process.env.MIDDAY_DASHBOARD_URL || "https://vendcfo.vercel.app";
 
     // Handle OAuth errors
     if (error || !code) {

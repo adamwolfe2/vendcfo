@@ -124,7 +124,7 @@ export function MCPRaycast() {
                 and replace <code className="font-mono">YOUR_API_KEY</code> in
                 the environment variables with your{" "}
                 <Link
-                  href="https://app.vendhub.com/settings/developer"
+                  href="https://vendcfo.vercel.app/settings/developer"
                   className="underline hover:text-foreground"
                 >
                   API key
@@ -168,7 +168,7 @@ export function MCPRaycast() {
                   <span className="font-sans text-sm text-muted-foreground pt-0.5">
                     Get an API key from{" "}
                     <Link
-                      href="https://app.vendhub.com/settings/developer"
+                      href="https://vendcfo.vercel.app/settings/developer"
                       className="underline hover:text-foreground"
                     >
                       Settings → Developer

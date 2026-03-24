@@ -93,6 +93,8 @@
         "MIDDAY_ENCRYPTION_KEY",
         "MIDDAY_API_URL",
         "MIDDAY_DASHBOARD_URL",
+        "VENDCFO_DASHBOARD_URL",
+        "VENDCFO_API_URL",
         "WEBHOOK_SECRET_KEY",
         "INVOICE_JWT_SECRET",
         "NEXT_PUBLIC_URL",

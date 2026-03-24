@@ -315,7 +315,7 @@ export function SDKs() {
                 asChild
                 className="w-full sm:w-auto h-11 px-6 text-sm font-sans"
               >
-                <Link href="https://app.vendhub.com">Get started</Link>
+                <Link href="https://vendcfo.vercel.app">Get started</Link>
               </Button>
               <Button
                 asChild
@@ -391,7 +391,7 @@ export function SDKs() {
             {/* CTA Buttons */}
             <div className="flex gap-6 justify-center mt-8">
               <Button asChild className="h-11 px-6 text-sm font-sans">
-                <Link href="https://app.vendhub.com">Get started</Link>
+                <Link href="https://vendcfo.vercel.app">Get started</Link>
               </Button>
               <Button
                 asChild

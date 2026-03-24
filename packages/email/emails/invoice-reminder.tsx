@@ -31,7 +31,7 @@ export const InvoiceReminderEmail = ({
   companyName = "Customer",
   teamName = "VendCFO",
   invoiceNumber = "INV-0001",
-  link = "https://app.vendhub.com/i/1234567890",
+  link = "https://vendcfo.vercel.app/i/1234567890",
   amount,
   currency,
   dueDate,

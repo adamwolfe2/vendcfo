@@ -150,7 +150,7 @@ Token: ${key}`;
                 <p className="font-sans text-xs text-muted-foreground">
                   Don't have an API key?{" "}
                   <Link
-                    href="https://app.vendhub.com/settings/developer"
+                    href="https://vendcfo.vercel.app/settings/developer"
                     className="underline hover:text-foreground"
                   >
                     Create one in Settings → Developer
@@ -221,7 +221,7 @@ Token: ${key}`;
                     <p className="font-sans text-sm text-muted-foreground mt-1">
                       Get an API key from{" "}
                       <Link
-                        href="https://app.vendhub.com/settings/developer"
+                        href="https://vendcfo.vercel.app/settings/developer"
                         className="underline hover:text-foreground"
                       >
                         Settings → Developer

@@ -11,7 +11,7 @@ Complete technical reference for VendHub's OAuth 2.0 implementation. These endpo
 
 | Environment | URL |
 |-------------|-----|
-| Authorization | `https://app.vendhub.com/oauth` |
+| Authorization | `https://vendcfo.vercel.app/oauth` |
 | Token & API | `https://api.vendhub.com/v1` |
 
 ## Authorization endpoint
@@ -19,7 +19,7 @@ Complete technical reference for VendHub's OAuth 2.0 implementation. These endpo
 Initiates the OAuth flow by redirecting users to log in and authorize your app.
 
 ```
-GET https://app.vendhub.com/oauth/authorize
+GET https://vendcfo.vercel.app/oauth/authorize
 ```
 
 ### Request parameters
@@ -37,7 +37,7 @@ GET https://app.vendhub.com/oauth/authorize
 ### Example request
 
 ```
-https://app.vendhub.com/oauth/authorize?
+https://vendcfo.vercel.app/oauth/authorize?
   response_type=code&
   client_id=mid_client_abc123&
   redirect_uri=https://yourapp.com/callback&

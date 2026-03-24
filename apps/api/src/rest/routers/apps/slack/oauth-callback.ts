@@ -237,7 +237,7 @@ app.openapi(
 
         // Build redirect URL to dashboard
         const dashboardUrl =
-          process.env.MIDDAY_DASHBOARD_URL || "https://app.vendhub.com";
+          process.env.VENDCFO_DASHBOARD_URL || process.env.MIDDAY_DASHBOARD_URL || "https://vendcfo.vercel.app";
 
         return c.redirect(`${dashboardUrl}/oauth-callback?status=success`, 302);
       }

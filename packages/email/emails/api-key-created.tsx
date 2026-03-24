@@ -79,7 +79,7 @@ export const ApiKeyCreatedEmail = ({
           </Text>
 
           <Section className="text-center mt-[50px] mb-[50px]">
-            <Button href="https://app.vendhub.com/settings/developer">
+            <Button href="https://vendcfo.vercel.app/settings/developer">
               View API Keys
             </Button>
           </Section>

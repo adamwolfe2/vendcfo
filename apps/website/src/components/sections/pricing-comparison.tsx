@@ -59,7 +59,7 @@ export function PricingComparison({ competitor }: Props) {
           </div>
           <div className="mt-6 text-center">
             <Button asChild className="btn-inverse h-10 px-6">
-              <a href="https://app.vendhub.com/">Start free trial</a>
+              <a href="https://vendcfo.vercel.app/">Start free trial</a>
             </Button>
             <p className="font-sans text-xs text-muted-foreground mt-2">
               14-day free trial. Cancel anytime.

@@ -147,7 +147,7 @@ export function MCPClaude() {
                 <p className="font-sans text-xs text-muted-foreground">
                   Don't have an API key?{" "}
                   <Link
-                    href="https://app.vendhub.com/settings/developer"
+                    href="https://vendcfo.vercel.app/settings/developer"
                     className="underline hover:text-foreground"
                   >
                     Create one in Settings → Developer
@@ -234,7 +234,7 @@ export function MCPClaude() {
                   <span className="font-sans text-sm text-muted-foreground pt-0.5">
                     Get an API key from{" "}
                     <Link
-                      href="https://app.vendhub.com/settings/developer"
+                      href="https://vendcfo.vercel.app/settings/developer"
                       className="underline hover:text-foreground"
                     >
                       Settings → Developer

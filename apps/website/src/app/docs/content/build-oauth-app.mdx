@@ -32,7 +32,7 @@ OAuth 2.0 lets your app request access to a user's VendHub data without handling
 
 ### Step 1: Create an OAuth application
 
-1. Go to [Settings → Developer](https://app.vendhub.com/settings/developer)
+1. Go to [Settings → Developer](https://vendcfo.vercel.app/settings/developer)
 2. Click **Create OAuth app**
 3. Fill in your application details:
    - **Name**: Your app's name (shown to users)
@@ -51,7 +51,7 @@ You'll receive:
 Redirect users to start authorization:
 
 ```
-https://app.vendhub.com/oauth/authorize?
+https://vendcfo.vercel.app/oauth/authorize?
   response_type=code&
   client_id=YOUR_CLIENT_ID&
   redirect_uri=YOUR_REDIRECT_URI&
@@ -180,7 +180,7 @@ async function generateCodeChallenge(verifier: string): Promise<string> {
 ### Include in authorization request
 
 ```
-https://app.vendhub.com/oauth/authorize?
+https://vendcfo.vercel.app/oauth/authorize?
   response_type=code&
   client_id=YOUR_CLIENT_ID&
   redirect_uri=YOUR_REDIRECT_URI&
@@ -261,7 +261,7 @@ app.get("/connect", (req, res) => {
   sessions.set(sessionId, { state });
   res.cookie("session_id", sessionId);
   
-  const authUrl = new URL("https://app.vendhub.com/oauth/authorize");
+  const authUrl = new URL("https://vendcfo.vercel.app/oauth/authorize");
   authUrl.searchParams.set("response_type", "code");
   authUrl.searchParams.set("client_id", CLIENT_ID);
   authUrl.searchParams.set("redirect_uri", REDIRECT_URI);
@@ -334,7 +334,7 @@ app.listen(3000, () => {
 
 ### Edit application settings
 
-1. Go to [Settings → Developer](https://app.vendhub.com/settings/developer)
+1. Go to [Settings → Developer](https://vendcfo.vercel.app/settings/developer)
 2. Click on your OAuth application
 3. Update settings as needed
 4. Click **Save**
