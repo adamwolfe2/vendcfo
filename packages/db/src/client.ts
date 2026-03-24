@@ -23,9 +23,16 @@ const connectionConfig = {
  * back to the simple query protocol which works with any pooler.
  */
 function createPool(connectionString: string) {
+  // Supabase and most cloud Postgres require SSL
+  const needsSsl =
+    connectionString.includes("supabase.co") ||
+    connectionString.includes("neon.tech") ||
+    connectionString.includes("pooler.supabase.com");
+
   const pool = new Pool({
     connectionString,
     ...connectionConfig,
+    ...(needsSsl ? { ssl: { rejectUnauthorized: false } } : {}),
   });
 
   // Wrap the pool's query to strip prepared statement names
