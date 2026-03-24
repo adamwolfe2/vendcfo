@@ -1,60 +1,54 @@
-import { db } from "@vendcfo/db/client";
-import { sql } from "drizzle-orm";
+import { Pool } from "pg";
 import { NextResponse } from "next/server";
 
 export const dynamic = "force-dynamic";
 
 export async function GET() {
   const results: Record<string, unknown> = {};
+  const url = process.env.DATABASE_PRIMARY_URL || process.env.DATABASE_URL;
 
-  // Check env vars (show host only)
-  try {
-    const url = process.env.DATABASE_PRIMARY_URL || process.env.DATABASE_URL;
-    if (url) {
+  // Show connection target
+  if (url) {
+    try {
       const parsed = new URL(url);
       results.db_host = `${parsed.hostname}:${parsed.port}${parsed.pathname}`;
       results.db_user = parsed.username;
-    } else {
-      results.db_host = "NO DATABASE URL SET";
+      results.has_ssl_param = url.includes("sslmode");
+      results.password_length = parsed.password?.length;
+    } catch {
+      results.db_host = "INVALID URL";
     }
-  } catch {
-    results.db_host = "INVALID URL FORMAT";
+  } else {
+    results.db_host = "NO DATABASE URL SET";
   }
 
-  // Test raw query
+  // Test with raw pg Pool (bypass Drizzle entirely)
+  const pool = new Pool({
+    connectionString: url,
+    ssl: { rejectUnauthorized: false },
+    connectionTimeoutMillis: 10000,
+  });
+
   try {
-    const res = await db.execute(sql`SELECT current_database() as db, current_user as usr, version() as ver`);
-    results.connection = "OK";
-    results.database = res.rows[0];
-  } catch (error) {
-    results.connection = "FAILED";
-    results.error = error instanceof Error ? error.message : String(error);
-    results.stack = error instanceof Error ? error.stack?.split("\n").slice(0, 3) : undefined;
+    const client = await pool.connect();
+    try {
+      const res = await client.query("SELECT current_database() as db, current_user as usr");
+      results.raw_pg_connection = "OK";
+      results.raw_pg_result = res.rows[0];
+    } finally {
+      client.release();
+    }
+  } catch (error: any) {
+    results.raw_pg_connection = "FAILED";
+    results.raw_pg_error = error?.message;
+    results.raw_pg_code = error?.code;
+    results.raw_pg_detail = error?.detail;
+    results.raw_pg_routine = error?.routine;
   }
 
-  // Test users query
-  try {
-    const res = await db.execute(
-      sql`SELECT id, full_name, team_id FROM users WHERE id = 'e68ad16d-0905-4eb7-82f5-0bb122d0e3f1'`
-    );
-    results.user_query = "OK";
-    results.user = res.rows[0];
-  } catch (error) {
-    results.user_query = "FAILED";
-    results.user_error = error instanceof Error ? error.message : String(error);
-  }
+  await pool.end().catch(() => {});
 
-  // Test users+teams join
-  try {
-    const res = await db.execute(
-      sql`SELECT u.id, u.full_name, t.name as team_name FROM users u LEFT JOIN teams t ON u.team_id = t.id WHERE u.id = 'e68ad16d-0905-4eb7-82f5-0bb122d0e3f1'`
-    );
-    results.join_query = "OK";
-    results.join = res.rows[0];
-  } catch (error) {
-    results.join_query = "FAILED";
-    results.join_error = error instanceof Error ? error.message : String(error);
-  }
-
-  return NextResponse.json(results, { status: results.connection === "OK" ? 200 : 500 });
+  return NextResponse.json(results, {
+    status: results.raw_pg_connection === "OK" ? 200 : 500,
+  });
 }
