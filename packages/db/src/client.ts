@@ -46,7 +46,9 @@ function createPool(connectionString: string) {
   return pool;
 }
 
-const primaryPool = createPool(process.env.DATABASE_PRIMARY_URL!);
+const primaryPool = createPool(
+  process.env.DATABASE_PRIMARY_URL || process.env.DATABASE_URL!,
+);
 
 export const primaryDb = drizzle(primaryPool, {
   schema,
