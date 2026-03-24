@@ -345,7 +345,7 @@ export function OnboardingWizard() {
   }, []);
 
   const { connect: connectQuickBooks, isLoading: isConnecting } = useAppOAuth({
-    installUrlEndpoint: "/apps/quickbooks/install-url",
+    installUrlEndpoint: "/api/apps/quickbooks/install-url",
     onSuccess: () => {
       setStep(2);
     },

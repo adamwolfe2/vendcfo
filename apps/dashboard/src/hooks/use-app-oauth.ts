@@ -117,7 +117,10 @@ export function useAppOAuth({
       });
 
       if (!response.ok) {
-        popup?.close();
+        // Don't close the popup — let the error propagate to the onError
+        // callback which shows a toast. The popup stays open so the user
+        // can see what happened; it will be cleaned up when the user
+        // closes it manually or the OAuth flow completes.
         const body = await response.json().catch(() => null);
         const message =
           body?.error || `Failed to get install URL: ${response.statusText}`;
@@ -159,7 +162,8 @@ export function useAppOAuth({
         }
       }, TIMEOUT_MS);
     } catch (error) {
-      popup?.close();
+      // Don't close the popup on error — let the user dismiss it manually.
+      // The popup will be cleaned up by the interval check when the user closes it.
       cleanup();
       const err = error instanceof Error ? error : new Error(String(error));
       onError?.(err);
