@@ -10,12 +10,12 @@ export const metadata: Metadata = {
 };
 
 export default async function FinancePage() {
-  const caller = await getServerCaller();
-  const user = await caller.user.me();
-
-  if (!user?.teamId) {
-    redirect("/teams");
+  try {
+    const caller = await getServerCaller();
+    const user = await caller.user.me();
+    if (!user?.teamId) redirect("/teams");
+    return <FinanceDashboard teamId={user.teamId} />;
+  } catch {
+    redirect("/login");
   }
-
-  return <FinanceDashboard teamId={user.teamId} />;
 }

@@ -20,25 +20,33 @@ export default async function Page() {
     redirect("/login");
   }
 
-  const supabase = await createClient();
+  let employees: any[] = [];
+  let plans: any[] = [];
 
-  const [employeesRes, plansRes] = await Promise.all([
-    supabase
-      .from("employees")
-      .select("*")
-      .eq("business_id", teamId)
-      .order("name", { ascending: true }),
-    supabase
-      .from("compensation_plans")
-      .select("*")
-      .eq("business_id", teamId)
-      .order("effective_from", { ascending: false }),
-  ]);
+  try {
+    const supabase = await createClient();
+    const [employeesRes, plansRes] = await Promise.all([
+      supabase
+        .from("employees")
+        .select("*")
+        .eq("business_id", teamId)
+        .order("name", { ascending: true }),
+      supabase
+        .from("compensation_plans")
+        .select("*")
+        .eq("business_id", teamId)
+        .order("effective_from", { ascending: false }),
+    ]);
+    employees = employeesRes.data || [];
+    plans = plansRes.data || [];
+  } catch {
+    // Tables may not exist yet — render empty
+  }
 
   return (
     <EmployeesPage
-      initialData={employeesRes.data || []}
-      initialPlans={plansRes.data || []}
+      initialData={employees}
+      initialPlans={plans}
       teamId={teamId}
     />
   );

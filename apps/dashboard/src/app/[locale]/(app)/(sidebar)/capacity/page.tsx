@@ -10,12 +10,12 @@ export const metadata: Metadata = {
 };
 
 export default async function CapacityPage() {
-  const caller = await getServerCaller();
-  const user = await caller.user.me();
-
-  if (!user?.teamId) {
-    redirect("/teams");
+  try {
+    const caller = await getServerCaller();
+    const user = await caller.user.me();
+    if (!user?.teamId) redirect("/teams");
+    return <CapacityDashboard teamId={user.teamId} />;
+  } catch {
+    redirect("/login");
   }
-
-  return <CapacityDashboard teamId={user.teamId} />;
 }

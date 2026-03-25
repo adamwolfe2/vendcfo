@@ -22,34 +22,44 @@ export default async function Page() {
     redirect("/login");
   }
 
-  const supabase = await createClient();
+  let reports: any[] = [];
+  let locations: any[] = [];
+  let locationGroups: any[] = [];
 
-  const [reportsRes, locationsRes, groupsRes] = await Promise.all([
-    supabase
-      .from("generated_reports")
-      .select("*")
-      .eq("business_id", teamId)
-      .order("created_at", { ascending: false }),
-    supabase
-      .from("locations")
-      .select("id, name, rev_share_pct, contact_name, contact_email")
-      .eq("business_id", teamId)
-      .eq("is_active", true)
-      .order("name"),
-    supabase
-      .from("location_groups")
-      .select("id, name, contact_name, contact_email")
-      .eq("business_id", teamId)
-      .order("name"),
-  ]);
+  try {
+    const supabase = await createClient();
+    const [reportsRes, locationsRes, groupsRes] = await Promise.all([
+      supabase
+        .from("generated_reports")
+        .select("*")
+        .eq("business_id", teamId)
+        .order("created_at", { ascending: false }),
+      supabase
+        .from("locations")
+        .select("id, name, rev_share_pct, contact_name, contact_email")
+        .eq("business_id", teamId)
+        .eq("is_active", true)
+        .order("name"),
+      supabase
+        .from("location_groups")
+        .select("id, name, contact_name, contact_email")
+        .eq("business_id", teamId)
+        .order("name"),
+    ]);
+    reports = reportsRes.data ?? [];
+    locations = locationsRes.data ?? [];
+    locationGroups = groupsRes.data ?? [];
+  } catch {
+    // Tables may not exist yet — render empty
+  }
 
   return (
     <ReportsPage
       teamId={teamId}
       userId={userId}
-      initialReports={reportsRes.data ?? []}
-      locations={locationsRes.data ?? []}
-      locationGroups={groupsRes.data ?? []}
+      initialReports={reports}
+      locations={locations}
+      locationGroups={locationGroups}
     />
   );
 }

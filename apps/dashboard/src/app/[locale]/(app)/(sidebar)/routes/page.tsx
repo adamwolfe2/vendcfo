@@ -32,40 +32,55 @@ export default async function Page() {
   const supabase = await createClient();
   const weekStart = getCurrentWeekStart();
 
-  const [routesRes, locationsRes, schedulesRes, operatorPlansRes, operatorRatesRes] =
-    await Promise.all([
-      supabase
-        .from("routes")
-        .select("*, locations(count)")
-        .eq("business_id", teamId)
-        .order("name", { ascending: true }),
-      supabase
-        .from("locations")
-        .select("id, name, stock_hours, pick_hours, route_id")
-        .eq("business_id", teamId)
-        .order("name", { ascending: true }),
-      supabase
-        .from("service_schedule")
-        .select("*")
-        .eq("business_id", teamId),
-      supabase
-        .from("operator_weekly_plan")
-        .select("*, users:operator_id(full_name, email)")
-        .eq("business_id", teamId)
-        .eq("week_start", weekStart),
-      supabase
-        .from("operator_rates")
-        .select("*")
-        .eq("business_id", teamId),
-    ]);
+  let routes: any[] = [];
+  let locations: any[] = [];
+  let schedules: any[] = [];
+  let operatorPlans: any[] = [];
+  let operatorRates: any[] = [];
+
+  try {
+    const [routesRes, locationsRes, schedulesRes, operatorPlansRes, operatorRatesRes] =
+      await Promise.all([
+        supabase
+          .from("routes")
+          .select("*, locations(count)")
+          .eq("business_id", teamId)
+          .order("name", { ascending: true }),
+        supabase
+          .from("locations")
+          .select("id, name, stock_hours, pick_hours, route_id")
+          .eq("business_id", teamId)
+          .order("name", { ascending: true }),
+        supabase
+          .from("service_schedule")
+          .select("*")
+          .eq("business_id", teamId),
+        supabase
+          .from("operator_weekly_plan")
+          .select("*, users:operator_id(full_name, email)")
+          .eq("business_id", teamId)
+          .eq("week_start", weekStart),
+        supabase
+          .from("operator_rates")
+          .select("*")
+          .eq("business_id", teamId),
+      ]);
+    routes = routesRes.data || [];
+    locations = locationsRes.data || [];
+    schedules = schedulesRes.data || [];
+    operatorPlans = operatorPlansRes.data || [];
+    operatorRates = operatorRatesRes.data || [];
+  } catch {
+    // Some tables may not exist — render with whatever we have
+  }
 
   return (
     <RoutesPage
-      initialData={routesRes.data || []}
-      initialLocations={locationsRes.data || []}
-      initialSchedules={schedulesRes.data || []}
-      initialOperatorPlans={operatorPlansRes.data || []}
-      initialOperatorRates={operatorRatesRes.data || []}
+      initialData={routes}
+      initialLocations={locations}
+      initialSchedules={schedules}
+      initialOperatorPlans={operatorPlans}
+      initialOperatorRates={operatorRates}
       teamId={teamId}
       weekStart={weekStart}
     />
