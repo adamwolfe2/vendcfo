@@ -618,6 +618,11 @@ const handleInsightReady: NotificationDescriptionHandler = (
   _user,
   t,
 ) => {
+  // Smart alert notifications use insight_ready type with smartAlertType in metadata
+  if (metadata?.smartAlertType && metadata?.message) {
+    return metadata.message;
+  }
+
   const periodLabel = metadata?.periodLabel;
   const title = metadata?.title;
 

@@ -93,18 +93,83 @@ export async function POST(req: NextRequest) {
       });
     }
 
+    // Generate PDF attachment for rev_share reports
+    let pdfAttachment: { filename: string; content: string } | undefined;
+
+    if (report.report_type === "rev_share") {
+      try {
+        const { renderToBuffer } = await import("@react-pdf/renderer");
+        const { CommissionReportPdf } = await import(
+          "@/components/reports/commission-report-pdf"
+        );
+        const reportData = (report.report_data ?? {}) as Record<
+          string,
+          unknown
+        >;
+
+        // Fetch team name
+        const { data: team } = await supabase
+          .from("teams")
+          .select("name")
+          .eq("id", teamId)
+          .single();
+
+        const periodLabel =
+          String(reportData.periodLabel ?? "") ||
+          derivePeriodLabel(report.period_start, report.period_end);
+
+        // @ts-expect-error — react-pdf renderer types diverge from React.ReactElement
+        const pdfBuffer = await renderToBuffer(
+          CommissionReportPdf({
+            lineItems: (reportData.lineItems ?? []) as Array<{
+              locationId: string;
+              locationName: string;
+              grossRevenue: number;
+              processingFees: number;
+              netDeposited: number;
+              sharePercentage: number;
+              commissionAmount: number;
+            }>,
+            totalGrossRevenue: Number(reportData.totalGrossRevenue ?? 0),
+            totalCommission: Number(reportData.totalCommission ?? 0),
+            periodLabel,
+            generatedAt: new Date().toLocaleDateString("en-US", {
+              month: "long",
+              day: "numeric",
+              year: "numeric",
+            }),
+            businessName: team?.name ?? "",
+            contactEmail: report.email_to ?? undefined,
+          }),
+        );
+
+        pdfAttachment = {
+          filename: `Revenue-Share-Report-${periodLabel.replace(/\s+/g, "-")}.pdf`,
+          content: Buffer.from(pdfBuffer).toString("base64"),
+        };
+      } catch {
+        // PDF generation failed — send email without attachment
+      }
+    }
+
+    const emailPayload: Record<string, unknown> = {
+      from: "VendCFO <reports@vendcfo.ai>",
+      to: [report.email_to],
+      subject: report.email_subject ?? report.title,
+      html: emailHtml,
+    };
+
+    if (pdfAttachment) {
+      emailPayload.attachments = [pdfAttachment];
+    }
+
     const emailResponse = await fetch("https://api.resend.com/emails", {
       method: "POST",
       headers: {
         Authorization: `Bearer ${resendApiKey}`,
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({
-        from: "VendCFO <reports@vendcfo.ai>",
-        to: [report.email_to],
-        subject: report.email_subject ?? report.title,
-        html: emailHtml,
-      }),
+      body: JSON.stringify(emailPayload),
     });
 
     if (!emailResponse.ok) {
@@ -134,6 +199,29 @@ export async function POST(req: NextRequest) {
       { status: 500 },
     );
   }
+}
+
+// ---------------------------------------------------------------------------
+// Period label helper
+// ---------------------------------------------------------------------------
+
+function derivePeriodLabel(start: string, end: string): string {
+  const startDate = new Date(start);
+  const endDate = new Date(end);
+  const startMonth = startDate.getMonth();
+  const endMonth = endDate.getMonth();
+  const year = endDate.getFullYear();
+
+  if (endMonth - startMonth === 2 && startMonth % 3 === 0) {
+    const quarter = Math.floor(startMonth / 3) + 1;
+    return `Q${quarter} ${year}`;
+  }
+
+  const dateFmt = new Intl.DateTimeFormat("en-US", {
+    month: "short",
+    year: "numeric",
+  });
+  return `${dateFmt.format(startDate)} - ${dateFmt.format(endDate)}`;
 }
 
 // ---------------------------------------------------------------------------

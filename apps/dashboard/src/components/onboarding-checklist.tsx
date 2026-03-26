@@ -35,6 +35,12 @@ const steps: readonly StepDefinition[] = [
     href: "/import",
   },
   {
+    id: "connect-bank",
+    label: "Connect your bank account",
+    description: "Link via Plaid for automatic syncing",
+    href: "/settings/accounts",
+  },
+  {
     id: "add-location",
     label: "Add your first location",
     description: "Where your machines are placed",
@@ -67,6 +73,7 @@ const steps: readonly StepDefinition[] = [
 interface CompletionCounts {
   transactions: number;
   bankAccounts: number;
+  bankConnections: number;
   locations: number;
   machines: number;
   routes: number;
@@ -87,6 +94,10 @@ async function fetchCompletionCounts(
       .eq("team_id", teamId),
     supabase
       .from("bank_accounts")
+      .select("id", { count: "exact", head: true })
+      .eq("team_id", teamId),
+    supabase
+      .from("bank_connections")
       .select("id", { count: "exact", head: true })
       .eq("team_id", teamId),
     sb
@@ -121,16 +132,18 @@ async function fetchCompletionCounts(
   return {
     transactions: extractCount(results[0] as CountResult),
     bankAccounts: extractCount(results[1] as CountResult),
-    locations: extractCount(results[2] as CountResult),
-    machines: extractCount(results[3] as CountResult),
-    routes: extractCount(results[4] as CountResult),
-    invoices: extractCount(results[5] as CountResult),
+    bankConnections: extractCount(results[2] as CountResult),
+    locations: extractCount(results[3] as CountResult),
+    machines: extractCount(results[4] as CountResult),
+    routes: extractCount(results[5] as CountResult),
+    invoices: extractCount(results[6] as CountResult),
   };
 }
 
 function deriveCompleted(counts: CompletionCounts): Set<string> {
   const completed = new Set<string>();
   if (counts.transactions > 0 || counts.bankAccounts > 0) completed.add("import-data");
+  if (counts.bankConnections > 0) completed.add("connect-bank");
   if (counts.locations > 0) completed.add("add-location");
   if (counts.machines > 0) completed.add("add-machine");
   if (counts.routes > 0) completed.add("set-up-route");

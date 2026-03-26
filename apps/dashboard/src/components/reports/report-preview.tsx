@@ -3,11 +3,13 @@
 import {
   ArrowLeft,
   Calendar,
+  Download,
   FileText,
   Loader2,
   Mail,
   Send,
 } from "lucide-react";
+import { useCallback, useState } from "react";
 import { RevenueSharePreviewTable } from "./revenue-share-preview";
 import { SalesTaxPreviewTable } from "./sales-tax-preview";
 
@@ -104,6 +106,41 @@ export function ReportPreview({
 }: Props) {
   const statusStyle = STATUS_STYLES[report.status] ?? STATUS_STYLES.draft;
   const data = report.report_data as Record<string, unknown>;
+  const [downloadingPdf, setDownloadingPdf] = useState(false);
+
+  const handleDownloadPdf = useCallback(async () => {
+    setDownloadingPdf(true);
+
+    try {
+      const response = await fetch("/api/reports/generate-pdf", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ reportId: report.id }),
+      });
+
+      if (!response.ok) {
+        return;
+      }
+
+      const blob = await response.blob();
+      const url = URL.createObjectURL(blob);
+      const anchor = document.createElement("a");
+      anchor.href = url;
+      anchor.download =
+        response.headers
+          .get("Content-Disposition")
+          ?.split("filename=")[1]
+          ?.replace(/"/g, "") ?? `Report-${report.id}.pdf`;
+      document.body.appendChild(anchor);
+      anchor.click();
+      document.body.removeChild(anchor);
+      URL.revokeObjectURL(url);
+    } catch {
+      // Silent fail — user can retry
+    } finally {
+      setDownloadingPdf(false);
+    }
+  }, [report.id]);
 
   return (
     <div className="w-full py-6 max-w-4xl">
@@ -134,21 +171,38 @@ export function ReportPreview({
           </div>
         </div>
 
-        {report.email_to && report.status !== "sent" && (
-          <button
-            type="button"
-            onClick={onSendEmail}
-            disabled={isSending}
-            className="inline-flex items-center gap-2 h-9 px-4 bg-[#1a1a1a] text-white text-sm font-medium hover:bg-[#333] transition-colors disabled:opacity-50"
-          >
-            {isSending ? (
-              <Loader2 size={14} className="animate-spin" />
-            ) : (
-              <Send size={14} />
-            )}
-            {isSending ? "Sending..." : "Send Email"}
-          </button>
-        )}
+        <div className="flex items-center gap-2">
+          {report.report_type === "rev_share" && (
+            <button
+              type="button"
+              onClick={handleDownloadPdf}
+              disabled={downloadingPdf}
+              className="inline-flex items-center gap-2 h-9 px-4 border border-[#e6e6e6] bg-white text-[#1a1a1a] text-sm font-medium hover:bg-[#fafafa] transition-colors disabled:opacity-50"
+            >
+              {downloadingPdf ? (
+                <Loader2 size={14} className="animate-spin" />
+              ) : (
+                <Download size={14} />
+              )}
+              {downloadingPdf ? "Generating..." : "Download PDF"}
+            </button>
+          )}
+          {report.email_to && report.status !== "sent" && (
+            <button
+              type="button"
+              onClick={onSendEmail}
+              disabled={isSending}
+              className="inline-flex items-center gap-2 h-9 px-4 bg-[#1a1a1a] text-white text-sm font-medium hover:bg-[#333] transition-colors disabled:opacity-50"
+            >
+              {isSending ? (
+                <Loader2 size={14} className="animate-spin" />
+              ) : (
+                <Send size={14} />
+              )}
+              {isSending ? "Sending..." : "Send Email"}
+            </button>
+          )}
+        </div>
       </div>
 
       {/* Metadata */}

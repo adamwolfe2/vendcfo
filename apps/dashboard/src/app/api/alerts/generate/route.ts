@@ -397,6 +397,45 @@ export async function POST() {
         (severityOrder[a.severity] ?? 3) - (severityOrder[b.severity] ?? 3),
     );
 
+    // Insert in-app notifications for critical and warning alerts
+    // Uses 'insight_ready' activity type with smartAlertType in metadata
+    const notifiableAlerts = alerts.filter(
+      (a) => a.severity === "critical" || a.severity === "warning",
+    );
+
+    if (notifiableAlerts.length > 0) {
+      const notificationInserts = notifiableAlerts.map((alert) => ({
+        team_id: teamId,
+        user_id: session.user.id,
+        type: "insight_ready" as const,
+        source: "system" as const,
+        status: "unread" as const,
+        priority: alert.severity === "critical" ? 1 : 2,
+        metadata: {
+          smartAlertType: alert.type,
+          severity: alert.severity,
+          title: alert.title,
+          message: alert.message,
+          entityId: alert.entityId,
+          entityName: alert.entityName,
+          actionLabel: alert.actionLabel,
+          actionHref: alert.actionHref,
+          ...(alert.metadata ?? {}),
+        },
+      }));
+
+      // Insert notifications (fire-and-forget, don't block the response)
+      supabase
+        .from("activities")
+        .insert(notificationInserts)
+        .then(() => {
+          // notifications inserted
+        })
+        .catch(() => {
+          // notification insertion failed silently
+        });
+    }
+
     return NextResponse.json({
       success: true,
       data: alerts,
@@ -406,6 +445,7 @@ export async function POST() {
         warning: alerts.filter((a) => a.severity === "warning").length,
         info: alerts.filter((a) => a.severity === "info").length,
         generatedAt: new Date().toISOString(),
+        notificationsCreated: notifiableAlerts.length,
       },
     });
   } catch (error) {

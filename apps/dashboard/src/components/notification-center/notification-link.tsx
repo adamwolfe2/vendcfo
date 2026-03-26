@@ -128,8 +128,11 @@ export function NotificationLink({
           break;
 
         case "insight_ready":
-          // Navigate to overview with insight query param to trigger the insight display
-          if (recordId) {
+          // Smart alert notifications have an actionHref in metadata
+          if (metadata?.smartAlertType && metadata?.actionHref) {
+            router.push(metadata.actionHref);
+          } else if (recordId) {
+            // Navigate to overview with insight query param to trigger the insight display
             router.push(`/?insight=${recordId}`);
           }
           break;

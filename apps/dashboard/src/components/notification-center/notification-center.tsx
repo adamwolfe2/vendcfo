@@ -26,8 +26,12 @@ export function NotificationCenter() {
     isLoading,
   } = useNotifications();
 
-  const unreadNotifications = notifications; // Main notifications (unread/read)
-  const archivedNotifications = archived; // Archived notifications
+  const unreadNotifications = notifications;
+  const archivedNotifications = archived;
+
+  const unreadCount = notifications.filter(
+    (n) => n.status === "unread",
+  ).length;
 
   useEffect(() => {
     if (isOpen && hasUnseenNotifications) {
@@ -43,8 +47,10 @@ export function NotificationCenter() {
           size="icon"
           className="rounded-full w-8 h-8 flex items-center relative"
         >
-          {hasUnseenNotifications && (
-            <div className="w-1.5 h-1.5 bg-[#FFD02B] rounded-full absolute top-0 right-0" />
+          {unreadCount > 0 && (
+            <span className="absolute -top-1 -right-1 flex items-center justify-center min-w-[18px] h-[18px] rounded-full bg-red-500 text-white text-[10px] font-medium px-1 leading-none">
+              {unreadCount > 99 ? "99+" : unreadCount}
+            </span>
           )}
           <Icons.Notifications size={16} />
         </Button>

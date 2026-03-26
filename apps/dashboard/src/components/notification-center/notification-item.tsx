@@ -34,6 +34,20 @@ export function NotificationItem({
   const metadata = getMetadata(activity);
 
   const getNotificationIcon = (activityType: string) => {
+    // Smart alert notifications use insight_ready with smartAlertType in metadata
+    if (activityType === "insight_ready" && metadata?.smartAlertType) {
+      const alertType = metadata.smartAlertType;
+      if (alertType === "overdue_invoice")
+        return <Icons.Invoice className="size-4" />;
+      if (alertType === "revenue_drop")
+        return <Icons.Transactions className="size-4" />;
+      if (alertType === "machine_down")
+        return <Icons.AlertCircle className="size-4" />;
+      if (alertType === "overdue_service")
+        return <Icons.AlertCircle className="size-4" />;
+      return <Icons.Insights className="size-4" />;
+    }
+
     if (activityType.startsWith("recurring_"))
       return <Icons.Repeat className="size-4" />;
     if (activityType.startsWith("invoice_"))

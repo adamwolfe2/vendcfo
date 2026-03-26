@@ -5,6 +5,7 @@ import {
   Calendar,
   ChevronRight,
   Clock,
+  Download,
   FileText,
   Loader2,
   Mail,
@@ -130,6 +131,7 @@ export function ReportsPage({
     null,
   );
   const [sendingId, setSendingId] = useState<string | null>(null);
+  const [downloadingId, setDownloadingId] = useState<string | null>(null);
 
   const refreshReports = useCallback(async () => {
     const supabase = createClient();
@@ -149,6 +151,44 @@ export function ReportsPage({
       setReports((prev) => [report, ...prev]);
       setShowWizard(false);
       setPreviewReport(report);
+    },
+    [],
+  );
+
+  const handleDownloadPdf = useCallback(
+    async (report: GeneratedReport, e: React.MouseEvent) => {
+      e.stopPropagation();
+      if (report.report_type !== "rev_share") return;
+
+      setDownloadingId(report.id);
+
+      try {
+        const response = await fetch("/api/reports/generate-pdf", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ reportId: report.id }),
+        });
+
+        if (!response.ok) return;
+
+        const blob = await response.blob();
+        const url = URL.createObjectURL(blob);
+        const anchor = document.createElement("a");
+        anchor.href = url;
+        anchor.download =
+          response.headers
+            .get("Content-Disposition")
+            ?.split("filename=")[1]
+            ?.replace(/"/g, "") ?? `Report-${report.id}.pdf`;
+        document.body.appendChild(anchor);
+        anchor.click();
+        document.body.removeChild(anchor);
+        URL.revokeObjectURL(url);
+      } catch {
+        // Silent fail
+      } finally {
+        setDownloadingId(null);
+      }
     },
     [],
   );
@@ -289,12 +329,13 @@ export function ReportsPage({
       ) : (
         <div className="border border-[#e6e6e6] overflow-hidden">
           {/* Desktop Table Header - hidden on mobile */}
-          <div className="hidden sm:grid grid-cols-[1fr_160px_120px_100px_120px_40px] gap-4 px-4 py-3 bg-[#f9f9f9] border-b border-[#e6e6e6] text-xs font-medium text-[#878787] uppercase tracking-wide">
+          <div className="hidden sm:grid grid-cols-[1fr_160px_120px_100px_120px_40px_40px] gap-4 px-4 py-3 bg-[#f9f9f9] border-b border-[#e6e6e6] text-xs font-medium text-[#878787] uppercase tracking-wide">
             <div>Title</div>
             <div>Type</div>
             <div>Period</div>
             <div>Status</div>
             <div>Created</div>
+            <div />
             <div />
           </div>
 
@@ -304,19 +345,21 @@ export function ReportsPage({
               STATUS_STYLES.draft;
 
             return (
-              <button
+              <div
                 key={report.id}
-                type="button"
-                onClick={() => setPreviewReport(report)}
-                className="w-full flex flex-col gap-2 px-4 py-3 border-b border-[#f0f0f0] last:border-b-0 hover:bg-[#fafafa] transition-colors text-left min-h-[44px] sm:grid sm:grid-cols-[1fr_160px_120px_100px_120px_40px] sm:gap-4 sm:items-center"
+                className="w-full flex flex-col gap-2 px-4 py-3 border-b border-[#f0f0f0] last:border-b-0 hover:bg-[#fafafa] transition-colors text-left min-h-[44px] sm:grid sm:grid-cols-[1fr_160px_120px_100px_120px_40px_40px] sm:gap-4 sm:items-center"
               >
-                <div className="flex items-center gap-3 min-w-0">
+                <button
+                  type="button"
+                  onClick={() => setPreviewReport(report)}
+                  className="flex items-center gap-3 min-w-0 text-left"
+                >
                   <FileText size={16} className="text-[#878787] shrink-0" />
                   <span className="text-sm font-medium text-[#1a1a1a] truncate">
                     {report.title}
                   </span>
                   <ChevronRight size={14} className="text-[#ccc] ml-auto sm:hidden shrink-0" />
-                </div>
+                </button>
                 <div className="flex items-center gap-2 sm:gap-0 flex-wrap sm:contents pl-7 sm:pl-0">
                   <span className="text-xs sm:text-sm text-[#666]">
                     {REPORT_TYPE_LABELS[report.report_type] ??
@@ -338,9 +381,34 @@ export function ReportsPage({
                   </span>
                 </div>
                 <div className="hidden sm:flex items-center justify-end">
-                  <ChevronRight size={14} className="text-[#ccc]" />
+                  {report.report_type === "rev_share" ? (
+                    <button
+                      type="button"
+                      onClick={(e) => handleDownloadPdf(report, e)}
+                      disabled={downloadingId === report.id}
+                      className="p-1 text-[#878787] hover:text-[#1a1a1a] transition-colors disabled:opacity-50"
+                      title="Download PDF"
+                    >
+                      {downloadingId === report.id ? (
+                        <Loader2 size={14} className="animate-spin" />
+                      ) : (
+                        <Download size={14} />
+                      )}
+                    </button>
+                  ) : (
+                    <div className="w-[14px]" />
+                  )}
                 </div>
-              </button>
+                <div className="hidden sm:flex items-center justify-end">
+                  <button
+                    type="button"
+                    onClick={() => setPreviewReport(report)}
+                    className="p-1 text-[#ccc] hover:text-[#1a1a1a] transition-colors"
+                  >
+                    <ChevronRight size={14} />
+                  </button>
+                </div>
+              </div>
             );
           })}
         </div>

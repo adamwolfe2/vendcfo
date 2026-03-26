@@ -7,6 +7,7 @@ import {
   Check,
   CheckCircle,
   ChevronDown,
+  Download,
   Loader2,
   Send,
 } from "lucide-react";
@@ -184,6 +185,7 @@ export function ReportGenerationWizard({
   const [sending, setSending] = useState(false);
   const [sendSuccess, setSendSuccess] = useState(false);
   const [sendError, setSendError] = useState<string | null>(null);
+  const [downloadingPdf, setDownloadingPdf] = useState(false);
 
   const periodStart =
     periodMode === "previous_quarter" ? prevQuarter.start : customStart;
@@ -521,6 +523,62 @@ export function ReportGenerationWizard({
   );
 
   // ---------------------------------------------------------------------------
+  // Download PDF
+  // ---------------------------------------------------------------------------
+
+  const handleDownloadPdf = useCallback(async () => {
+    setDownloadingPdf(true);
+
+    try {
+      const response = await fetch("/api/reports/generate-pdf", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          reportType,
+          periodStart,
+          periodEnd,
+          locationIds:
+            scopeMode === "individual" && selectedLocationIds.length > 0
+              ? selectedLocationIds
+              : undefined,
+        }),
+      });
+
+      if (!response.ok) {
+        const errBody = (await response.json().catch(() => ({}))) as Record<
+          string,
+          unknown
+        >;
+        setSendError(String(errBody.error ?? "Failed to generate PDF"));
+        return;
+      }
+
+      const blob = await response.blob();
+      const url = URL.createObjectURL(blob);
+      const anchor = document.createElement("a");
+      anchor.href = url;
+      anchor.download =
+        response.headers.get("Content-Disposition")?.split("filename=")[1]?.replace(/"/g, "") ??
+        `Revenue-Share-Report-${periodLabel.replace(/\s+/g, "-")}.pdf`;
+      document.body.appendChild(anchor);
+      anchor.click();
+      document.body.removeChild(anchor);
+      URL.revokeObjectURL(url);
+    } catch {
+      setSendError("Failed to download PDF. Please try again.");
+    } finally {
+      setDownloadingPdf(false);
+    }
+  }, [
+    reportType,
+    periodStart,
+    periodEnd,
+    periodLabel,
+    scopeMode,
+    selectedLocationIds,
+  ]);
+
+  // ---------------------------------------------------------------------------
   // Step indicator
   // ---------------------------------------------------------------------------
 
@@ -677,6 +735,21 @@ export function ReportGenerationWizard({
               )}
               {saving ? "Saving..." : "Save Only"}
             </button>
+            {reportType === "rev_share" && (
+              <button
+                type="button"
+                onClick={handleDownloadPdf}
+                disabled={saving || sending || sendSuccess || downloadingPdf}
+                className="inline-flex items-center gap-2 h-9 px-5 border border-[#e6e6e6] bg-white text-[#1a1a1a] text-sm font-medium hover:bg-[#fafafa] transition-colors disabled:opacity-50"
+              >
+                {downloadingPdf ? (
+                  <Loader2 size={14} className="animate-spin" />
+                ) : (
+                  <Download size={14} />
+                )}
+                {downloadingPdf ? "Generating..." : "Download PDF"}
+              </button>
+            )}
             <button
               type="button"
               onClick={() => handleGenerate(true)}

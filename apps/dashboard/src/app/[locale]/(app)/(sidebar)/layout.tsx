@@ -8,6 +8,7 @@ import { GlobalSheetsProvider } from "@/components/sheets/global-sheets-provider
 import { Sidebar } from "@/components/sidebar";
 import { TimezoneDetector } from "@/components/timezone-detector";
 import { TrialGuard } from "@/components/trial-guard";
+import { WelcomeModal } from "@/components/welcome-modal";
 import {
   HydrateClient,
   getQueryClient,
@@ -140,6 +141,7 @@ export default async function Layout({
         <TimezoneDetector />
         <OnboardingChatPrompt />
         <BetaFeedback />
+        <WelcomeModal />
       </div>
     </HydrateClient>
   );
