@@ -4,21 +4,8 @@ import { Button } from "@vendcfo/ui/button";
 import { Icons } from "@vendcfo/ui/icons";
 import { format, parseISO } from "date-fns";
 import type { Metadata } from "next";
-import dynamic from "next/dynamic";
+import { PublicMetricView } from "@/components/public-metric-view";
 import Link from "next/link";
-
-const PublicMetricView = dynamic(
-  () =>
-    import("@/components/public-metric-view").then((mod) => ({
-      default: mod.PublicMetricView,
-    })),
-  {
-    ssr: false,
-    loading: () => (
-      <div className="h-[400px] animate-pulse bg-muted/40 rounded border border-border" />
-    ),
-  },
-);
 import { notFound } from "next/navigation";
 
 // Cache the page for 1 hour (3600 seconds)
