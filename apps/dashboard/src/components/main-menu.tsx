@@ -6,6 +6,7 @@ import { Icons } from "@vendcfo/ui/icons";
 import {
   BarChart3,
   CalendarDays,
+  ClipboardCheck,
   FileBarChart,
   GraduationCap,
   KeyRound,
@@ -45,6 +46,7 @@ const icons = {
   "/reports": () => <FileBarChart size={20} strokeWidth={1.5} />,
   "/finance": () => <BarChart3 size={20} strokeWidth={1.5} />,
   "/capacity": () => <UsersRound size={20} strokeWidth={1.5} />,
+  "/productivity": () => <ClipboardCheck size={20} strokeWidth={1.5} />,
 } as const;
 
 const items = [
@@ -76,6 +78,7 @@ const items = [
     children: [
       { path: "/finance", name: "Finance" },
       { path: "/capacity", name: "Capacity" },
+      { path: "/productivity", name: "Productivity" },
       { path: "/calculators", name: "Calculators" },
       { path: "/reports", name: "Reports" },
       { path: "/scenarios", name: "Scenario Builder" },
@@ -291,7 +294,7 @@ export function MainMenu({ onSelect, isExpanded = false }: Props) {
     "/skus",
     "/import",
   ];
-  const vendingAnalyticsPaths = ["/calculators", "/finance", "/capacity", "/reports", "/scenarios", "/alerts"];
+  const vendingAnalyticsPaths = ["/calculators", "/finance", "/capacity", "/productivity", "/reports", "/scenarios", "/alerts"];
 
   return (
     <div className="mt-6 w-full">

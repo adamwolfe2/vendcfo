@@ -5,8 +5,10 @@ import {
   ArrowLeft,
   ArrowRight,
   Check,
+  CheckCircle,
   ChevronDown,
   Loader2,
+  Send,
 } from "lucide-react";
 import { useCallback, useMemo, useState } from "react";
 import { RevenueSharePreviewTable } from "./revenue-share-preview";
@@ -58,6 +60,7 @@ type WizardStep = "type" | "period" | "scope" | "preview" | "email";
 
 interface Props {
   teamId: string;
+  teamName: string;
   userId: string;
   locations: Location[];
   locationGroups: LocationGroup[];
@@ -128,6 +131,7 @@ function fmt(n: number): string {
 
 export function ReportGenerationWizard({
   teamId,
+  teamName,
   userId,
   locations,
   locationGroups,
@@ -177,6 +181,9 @@ export function ReportGenerationWizard({
 
   // Submission
   const [saving, setSaving] = useState(false);
+  const [sending, setSending] = useState(false);
+  const [sendSuccess, setSendSuccess] = useState(false);
+  const [sendError, setSendError] = useState<string | null>(null);
 
   const periodStart =
     periodMode === "previous_quarter" ? prevQuarter.start : customStart;
@@ -305,9 +312,11 @@ export function ReportGenerationWizard({
           selectedGroup?.contact_name ?? contactLoc?.contact_name ?? "";
 
         setEmailTo(recipientEmail);
-        setEmailSubject(`Revenue Share Report - ${periodLabel}`);
+        setEmailSubject(
+          `Revenue Share Report - ${periodLabel}${teamName ? ` - ${teamName}` : ""}`,
+        );
         setEmailBody(
-          `Hi ${recipientName || "there"},\n\nPlease find attached the revenue share report for ${periodLabel}.\n\nTotal Gross Revenue: ${fmt(totalGrossRevenue)}\nTotal Commission Due: ${fmt(totalCommission)}\n\nPlease let us know if you have any questions.\n\nBest regards`,
+          `Hi ${recipientName || "there"},\n\nPlease find the revenue share report for ${periodLabel}.\n\nTotal Gross Revenue: ${fmt(totalGrossRevenue)}\nTotal Commission Due: ${fmt(totalCommission)}\n\nPlease review the details above and let us know if you have any questions.\n\nBest regards${teamName ? `,\n${teamName}` : ""}`,
         );
       } else if (reportType === "sales_tax") {
         let query = supabase
@@ -370,9 +379,11 @@ export function ReportGenerationWizard({
         });
 
         setEmailTo("");
-        setEmailSubject(`Sales Tax Report - ${periodLabel}`);
+        setEmailSubject(
+          `Sales Tax Report - ${periodLabel}${teamName ? ` - ${teamName}` : ""}`,
+        );
         setEmailBody(
-          `Quarterly sales tax summary for ${periodLabel}.\n\nTotal Taxable Amount: ${fmt(totalTaxableAmount)}\nTotal Tax Collected: ${fmt(totalTaxAmount)}\n\nPlease review for filing.`,
+          `Quarterly sales tax summary for ${periodLabel}.\n\nTotal Taxable Amount: ${fmt(totalTaxableAmount)}\nTotal Tax Collected: ${fmt(totalTaxAmount)}\n\nPlease review for filing.${teamName ? `\n\nBest regards,\n${teamName}` : ""}`,
         );
       }
     } catch (err) {
@@ -383,6 +394,7 @@ export function ReportGenerationWizard({
   }, [
     reportType,
     teamId,
+    teamName,
     periodStart,
     periodEnd,
     periodLabel,
@@ -407,65 +419,106 @@ export function ReportGenerationWizard({
   // Save report
   // ---------------------------------------------------------------------------
 
-  const handleGenerate = useCallback(async () => {
-    setSaving(true);
-    const supabase = createClient();
+  const handleGenerate = useCallback(
+    async (shouldSendEmail = false) => {
+      setSaving(true);
+      setSendError(null);
+      const supabase = createClient();
 
-    const reportData =
-      reportType === "rev_share"
-        ? revShareData
-        : reportType === "sales_tax"
-          ? salesTaxData
-          : {};
+      const reportData =
+        reportType === "rev_share"
+          ? revShareData
+          : reportType === "sales_tax"
+            ? salesTaxData
+            : {};
 
-    const title = `${REPORT_TYPES.find((t) => t.value === reportType)?.label ?? reportType} - ${periodLabel}`;
+      const title = `${REPORT_TYPES.find((t) => t.value === reportType)?.label ?? reportType} - ${periodLabel}`;
 
-    try {
-      const { data, error } = await supabase
-        .from("generated_reports")
-        .insert({
-          business_id: teamId,
-          report_type: reportType,
-          title,
-          period_start: periodStart,
-          period_end: periodEnd,
-          location_group_id:
-            scopeMode === "group" && selectedGroupId ? selectedGroupId : null,
-          report_data: reportData ?? {},
-          email_to: emailTo || null,
-          email_subject: emailSubject || null,
-          email_body: emailBody || null,
-          status: "generated",
-          created_by: userId,
-        })
-        .select()
-        .single();
+      try {
+        const { data, error } = await supabase
+          .from("generated_reports")
+          .insert({
+            business_id: teamId,
+            report_type: reportType,
+            title,
+            period_start: periodStart,
+            period_end: periodEnd,
+            location_group_id:
+              scopeMode === "group" && selectedGroupId
+                ? selectedGroupId
+                : null,
+            report_data: reportData ?? {},
+            email_to: emailTo || null,
+            email_subject: emailSubject || null,
+            email_body: emailBody || null,
+            status: "generated",
+            created_by: userId,
+          })
+          .select()
+          .single();
 
-      if (error) throw error;
-      if (data) {
-        onComplete(data);
+        if (error) throw error;
+
+        if (data && shouldSendEmail && emailTo) {
+          setSaving(false);
+          setSending(true);
+
+          try {
+            const response = await fetch("/api/reports/send-email", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ reportId: data.id }),
+            });
+
+            if (!response.ok) {
+              const errBody = (await response
+                .json()
+                .catch(() => ({}))) as Record<string, unknown>;
+              setSendError(
+                String(errBody.error ?? "Failed to send email"),
+              );
+              setSending(false);
+              onComplete({ ...data, status: "generated" });
+              return;
+            }
+
+            setSendSuccess(true);
+            setSending(false);
+
+            // Brief delay to show success before navigating away
+            setTimeout(() => {
+              onComplete({ ...data, status: "sent" });
+            }, 1500);
+          } catch {
+            setSendError("Failed to send email. Report was saved.");
+            setSending(false);
+            onComplete({ ...data, status: "generated" });
+          }
+        } else if (data) {
+          onComplete(data);
+        }
+      } catch {
+        setSendError("Failed to save report. Please try again.");
+        setSaving(false);
       }
-    } catch (err) {
-      // Stay on email step on error
-    } finally {
-      setSaving(false);
-    }
-  }, [
-    teamId,
-    userId,
-    reportType,
-    periodStart,
-    periodEnd,
-    periodLabel,
-    scopeMode,
-    selectedGroupId,
-    revShareData,
-    salesTaxData,
-    emailTo,
-    emailSubject,
-    emailBody,
-    onComplete,
-  ]);
+    },
+    [
+      teamId,
+      userId,
+      reportType,
+      periodStart,
+      periodEnd,
+      periodLabel,
+      scopeMode,
+      selectedGroupId,
+      revShareData,
+      salesTaxData,
+      emailTo,
+      emailSubject,
+      emailBody,
+      onComplete,
+    ],
+  );
 
   // ---------------------------------------------------------------------------
   // Step indicator
@@ -580,31 +633,70 @@ export function ReportGenerationWizard({
         )}
       </div>
 
+      {/* Send success overlay */}
+      {sendSuccess && (
+        <div className="mb-6 flex items-center gap-3 border border-[#bbf7d0] bg-[#dcfce7] px-4 py-3">
+          <CheckCircle size={16} className="text-[#166534]" />
+          <p className="text-sm font-medium text-[#166534]">
+            Report generated and email sent successfully.
+          </p>
+        </div>
+      )}
+
+      {/* Send error */}
+      {sendError && (
+        <div className="mb-6 flex items-center gap-3 border border-[#fecaca] bg-[#fef2f2] px-4 py-3">
+          <p className="text-sm font-medium text-[#dc2626]">{sendError}</p>
+        </div>
+      )}
+
       {/* Navigation */}
       <div className="flex items-center justify-between">
         <button
           type="button"
           onClick={canGoBack ? goBack : onCancel}
-          className="inline-flex items-center gap-1 text-sm text-[#878787] hover:text-[#1a1a1a] transition-colors"
+          disabled={saving || sending || sendSuccess}
+          className="inline-flex items-center gap-1 text-sm text-[#878787] hover:text-[#1a1a1a] transition-colors disabled:opacity-50"
         >
           <ArrowLeft size={14} />
           {canGoBack ? "Back" : "Cancel"}
         </button>
 
         {step === "email" ? (
-          <button
-            type="button"
-            onClick={handleGenerate}
-            disabled={saving}
-            className="inline-flex items-center gap-2 h-9 px-5 bg-[#1a1a1a] text-white text-sm font-medium hover:bg-[#333] transition-colors disabled:opacity-50"
-          >
-            {saving ? (
-              <Loader2 size={14} className="animate-spin" />
-            ) : (
-              <Check size={14} />
-            )}
-            {saving ? "Saving..." : "Generate Report"}
-          </button>
+          <div className="flex items-center gap-3">
+            <button
+              type="button"
+              onClick={() => handleGenerate(false)}
+              disabled={saving || sending || sendSuccess}
+              className="inline-flex items-center gap-2 h-9 px-5 border border-[#e6e6e6] bg-white text-[#1a1a1a] text-sm font-medium hover:bg-[#fafafa] transition-colors disabled:opacity-50"
+            >
+              {saving ? (
+                <Loader2 size={14} className="animate-spin" />
+              ) : (
+                <Check size={14} />
+              )}
+              {saving ? "Saving..." : "Save Only"}
+            </button>
+            <button
+              type="button"
+              onClick={() => handleGenerate(true)}
+              disabled={saving || sending || sendSuccess || !emailTo}
+              className="inline-flex items-center gap-2 h-9 px-5 bg-[#1a1a1a] text-white text-sm font-medium hover:bg-[#333] transition-colors disabled:opacity-50"
+            >
+              {sending ? (
+                <Loader2 size={14} className="animate-spin" />
+              ) : sendSuccess ? (
+                <CheckCircle size={14} />
+              ) : (
+                <Send size={14} />
+              )}
+              {sending
+                ? "Sending..."
+                : sendSuccess
+                  ? "Sent"
+                  : "Generate & Send"}
+            </button>
+          </div>
         ) : (
           <button
             type="button"

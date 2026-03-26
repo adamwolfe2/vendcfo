@@ -1,25 +1,21 @@
-import { ImportWizard } from "@/components/import/import-wizard";
+import { ProductivityDashboard } from "@/components/productivity/productivity-dashboard";
 import { getServerCaller } from "@/trpc/server";
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 
 export const metadata: Metadata = {
-  title: "Import Spreadsheet Data | VendCFO",
+  title: "Operator Productivity | VendCFO",
+  description:
+    "Planned vs actual hours per operator, efficiency scores, and time tracking.",
 };
 
-export default async function Page() {
-  let teamId: string | null = null;
-
+export default async function ProductivityPage() {
   try {
     const caller = await getServerCaller();
     const user = await caller.user.me();
     if (!user?.teamId) redirect("/teams");
-    teamId = user.teamId;
+    return <ProductivityDashboard teamId={user.teamId} />;
   } catch {
     redirect("/login");
   }
-
-  if (!teamId) redirect("/teams");
-
-  return <ImportWizard teamId={teamId} />;
 }

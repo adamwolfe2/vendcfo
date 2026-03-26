@@ -25,10 +25,11 @@ export default async function Page() {
   let reports: any[] = [];
   let locations: any[] = [];
   let locationGroups: any[] = [];
+  let teamName = "";
 
   try {
     const supabase = await createClient();
-    const [reportsRes, locationsRes, groupsRes] = await Promise.all([
+    const [reportsRes, locationsRes, groupsRes, teamRes] = await Promise.all([
       supabase
         .from("generated_reports")
         .select("*")
@@ -45,10 +46,12 @@ export default async function Page() {
         .select("id, name, contact_name, contact_email")
         .eq("business_id", teamId)
         .order("name"),
+      supabase.from("teams").select("name").eq("id", teamId).single(),
     ]);
     reports = reportsRes.data ?? [];
     locations = locationsRes.data ?? [];
     locationGroups = groupsRes.data ?? [];
+    teamName = teamRes.data?.name ?? "";
   } catch {
     // Tables may not exist yet — render empty
   }
@@ -56,6 +59,7 @@ export default async function Page() {
   return (
     <ReportsPage
       teamId={teamId}
+      teamName={teamName}
       userId={userId}
       initialReports={reports}
       locations={locations}

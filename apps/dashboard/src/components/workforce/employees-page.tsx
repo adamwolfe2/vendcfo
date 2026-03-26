@@ -6,6 +6,7 @@ import {
   Briefcase,
   ChevronLeft,
   Clock,
+  CreditCard,
   DollarSign,
   Mail,
   Pencil,
@@ -55,9 +56,53 @@ interface CompensationPlanRow {
   created_at: string;
 }
 
+interface PaymentRow {
+  id: string;
+  business_id: string;
+  employee_id: string;
+  amount: string | number;
+  payment_method: string;
+  payment_date: string;
+  period_start: string | null;
+  period_end: string | null;
+  notes: string | null;
+  status: string;
+  reference_number: string | null;
+  created_at: string;
+}
+
 // ---------------------------------------------------------------------------
 // Constants
 // ---------------------------------------------------------------------------
+
+const PAYMENT_METHOD_LABELS: Record<string, string> = {
+  ach: "ACH",
+  check: "Check",
+  cash: "Cash",
+  direct_deposit: "Direct Deposit",
+};
+
+const PAYMENT_STATUS_STYLES: Record<
+  string,
+  { label: string; className: string }
+> = {
+  pending: {
+    label: "Pending",
+    className: "bg-[#fef3c7] text-[#92400e] border-[#fcd34d]",
+  },
+  processing: {
+    label: "Processing",
+    className: "bg-[#dbeafe] text-[#1e40af] border-[#bfdbfe]",
+  },
+  completed: {
+    label: "Completed",
+    className: "bg-[#ecfdf5] text-[#059669] border-[#a7f3d0]",
+  },
+  failed: {
+    label: "Failed",
+    className: "bg-[#fef2f2] text-[#dc2626] border-[#fecaca]",
+  },
+};
 
 const EMPLOYMENT_TYPES: Record<string, string> = {
   w2: "W-2",
@@ -711,6 +756,536 @@ function DeleteConfirmModal({
 }
 
 // ---------------------------------------------------------------------------
+// Record Payment Modal
+// ---------------------------------------------------------------------------
+
+function RecordPaymentModal({
+  employees,
+  preselectedEmployeeId,
+  teamId,
+  onClose,
+  onSaved,
+}: {
+  employees: EmployeeRow[];
+  preselectedEmployeeId?: string;
+  teamId: string;
+  onClose: () => void;
+  onSaved: () => void;
+}) {
+  const supabase = createClient();
+  const [employeeId, setEmployeeId] = useState(preselectedEmployeeId ?? "");
+  const [amount, setAmount] = useState("");
+  const [paymentMethod, setPaymentMethod] = useState("ach");
+  const [paymentDate, setPaymentDate] = useState(
+    new Date().toISOString().split("T")[0] ?? "",
+  );
+  const [periodStart, setPeriodStart] = useState("");
+  const [periodEnd, setPeriodEnd] = useState("");
+  const [notes, setNotes] = useState("");
+  const [referenceNumber, setReferenceNumber] = useState("");
+  const [status, setStatus] = useState("completed");
+  const [saving, setSaving] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!employeeId || !amount) return;
+
+    setSaving(true);
+    setError(null);
+
+    const payload = {
+      business_id: teamId,
+      employee_id: employeeId,
+      amount: Number.parseFloat(amount),
+      payment_method: paymentMethod,
+      payment_date: paymentDate,
+      period_start: periodStart || null,
+      period_end: periodEnd || null,
+      notes: notes.trim() || null,
+      status,
+      reference_number: referenceNumber.trim() || null,
+    };
+
+    try {
+      const { error: insertError } = await supabase
+        .from("employee_payments")
+        .insert(payload);
+      if (insertError) {
+        setError(insertError.message);
+        setSaving(false);
+        return;
+      }
+      onSaved();
+      onClose();
+    } catch {
+      setError("Failed to record payment. Please try again.");
+      setSaving(false);
+    }
+  };
+
+  const activeEmployees = employees.filter((e) => e.is_active);
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/30">
+      <div className="relative w-full max-h-[90vh] overflow-y-auto sm:mx-4 sm:max-w-lg rounded-t-xl sm:rounded-lg border border-[#e0e0e0] bg-white p-5 sm:p-6 shadow-lg">
+        <div className="mb-5 flex items-center justify-between">
+          <h2 className="text-lg font-semibold text-[#111]">Record Payment</h2>
+          <button
+            type="button"
+            onClick={onClose}
+            className="rounded p-2 min-h-[44px] min-w-[44px] flex items-center justify-center text-[#999] transition-colors hover:text-[#333]"
+          >
+            <X size={20} strokeWidth={1.5} />
+          </button>
+        </div>
+
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div>
+            <label className="mb-1 block text-sm font-medium text-[#333]">
+              Employee <span className="text-red-500">*</span>
+            </label>
+            <select
+              value={employeeId}
+              onChange={(e) => setEmployeeId(e.target.value)}
+              required
+              className="w-full rounded-md border border-[#d0d0d0] bg-white px-3 py-2 text-sm text-[#111] outline-none transition-colors focus:border-[#888]"
+            >
+              <option value="">Select an employee...</option>
+              {activeEmployees.map((emp) => (
+                <option key={emp.id} value={emp.id}>
+                  {emp.name}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="mb-1 block text-sm font-medium text-[#333]">
+                Amount <span className="text-red-500">*</span>
+              </label>
+              <input
+                type="number"
+                step="0.01"
+                min="0"
+                value={amount}
+                onChange={(e) => setAmount(e.target.value)}
+                required
+                placeholder="0.00"
+                className="w-full rounded-md border border-[#d0d0d0] bg-white px-3 py-2 text-sm text-[#111] placeholder-[#aaa] outline-none transition-colors focus:border-[#888]"
+              />
+            </div>
+            <div>
+              <label className="mb-1 block text-sm font-medium text-[#333]">
+                Payment Method
+              </label>
+              <select
+                value={paymentMethod}
+                onChange={(e) => setPaymentMethod(e.target.value)}
+                className="w-full rounded-md border border-[#d0d0d0] bg-white px-3 py-2 text-sm text-[#111] outline-none transition-colors focus:border-[#888]"
+              >
+                {Object.entries(PAYMENT_METHOD_LABELS).map(([val, label]) => (
+                  <option key={val} value={val}>
+                    {label}
+                  </option>
+                ))}
+              </select>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="mb-1 block text-sm font-medium text-[#333]">
+                Payment Date
+              </label>
+              <input
+                type="date"
+                value={paymentDate}
+                onChange={(e) => setPaymentDate(e.target.value)}
+                className="w-full rounded-md border border-[#d0d0d0] bg-white px-3 py-2 text-sm text-[#111] outline-none transition-colors focus:border-[#888]"
+              />
+            </div>
+            <div>
+              <label className="mb-1 block text-sm font-medium text-[#333]">
+                Status
+              </label>
+              <select
+                value={status}
+                onChange={(e) => setStatus(e.target.value)}
+                className="w-full rounded-md border border-[#d0d0d0] bg-white px-3 py-2 text-sm text-[#111] outline-none transition-colors focus:border-[#888]"
+              >
+                <option value="pending">Pending</option>
+                <option value="processing">Processing</option>
+                <option value="completed">Completed</option>
+                <option value="failed">Failed</option>
+              </select>
+            </div>
+          </div>
+
+          <div className="border-t border-[#e0e0e0] pt-4">
+            <p className="mb-3 text-sm font-medium text-[#333]">
+              Period Covered (optional)
+            </p>
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="mb-1 block text-xs text-[#555]">
+                  Period Start
+                </label>
+                <input
+                  type="date"
+                  value={periodStart}
+                  onChange={(e) => setPeriodStart(e.target.value)}
+                  className="w-full rounded-md border border-[#d0d0d0] bg-white px-3 py-2 text-sm text-[#111] outline-none transition-colors focus:border-[#888]"
+                />
+              </div>
+              <div>
+                <label className="mb-1 block text-xs text-[#555]">
+                  Period End
+                </label>
+                <input
+                  type="date"
+                  value={periodEnd}
+                  onChange={(e) => setPeriodEnd(e.target.value)}
+                  className="w-full rounded-md border border-[#d0d0d0] bg-white px-3 py-2 text-sm text-[#111] outline-none transition-colors focus:border-[#888]"
+                />
+              </div>
+            </div>
+          </div>
+
+          <div>
+            <label className="mb-1 block text-sm font-medium text-[#333]">
+              Reference Number
+            </label>
+            <input
+              type="text"
+              value={referenceNumber}
+              onChange={(e) => setReferenceNumber(e.target.value)}
+              placeholder="e.g. TXN-12345"
+              className="w-full rounded-md border border-[#d0d0d0] bg-white px-3 py-2 text-sm text-[#111] placeholder-[#aaa] outline-none transition-colors focus:border-[#888]"
+            />
+          </div>
+
+          <div>
+            <label className="mb-1 block text-sm font-medium text-[#333]">
+              Notes
+            </label>
+            <textarea
+              value={notes}
+              onChange={(e) => setNotes(e.target.value)}
+              rows={3}
+              placeholder="Optional payment notes..."
+              className="w-full rounded-md border border-[#d0d0d0] bg-white px-3 py-2 text-sm text-[#111] placeholder-[#aaa] outline-none transition-colors focus:border-[#888] resize-none"
+            />
+          </div>
+
+          {error && <p className="text-sm text-red-600">{error}</p>}
+
+          <div className="flex flex-col-reverse sm:flex-row justify-end gap-3 pt-2">
+            <button
+              type="button"
+              onClick={onClose}
+              className="rounded-md border border-[#d0d0d0] bg-white px-4 py-2 min-h-[44px] text-sm font-medium text-[#555] transition-colors hover:bg-[#f5f5f5] w-full sm:w-auto"
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              disabled={saving || !employeeId || !amount}
+              className="rounded-md bg-[#111] px-4 py-2 min-h-[44px] text-sm font-medium text-white transition-colors hover:bg-[#333] disabled:opacity-50 w-full sm:w-auto"
+            >
+              {saving ? "Saving..." : "Record Payment"}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  );
+}
+
+// ---------------------------------------------------------------------------
+// Payment History Table
+// ---------------------------------------------------------------------------
+
+function PaymentHistorySection({
+  payments,
+  employees,
+  loading,
+  onRecordPayment,
+}: {
+  payments: PaymentRow[];
+  employees: EmployeeRow[];
+  loading: boolean;
+  onRecordPayment: () => void;
+}) {
+  const employeeLookup: Record<string, string> = {};
+  for (const emp of employees) {
+    employeeLookup[emp.id] = emp.name;
+  }
+
+  if (loading) {
+    return (
+      <div className="space-y-2">
+        {[1, 2, 3].map((i) => (
+          <div
+            key={i}
+            className="h-12 animate-pulse rounded-lg border border-[#e0e0e0] bg-[#f5f5f5]"
+          />
+        ))}
+      </div>
+    );
+  }
+
+  if (payments.length === 0) {
+    return (
+      <div className="rounded-lg border border-dashed border-[#d0d0d0] bg-[#fafafa] py-12 text-center">
+        <CreditCard
+          size={32}
+          strokeWidth={1.5}
+          className="mx-auto mb-3 text-[#bbb]"
+        />
+        <p className="text-sm font-medium text-[#555]">No payments recorded</p>
+        <p className="mt-1 text-xs text-[#999]">
+          Record a payment to start tracking compensation disbursements.
+        </p>
+        <button
+          type="button"
+          onClick={onRecordPayment}
+          className="mt-4 inline-flex items-center gap-1.5 rounded-md bg-[#111] px-3.5 py-2 min-h-[44px] text-sm font-medium text-white transition-colors hover:bg-[#333]"
+        >
+          <Plus size={16} strokeWidth={1.5} />
+          Record Payment
+        </button>
+      </div>
+    );
+  }
+
+  return (
+    <div className="overflow-x-auto rounded-lg border border-[#e0e0e0] bg-white">
+      <table className="w-full text-sm">
+        <thead>
+          <tr className="border-b border-[#e0e0e0] bg-[#fafafa]">
+            <th className="px-4 py-3 text-left font-medium text-[#555]">
+              Date
+            </th>
+            <th className="px-4 py-3 text-left font-medium text-[#555]">
+              Employee
+            </th>
+            <th className="px-4 py-3 text-right font-medium text-[#555]">
+              Amount
+            </th>
+            <th className="px-4 py-3 text-center font-medium text-[#555]">
+              Method
+            </th>
+            <th className="px-4 py-3 text-center font-medium text-[#555]">
+              Status
+            </th>
+            <th className="px-4 py-3 text-left font-medium text-[#555]">
+              Reference
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          {payments.map((payment) => {
+            const statusStyle = PAYMENT_STATUS_STYLES[payment.status] ?? {
+              label: payment.status,
+              className: "bg-[#f3f4f6] text-[#374151] border-[#d1d5db]",
+            };
+            return (
+              <tr
+                key={payment.id}
+                className="border-b border-[#f0f0f0] transition-colors hover:bg-[#fafafa] last:border-0"
+              >
+                <td className="px-4 py-3 text-[#111]">
+                  {formatDate(payment.payment_date)}
+                </td>
+                <td className="px-4 py-3 font-medium text-[#111]">
+                  {employeeLookup[payment.employee_id] ?? "Unknown"}
+                </td>
+                <td className="px-4 py-3 text-right font-mono text-[#111]">
+                  {fmtCurrency(toNum(payment.amount))}
+                </td>
+                <td className="px-4 py-3 text-center">
+                  <span className="inline-flex items-center rounded-full border border-[#ddd] bg-[#f0f0f0] px-2.5 py-0.5 text-xs font-medium text-[#555]">
+                    {PAYMENT_METHOD_LABELS[payment.payment_method] ??
+                      payment.payment_method}
+                  </span>
+                </td>
+                <td className="px-4 py-3 text-center">
+                  <span
+                    className={`inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-medium ${statusStyle.className}`}
+                  >
+                    {statusStyle.label}
+                  </span>
+                </td>
+                <td className="px-4 py-3 text-[#666] font-mono text-xs">
+                  {payment.reference_number ?? "--"}
+                </td>
+              </tr>
+            );
+          })}
+        </tbody>
+      </table>
+    </div>
+  );
+}
+
+// ---------------------------------------------------------------------------
+// Employee Payment History (for detail view)
+// ---------------------------------------------------------------------------
+
+function EmployeePaymentHistory({
+  employeeId,
+  teamId,
+  onRecordPayment,
+}: {
+  employeeId: string;
+  teamId: string;
+  onRecordPayment: () => void;
+}) {
+  const supabase = createClient();
+  const [payments, setPayments] = useState<PaymentRow[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  const fetchPayments = useCallback(async () => {
+    setLoading(true);
+    const { data } = await supabase
+      .from("employee_payments")
+      .select("*")
+      .eq("employee_id", employeeId)
+      .eq("business_id", teamId)
+      .order("payment_date", { ascending: false });
+    if (data) setPayments(data as PaymentRow[]);
+    setLoading(false);
+  }, [supabase, employeeId, teamId]);
+
+  useEffect(() => {
+    fetchPayments();
+  }, [fetchPayments]);
+
+  const totalPaid = payments
+    .filter((p) => p.status === "completed")
+    .reduce((sum, p) => sum + toNum(p.amount), 0);
+
+  return (
+    <div>
+      <div className="flex items-center justify-between mb-3">
+        <div className="flex items-center gap-3">
+          <h3 className="text-sm font-semibold text-[#111]">
+            Payment History
+          </h3>
+          {totalPaid > 0 && (
+            <span className="text-xs text-[#999]">
+              Total paid: {fmtCurrency(totalPaid)}
+            </span>
+          )}
+        </div>
+        <button
+          type="button"
+          onClick={onRecordPayment}
+          className="inline-flex items-center gap-1.5 rounded-md bg-[#111] px-3 py-1.5 min-h-[44px] text-sm font-medium text-white transition-colors hover:bg-[#333]"
+        >
+          <Plus size={14} strokeWidth={1.5} />
+          Record Payment
+        </button>
+      </div>
+
+      {loading ? (
+        <div className="space-y-2">
+          {[1, 2].map((i) => (
+            <div
+              key={i}
+              className="h-12 animate-pulse rounded-lg border border-[#e0e0e0] bg-[#f5f5f5]"
+            />
+          ))}
+        </div>
+      ) : payments.length === 0 ? (
+        <div className="rounded-lg border border-dashed border-[#d0d0d0] bg-[#fafafa] py-8 text-center">
+          <CreditCard
+            size={24}
+            strokeWidth={1.5}
+            className="mx-auto mb-2 text-[#bbb]"
+          />
+          <p className="text-sm text-[#666]">No payments recorded yet.</p>
+        </div>
+      ) : (
+        <div className="overflow-x-auto rounded-lg border border-[#e0e0e0] bg-white">
+          <table className="w-full text-sm">
+            <thead>
+              <tr className="border-b border-[#e0e0e0] bg-[#fafafa]">
+                <th className="px-4 py-3 text-left font-medium text-[#555]">
+                  Date
+                </th>
+                <th className="px-4 py-3 text-right font-medium text-[#555]">
+                  Amount
+                </th>
+                <th className="px-4 py-3 text-center font-medium text-[#555]">
+                  Method
+                </th>
+                <th className="px-4 py-3 text-center font-medium text-[#555]">
+                  Status
+                </th>
+                <th className="px-4 py-3 text-left font-medium text-[#555]">
+                  Reference
+                </th>
+                <th className="px-4 py-3 text-left font-medium text-[#555]">
+                  Period
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              {payments.map((payment) => {
+                const statusStyle = PAYMENT_STATUS_STYLES[payment.status] ?? {
+                  label: payment.status,
+                  className:
+                    "bg-[#f3f4f6] text-[#374151] border-[#d1d5db]",
+                };
+                const periodStr =
+                  payment.period_start && payment.period_end
+                    ? `${formatDate(payment.period_start)} - ${formatDate(payment.period_end)}`
+                    : "--";
+                return (
+                  <tr
+                    key={payment.id}
+                    className="border-b border-[#f0f0f0] transition-colors hover:bg-[#fafafa] last:border-0"
+                  >
+                    <td className="px-4 py-3 text-[#111]">
+                      {formatDate(payment.payment_date)}
+                    </td>
+                    <td className="px-4 py-3 text-right font-mono text-[#111]">
+                      {fmtCurrency(toNum(payment.amount))}
+                    </td>
+                    <td className="px-4 py-3 text-center">
+                      <span className="inline-flex items-center rounded-full border border-[#ddd] bg-[#f0f0f0] px-2.5 py-0.5 text-xs font-medium text-[#555]">
+                        {PAYMENT_METHOD_LABELS[payment.payment_method] ??
+                          payment.payment_method}
+                      </span>
+                    </td>
+                    <td className="px-4 py-3 text-center">
+                      <span
+                        className={`inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-medium ${statusStyle.className}`}
+                      >
+                        {statusStyle.label}
+                      </span>
+                    </td>
+                    <td className="px-4 py-3 text-[#666] font-mono text-xs">
+                      {payment.reference_number ?? "--"}
+                    </td>
+                    <td className="px-4 py-3 text-xs text-[#666]">
+                      {periodStr}
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ---------------------------------------------------------------------------
 // Employee Detail View
 // ---------------------------------------------------------------------------
 
@@ -734,6 +1309,8 @@ function EmployeeDetail({
   const [editPlan, setEditPlan] = useState<CompensationPlanRow | null>(null);
   const [deletePlanId, setDeletePlanId] = useState<string | null>(null);
   const [deletingPlan, setDeletingPlan] = useState(false);
+  const [showRecordPayment, setShowRecordPayment] = useState(false);
+  const [paymentRefreshKey, setPaymentRefreshKey] = useState(0);
 
   const fetchPlans = useCallback(async () => {
     setLoadingPlans(true);
@@ -1054,6 +1631,15 @@ function EmployeeDetail({
         )}
       </div>
 
+      {/* Payment History */}
+      <div className="mb-6" key={paymentRefreshKey}>
+        <EmployeePaymentHistory
+          employeeId={employee.id}
+          teamId={teamId}
+          onRecordPayment={() => setShowRecordPayment(true)}
+        />
+      </div>
+
       {/* Modals */}
       {showAddPlan && (
         <CompensationModal
@@ -1078,6 +1664,15 @@ function EmployeeDetail({
           onConfirm={handleDeletePlan}
           onCancel={() => setDeletePlanId(null)}
           deleting={deletingPlan}
+        />
+      )}
+      {showRecordPayment && (
+        <RecordPaymentModal
+          employees={[employee]}
+          preselectedEmployeeId={employee.id}
+          teamId={teamId}
+          onClose={() => setShowRecordPayment(false)}
+          onSaved={() => setPaymentRefreshKey((k) => k + 1)}
         />
       )}
     </div>
@@ -1260,6 +1855,12 @@ export function EmployeesPage({
   const [selectedEmployee, setSelectedEmployee] = useState<EmployeeRow | null>(
     null,
   );
+  const [activeTab, setActiveTab] = useState<"employees" | "payments">(
+    "employees",
+  );
+  const [allPayments, setAllPayments] = useState<PaymentRow[]>([]);
+  const [loadingPayments, setLoadingPayments] = useState(false);
+  const [showRecordPaymentModal, setShowRecordPaymentModal] = useState(false);
 
   const fetchEmployees = useCallback(async () => {
     setLoading(true);
@@ -1279,6 +1880,24 @@ export function EmployeesPage({
     if (planRes.data) setAllPlans(planRes.data as CompensationPlanRow[]);
     setLoading(false);
   }, [supabase, teamId]);
+
+  const fetchPayments = useCallback(async () => {
+    setLoadingPayments(true);
+    const { data } = await supabase
+      .from("employee_payments")
+      .select("*")
+      .eq("business_id", teamId)
+      .order("payment_date", { ascending: false })
+      .limit(50);
+    if (data) setAllPayments(data as PaymentRow[]);
+    setLoadingPayments(false);
+  }, [supabase, teamId]);
+
+  useEffect(() => {
+    if (activeTab === "payments") {
+      fetchPayments();
+    }
+  }, [activeTab, fetchPayments]);
 
   const handleDelete = async () => {
     if (!deleteId) return;
@@ -1351,152 +1970,212 @@ export function EmployeesPage({
             Manage your workforce, compensation plans, and payment info.
           </p>
         </div>
+        <div className="flex items-center gap-2">
+          {activeTab === "payments" && (
+            <button
+              type="button"
+              onClick={() => setShowRecordPaymentModal(true)}
+              className="inline-flex shrink-0 items-center justify-center gap-1.5 rounded-md bg-[#111] px-3.5 py-2 min-h-[44px] text-sm font-medium text-white transition-colors hover:bg-[#333] w-full sm:w-auto"
+            >
+              <Plus size={16} strokeWidth={1.5} />
+              Record Payment
+            </button>
+          )}
+          {activeTab === "employees" && (
+            <button
+              type="button"
+              onClick={() => setShowAddModal(true)}
+              className="inline-flex shrink-0 items-center justify-center gap-1.5 rounded-md bg-[#111] px-3.5 py-2 min-h-[44px] text-sm font-medium text-white transition-colors hover:bg-[#333] w-full sm:w-auto"
+            >
+              <Plus size={16} strokeWidth={1.5} />
+              Add Employee
+            </button>
+          )}
+        </div>
+      </div>
+
+      {/* Tabs */}
+      <div className="mb-6 flex items-center gap-1 border-b border-[#e0e0e0]">
         <button
           type="button"
-          onClick={() => setShowAddModal(true)}
-          className="inline-flex shrink-0 items-center justify-center gap-1.5 rounded-md bg-[#111] px-3.5 py-2 min-h-[44px] text-sm font-medium text-white transition-colors hover:bg-[#333] w-full sm:w-auto"
+          onClick={() => setActiveTab("employees")}
+          className={`inline-flex items-center gap-2 px-4 py-2.5 text-sm font-medium transition-colors border-b-2 -mb-px ${
+            activeTab === "employees"
+              ? "border-[#111] text-[#111]"
+              : "border-transparent text-[#999] hover:text-[#666]"
+          }`}
         >
-          <Plus size={16} strokeWidth={1.5} />
-          Add Employee
+          <Users size={16} strokeWidth={1.5} />
+          Employees
+        </button>
+        <button
+          type="button"
+          onClick={() => setActiveTab("payments")}
+          className={`inline-flex items-center gap-2 px-4 py-2.5 text-sm font-medium transition-colors border-b-2 -mb-px ${
+            activeTab === "payments"
+              ? "border-[#111] text-[#111]"
+              : "border-transparent text-[#999] hover:text-[#666]"
+          }`}
+        >
+          <CreditCard size={16} strokeWidth={1.5} />
+          Payments
         </button>
       </div>
 
-      {/* Compensation Summary */}
-      {!loading && employees.length > 0 && (
-        <CompensationSummary employees={employees} plans={allPlans} />
-      )}
+      {/* Employees Tab */}
+      {activeTab === "employees" && (
+        <>
+          {/* Compensation Summary */}
+          {!loading && employees.length > 0 && (
+            <CompensationSummary employees={employees} plans={allPlans} />
+          )}
 
-      {/* Content */}
-      {loading ? (
-        <div className="space-y-3">
-          {[1, 2, 3].map((i) => (
-            <div
-              key={i}
-              className="h-16 animate-pulse rounded-lg border border-[#e0e0e0] bg-[#f5f5f5]"
-            />
-          ))}
-        </div>
-      ) : employees.length === 0 ? (
-        <EmptyState onAdd={() => setShowAddModal(true)} />
-      ) : (
-        <div className="overflow-x-auto rounded-lg border border-[#e0e0e0] bg-white">
-          <table className="w-full text-sm">
-            <thead>
-              <tr className="border-b border-[#e0e0e0] bg-[#fafafa]">
-                <th className="px-4 py-3 text-left font-medium text-[#555]">
-                  Employee
-                </th>
-                <th className="px-4 py-3 text-left font-medium text-[#555]">
-                  Role
-                </th>
-                <th className="px-4 py-3 text-center font-medium text-[#555]">
-                  Type
-                </th>
-                <th className="px-4 py-3 text-left font-medium text-[#555]">
-                  Hire Date
-                </th>
-                <th className="px-4 py-3 text-center font-medium text-[#555]">
-                  Pay Model
-                </th>
-                <th className="px-4 py-3 text-center font-medium text-[#555]">
-                  Status
-                </th>
-                <th className="px-4 py-3 text-right font-medium text-[#555]">
-                  Actions
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              {employees.map((emp) => {
-                const plan = activePlanByEmployee[emp.id];
-                return (
-                  <tr
-                    key={emp.id}
-                    onClick={() => setSelectedEmployee(emp)}
-                    className="border-b border-[#f0f0f0] transition-colors hover:bg-[#fafafa] last:border-0 cursor-pointer"
-                  >
-                    <td className="px-4 py-3">
-                      <div className="flex items-center gap-3">
-                        <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#f5f5f5] text-[#666]">
-                          <User size={16} strokeWidth={1.5} />
-                        </div>
-                        <div>
-                          <span className="font-semibold text-[#111]">
-                            {emp.name}
-                          </span>
-                          {emp.email && (
-                            <p className="text-xs text-[#999]">{emp.email}</p>
-                          )}
-                        </div>
-                      </div>
-                    </td>
-                    <td className="px-4 py-3 text-[#666]">
-                      {emp.role || "--"}
-                    </td>
-                    <td className="px-4 py-3 text-center">
-                      <span className="inline-flex items-center rounded-full border border-[#ddd] bg-[#f0f0f0] px-2.5 py-0.5 text-xs font-medium text-[#555]">
-                        {EMPLOYMENT_TYPES[emp.employment_type] ??
-                          emp.employment_type}
-                      </span>
-                    </td>
-                    <td className="px-4 py-3 text-[#666]">
-                      {formatDate(emp.hire_date)}
-                    </td>
-                    <td className="px-4 py-3 text-center">
-                      {plan ? (
-                        <span className="inline-flex items-center rounded-full border border-[#ddd] bg-[#f0f0f0] px-2.5 py-0.5 text-xs font-medium text-[#555]">
-                          {PAY_MODEL_LABELS[plan.pay_model] ?? plan.pay_model}
-                        </span>
-                      ) : (
-                        <span className="text-xs text-[#999]">--</span>
-                      )}
-                    </td>
-                    <td className="px-4 py-3 text-center">
-                      <span
-                        className={`inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-medium ${
-                          emp.is_active
-                            ? "bg-[#ecfdf5] text-[#059669] border-[#a7f3d0]"
-                            : "bg-[#fef2f2] text-[#dc2626] border-[#fecaca]"
-                        }`}
-                      >
-                        {emp.is_active ? "Active" : "Inactive"}
-                      </span>
-                    </td>
-                    <td className="px-4 py-3">
-                      <div
-                        className="flex items-center justify-end gap-1"
-                        onClick={(e) => e.stopPropagation()}
-                      >
-                        <button
-                          type="button"
-                          onClick={() => setEditEntry(emp)}
-                          title="Edit"
-                          className="rounded p-2 min-h-[44px] min-w-[44px] flex items-center justify-center text-[#999] transition-colors hover:bg-[#f0f0f0] hover:text-[#555]"
-                        >
-                          <Pencil size={16} strokeWidth={1.5} />
-                        </button>
-                        <button
-                          type="button"
-                          onClick={() => setDeleteId(emp.id)}
-                          title="Delete"
-                          className="rounded p-2 min-h-[44px] min-w-[44px] flex items-center justify-center text-[#999] transition-colors hover:bg-red-50 hover:text-red-600"
-                        >
-                          <Trash2 size={16} strokeWidth={1.5} />
-                        </button>
-                      </div>
-                    </td>
+          {/* Content */}
+          {loading ? (
+            <div className="space-y-3">
+              {[1, 2, 3].map((i) => (
+                <div
+                  key={i}
+                  className="h-16 animate-pulse rounded-lg border border-[#e0e0e0] bg-[#f5f5f5]"
+                />
+              ))}
+            </div>
+          ) : employees.length === 0 ? (
+            <EmptyState onAdd={() => setShowAddModal(true)} />
+          ) : (
+            <div className="overflow-x-auto rounded-lg border border-[#e0e0e0] bg-white">
+              <table className="w-full text-sm">
+                <thead>
+                  <tr className="border-b border-[#e0e0e0] bg-[#fafafa]">
+                    <th className="px-4 py-3 text-left font-medium text-[#555]">
+                      Employee
+                    </th>
+                    <th className="px-4 py-3 text-left font-medium text-[#555]">
+                      Role
+                    </th>
+                    <th className="px-4 py-3 text-center font-medium text-[#555]">
+                      Type
+                    </th>
+                    <th className="px-4 py-3 text-left font-medium text-[#555]">
+                      Hire Date
+                    </th>
+                    <th className="px-4 py-3 text-center font-medium text-[#555]">
+                      Pay Model
+                    </th>
+                    <th className="px-4 py-3 text-center font-medium text-[#555]">
+                      Status
+                    </th>
+                    <th className="px-4 py-3 text-right font-medium text-[#555]">
+                      Actions
+                    </th>
                   </tr>
-                );
-              })}
-            </tbody>
-          </table>
-        </div>
+                </thead>
+                <tbody>
+                  {employees.map((emp) => {
+                    const plan = activePlanByEmployee[emp.id];
+                    return (
+                      <tr
+                        key={emp.id}
+                        onClick={() => setSelectedEmployee(emp)}
+                        className="border-b border-[#f0f0f0] transition-colors hover:bg-[#fafafa] last:border-0 cursor-pointer"
+                      >
+                        <td className="px-4 py-3">
+                          <div className="flex items-center gap-3">
+                            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#f5f5f5] text-[#666]">
+                              <User size={16} strokeWidth={1.5} />
+                            </div>
+                            <div>
+                              <span className="font-semibold text-[#111]">
+                                {emp.name}
+                              </span>
+                              {emp.email && (
+                                <p className="text-xs text-[#999]">
+                                  {emp.email}
+                                </p>
+                              )}
+                            </div>
+                          </div>
+                        </td>
+                        <td className="px-4 py-3 text-[#666]">
+                          {emp.role || "--"}
+                        </td>
+                        <td className="px-4 py-3 text-center">
+                          <span className="inline-flex items-center rounded-full border border-[#ddd] bg-[#f0f0f0] px-2.5 py-0.5 text-xs font-medium text-[#555]">
+                            {EMPLOYMENT_TYPES[emp.employment_type] ??
+                              emp.employment_type}
+                          </span>
+                        </td>
+                        <td className="px-4 py-3 text-[#666]">
+                          {formatDate(emp.hire_date)}
+                        </td>
+                        <td className="px-4 py-3 text-center">
+                          {plan ? (
+                            <span className="inline-flex items-center rounded-full border border-[#ddd] bg-[#f0f0f0] px-2.5 py-0.5 text-xs font-medium text-[#555]">
+                              {PAY_MODEL_LABELS[plan.pay_model] ??
+                                plan.pay_model}
+                            </span>
+                          ) : (
+                            <span className="text-xs text-[#999]">--</span>
+                          )}
+                        </td>
+                        <td className="px-4 py-3 text-center">
+                          <span
+                            className={`inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-medium ${
+                              emp.is_active
+                                ? "bg-[#ecfdf5] text-[#059669] border-[#a7f3d0]"
+                                : "bg-[#fef2f2] text-[#dc2626] border-[#fecaca]"
+                            }`}
+                          >
+                            {emp.is_active ? "Active" : "Inactive"}
+                          </span>
+                        </td>
+                        <td className="px-4 py-3">
+                          <div
+                            className="flex items-center justify-end gap-1"
+                            onClick={(e) => e.stopPropagation()}
+                          >
+                            <button
+                              type="button"
+                              onClick={() => setEditEntry(emp)}
+                              title="Edit"
+                              className="rounded p-2 min-h-[44px] min-w-[44px] flex items-center justify-center text-[#999] transition-colors hover:bg-[#f0f0f0] hover:text-[#555]"
+                            >
+                              <Pencil size={16} strokeWidth={1.5} />
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => setDeleteId(emp.id)}
+                              title="Delete"
+                              className="rounded p-2 min-h-[44px] min-w-[44px] flex items-center justify-center text-[#999] transition-colors hover:bg-red-50 hover:text-red-600"
+                            >
+                              <Trash2 size={16} strokeWidth={1.5} />
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
+          )}
+
+          {!loading && employees.length > 0 && (
+            <p className="mt-4 text-xs text-[#999]">
+              {employees.length} employee{employees.length !== 1 ? "s" : ""}
+            </p>
+          )}
+        </>
       )}
 
-      {!loading && employees.length > 0 && (
-        <p className="mt-4 text-xs text-[#999]">
-          {employees.length} employee{employees.length !== 1 ? "s" : ""}
-        </p>
+      {/* Payments Tab */}
+      {activeTab === "payments" && (
+        <PaymentHistorySection
+          payments={allPayments}
+          employees={employees}
+          loading={loadingPayments}
+          onRecordPayment={() => setShowRecordPaymentModal(true)}
+        />
       )}
 
       {/* Modals */}
@@ -1523,6 +2202,16 @@ export function EmployeesPage({
           onConfirm={handleDelete}
           onCancel={() => setDeleteId(null)}
           deleting={deleting}
+        />
+      )}
+      {showRecordPaymentModal && (
+        <RecordPaymentModal
+          employees={employees}
+          teamId={teamId}
+          onClose={() => setShowRecordPaymentModal(false)}
+          onSaved={() => {
+            fetchPayments();
+          }}
         />
       )}
     </div>

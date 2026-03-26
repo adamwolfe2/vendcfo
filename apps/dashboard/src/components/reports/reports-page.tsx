@@ -48,6 +48,7 @@ interface LocationGroup {
 
 interface Props {
   teamId: string;
+  teamName: string;
   userId: string;
   initialReports: GeneratedReport[];
   locations: Location[];
@@ -117,6 +118,7 @@ function formatPeriod(start: string, end: string): string {
 
 export function ReportsPage({
   teamId,
+  teamName,
   userId,
   initialReports,
   locations,
@@ -183,6 +185,7 @@ export function ReportsPage({
     return (
       <ReportGenerationWizard
         teamId={teamId}
+        teamName={teamName}
         userId={userId}
         locations={locations}
         locationGroups={locationGroups}
