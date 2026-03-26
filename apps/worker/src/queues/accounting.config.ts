@@ -58,7 +58,9 @@ export const accountingQueueConfig: QueueConfig = {
   workerOptions: accountingWorkerOptions,
   eventHandlers: {
     onCompleted: (job) => {
-      console.log(`Accounting job completed: ${job.name} (${job.id})`);
+      if (process.env.NODE_ENV === "development") {
+        console.log(`Accounting job completed: ${job.name} (${job.id})`);
+      }
     },
     onFailed: (job, err) => {
       console.error(`Accounting job failed: ${job?.name} (${job?.id})`, err);

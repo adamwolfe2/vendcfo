@@ -138,10 +138,12 @@ function initializeWorkbench() {
     }),
   );
 
-  console.log(
-    `Workbench initialized with ${queues.length} queues:`,
-    queues.map((q) => q.name),
-  );
+  if (process.env.NODE_ENV === "development") {
+    console.log(
+      `Workbench initialized with ${queues.length} queues:`,
+      queues.map((q) => q.name),
+    );
+  }
 }
 
 // Initialize Workbench on startup
@@ -175,33 +177,35 @@ Bun.serve({
   fetch: app.fetch,
 });
 
-console.log(`Worker server running on port ${port}`);
-console.log("Workers initialized and ready to process jobs");
+if (process.env.NODE_ENV === "development") {
+  console.log(`Worker server running on port ${port}`);
+  console.log("Workers initialized and ready to process jobs");
+}
 
 /**
  * Graceful shutdown handlers
  * Close database connections and workers cleanly on process termination
  */
 const shutdown = async (signal: string) => {
-  console.log(`Received ${signal}, starting graceful shutdown...`);
+  console.warn(`Received ${signal}, starting graceful shutdown...`);
 
   const SHUTDOWN_TIMEOUT = 30_000; // 30 seconds max for shutdown
 
   const shutdownPromise = (async () => {
     try {
       // Stop accepting new jobs
-      console.log("Stopping workers from accepting new jobs...");
+      console.warn("Stopping workers from accepting new jobs...");
       await Promise.all(workers.map((worker) => worker.close()));
 
       // Wait a bit for in-flight jobs to complete
-      console.log("Waiting for in-flight jobs to complete...");
+      console.warn("Waiting for in-flight jobs to complete...");
       await new Promise((resolve) => setTimeout(resolve, 5000)); // 5 seconds grace period
 
       // Close database connections
-      console.log("Closing database connections...");
+      console.warn("Closing database connections...");
       await closeWorkerDb();
 
-      console.log("Graceful shutdown complete");
+      console.warn("Graceful shutdown complete");
     } catch (error) {
       console.error("Error during shutdown:", error);
     }

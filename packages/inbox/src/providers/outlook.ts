@@ -302,10 +302,7 @@ export class OutlookProvider implements OAuthProviderInterface {
         await this.#persistTokensToDatabase(tokenResponse, expiryDate);
       }
 
-      console.log("Successfully refreshed Outlook access token", {
-        accountId: this.#accountId,
-        newExpiryDate: new Date(expiryDate).toISOString(),
-      });
+      // Token refresh success is tracked via the persisted expiry_date
     } catch (error: unknown) {
       // Re-throw InboxAuthError as-is
       if (error instanceof InboxAuthError) {
@@ -562,9 +559,6 @@ export class OutlookProvider implements OAuthProviderInterface {
         .slice(0, maxResults);
 
       if (!messages || messages.length === 0) {
-        console.log(
-          "No emails found with PDF attachments matching the criteria.",
-        );
         return [];
       }
 
@@ -688,9 +682,6 @@ export class OutlookProvider implements OAuthProviderInterface {
 
       for (const att of rawAttachments) {
         if (pdfAttachments.length >= maxAttachments) {
-          console.log(
-            `Reached maximum attachment limit (${maxAttachments}) for message ${message.id}.`,
-          );
           break;
         }
 

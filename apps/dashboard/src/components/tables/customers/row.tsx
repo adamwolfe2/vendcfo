@@ -3,6 +3,7 @@
 import { type Row, flexRender } from "@tanstack/react-table";
 import { cn } from "@vendcfo/ui/cn";
 import { TableCell, TableRow } from "@vendcfo/ui/table";
+import React from "react";
 import type { Customer } from "./columns";
 
 type Props = {
@@ -10,7 +11,7 @@ type Props = {
   setOpen: (id?: string) => void;
 };
 
-export function CustomerRow({ row, setOpen }: Props) {
+export const CustomerRow = React.memo(function CustomerRow({ row, setOpen }: Props) {
   return (
     <>
       <TableRow
@@ -29,4 +30,4 @@ export function CustomerRow({ row, setOpen }: Props) {
       </TableRow>
     </>
   );
-}
+});

@@ -53,7 +53,9 @@ export const inboxQueueConfig: QueueConfig = {
   workerOptions: inboxWorkerOptions,
   eventHandlers: {
     onCompleted: (job) => {
-      console.log(`Inbox job completed: ${job.name} (${job.id})`);
+      if (process.env.NODE_ENV === "development") {
+        console.log(`Inbox job completed: ${job.name} (${job.id})`);
+      }
     },
     onFailed: (job, err) => {
       console.error(`Inbox job failed: ${job?.name} (${job?.id})`, err);
@@ -92,7 +94,9 @@ export const inboxProviderQueueConfig: QueueConfig = {
   workerOptions: inboxProviderWorkerOptions,
   eventHandlers: {
     onCompleted: (job) => {
-      console.log(`Inbox provider job completed: ${job.name} (${job.id})`);
+      if (process.env.NODE_ENV === "development") {
+        console.log(`Inbox provider job completed: ${job.name} (${job.id})`);
+      }
     },
     onFailed: (job, err) => {
       console.error(

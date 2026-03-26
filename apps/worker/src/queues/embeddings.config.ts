@@ -58,7 +58,9 @@ export const embeddingsQueueConfig: QueueConfig = {
   workerOptions: embeddingsWorkerOptions,
   eventHandlers: {
     onCompleted: (job) => {
-      console.log(`Embeddings job completed: ${job.name} (${job.id})`);
+      if (process.env.NODE_ENV === "development") {
+        console.log(`Embeddings job completed: ${job.name} (${job.id})`);
+      }
     },
     onFailed: (job, err) => {
       console.error(`Embeddings job failed: ${job?.name} (${job?.id})`, err);

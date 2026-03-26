@@ -33,6 +33,7 @@ import { Icons } from "@vendcfo/ui/icons";
 import { ScrollArea, ScrollBar } from "@vendcfo/ui/scroll-area";
 import { TableCell, TableRow } from "@vendcfo/ui/table";
 import Link from "next/link";
+import React from "react";
 
 type DataTableCellProps = {
   children: React.ReactNode;
@@ -69,7 +70,7 @@ type DataTableRowProps = {
   onDelete: ({ id }: { id: string }) => void;
 };
 
-export function DataTableRow({ row, onDelete }: DataTableRowProps) {
+export const DataTableRow = React.memo(function DataTableRow({ row, onDelete }: DataTableRowProps) {
   const { setParams } = useTrackerParams();
   const { data: user } = useUserQuery();
 
@@ -229,4 +230,4 @@ export function DataTableRow({ row, onDelete }: DataTableRowProps) {
       </DropdownMenu>
     </AlertDialog>
   );
-}
+});

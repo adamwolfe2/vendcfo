@@ -47,7 +47,9 @@ export const teamsQueueConfig: QueueConfig = {
   workerOptions: teamsWorkerOptions,
   eventHandlers: {
     onCompleted: (job) => {
-      console.log(`Team job completed: ${job.name} (${job.id})`);
+      if (process.env.NODE_ENV === "development") {
+        console.log(`Team job completed: ${job.name} (${job.id})`);
+      }
     },
     onFailed: (job, err) => {
       console.error(`Team job failed: ${job?.name} (${job?.id})`, err);

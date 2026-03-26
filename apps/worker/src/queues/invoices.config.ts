@@ -43,7 +43,9 @@ export const invoicesQueueConfig: QueueConfig = {
   workerOptions: invoicesWorkerOptions,
   eventHandlers: {
     onCompleted: (job) => {
-      console.log(`Invoices job completed: ${job.name} (${job.id})`);
+      if (process.env.NODE_ENV === "development") {
+        console.log(`Invoices job completed: ${job.name} (${job.id})`);
+      }
     },
     onFailed: (job, err) => {
       console.error(`Invoices job failed: ${job?.name} (${job?.id})`, err);

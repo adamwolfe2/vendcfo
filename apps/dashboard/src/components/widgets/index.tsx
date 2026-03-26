@@ -9,8 +9,28 @@ import type { AppRouter } from "@vendcfo/api/trpc/routers/_app";
 import { cn } from "@vendcfo/ui/cn";
 import { Skeleton } from "@vendcfo/ui/skeleton";
 import { Tabs, TabsContent } from "@vendcfo/ui/tabs";
+import dynamic from "next/dynamic";
 import { Suspense } from "react";
-import { MetricsView } from "../metrics/metrics-view";
+
+const MetricsView = dynamic(
+  () =>
+    import("../metrics/metrics-view").then((mod) => ({
+      default: mod.MetricsView,
+    })),
+  {
+    ssr: false,
+    loading: () => (
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        {Array.from({ length: 4 }).map((_, i) => (
+          <div
+            key={`metrics-skeleton-${i}`}
+            className="h-[300px] animate-pulse bg-muted/40 rounded border border-border"
+          />
+        ))}
+      </div>
+    ),
+  },
+);
 import { SuggestedActions } from "../suggested-actions";
 import { WidgetsHeader } from "./header";
 import { WidgetProvider, useIsCustomizing } from "./widget-provider";

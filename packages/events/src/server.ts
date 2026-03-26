@@ -10,7 +10,7 @@ export const setupAnalytics = async () => {
   return {
     track: (options: { event: string } & TrackProperties) => {
       if (process.env.NODE_ENV !== "production") {
-        console.log("Track", options);
+        // Non-production tracking is a no-op
         return;
       }
 

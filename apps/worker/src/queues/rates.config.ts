@@ -45,7 +45,9 @@ export const ratesQueueConfig: QueueConfig = {
   workerOptions: ratesWorkerOptions,
   eventHandlers: {
     onCompleted: (job) => {
-      console.log(`Rates job completed: ${job.name} (${job.id})`);
+      if (process.env.NODE_ENV === "development") {
+        console.log(`Rates job completed: ${job.name} (${job.id})`);
+      }
     },
     onFailed: (job, err) => {
       console.error(`Rates job failed: ${job?.name} (${job?.id})`, err);

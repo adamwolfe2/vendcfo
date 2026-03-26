@@ -291,7 +291,7 @@ export function UnifiedAppComponent({ app }: UnifiedAppProps) {
           typeof app.logo !== "string" ? (
             <app.logo />
           ) : (
-            <img src={app.logo as string} alt={app.name} className="w-8 h-8" />
+            <Image src={app.logo as string} alt={app.name} width={32} height={32} />
           )}
 
           <div className="flex items-center gap-2">
@@ -390,10 +390,12 @@ export function UnifiedAppComponent({ app }: UnifiedAppProps) {
                 typeof app.logo !== "string" ? (
                   <app.logo />
                 ) : (
-                  <img
+                  <Image
                     src={app.logo as string}
                     alt={app.name}
-                    className="w-8 h-8 rounded"
+                    width={32}
+                    height={32}
+                    className="rounded"
                   />
                 )}
                 <div>

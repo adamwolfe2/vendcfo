@@ -95,7 +95,7 @@ export const Source = ({
           {showAvatar && sourceDomain ? (
             <Avatar className="h-6 w-6">
               <AvatarImage
-                src={`https://img.logo.dev/${sourceDomain}?token=pk_BQw8Qo2gQeGk5LGKGGMUxA&format=png&size=24&theme=light`}
+                src={`https://img.logo.dev/${sourceDomain}?token=${process.env.NEXT_PUBLIC_LOGO_DEV_API_KEY || ""}&format=png&size=24&theme=light`}
                 alt={`${sourceDomain} logo`}
                 onError={(e) => {
                   // Fallback to favicon if Logo.dev fails

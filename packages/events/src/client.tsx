@@ -19,7 +19,7 @@ const track = (options: { event: string } & TrackProperties) => {
   const { track: openTrack } = useOpenPanel();
 
   if (!isProd) {
-    console.log("Track", options);
+    // Non-production tracking is a no-op
     return;
   }
 

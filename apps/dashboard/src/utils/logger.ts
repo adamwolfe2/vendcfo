@@ -1,3 +1,5 @@
 export const logger = (message: string, params?: unknown) => {
-  console.log(message, params);
+  if (process.env.NODE_ENV === "development") {
+    console.info(message, params);
+  }
 };

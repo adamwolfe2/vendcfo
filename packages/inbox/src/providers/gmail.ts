@@ -225,12 +225,7 @@ export class GmailProvider implements OAuthProviderInterface {
         await this.#persistTokensToDatabase(newCredentials);
       }
 
-      console.log("Successfully refreshed Gmail access token", {
-        accountId: this.#accountId,
-        newExpiryDate: newCredentials.expiry_date
-          ? new Date(newCredentials.expiry_date).toISOString()
-          : "unknown",
-      });
+      // Token refresh success is tracked via the persisted expiry_date
     } catch (error: unknown) {
       // Re-throw InboxAuthError as-is
       if (error instanceof InboxAuthError) {
@@ -413,9 +408,6 @@ export class GmailProvider implements OAuthProviderInterface {
       const messages = allMessages.slice(0, maxResults);
 
       if (!messages || messages.length === 0) {
-        console.log(
-          "No emails found with PDF attachments matching the criteria.",
-        );
         return [];
       }
 
@@ -443,7 +435,6 @@ export class GmailProvider implements OAuthProviderInterface {
       ).filter((msg): msg is gmail_v1.Schema$Message => msg !== null);
 
       if (fetchedMessages.length === 0) {
-        console.log("All filtered messages failed to fetch details.");
         return [];
       }
 
@@ -613,9 +604,6 @@ export class GmailProvider implements OAuthProviderInterface {
 
     for (const part of parts) {
       if (attachmentsCount >= maxAttachments) {
-        console.log(
-          `Reached maximum attachment limit (${maxAttachments}) for message ${messageId}. Skipping further attachments.`,
-        );
         break;
       }
 
@@ -665,9 +653,6 @@ export class GmailProvider implements OAuthProviderInterface {
         attachments.push(...nestedAttachments);
         attachmentsCount = attachments.length;
         if (attachmentsCount >= maxAttachments) {
-          console.log(
-            `Reached maximum attachment limit (${maxAttachments}) after processing nested parts for message ${messageId}.`,
-          );
           break;
         }
       }
