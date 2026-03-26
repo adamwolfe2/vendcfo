@@ -738,6 +738,10 @@ export async function getCustomerByPortalId(
         name: teams.name,
         logoUrl: teams.logoUrl,
         baseCurrency: teams.baseCurrency,
+        stripeConnected:
+          sql<boolean>`${teams.stripeAccountId} IS NOT NULL AND ${teams.stripeConnectStatus} = 'connected'`.as(
+            "stripe_connected",
+          ),
       },
     })
     .from(customers)

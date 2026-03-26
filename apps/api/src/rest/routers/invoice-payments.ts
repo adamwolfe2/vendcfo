@@ -575,6 +575,184 @@ app.openapi(
 );
 
 // ============================================================================
+// Create Checkout Session Endpoint (Public - for invoice customers)
+// ============================================================================
+
+const createCheckoutSchema = z.object({
+  invoiceId: z.string().uuid().openapi({
+    description: "The invoice ID to create a checkout session for",
+  }),
+  successUrl: z.string().url().openapi({
+    description: "URL to redirect to after successful payment",
+  }),
+  cancelUrl: z.string().url().openapi({
+    description: "URL to redirect to if payment is cancelled",
+  }),
+});
+
+const checkoutResponseSchema = z.object({
+  url: z.string().url(),
+});
+
+app.use("/create-checkout", ...publicMiddleware);
+
+app.openapi(
+  createRoute({
+    method: "post",
+    path: "/create-checkout",
+    summary: "Create Stripe Checkout Session for invoice",
+    operationId: "createInvoiceCheckoutSession",
+    description:
+      "Creates a Stripe Checkout Session for paying an invoice. Returns a URL to redirect the customer to Stripe's hosted payment page.",
+    tags: ["Invoice Payments"],
+    request: {
+      body: {
+        content: {
+          "application/json": {
+            schema: createCheckoutSchema,
+          },
+        },
+      },
+    },
+    responses: {
+      200: {
+        description: "Checkout session created",
+        content: {
+          "application/json": {
+            schema: checkoutResponseSchema,
+          },
+        },
+      },
+      400: {
+        description: "Invalid request or invoice not payable",
+      },
+      404: {
+        description: "Invoice not found",
+      },
+    },
+  }),
+  async (c) => {
+    const db = c.get("db");
+    const { invoiceId, successUrl, cancelUrl } = c.req.valid("json");
+
+    if (!process.env.STRIPE_SECRET_KEY) {
+      throw new HTTPException(500, {
+        message: "Stripe is not configured",
+      });
+    }
+
+    // Get invoice by ID (no teamId filter since this is public)
+    const invoice = await getInvoiceById(db, { id: invoiceId });
+
+    if (!invoice) {
+      throw new HTTPException(404, { message: "Invoice not found" });
+    }
+
+    // Check if invoice can be paid
+    if (invoice.status === "paid") {
+      throw new HTTPException(400, { message: "Invoice is already paid" });
+    }
+
+    if (invoice.status === "draft") {
+      throw new HTTPException(400, { message: "Invoice is still a draft" });
+    }
+
+    if (invoice.status === "canceled") {
+      throw new HTTPException(400, { message: "Invoice has been canceled" });
+    }
+
+    if (invoice.status === "refunded") {
+      throw new HTTPException(400, { message: "Invoice has been refunded" });
+    }
+
+    // Only allow unpaid or overdue invoices
+    if (invoice.status !== "unpaid" && invoice.status !== "overdue") {
+      throw new HTTPException(400, {
+        message: "Invoice is not eligible for payment",
+      });
+    }
+
+    // Get team to retrieve Stripe account
+    const team = await getTeamById(db, invoice.teamId);
+
+    if (!team?.stripeAccountId) {
+      throw new HTTPException(400, {
+        message: "Payment provider is not configured",
+      });
+    }
+
+    if (team.stripeConnectStatus !== "connected") {
+      throw new HTTPException(400, {
+        message: "Payment provider account is not fully set up",
+      });
+    }
+
+    // Calculate amount in Stripe's smallest currency unit
+    const currency = (invoice.currency || "usd").toLowerCase();
+    const amount = toStripeAmount(invoice.amount || 0, currency);
+
+    if (amount <= 0) {
+      throw new HTTPException(400, { message: "Invalid invoice amount" });
+    }
+
+    try {
+      const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
+
+      const invoiceLabel = invoice.invoiceNumber
+        ? `Invoice #${invoice.invoiceNumber}`
+        : `Invoice ${invoice.id.slice(0, 8)}`;
+
+      // Create Checkout Session on the connected account
+      const session = await stripe.checkout.sessions.create(
+        {
+          line_items: [
+            {
+              price_data: {
+                currency,
+                unit_amount: amount,
+                product_data: {
+                  name: invoiceLabel,
+                },
+              },
+              quantity: 1,
+            },
+          ],
+          mode: "payment",
+          metadata: {
+            invoice_id: invoice.id,
+            team_id: invoice.teamId,
+          },
+          success_url: successUrl,
+          cancel_url: cancelUrl,
+        },
+        {
+          stripeAccount: team.stripeAccountId,
+        },
+      );
+
+      if (!session.url) {
+        throw new Error("Stripe did not return a checkout URL");
+      }
+
+      return c.json({ url: session.url });
+    } catch (err) {
+      if (err instanceof HTTPException) {
+        throw err;
+      }
+
+      logger.error("Failed to create checkout session", {
+        error: err instanceof Error ? err.message : String(err),
+        invoiceId: invoice.id,
+      });
+
+      throw new HTTPException(500, {
+        message: "Failed to create checkout session",
+      });
+    }
+  },
+);
+
+// ============================================================================
 // Get Stripe Connect Status Endpoint
 // ============================================================================
 

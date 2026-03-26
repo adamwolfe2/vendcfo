@@ -44,3 +44,5 @@ export * from "./oauth-flow";
 export * from "./oauth-applications";
 export * from "./notification-settings";
 export * from "./quarterly-reports";
+export * from "./weekly-digest";
+export * from "./smart-alerts";

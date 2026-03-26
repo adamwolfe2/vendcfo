@@ -25,7 +25,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import JSZip from "jszip";
 import Image from "next/image";
 import Link from "next/link";
-import { useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 
 type Props = {
   portalId: string;
@@ -36,6 +36,7 @@ export function PortalContent({ portalId }: Props) {
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const [isDownloading, setIsDownloading] = useState(false);
   const [downloadingId, setDownloadingId] = useState<string | null>(null);
+  const [payingId, setPayingId] = useState<string | null>(null);
 
   // Fetch customer and summary data
   const { data: portalData } = useSuspenseQuery(
@@ -59,6 +60,52 @@ export function PortalContent({ portalId }: Props) {
   const invoices = useMemo(() => {
     return data?.pages.flatMap((page) => page.data) ?? [];
   }, [data]);
+
+  const stripeConnected = customer?.team?.stripeConnected === true;
+
+  const handlePayInvoice = useCallback(
+    async (invoice: (typeof invoices)[number]) => {
+      setPayingId(invoice.id);
+      try {
+        const apiUrl = process.env.NEXT_PUBLIC_API_URL || "/api";
+        const currentUrl = window.location.href;
+        const successUrl = `/i/${invoice.token}/payment-success`;
+        const baseUrl = window.location.origin;
+
+        const response = await fetch(
+          `${apiUrl}/invoice-payments/create-checkout`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              invoiceId: invoice.id,
+              successUrl: `${baseUrl}${successUrl}`,
+              cancelUrl: currentUrl,
+            }),
+          },
+        );
+
+        if (!response.ok) {
+          const errorData = await response.json().catch(() => ({}));
+          throw new Error(
+            errorData.message || errorData.error || "Failed to start payment",
+          );
+        }
+
+        const data = await response.json();
+        if (data.url) {
+          window.location.href = data.url;
+        }
+      } catch (error) {
+        // Silently handle - user can retry
+      } finally {
+        setPayingId(null);
+      }
+    },
+    [],
+  );
 
   if (!customer || !summary) {
     return null;
@@ -229,7 +276,7 @@ export function PortalContent({ portalId }: Props) {
         {invoices.length > 0 ? (
           <div className="bg-background border border-border overflow-hidden">
             {/* Table Header */}
-            <div className="grid grid-cols-[32px_minmax(80px,1.2fr)_minmax(70px,1fr)_minmax(70px,1fr)_minmax(70px,1fr)_minmax(60px,0.8fr)_32px] gap-2 px-3 py-3 bg-muted/50 border-b border-border text-[12px] font-medium text-[#606060] items-center">
+            <div className="grid grid-cols-[32px_minmax(80px,1.2fr)_minmax(70px,1fr)_minmax(70px,1fr)_minmax(70px,1fr)_minmax(60px,0.8fr)_minmax(70px,auto)] gap-2 px-3 py-3 bg-muted/50 border-b border-border text-[12px] font-medium text-[#606060] items-center">
               <div className="flex items-center justify-center">
                 <Checkbox
                   checked={
@@ -251,7 +298,7 @@ export function PortalContent({ portalId }: Props) {
               {invoices.map((invoice) => (
                 <div
                   key={invoice.id}
-                  className="grid grid-cols-[32px_minmax(80px,1.2fr)_minmax(70px,1fr)_minmax(70px,1fr)_minmax(70px,1fr)_minmax(60px,0.8fr)_32px] gap-2 px-3 py-3 hover:bg-muted/50 transition-colors group items-center"
+                  className="grid grid-cols-[32px_minmax(80px,1.2fr)_minmax(70px,1fr)_minmax(70px,1fr)_minmax(70px,1fr)_minmax(60px,0.8fr)_minmax(70px,auto)] gap-2 px-3 py-3 hover:bg-muted/50 transition-colors group items-center"
                 >
                   <div
                     className="flex items-center justify-center"
@@ -296,7 +343,24 @@ export function PortalContent({ portalId }: Props) {
                   <div className="text-right">
                     <InvoiceStatus status={invoice.status as any} />
                   </div>
-                  <div className="flex items-center justify-center">
+                  <div className="flex items-center justify-center gap-1">
+                    {stripeConnected &&
+                      (invoice.status === "unpaid" ||
+                        invoice.status === "overdue") && (
+                        <Button
+                          variant="default"
+                          size="sm"
+                          className="h-6 px-2 text-[11px] text-secondary"
+                          onClick={() => handlePayInvoice(invoice)}
+                          disabled={payingId === invoice.id}
+                        >
+                          {payingId === invoice.id ? (
+                            <Spinner size={12} />
+                          ) : (
+                            "Pay"
+                          )}
+                        </Button>
+                      )}
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
                         <Button variant="ghost" className="h-8 w-8 p-0">
@@ -318,6 +382,18 @@ export function PortalContent({ portalId }: Props) {
                         >
                           Download
                         </DropdownMenuItem>
+                        {stripeConnected &&
+                          (invoice.status === "unpaid" ||
+                            invoice.status === "overdue") && (
+                            <DropdownMenuItem
+                              onClick={() => handlePayInvoice(invoice)}
+                              disabled={payingId === invoice.id}
+                            >
+                              {payingId === invoice.id
+                                ? "Redirecting..."
+                                : "Pay now"}
+                            </DropdownMenuItem>
+                          )}
                         {invoice.status === "paid" && (
                           <DropdownMenuItem
                             onClick={() => {

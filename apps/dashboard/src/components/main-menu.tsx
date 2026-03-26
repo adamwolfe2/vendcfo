@@ -38,6 +38,7 @@ const icons = {
   "/calculators": () => <Icons.Invoice size={20} />,
   "/scenarios": () => <Icons.Tracker size={20} />,
   "/alerts": () => <Icons.Transactions size={20} />,
+  "/analytics/location-pnl": () => <BarChart3 size={20} strokeWidth={1.5} />,
   "/import": () => <Icons.Files size={20} />,
   "/logistics": () => <CalendarDays size={20} strokeWidth={1.5} />,
   "/employees": () => <UserCheck size={20} strokeWidth={1.5} />,
@@ -77,6 +78,7 @@ const items = [
     name: "Analytics",
     children: [
       { path: "/finance", name: "Finance" },
+      { path: "/analytics/location-pnl", name: "Location P&L" },
       { path: "/capacity", name: "Capacity" },
       { path: "/productivity", name: "Productivity" },
       { path: "/calculators", name: "Calculators" },
@@ -294,7 +296,16 @@ export function MainMenu({ onSelect, isExpanded = false }: Props) {
     "/skus",
     "/import",
   ];
-  const vendingAnalyticsPaths = ["/calculators", "/finance", "/capacity", "/productivity", "/reports", "/scenarios", "/alerts"];
+  const vendingAnalyticsPaths = [
+    "/calculators",
+    "/finance",
+    "/analytics",
+    "/capacity",
+    "/productivity",
+    "/reports",
+    "/scenarios",
+    "/alerts",
+  ];
 
   return (
     <div className="mt-6 w-full">

@@ -6,6 +6,12 @@
   },
   "buildCommand": "TURBOPACK=0 next build",
   "regions": ["iad1"],
+  "crons": [
+    {
+      "path": "/api/digest/cron",
+      "schedule": "0 13 * * 1"
+    }
+  ],
   "headers": [
     {
       "source": "/_next/static/:path*",

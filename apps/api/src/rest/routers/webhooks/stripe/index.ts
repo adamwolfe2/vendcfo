@@ -231,6 +231,102 @@ app.openapi(
           break;
         }
 
+        case "checkout.session.completed": {
+          const session = event.data.object as Stripe.Checkout.Session;
+
+          // Only process payment mode sessions (not subscription or setup)
+          if (session.mode !== "payment") {
+            logger.debug("Ignoring non-payment checkout session", {
+              sessionId: session.id,
+              mode: session.mode,
+            });
+            break;
+          }
+
+          const invoiceId = session.metadata?.invoice_id;
+          const teamId = session.metadata?.team_id;
+
+          if (!invoiceId || !teamId) {
+            logger.warn("Checkout session missing invoice metadata", {
+              sessionId: session.id,
+            });
+            break;
+          }
+
+          if (session.payment_status !== "paid") {
+            logger.info("Checkout session not yet paid", {
+              sessionId: session.id,
+              invoiceId,
+              paymentStatus: session.payment_status,
+            });
+            break;
+          }
+
+          const checkoutPaidAt = new Date().toISOString();
+
+          // Extract payment intent ID if available
+          const checkoutPaymentIntentId =
+            typeof session.payment_intent === "string"
+              ? session.payment_intent
+              : session.payment_intent?.id ?? null;
+
+          // Update invoice to paid status
+          const checkoutUpdatedInvoice = await updateInvoice(db, {
+            id: invoiceId,
+            teamId,
+            status: "paid",
+            paidAt: checkoutPaidAt,
+            ...(checkoutPaymentIntentId
+              ? { paymentIntentId: checkoutPaymentIntentId }
+              : {}),
+          });
+
+          if (checkoutUpdatedInvoice) {
+            logger.info("Invoice marked as paid via Checkout", {
+              invoiceId,
+              sessionId: session.id,
+              paymentIntentId: checkoutPaymentIntentId,
+            });
+
+            // Fetch full invoice details for notification
+            const checkoutInvoice = await getInvoiceById(db, {
+              id: invoiceId,
+            });
+
+            if (checkoutInvoice) {
+              // Trigger notification job
+              await triggerJob(
+                "notification",
+                {
+                  type: "invoice_paid",
+                  invoiceId,
+                  invoiceNumber: checkoutInvoice.invoiceNumber || "",
+                  teamId,
+                  customerName: checkoutInvoice.customerName || "",
+                  paidAt: checkoutPaidAt,
+                },
+                "notifications",
+              );
+
+              logger.info("Invoice paid notification triggered (Checkout)", {
+                invoiceId,
+                invoiceNumber: checkoutInvoice.invoiceNumber,
+              });
+            }
+          } else {
+            logger.warn(
+              "Failed to update invoice from checkout - not found or unauthorized",
+              {
+                invoiceId,
+                teamId,
+                sessionId: session.id,
+              },
+            );
+          }
+
+          break;
+        }
+
         case "account.updated": {
           // Handle connected account status changes
           const account = event.data.object as Stripe.Account;
