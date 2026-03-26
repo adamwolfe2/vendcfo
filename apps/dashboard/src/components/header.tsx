@@ -19,7 +19,7 @@ export function Header() {
 
       <OpenSearchButton />
 
-      <div className="flex space-x-2 ml-auto">
+      <div className="flex space-x-1 sm:space-x-2 ml-auto">
         <Trial />
         <ConnectionStatus />
         <NotificationCenter />

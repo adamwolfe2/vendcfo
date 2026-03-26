@@ -543,19 +543,19 @@ export function ReportGenerationWizard({
         <button
           type="button"
           onClick={onCancel}
-          className="text-sm text-[#878787] hover:text-[#1a1a1a] transition-colors"
+          className="text-sm text-[#878787] hover:text-[#1a1a1a] transition-colors min-h-[44px] min-w-[44px] flex items-center justify-center -ml-2"
         >
-          <ArrowLeft size={16} />
+          <ArrowLeft size={20} />
         </button>
-        <h1 className="text-xl font-semibold text-[#1a1a1a]">
+        <h1 className="text-lg sm:text-xl font-semibold text-[#1a1a1a]">
           Generate Report
         </h1>
       </div>
 
       {/* Step Indicator */}
-      <div className="flex items-center gap-2 mb-8">
+      <div className="flex items-center gap-1 sm:gap-2 mb-8 overflow-x-auto">
         {steps.map((s, i) => (
-          <div key={s} className="flex items-center gap-2">
+          <div key={s} className="flex items-center gap-1 sm:gap-2 shrink-0">
             <div
               className={`flex items-center justify-center w-6 h-6 text-xs font-medium border ${
                 i < currentStepIndex
@@ -568,14 +568,14 @@ export function ReportGenerationWizard({
               {i < currentStepIndex ? <Check size={12} /> : i + 1}
             </div>
             <span
-              className={`text-xs font-medium ${
+              className={`text-xs font-medium hidden sm:inline ${
                 i <= currentStepIndex ? "text-[#1a1a1a]" : "text-[#ccc]"
               }`}
             >
               {stepLabels[s]}
             </span>
             {i < steps.length - 1 && (
-              <div className="w-8 h-px bg-[#e6e6e6]" />
+              <div className="w-4 sm:w-8 h-px bg-[#e6e6e6]" />
             )}
           </div>
         ))}

@@ -32,7 +32,7 @@ export function Trial() {
     <Button
       asChild
       variant="outline"
-      className="rounded-full font-normal h-[32px] p-0 px-3 text-xs text-[#878787]"
+      className="rounded-full font-normal h-[32px] p-0 px-3 text-xs text-[#878787] hidden sm:inline-flex"
     >
       <Link href="/upgrade">
         Pro trial - {daysLeft} {daysLeft === 1 ? "day" : "days"} left

@@ -292,7 +292,7 @@ export function ExportBar() {
       <Portal>
         <AnimatePresence>
           <motion.div
-            className="h-12 fixed left-[50%] bottom-6 w-[400px] -ml-[200px] z-50"
+            className="h-12 fixed bottom-6 left-4 right-4 sm:left-[50%] sm:right-auto sm:w-[400px] sm:-ml-[200px] z-50"
             animate={{ y: isOpen ? 0 : 100 }}
             initial={{ y: 100 }}
             transition={{ duration: 0.2, ease: "easeOut" }}

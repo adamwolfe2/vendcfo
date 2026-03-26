@@ -10,13 +10,13 @@ export async function CustomersHeader() {
       <SearchField placeholder="Search customers" />
 
       <div className="flex items-center gap-2">
-        <Suspense fallback={null}>
-          <ExportCustomersCsv />
-        </Suspense>
-        <CustomersColumnVisibility />
-        <div className="hidden sm:block">
-          <OpenCustomerSheet />
+        <div className="hidden sm:flex items-center gap-2">
+          <Suspense fallback={null}>
+            <ExportCustomersCsv />
+          </Suspense>
+          <CustomersColumnVisibility />
         </div>
+        <OpenCustomerSheet />
       </div>
     </div>
   );

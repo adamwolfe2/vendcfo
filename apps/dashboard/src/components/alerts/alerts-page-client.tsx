@@ -419,10 +419,10 @@ export function AlertsPageClient({ teamId }: { teamId: string }) {
                 <button
                   type="button"
                   onClick={() => handleDismiss(alertKey)}
-                  className="mt-0.5 rounded p-1 text-[#999] hover:text-[#666] hover:bg-black/5 transition-colors"
+                  className="mt-0.5 rounded p-2 min-h-[44px] min-w-[44px] flex items-center justify-center text-[#999] hover:text-[#666] hover:bg-black/5 transition-colors -mr-2"
                   title="Dismiss"
                 >
-                  <X size={14} />
+                  <X size={16} />
                 </button>
               </div>
             );

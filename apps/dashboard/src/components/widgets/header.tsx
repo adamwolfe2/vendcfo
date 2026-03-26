@@ -52,22 +52,22 @@ export function WidgetsHeader() {
   }, [user?.timezone]);
 
   return (
-    <div className="flex justify-between items-end mb-6">
-      <div>
-        <h1 className="text-[30px] font-serif leading-normal mb-1">
+    <div className="flex flex-col sm:flex-row sm:justify-between sm:items-end gap-4 mb-6">
+      <div className="min-w-0">
+        <h1 className="text-[24px] sm:text-[30px] font-serif leading-normal mb-1">
           <span>{greeting} </span>
           <span className="text-[#666666]">
             {user?.fullName?.split(" ")[0]},
           </span>
         </h1>
-        <p className="text-[#666666] text-[14px]">
+        <p className="text-[#666666] text-[13px] sm:text-[14px]">
           {isCustomizing
             ? "drag and drop to arrange your perfect dashboard."
             : "here's a quick look at how things are going."}
         </p>
       </div>
 
-      <div className="flex items-center gap-2" data-no-close>
+      <div className="flex items-center gap-2 flex-shrink-0" data-no-close>
         <div className="hidden md:block">
           <Customize />
         </div>

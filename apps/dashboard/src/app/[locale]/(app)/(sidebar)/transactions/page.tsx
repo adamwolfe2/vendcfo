@@ -118,7 +118,7 @@ export default async function Transactions(props: Props) {
     <HydrateClient>
       <ScrollableContent>
         <TransactionsUploadZone>
-          <div className="flex justify-between items-center py-6">
+          <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3 py-6">
             <TransactionsSearchFilter />
             <div className="flex items-center gap-4">
               <div className="hidden md:flex items-center gap-2">

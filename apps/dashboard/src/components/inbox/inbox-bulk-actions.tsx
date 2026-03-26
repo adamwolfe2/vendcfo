@@ -145,7 +145,7 @@ export function InboxBulkActions() {
           initial={{ y: 100 }}
           transition={{ duration: 0.2, ease: "easeOut" }}
         >
-          <div className="relative pointer-events-auto min-w-[400px] h-12">
+          <div className="relative pointer-events-auto w-[calc(100vw-2rem)] sm:min-w-[400px] sm:w-auto mx-4 sm:mx-0 h-12">
             {/* Blur layer fades in separately to avoid backdrop-filter animation issues */}
             <motion.div
               className="absolute inset-0 backdrop-filter backdrop-blur-lg bg-[rgba(247,247,247,0.85)]"

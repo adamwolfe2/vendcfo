@@ -217,9 +217,9 @@ export function ReportsPage({
   return (
     <div className="w-full py-6 space-y-6">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
-          <h1 className="text-2xl font-semibold text-[#1a1a1a]">Reports</h1>
+          <h1 className="text-xl sm:text-2xl font-semibold text-[#1a1a1a]">Reports</h1>
           <p className="text-sm text-[#878787] mt-1">
             Generate and send quarterly reports to property managers and
             stakeholders
@@ -228,7 +228,7 @@ export function ReportsPage({
         <button
           type="button"
           onClick={() => setShowWizard(true)}
-          className="inline-flex items-center gap-2 h-9 px-4 bg-[#1a1a1a] text-white text-sm font-medium hover:bg-[#333] transition-colors"
+          className="inline-flex items-center justify-center gap-2 min-h-[44px] px-4 bg-[#1a1a1a] text-white text-sm font-medium hover:bg-[#333] transition-colors w-full sm:w-auto"
         >
           <Plus size={16} />
           Generate Report
@@ -288,8 +288,8 @@ export function ReportsPage({
         </div>
       ) : (
         <div className="border border-[#e6e6e6] overflow-hidden">
-          {/* Table Header */}
-          <div className="grid grid-cols-[1fr_160px_120px_100px_120px_40px] gap-4 px-4 py-3 bg-[#f9f9f9] border-b border-[#e6e6e6] text-xs font-medium text-[#878787] uppercase tracking-wide">
+          {/* Desktop Table Header - hidden on mobile */}
+          <div className="hidden sm:grid grid-cols-[1fr_160px_120px_100px_120px_40px] gap-4 px-4 py-3 bg-[#f9f9f9] border-b border-[#e6e6e6] text-xs font-medium text-[#878787] uppercase tracking-wide">
             <div>Title</div>
             <div>Type</div>
             <div>Period</div>
@@ -308,38 +308,36 @@ export function ReportsPage({
                 key={report.id}
                 type="button"
                 onClick={() => setPreviewReport(report)}
-                className="w-full grid grid-cols-[1fr_160px_120px_100px_120px_40px] gap-4 px-4 py-3 border-b border-[#f0f0f0] last:border-b-0 hover:bg-[#fafafa] transition-colors text-left"
+                className="w-full flex flex-col gap-2 px-4 py-3 border-b border-[#f0f0f0] last:border-b-0 hover:bg-[#fafafa] transition-colors text-left min-h-[44px] sm:grid sm:grid-cols-[1fr_160px_120px_100px_120px_40px] sm:gap-4 sm:items-center"
               >
                 <div className="flex items-center gap-3 min-w-0">
                   <FileText size={16} className="text-[#878787] shrink-0" />
                   <span className="text-sm font-medium text-[#1a1a1a] truncate">
                     {report.title}
                   </span>
+                  <ChevronRight size={14} className="text-[#ccc] ml-auto sm:hidden shrink-0" />
                 </div>
-                <div className="flex items-center">
-                  <span className="text-sm text-[#666]">
+                <div className="flex items-center gap-2 sm:gap-0 flex-wrap sm:contents pl-7 sm:pl-0">
+                  <span className="text-xs sm:text-sm text-[#666]">
                     {REPORT_TYPE_LABELS[report.report_type] ??
                       report.report_type}
                   </span>
-                </div>
-                <div className="flex items-center">
-                  <span className="text-sm text-[#666]">
+                  <span className="text-xs text-[#999] sm:hidden">--</span>
+                  <span className="text-xs sm:text-sm text-[#666] sm:flex sm:items-center">
                     {formatPeriod(report.period_start, report.period_end)}
                   </span>
-                </div>
-                <div className="flex items-center">
-                  <span
-                    className={`inline-flex items-center px-2 py-0.5 text-xs font-medium border ${statusStyle.className}`}
-                  >
-                    {statusStyle.label}
-                  </span>
-                </div>
-                <div className="flex items-center">
-                  <span className="text-sm text-[#878787]">
+                  <div className="flex items-center">
+                    <span
+                      className={`inline-flex items-center px-2 py-0.5 text-xs font-medium border ${statusStyle.className}`}
+                    >
+                      {statusStyle.label}
+                    </span>
+                  </div>
+                  <span className="text-xs sm:text-sm text-[#878787] sm:flex sm:items-center">
                     {formatDate(report.created_at)}
                   </span>
                 </div>
-                <div className="flex items-center justify-end">
+                <div className="hidden sm:flex items-center justify-end">
                   <ChevronRight size={14} className="text-[#ccc]" />
                 </div>
               </button>

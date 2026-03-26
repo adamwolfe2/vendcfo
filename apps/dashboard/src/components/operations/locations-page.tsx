@@ -371,7 +371,7 @@ function DeleteConfirmModal({
           <button
             type="button"
             onClick={onCancel}
-            className="rounded-md border border-[#d0d0d0] bg-white px-4 py-2 text-sm font-medium text-[#555] transition-colors hover:bg-[#f5f5f5]"
+            className="rounded-md border border-[#d0d0d0] bg-white px-4 py-2 min-h-[44px] text-sm font-medium text-[#555] transition-colors hover:bg-[#f5f5f5]"
           >
             Cancel
           </button>
@@ -379,7 +379,7 @@ function DeleteConfirmModal({
             type="button"
             onClick={onConfirm}
             disabled={deleting}
-            className="rounded-md bg-red-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-red-700 disabled:opacity-50"
+            className="rounded-md bg-red-600 px-4 py-2 min-h-[44px] text-sm font-medium text-white transition-colors hover:bg-red-700 disabled:opacity-50"
           >
             {deleting ? "Deleting..." : "Delete"}
           </button>
@@ -614,7 +614,7 @@ export function LocationsPage({
                         type="button"
                         onClick={() => setEditEntry(loc)}
                         title="Edit"
-                        className="rounded p-2 text-[#999] transition-colors hover:bg-[#f0f0f0] hover:text-[#555]"
+                        className="rounded p-2 min-h-[44px] min-w-[44px] flex items-center justify-center text-[#999] transition-colors hover:bg-[#f0f0f0] hover:text-[#555]"
                       >
                         <Pencil size={16} strokeWidth={1.5} />
                       </button>
@@ -622,7 +622,7 @@ export function LocationsPage({
                         type="button"
                         onClick={() => setDeleteId(loc.id)}
                         title="Delete"
-                        className="rounded p-2 text-[#999] transition-colors hover:bg-red-50 hover:text-red-600"
+                        className="rounded p-2 min-h-[44px] min-w-[44px] flex items-center justify-center text-[#999] transition-colors hover:bg-red-50 hover:text-red-600"
                       >
                         <Trash2 size={16} strokeWidth={1.5} />
                       </button>
