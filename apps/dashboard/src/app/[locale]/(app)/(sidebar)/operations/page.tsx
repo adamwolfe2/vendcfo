@@ -1,6 +1,13 @@
 import { OperationsDashboard } from "@/components/operations/operations-dashboard";
 import { getServerCaller } from "@/trpc/server";
-import { createClient } from "@vendcfo/supabase/server";
+import { db } from "@vendcfo/db/client";
+import {
+  routes,
+  locations,
+  machines,
+  skus,
+} from "@vendcfo/db/schema/vending";
+import { eq, and, sql } from "drizzle-orm";
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 
@@ -28,37 +35,36 @@ export default async function Page() {
   };
 
   try {
-    const supabase = await createClient();
-
-    const [routesRes, locationsRes, machinesRes, productsRes] =
+    const [routeCount, locationCount, machineCount, skuCount] =
       await Promise.all([
-        supabase
-          .from("routes")
-          .select("id", { count: "exact", head: true })
-          .eq("business_id", teamId)
-          .eq("is_active", true),
-        supabase
-          .from("locations")
-          .select("id", { count: "exact", head: true })
-          .eq("business_id", teamId),
-        supabase
-          .from("machines")
-          .select("id", { count: "exact", head: true })
-          .eq("business_id", teamId),
-        supabase
-          .from("skus")
-          .select("id", { count: "exact", head: true })
-          .eq("business_id", teamId),
+        db
+          .select({ count: sql<number>`count(*)` })
+          .from(routes)
+          .where(
+            and(eq(routes.business_id, teamId!), eq(routes.is_active, true)),
+          ),
+        db
+          .select({ count: sql<number>`count(*)` })
+          .from(locations)
+          .where(eq(locations.business_id, teamId!)),
+        db
+          .select({ count: sql<number>`count(*)` })
+          .from(machines)
+          .where(eq(machines.business_id, teamId!)),
+        db
+          .select({ count: sql<number>`count(*)` })
+          .from(skus)
+          .where(eq(skus.business_id, teamId!)),
       ]);
 
     stats = {
-      routes: routesRes.count ?? 0,
-      locations: locationsRes.count ?? 0,
-      machines: machinesRes.count ?? 0,
-      products: productsRes.count ?? 0,
+      routes: Number(routeCount[0]?.count ?? 0),
+      locations: Number(locationCount[0]?.count ?? 0),
+      machines: Number(machineCount[0]?.count ?? 0),
+      products: Number(skuCount[0]?.count ?? 0),
     };
   } catch {
-    // Tables may not exist yet — render with zero counts
+    // Tables may not exist yet -- render with zero counts
   }
 
   return <OperationsDashboard stats={stats} />;

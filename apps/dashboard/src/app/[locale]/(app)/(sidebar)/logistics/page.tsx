@@ -1,6 +1,8 @@
 import { RouteLogistics } from "@/components/logistics/route-logistics";
 import { getServerCaller } from "@/trpc/server";
-import { createClient } from "@vendcfo/supabase/server";
+import { db } from "@vendcfo/db/client";
+import { locations, routes } from "@vendcfo/db/schema/vending";
+import { eq, and } from "drizzle-orm";
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 
@@ -19,38 +21,50 @@ export default async function Page() {
     redirect("/login");
   }
 
-  let locations: any[] = [];
-  let routes: any[] = [];
+  let locationData: any[] = [];
+  let routeData: any[] = [];
 
   try {
-    const supabase = await createClient();
-
-    const [locationsRes, routesRes] = await Promise.all([
-      supabase
-        .from("locations")
-        .select("id, name, address, route_id, is_active")
-        .eq("business_id", teamId)
-        .eq("is_active", true)
-        .order("name", { ascending: true }),
-      supabase
-        .from("routes")
-        .select("id, name")
-        .eq("business_id", teamId)
-        .eq("is_active", true)
-        .order("name", { ascending: true }),
+    const [locationRows, routeRows] = await Promise.all([
+      db
+        .select({
+          id: locations.id,
+          name: locations.name,
+          address: locations.address,
+          route_id: locations.route_id,
+          is_active: locations.is_active,
+        })
+        .from(locations)
+        .where(
+          and(
+            eq(locations.business_id, teamId!),
+            eq(locations.is_active, true),
+          ),
+        )
+        .orderBy(locations.name),
+      db
+        .select({
+          id: routes.id,
+          name: routes.name,
+        })
+        .from(routes)
+        .where(
+          and(eq(routes.business_id, teamId!), eq(routes.is_active, true)),
+        )
+        .orderBy(routes.name),
     ]);
 
-    locations = locationsRes.data ?? [];
-    routes = routesRes.data ?? [];
+    locationData = locationRows;
+    routeData = routeRows;
   } catch {
-    // Tables may not exist yet — render empty
+    // Tables may not exist yet -- render empty
   }
 
   return (
     <RouteLogistics
-      locations={locations}
-      routes={routes}
-      teamId={teamId}
+      locations={locationData}
+      routes={routeData}
+      teamId={teamId!}
     />
   );
 }

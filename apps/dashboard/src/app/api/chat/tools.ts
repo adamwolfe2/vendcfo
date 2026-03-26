@@ -13,6 +13,13 @@ import {
   locations,
   routes,
   skus,
+  serviceSchedule,
+  employees,
+  compensationPlans,
+  operatorWeeklyPlan,
+  operatorRates,
+  capacityAlerts,
+  revenueRecords,
 } from "@vendcfo/db/schema/vending";
 import { eq, and, gte, lte, sql, count, desc, asc } from "drizzle-orm";
 import { z } from "zod";
@@ -286,11 +293,19 @@ async function queryOperationsData(
     entity: string;
     query_type?: string;
     sort_by?: string;
+    routeId?: string;
+    locationId?: string;
+    dayOfWeek?: number;
   },
   teamId: string,
 ): Promise<string> {
   try {
   if (input.entity === "machines") {
+    const conditions: ReturnType<typeof eq>[] = [eq(machines.business_id, teamId)];
+    if (input.locationId) {
+      conditions.push(eq(machines.location_id, input.locationId));
+    }
+
     const results = await db
       .select({
         id: machines.id,
@@ -298,12 +313,15 @@ async function queryOperationsData(
         makeModel: machines.make_model,
         machineType: machines.machine_type,
         locationName: locations.name,
+        locationId: machines.location_id,
+        capacitySlots: machines.capacity_slots,
         purchasePrice: machines.purchase_price,
+        dateAcquired: machines.date_acquired,
         isActive: machines.is_active,
       })
       .from(machines)
       .leftJoin(locations, eq(machines.location_id, locations.id))
-      .where(eq(machines.business_id, teamId))
+      .where(and(...conditions))
       .limit(50);
 
     return JSON.stringify({
@@ -314,6 +332,11 @@ async function queryOperationsData(
   }
 
   if (input.entity === "locations") {
+    const conditions: ReturnType<typeof eq>[] = [eq(locations.business_id, teamId)];
+    if (input.routeId) {
+      conditions.push(eq(locations.route_id, input.routeId));
+    }
+
     const results = await db
       .select({
         id: locations.id,
@@ -322,12 +345,16 @@ async function queryOperationsData(
         locationType: locations.location_type,
         revSharePct: locations.rev_share_pct,
         monthlyRent: locations.monthly_rent,
+        routeId: locations.route_id,
         routeName: routes.name,
+        contactName: locations.contact_name,
+        serviceFrequencyDays: locations.service_frequency_days,
+        machineCount: locations.machine_count,
         isActive: locations.is_active,
       })
       .from(locations)
       .leftJoin(routes, eq(locations.route_id, routes.id))
-      .where(eq(locations.business_id, teamId))
+      .where(and(...conditions))
       .limit(50);
 
     return JSON.stringify({
@@ -349,10 +376,27 @@ async function queryOperationsData(
       .where(eq(routes.business_id, teamId))
       .limit(50);
 
+    // For each route, get location count
+    const routeLocationCounts = await db
+      .select({
+        routeId: locations.route_id,
+        locationCount: count(),
+      })
+      .from(locations)
+      .where(and(eq(locations.business_id, teamId), eq(locations.is_active, true)))
+      .groupBy(locations.route_id);
+
+    const countMap = new Map(
+      routeLocationCounts.map((r) => [r.routeId, Number(r.locationCount)]),
+    );
+
     return JSON.stringify({
       entity: "routes",
       count: results.length,
-      routes: results,
+      routes: results.map((r) => ({
+        ...r,
+        locationCount: countMap.get(r.id) || 0,
+      })),
     });
   }
 
@@ -375,6 +419,58 @@ async function queryOperationsData(
       entity: "products",
       count: results.length,
       products: results,
+    });
+  }
+
+  if (input.entity === "schedule") {
+    const dayNames = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+    const conditions: ReturnType<typeof eq>[] = [eq(serviceSchedule.business_id, teamId)];
+    if (input.dayOfWeek !== undefined) {
+      conditions.push(eq(serviceSchedule.day_of_week, input.dayOfWeek));
+    }
+    if (input.locationId) {
+      conditions.push(eq(serviceSchedule.location_id, input.locationId));
+    }
+
+    const results = await db
+      .select({
+        id: serviceSchedule.id,
+        locationId: serviceSchedule.location_id,
+        locationName: locations.name,
+        locationAddress: locations.address,
+        routeName: routes.name,
+        dayOfWeek: serviceSchedule.day_of_week,
+        action: serviceSchedule.action,
+      })
+      .from(serviceSchedule)
+      .innerJoin(locations, eq(serviceSchedule.location_id, locations.id))
+      .leftJoin(routes, eq(locations.route_id, routes.id))
+      .where(and(...conditions))
+      .orderBy(asc(serviceSchedule.day_of_week), asc(locations.name))
+      .limit(100);
+
+    const grouped = results.reduce<Record<string, typeof results>>(
+      (acc, row) => {
+        const dayName = dayNames[row.dayOfWeek] || `Day ${row.dayOfWeek}`;
+        const existing = acc[dayName] || [];
+        return { ...acc, [dayName]: [...existing, row] };
+      },
+      {},
+    );
+
+    return JSON.stringify({
+      entity: "schedule",
+      total_entries: results.length,
+      by_day: Object.entries(grouped).map(([day, entries]) => ({
+        day,
+        stop_count: entries.length,
+        stops: entries.map((e) => ({
+          location: e.locationName,
+          address: e.locationAddress,
+          route: e.routeName,
+          action: e.action,
+        })),
+      })),
     });
   }
 
@@ -740,6 +836,454 @@ function executeCalculation(input: {
   }
 }
 
+async function queryWorkforceData(
+  input: {
+    query_type: string;
+    employeeId?: string;
+    period?: string;
+  },
+  teamId: string,
+): Promise<string> {
+  try {
+    if (input.query_type === "employees") {
+      const results = await db
+        .select({
+          id: employees.id,
+          name: employees.name,
+          email: employees.email,
+          phone: employees.phone,
+          role: employees.role,
+          employmentType: employees.employment_type,
+          maxWeeklyHours: employees.max_weekly_hours,
+          hourlyRate: employees.hourly_rate,
+          hireDate: employees.hire_date,
+          isActive: employees.is_active,
+        })
+        .from(employees)
+        .where(eq(employees.business_id, teamId))
+        .limit(50);
+
+      return JSON.stringify({
+        type: "employees",
+        count: results.length,
+        employees: results,
+      });
+    }
+
+    if (input.query_type === "compensation_plans") {
+      const conditions: ReturnType<typeof eq>[] = [
+        eq(compensationPlans.business_id, teamId),
+      ];
+      if (input.employeeId) {
+        conditions.push(eq(compensationPlans.employee_id, input.employeeId));
+      }
+
+      const results = await db
+        .select({
+          id: compensationPlans.id,
+          employeeId: compensationPlans.employee_id,
+          employeeName: employees.name,
+          planName: compensationPlans.name,
+          payModel: compensationPlans.pay_model,
+          hourlyRate: compensationPlans.hourly_rate,
+          perMachineRate: compensationPlans.per_machine_rate,
+          perStopRate: compensationPlans.per_stop_rate,
+          revenueSharePct: compensationPlans.revenue_share_pct,
+          effectiveFrom: compensationPlans.effective_from,
+          effectiveTo: compensationPlans.effective_to,
+          isActive: compensationPlans.is_active,
+        })
+        .from(compensationPlans)
+        .innerJoin(employees, eq(compensationPlans.employee_id, employees.id))
+        .where(and(...conditions))
+        .limit(50);
+
+      return JSON.stringify({
+        type: "compensation_plans",
+        count: results.length,
+        plans: results,
+      });
+    }
+
+    if (input.query_type === "labor_costs") {
+      const { from, to } = getDateRange(input.period);
+
+      const results = await db
+        .select({
+          operatorId: operatorWeeklyPlan.operator_id,
+          weekStart: operatorWeeklyPlan.week_start,
+          dayOfWeek: operatorWeeklyPlan.day_of_week,
+          plannedStops: operatorWeeklyPlan.planned_stops,
+          plannedDrivingHrs: operatorWeeklyPlan.planned_driving_hrs,
+          plannedWarehouseHrs: operatorWeeklyPlan.planned_warehouse_hrs,
+          plannedStockHrs: operatorWeeklyPlan.planned_stock_hrs,
+          plannedPickHrs: operatorWeeklyPlan.planned_pick_hrs,
+          plannedLoadVanHrs: operatorWeeklyPlan.planned_load_van_hrs,
+          actualStops: operatorWeeklyPlan.actual_stops,
+          actualDrivingHrs: operatorWeeklyPlan.actual_driving_hrs,
+          actualWarehouseHrs: operatorWeeklyPlan.actual_warehouse_hrs,
+          actualStockHrs: operatorWeeklyPlan.actual_stock_hrs,
+          actualPickHrs: operatorWeeklyPlan.actual_pick_hrs,
+          actualLoadVanHrs: operatorWeeklyPlan.actual_load_van_hrs,
+        })
+        .from(operatorWeeklyPlan)
+        .where(
+          and(
+            eq(operatorWeeklyPlan.business_id, teamId),
+            gte(operatorWeeklyPlan.week_start, from),
+            lte(operatorWeeklyPlan.week_start, to),
+          ),
+        )
+        .orderBy(desc(operatorWeeklyPlan.week_start))
+        .limit(100);
+
+      // Compute total planned & actual hours
+      let totalPlannedHrs = 0;
+      let totalActualHrs = 0;
+      let totalPlannedStops = 0;
+      let totalActualStops = 0;
+
+      for (const r of results) {
+        totalPlannedHrs +=
+          Number(r.plannedDrivingHrs || 0) +
+          Number(r.plannedWarehouseHrs || 0) +
+          Number(r.plannedStockHrs || 0) +
+          Number(r.plannedPickHrs || 0) +
+          Number(r.plannedLoadVanHrs || 0);
+        totalActualHrs +=
+          Number(r.actualDrivingHrs || 0) +
+          Number(r.actualWarehouseHrs || 0) +
+          Number(r.actualStockHrs || 0) +
+          Number(r.actualPickHrs || 0) +
+          Number(r.actualLoadVanHrs || 0);
+        totalPlannedStops += Number(r.plannedStops || 0);
+        totalActualStops += Number(r.actualStops || 0);
+      }
+
+      // Get operator rates to compute cost
+      const rates = await db
+        .select({
+          operatorId: operatorRates.operator_id,
+          hourlyRate: operatorRates.hourly_rate,
+          gasRatePerHr: operatorRates.gas_rate_per_hr,
+        })
+        .from(operatorRates)
+        .where(eq(operatorRates.business_id, teamId));
+
+      const avgHourlyRate =
+        rates.length > 0
+          ? rates.reduce((s, r) => s + Number(r.hourlyRate), 0) / rates.length
+          : 25;
+
+      const estimatedLaborCost = Number((totalActualHrs > 0
+        ? totalActualHrs * avgHourlyRate
+        : totalPlannedHrs * avgHourlyRate
+      ).toFixed(2));
+
+      return JSON.stringify({
+        type: "labor_costs",
+        period: { from, to },
+        total_planned_hours: Number(totalPlannedHrs.toFixed(2)),
+        total_actual_hours: Number(totalActualHrs.toFixed(2)),
+        total_planned_stops: totalPlannedStops,
+        total_actual_stops: totalActualStops,
+        avg_hourly_rate: avgHourlyRate,
+        estimated_labor_cost: estimatedLaborCost,
+        day_count: results.length,
+      });
+    }
+
+    if (input.query_type === "capacity_alerts") {
+      const results = await db
+        .select({
+          id: capacityAlerts.id,
+          employeeId: capacityAlerts.employee_id,
+          employeeName: employees.name,
+          alertType: capacityAlerts.alert_type,
+          message: capacityAlerts.message,
+          currentUtilization: capacityAlerts.current_utilization,
+          threshold: capacityAlerts.threshold,
+          isDismissed: capacityAlerts.is_dismissed,
+          createdAt: capacityAlerts.created_at,
+        })
+        .from(capacityAlerts)
+        .innerJoin(employees, eq(capacityAlerts.employee_id, employees.id))
+        .where(
+          and(
+            eq(capacityAlerts.business_id, teamId),
+            eq(capacityAlerts.is_dismissed, false),
+          ),
+        )
+        .orderBy(desc(capacityAlerts.created_at))
+        .limit(20);
+
+      return JSON.stringify({
+        type: "capacity_alerts",
+        count: results.length,
+        alerts: results,
+      });
+    }
+
+    if (input.query_type === "operator_rates") {
+      const results = await db
+        .select({
+          id: operatorRates.id,
+          operatorId: operatorRates.operator_id,
+          hourlyRate: operatorRates.hourly_rate,
+          gasRatePerHr: operatorRates.gas_rate_per_hr,
+        })
+        .from(operatorRates)
+        .where(eq(operatorRates.business_id, teamId))
+        .limit(50);
+
+      return JSON.stringify({
+        type: "operator_rates",
+        count: results.length,
+        rates: results,
+      });
+    }
+
+    return JSON.stringify({
+      error: "Unknown query type",
+      available: [
+        "employees",
+        "compensation_plans",
+        "labor_costs",
+        "capacity_alerts",
+        "operator_rates",
+      ],
+    });
+  } catch (error) {
+    return `Unable to retrieve workforce data: ${error instanceof Error ? error.message : "An unexpected error occurred"}. Please try again.`;
+  }
+}
+
+async function queryRevenueData(
+  input: {
+    query_type: string;
+    period?: string;
+    locationId?: string;
+    limit?: number;
+  },
+  teamId: string,
+): Promise<string> {
+  try {
+    const { from, to } = getDateRange(input.period);
+
+    if (input.query_type === "summary") {
+      const conditions: ReturnType<typeof eq>[] = [
+        eq(revenueRecords.business_id, teamId),
+        gte(revenueRecords.period_start, from),
+        lte(revenueRecords.period_end, to),
+      ];
+      if (input.locationId) {
+        conditions.push(eq(revenueRecords.location_id, input.locationId));
+      }
+
+      const [result] = await db
+        .select({
+          grossRevenue: sql<number>`COALESCE(SUM(CAST(${revenueRecords.gross_revenue} AS numeric)), 0)`,
+          processingFees: sql<number>`COALESCE(SUM(CAST(${revenueRecords.processing_fees} AS numeric)), 0)`,
+          netDeposited: sql<number>`COALESCE(SUM(CAST(${revenueRecords.net_deposited} AS numeric)), 0)`,
+          cashRevenue: sql<number>`COALESCE(SUM(CAST(${revenueRecords.cash_revenue} AS numeric)), 0)`,
+          cardRevenue: sql<number>`COALESCE(SUM(CAST(${revenueRecords.card_revenue} AS numeric)), 0)`,
+          totalTransactions: sql<number>`COALESCE(SUM(${revenueRecords.transaction_count}), 0)`,
+          recordCount: count(),
+        })
+        .from(revenueRecords)
+        .where(and(...conditions));
+
+      const gross = Number(result?.grossRevenue || 0);
+      const fees = Number(result?.processingFees || 0);
+      const feePct = gross > 0 ? ((fees / gross) * 100).toFixed(2) : "0";
+
+      return JSON.stringify({
+        type: "revenue_summary",
+        period: { from, to },
+        gross_revenue: gross,
+        processing_fees: fees,
+        processing_fee_pct: Number(feePct),
+        net_deposited: Number(result?.netDeposited || 0),
+        cash_revenue: Number(result?.cashRevenue || 0),
+        card_revenue: Number(result?.cardRevenue || 0),
+        total_transactions: Number(result?.totalTransactions || 0),
+        record_count: Number(result?.recordCount || 0),
+      });
+    }
+
+    if (input.query_type === "by_location") {
+      const results = await db
+        .select({
+          locationId: revenueRecords.location_id,
+          locationName: locations.name,
+          locationType: locations.location_type,
+          revSharePct: locations.rev_share_pct,
+          grossRevenue: sql<number>`COALESCE(SUM(CAST(${revenueRecords.gross_revenue} AS numeric)), 0)`,
+          processingFees: sql<number>`COALESCE(SUM(CAST(${revenueRecords.processing_fees} AS numeric)), 0)`,
+          netDeposited: sql<number>`COALESCE(SUM(CAST(${revenueRecords.net_deposited} AS numeric)), 0)`,
+          totalTransactions: sql<number>`COALESCE(SUM(${revenueRecords.transaction_count}), 0)`,
+        })
+        .from(revenueRecords)
+        .innerJoin(locations, eq(revenueRecords.location_id, locations.id))
+        .where(
+          and(
+            eq(revenueRecords.business_id, teamId),
+            gte(revenueRecords.period_start, from),
+            lte(revenueRecords.period_end, to),
+          ),
+        )
+        .groupBy(
+          revenueRecords.location_id,
+          locations.name,
+          locations.location_type,
+          locations.rev_share_pct,
+        )
+        .orderBy(desc(sql`SUM(CAST(${revenueRecords.gross_revenue} AS numeric))`))
+        .limit(input.limit || 50);
+
+      return JSON.stringify({
+        type: "revenue_by_location",
+        period: { from, to },
+        count: results.length,
+        locations: results.map((r) => {
+          const gross = Number(r.grossRevenue);
+          const fees = Number(r.processingFees);
+          const revShare = Number(r.revSharePct || 0);
+          const revShareAmt = gross * (revShare / 100);
+          const netAfterAll = gross - fees - revShareAmt;
+          return {
+            location_id: r.locationId,
+            location_name: r.locationName,
+            location_type: r.locationType,
+            gross_revenue: gross,
+            processing_fees: fees,
+            net_deposited: Number(r.netDeposited),
+            rev_share_pct: revShare,
+            rev_share_amount: Number(revShareAmt.toFixed(2)),
+            net_after_rev_share: Number(netAfterAll.toFixed(2)),
+            total_transactions: Number(r.totalTransactions),
+          };
+        }),
+      });
+    }
+
+    if (input.query_type === "period_comparison") {
+      // Current period
+      const [current] = await db
+        .select({
+          grossRevenue: sql<number>`COALESCE(SUM(CAST(${revenueRecords.gross_revenue} AS numeric)), 0)`,
+          processingFees: sql<number>`COALESCE(SUM(CAST(${revenueRecords.processing_fees} AS numeric)), 0)`,
+          netDeposited: sql<number>`COALESCE(SUM(CAST(${revenueRecords.net_deposited} AS numeric)), 0)`,
+          totalTransactions: sql<number>`COALESCE(SUM(${revenueRecords.transaction_count}), 0)`,
+        })
+        .from(revenueRecords)
+        .where(
+          and(
+            eq(revenueRecords.business_id, teamId),
+            gte(revenueRecords.period_start, from),
+            lte(revenueRecords.period_end, to),
+          ),
+        );
+
+      // Previous period (same duration, shifted back)
+      const fromDate = new Date(from);
+      const toDate = new Date(to);
+      const durationMs = toDate.getTime() - fromDate.getTime();
+      const prevTo = new Date(fromDate.getTime() - 1).toISOString().split("T")[0]!;
+      const prevFrom = new Date(fromDate.getTime() - durationMs).toISOString().split("T")[0]!;
+
+      const [previous] = await db
+        .select({
+          grossRevenue: sql<number>`COALESCE(SUM(CAST(${revenueRecords.gross_revenue} AS numeric)), 0)`,
+          processingFees: sql<number>`COALESCE(SUM(CAST(${revenueRecords.processing_fees} AS numeric)), 0)`,
+          netDeposited: sql<number>`COALESCE(SUM(CAST(${revenueRecords.net_deposited} AS numeric)), 0)`,
+          totalTransactions: sql<number>`COALESCE(SUM(${revenueRecords.transaction_count}), 0)`,
+        })
+        .from(revenueRecords)
+        .where(
+          and(
+            eq(revenueRecords.business_id, teamId),
+            gte(revenueRecords.period_start, prevFrom),
+            lte(revenueRecords.period_end, prevTo),
+          ),
+        );
+
+      const currentGross = Number(current?.grossRevenue || 0);
+      const previousGross = Number(previous?.grossRevenue || 0);
+      const growthPct =
+        previousGross > 0
+          ? (((currentGross - previousGross) / previousGross) * 100).toFixed(1)
+          : "N/A";
+
+      return JSON.stringify({
+        type: "period_comparison",
+        current_period: {
+          from,
+          to,
+          gross_revenue: currentGross,
+          processing_fees: Number(current?.processingFees || 0),
+          net_deposited: Number(current?.netDeposited || 0),
+          total_transactions: Number(current?.totalTransactions || 0),
+        },
+        previous_period: {
+          from: prevFrom,
+          to: prevTo,
+          gross_revenue: previousGross,
+          processing_fees: Number(previous?.processingFees || 0),
+          net_deposited: Number(previous?.netDeposited || 0),
+          total_transactions: Number(previous?.totalTransactions || 0),
+        },
+        growth_pct: growthPct === "N/A" ? growthPct : Number(growthPct),
+      });
+    }
+
+    if (input.query_type === "monthly_trend") {
+      const results = await db
+        .select({
+          month: sql<string>`to_char(${revenueRecords.period_start}::date, 'YYYY-MM')`,
+          grossRevenue: sql<number>`COALESCE(SUM(CAST(${revenueRecords.gross_revenue} AS numeric)), 0)`,
+          processingFees: sql<number>`COALESCE(SUM(CAST(${revenueRecords.processing_fees} AS numeric)), 0)`,
+          netDeposited: sql<number>`COALESCE(SUM(CAST(${revenueRecords.net_deposited} AS numeric)), 0)`,
+          totalTransactions: sql<number>`COALESCE(SUM(${revenueRecords.transaction_count}), 0)`,
+        })
+        .from(revenueRecords)
+        .where(
+          and(
+            eq(revenueRecords.business_id, teamId),
+            gte(revenueRecords.period_start, from),
+            lte(revenueRecords.period_end, to),
+          ),
+        )
+        .groupBy(sql`to_char(${revenueRecords.period_start}::date, 'YYYY-MM')`)
+        .orderBy(asc(sql`to_char(${revenueRecords.period_start}::date, 'YYYY-MM')`));
+
+      return JSON.stringify({
+        type: "monthly_trend",
+        period: { from, to },
+        months: results.map((r) => ({
+          month: r.month,
+          gross_revenue: Number(r.grossRevenue),
+          processing_fees: Number(r.processingFees),
+          net_deposited: Number(r.netDeposited),
+          total_transactions: Number(r.totalTransactions),
+        })),
+      });
+    }
+
+    return JSON.stringify({
+      error: "Unknown query type",
+      available: [
+        "summary",
+        "by_location",
+        "period_comparison",
+        "monthly_trend",
+      ],
+    });
+  } catch (error) {
+    return `Unable to retrieve revenue data: ${error instanceof Error ? error.message : "An unexpected error occurred"}. Please try again.`;
+  }
+}
+
 // ─── Tool definitions using Vercel AI SDK ───────────────────────────
 
 export function createChatTools(teamId: string) {
@@ -784,10 +1328,10 @@ export function createChatTools(teamId: string) {
 
     query_operations_data: tool({
       description:
-        "Query machines, locations, routes, and products/SKUs. Returns performance data, counts, and details.",
+        "Query machines, locations, routes, products/SKUs, and service schedules. Returns details, counts, and can filter by route or location. Use 'schedule' entity to find which locations need service on a given day.",
       inputSchema: z.object({
         entity: z
-          .enum(["machines", "locations", "routes", "products"])
+          .enum(["machines", "locations", "routes", "products", "schedule"])
           .describe("What to query"),
         query_type: z
           .enum(["list", "count", "performance", "comparison"])
@@ -797,9 +1341,24 @@ export function createChatTools(teamId: string) {
           .enum(["revenue", "name", "created", "status"])
           .optional()
           .describe("Sort order"),
+        routeId: z
+          .string()
+          .optional()
+          .describe("Filter locations by route ID"),
+        locationId: z
+          .string()
+          .optional()
+          .describe("Filter machines or schedule by location ID"),
+        dayOfWeek: z
+          .number()
+          .optional()
+          .describe("Filter schedule by day (0=Monday, 1=Tuesday, ..., 5=Saturday)"),
       }),
-      execute: async ({ entity, query_type, sort_by }) => {
-        return queryOperationsData({ entity, query_type, sort_by }, teamId);
+      execute: async ({ entity, query_type, sort_by, routeId, locationId, dayOfWeek }) => {
+        return queryOperationsData(
+          { entity, query_type, sort_by, routeId, locationId, dayOfWeek },
+          teamId,
+        );
       },
     }),
 
@@ -876,6 +1435,78 @@ export function createChatTools(teamId: string) {
       }),
       execute: async ({ calculator, inputs }) => {
         return executeCalculation({ calculator, inputs });
+      },
+    }),
+
+    query_workforce: tool({
+      description:
+        "Query workforce data: employees, compensation plans, labor costs, operator rates, and capacity alerts. Use 'labor_costs' to calculate total hours worked and estimated labor cost for a period.",
+      inputSchema: z.object({
+        query_type: z
+          .enum([
+            "employees",
+            "compensation_plans",
+            "labor_costs",
+            "capacity_alerts",
+            "operator_rates",
+          ])
+          .describe("What workforce data to query"),
+        employeeId: z
+          .string()
+          .optional()
+          .describe("Filter compensation plans by employee ID"),
+        period: z
+          .enum([
+            "this_month",
+            "last_month",
+            "this_quarter",
+            "last_quarter",
+            "this_year",
+            "last_year",
+            "last_6_months",
+            "last_12_months",
+          ])
+          .optional()
+          .describe("Time period for labor cost queries"),
+      }),
+      execute: async ({ query_type, employeeId, period }) => {
+        return queryWorkforceData({ query_type, employeeId, period }, teamId);
+      },
+    }),
+
+    query_revenue: tool({
+      description:
+        "Query vending revenue records with gross/fees/net decomposition. Shows revenue by location, period comparisons, monthly trends, and processing fee analysis. This is vending-specific revenue (from machine telemetry), distinct from bank transaction data.",
+      inputSchema: z.object({
+        query_type: z
+          .enum(["summary", "by_location", "period_comparison", "monthly_trend"])
+          .describe(
+            "Type of revenue analysis. 'summary' for totals, 'by_location' for per-location breakdown with rev share calc, 'period_comparison' to compare current vs previous period, 'monthly_trend' for month-over-month data.",
+          ),
+        period: z
+          .enum([
+            "this_month",
+            "last_month",
+            "this_quarter",
+            "last_quarter",
+            "this_year",
+            "last_year",
+            "last_6_months",
+            "last_12_months",
+          ])
+          .optional()
+          .describe("Time period"),
+        locationId: z
+          .string()
+          .optional()
+          .describe("Filter revenue summary to a specific location"),
+        limit: z
+          .number()
+          .optional()
+          .describe("Max locations to return for by_location queries"),
+      }),
+      execute: async ({ query_type, period, locationId, limit }) => {
+        return queryRevenueData({ query_type, period, locationId, limit }, teamId);
       },
     }),
   };

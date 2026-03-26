@@ -1,9 +1,8 @@
 "use client";
 
 import { AskRouteCFO } from "@/components/ask-route-cfo";
-import { createClient } from "@vendcfo/supabase/client";
-import { Activity, Loader2 } from "lucide-react";
-import { useEffect, useState } from "react";
+import { Activity } from "lucide-react";
+import { useMemo, useState } from "react";
 import { OperatorProductivityTable } from "./operator-productivity-table";
 import { ProductivitySummaryCards } from "./productivity-summary-cards";
 import { WeeklyComparisonChart } from "./weekly-comparison-chart";
@@ -67,6 +66,11 @@ interface EmployeeRow {
   is_active: boolean;
 }
 
+interface ServerData {
+  employees: any[];
+  weeklyPlans: any[];
+}
+
 // ---------------------------------------------------------------------------
 // Helpers
 // ---------------------------------------------------------------------------
@@ -75,243 +79,187 @@ function toNum(val: string | null | undefined): number {
   return Number(val) || 0;
 }
 
-function getCurrentWeekStart(): string {
-  const now = new Date();
-  const day = now.getDay();
-  const diff = day === 0 ? -6 : 1 - day;
-  const monday = new Date(now);
-  monday.setDate(now.getDate() + diff);
-  return monday.toISOString().split("T")[0] ?? "";
-}
-
 const DAY_LABELS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat"] as const;
 
 // ---------------------------------------------------------------------------
 // Component
 // ---------------------------------------------------------------------------
 
-export function ProductivityDashboard({ teamId }: { teamId: string }) {
-  const supabase = createClient();
-  const [loading, setLoading] = useState(true);
-  const [operators, setOperators] = useState<OperatorProductivity[]>([]);
-  const [selectedOperatorId, setSelectedOperatorId] = useState<string | null>(
-    null,
-  );
-  const [dailyData, setDailyData] = useState<
-    Record<string, DailyComparison[]>
-  >({});
-  const [weeklyPlans, setWeeklyPlans] = useState<WeeklyPlanRow[]>([]);
+export function ProductivityDashboard({
+  teamId,
+  serverData,
+}: {
+  teamId: string;
+  serverData: ServerData;
+}) {
+  const { operators, dailyData, weeklyPlans } = useMemo(() => {
+    const employeesList = (serverData.employees ?? []) as EmployeeRow[];
+    const plans = (serverData.weeklyPlans ?? []) as WeeklyPlanRow[];
 
-  useEffect(() => {
-    async function fetchData() {
-      setLoading(true);
-
-      const weekStart = getCurrentWeekStart();
-      const sb = supabase as any;
-
-      const [employeesRes, weeklyPlanRes] = await Promise.all([
-        sb
-          .from("employees")
-          .select("id, name, role, is_active")
-          .eq("business_id", teamId)
-          .eq("is_active", true),
-        sb
-          .from("operator_weekly_plan")
-          .select(
-            "operator_id, day_of_week, planned_stops, planned_driving_hrs, planned_warehouse_hrs, planned_load_van_hrs, planned_stock_hrs, planned_pick_hrs, actual_stops, actual_driving_hrs, actual_warehouse_hrs, actual_load_van_hrs, actual_stock_hrs, actual_pick_hrs",
-          )
-          .eq("business_id", teamId)
-          .eq("week_start", weekStart),
-      ]);
-
-      const employeesList = (employeesRes.data ?? []) as EmployeeRow[];
-      const plans = (weeklyPlanRes.data ?? []) as WeeklyPlanRow[];
-      setWeeklyPlans(plans);
-
-      // Build per-operator aggregation
-      const operatorMap = new Map<
-        string,
-        {
-          plannedStops: number;
-          actualStops: number;
-          plannedDriving: number;
-          actualDriving: number;
-          plannedWarehouse: number;
-          actualWarehouse: number;
-          plannedLoadVan: number;
-          actualLoadVan: number;
-          plannedStock: number;
-          actualStock: number;
-          plannedPick: number;
-          actualPick: number;
-        }
-      >();
-
-      // Build per-operator daily breakdown
-      const dailyMap: Record<string, DailyComparison[]> = {};
-
-      for (const plan of plans) {
-        const existing = operatorMap.get(plan.operator_id) ?? {
-          plannedStops: 0,
-          actualStops: 0,
-          plannedDriving: 0,
-          actualDriving: 0,
-          plannedWarehouse: 0,
-          actualWarehouse: 0,
-          plannedLoadVan: 0,
-          actualLoadVan: 0,
-          plannedStock: 0,
-          actualStock: 0,
-          plannedPick: 0,
-          actualPick: 0,
-        };
-
-        operatorMap.set(plan.operator_id, {
-          plannedStops: existing.plannedStops + (plan.planned_stops ?? 0),
-          actualStops: existing.actualStops + (plan.actual_stops ?? 0),
-          plannedDriving:
-            existing.plannedDriving + toNum(plan.planned_driving_hrs),
-          actualDriving:
-            existing.actualDriving + toNum(plan.actual_driving_hrs),
-          plannedWarehouse:
-            existing.plannedWarehouse + toNum(plan.planned_warehouse_hrs),
-          actualWarehouse:
-            existing.actualWarehouse + toNum(plan.actual_warehouse_hrs),
-          plannedLoadVan:
-            existing.plannedLoadVan + toNum(plan.planned_load_van_hrs),
-          actualLoadVan:
-            existing.actualLoadVan + toNum(plan.actual_load_van_hrs),
-          plannedStock: existing.plannedStock + toNum(plan.planned_stock_hrs),
-          actualStock: existing.actualStock + toNum(plan.actual_stock_hrs),
-          plannedPick: existing.plannedPick + toNum(plan.planned_pick_hrs),
-          actualPick: existing.actualPick + toNum(plan.actual_pick_hrs),
-        });
-
-        // Daily data
-        if (!dailyMap[plan.operator_id]) {
-          dailyMap[plan.operator_id] = DAY_LABELS.map((label, i) => ({
-            dayLabel: label,
-            dayOfWeek: i,
-            plannedHrs: 0,
-            actualHrs: 0,
-          }));
-        }
-        const dayIndex = plan.day_of_week;
-        if (dayIndex >= 0 && dayIndex < DAY_LABELS.length) {
-          const dayPlanned =
-            toNum(plan.planned_driving_hrs) +
-            toNum(plan.planned_warehouse_hrs) +
-            toNum(plan.planned_load_van_hrs) +
-            toNum(plan.planned_stock_hrs) +
-            toNum(plan.planned_pick_hrs);
-          const dayActual =
-            toNum(plan.actual_driving_hrs) +
-            toNum(plan.actual_warehouse_hrs) +
-            toNum(plan.actual_load_van_hrs) +
-            toNum(plan.actual_stock_hrs) +
-            toNum(plan.actual_pick_hrs);
-
-          const dayEntry = dailyMap[plan.operator_id]?.[dayIndex];
-          if (dayEntry) {
-            dailyMap[plan.operator_id] = dailyMap[plan.operator_id]!.map(
-              (d, i) =>
-                i === dayIndex
-                  ? {
-                      ...d,
-                      plannedHrs: d.plannedHrs + dayPlanned,
-                      actualHrs: d.actualHrs + dayActual,
-                    }
-                  : d,
-            );
-          }
-        }
+    const operatorMap = new Map<
+      string,
+      {
+        plannedStops: number;
+        actualStops: number;
+        plannedDriving: number;
+        actualDriving: number;
+        plannedWarehouse: number;
+        actualWarehouse: number;
+        plannedLoadVan: number;
+        actualLoadVan: number;
+        plannedStock: number;
+        actualStock: number;
+        plannedPick: number;
+        actualPick: number;
       }
+    >();
 
-      setDailyData(dailyMap);
+    const dailyMap: Record<string, DailyComparison[]> = {};
 
-      // Build operator productivity rows
-      const productivityRows: OperatorProductivity[] = employeesList.map(
-        (emp) => {
-          const agg = operatorMap.get(emp.id);
-          const totalPlanned = agg
-            ? agg.plannedDriving +
-              agg.plannedWarehouse +
-              agg.plannedLoadVan +
-              agg.plannedStock +
-              agg.plannedPick
-            : 0;
-          const totalActual = agg
-            ? agg.actualDriving +
-              agg.actualWarehouse +
-              agg.actualLoadVan +
-              agg.actualStock +
-              agg.actualPick
-            : 0;
-          const hoursVariance = totalActual - totalPlanned;
-          const efficiencyScore =
-            totalPlanned > 0
-              ? Math.round((totalActual / totalPlanned) * 100)
-              : 0;
+    for (const plan of plans) {
+      const existing = operatorMap.get(plan.operator_id) ?? {
+        plannedStops: 0,
+        actualStops: 0,
+        plannedDriving: 0,
+        actualDriving: 0,
+        plannedWarehouse: 0,
+        actualWarehouse: 0,
+        plannedLoadVan: 0,
+        actualLoadVan: 0,
+        plannedStock: 0,
+        actualStock: 0,
+        plannedPick: 0,
+        actualPick: 0,
+      };
 
-          return {
-            operatorId: emp.id,
-            name: emp.name,
-            role: emp.role ?? "Route Operator",
-            plannedStops: agg?.plannedStops ?? 0,
-            actualStops: agg?.actualStops ?? 0,
-            stopsVariance: (agg?.actualStops ?? 0) - (agg?.plannedStops ?? 0),
-            plannedDrivingHrs: agg?.plannedDriving ?? 0,
-            actualDrivingHrs: agg?.actualDriving ?? 0,
-            plannedWarehouseHrs: agg?.plannedWarehouse ?? 0,
-            actualWarehouseHrs: agg?.actualWarehouse ?? 0,
-            plannedLoadVanHrs: agg?.plannedLoadVan ?? 0,
-            actualLoadVanHrs: agg?.actualLoadVan ?? 0,
-            plannedStockHrs: agg?.plannedStock ?? 0,
-            actualStockHrs: agg?.actualStock ?? 0,
-            plannedPickHrs: agg?.plannedPick ?? 0,
-            actualPickHrs: agg?.actualPick ?? 0,
-            totalPlannedHrs: totalPlanned,
-            totalActualHrs: totalActual,
-            hoursVariance,
-            efficiencyScore,
-          };
-        },
-      );
-
-      // Sort by efficiency score descending, operators with data first
-      productivityRows.sort((a, b) => {
-        if (a.totalPlannedHrs === 0 && b.totalPlannedHrs > 0) return 1;
-        if (b.totalPlannedHrs === 0 && a.totalPlannedHrs > 0) return -1;
-        return b.efficiencyScore - a.efficiencyScore;
+      operatorMap.set(plan.operator_id, {
+        plannedStops: existing.plannedStops + (plan.planned_stops ?? 0),
+        actualStops: existing.actualStops + (plan.actual_stops ?? 0),
+        plannedDriving:
+          existing.plannedDriving + toNum(plan.planned_driving_hrs),
+        actualDriving:
+          existing.actualDriving + toNum(plan.actual_driving_hrs),
+        plannedWarehouse:
+          existing.plannedWarehouse + toNum(plan.planned_warehouse_hrs),
+        actualWarehouse:
+          existing.actualWarehouse + toNum(plan.actual_warehouse_hrs),
+        plannedLoadVan:
+          existing.plannedLoadVan + toNum(plan.planned_load_van_hrs),
+        actualLoadVan:
+          existing.actualLoadVan + toNum(plan.actual_load_van_hrs),
+        plannedStock: existing.plannedStock + toNum(plan.planned_stock_hrs),
+        actualStock: existing.actualStock + toNum(plan.actual_stock_hrs),
+        plannedPick: existing.plannedPick + toNum(plan.planned_pick_hrs),
+        actualPick: existing.actualPick + toNum(plan.actual_pick_hrs),
       });
 
-      setOperators(productivityRows);
-
-      // Select first operator with data by default
-      const firstWithData = productivityRows.find(
-        (op) => op.totalPlannedHrs > 0 || op.totalActualHrs > 0,
-      );
-      if (firstWithData) {
-        setSelectedOperatorId(firstWithData.operatorId);
-      } else if (productivityRows.length > 0) {
-        setSelectedOperatorId(productivityRows[0]?.operatorId ?? null);
+      // Daily data
+      if (!dailyMap[plan.operator_id]) {
+        dailyMap[plan.operator_id] = DAY_LABELS.map((label, i) => ({
+          dayLabel: label,
+          dayOfWeek: i,
+          plannedHrs: 0,
+          actualHrs: 0,
+        }));
       }
+      const dayIndex = plan.day_of_week;
+      if (dayIndex >= 0 && dayIndex < DAY_LABELS.length) {
+        const dayPlanned =
+          toNum(plan.planned_driving_hrs) +
+          toNum(plan.planned_warehouse_hrs) +
+          toNum(plan.planned_load_van_hrs) +
+          toNum(plan.planned_stock_hrs) +
+          toNum(plan.planned_pick_hrs);
+        const dayActual =
+          toNum(plan.actual_driving_hrs) +
+          toNum(plan.actual_warehouse_hrs) +
+          toNum(plan.actual_load_van_hrs) +
+          toNum(plan.actual_stock_hrs) +
+          toNum(plan.actual_pick_hrs);
 
-      setLoading(false);
+        const dayEntry = dailyMap[plan.operator_id]?.[dayIndex];
+        if (dayEntry) {
+          dailyMap[plan.operator_id] = dailyMap[plan.operator_id]!.map(
+            (d, i) =>
+              i === dayIndex
+                ? {
+                    ...d,
+                    plannedHrs: d.plannedHrs + dayPlanned,
+                    actualHrs: d.actualHrs + dayActual,
+                  }
+                : d,
+          );
+        }
+      }
     }
 
-    fetchData();
-  }, [supabase, teamId]);
+    const productivityRows: OperatorProductivity[] = employeesList.map(
+      (emp) => {
+        const agg = operatorMap.get(emp.id);
+        const totalPlanned = agg
+          ? agg.plannedDriving +
+            agg.plannedWarehouse +
+            agg.plannedLoadVan +
+            agg.plannedStock +
+            agg.plannedPick
+          : 0;
+        const totalActual = agg
+          ? agg.actualDriving +
+            agg.actualWarehouse +
+            agg.actualLoadVan +
+            agg.actualStock +
+            agg.actualPick
+          : 0;
+        const hoursVariance = totalActual - totalPlanned;
+        const efficiencyScore =
+          totalPlanned > 0
+            ? Math.round((totalActual / totalPlanned) * 100)
+            : 0;
 
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center py-20">
-        <Loader2 size={24} className="animate-spin text-[#999]" />
-      </div>
+        return {
+          operatorId: emp.id,
+          name: emp.name,
+          role: emp.role ?? "Route Operator",
+          plannedStops: agg?.plannedStops ?? 0,
+          actualStops: agg?.actualStops ?? 0,
+          stopsVariance: (agg?.actualStops ?? 0) - (agg?.plannedStops ?? 0),
+          plannedDrivingHrs: agg?.plannedDriving ?? 0,
+          actualDrivingHrs: agg?.actualDriving ?? 0,
+          plannedWarehouseHrs: agg?.plannedWarehouse ?? 0,
+          actualWarehouseHrs: agg?.actualWarehouse ?? 0,
+          plannedLoadVanHrs: agg?.plannedLoadVan ?? 0,
+          actualLoadVanHrs: agg?.actualLoadVan ?? 0,
+          plannedStockHrs: agg?.plannedStock ?? 0,
+          actualStockHrs: agg?.actualStock ?? 0,
+          plannedPickHrs: agg?.plannedPick ?? 0,
+          actualPickHrs: agg?.actualPick ?? 0,
+          totalPlannedHrs: totalPlanned,
+          totalActualHrs: totalActual,
+          hoursVariance,
+          efficiencyScore,
+        };
+      },
     );
-  }
 
-  if (!loading && operators.length === 0) {
+    productivityRows.sort((a, b) => {
+      if (a.totalPlannedHrs === 0 && b.totalPlannedHrs > 0) return 1;
+      if (b.totalPlannedHrs === 0 && a.totalPlannedHrs > 0) return -1;
+      return b.efficiencyScore - a.efficiencyScore;
+    });
+
+    return { operators: productivityRows, dailyData: dailyMap, weeklyPlans: plans };
+  }, [serverData]);
+
+  const [selectedOperatorId, setSelectedOperatorId] = useState<string | null>(
+    () => {
+      const firstWithData = operators.find(
+        (op) => op.totalPlannedHrs > 0 || op.totalActualHrs > 0,
+      );
+      return firstWithData?.operatorId ?? operators[0]?.operatorId ?? null;
+    },
+  );
+
+  if (operators.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center h-[300px] border border-border rounded-lg">
         <Activity size={32} className="text-[#878787] mb-4" />

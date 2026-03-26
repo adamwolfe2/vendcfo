@@ -1,6 +1,8 @@
 import { SkusPage } from "@/components/operations/skus-page";
 import { getServerCaller } from "@/trpc/server";
-import { createClient } from "@vendcfo/supabase/server";
+import { db } from "@vendcfo/db/client";
+import { skus } from "@vendcfo/db/schema/vending";
+import { eq } from "drizzle-orm";
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 
@@ -23,16 +25,14 @@ export default async function Page() {
   let initialData: any[] = [];
 
   try {
-    const supabase = await createClient();
-    const { data } = await supabase
-      .from("skus")
-      .select("*")
-      .eq("business_id", teamId)
-      .order("name", { ascending: true });
-    initialData = data || [];
+    initialData = await db
+      .select()
+      .from(skus)
+      .where(eq(skus.business_id, teamId!))
+      .orderBy(skus.name);
   } catch {
-    // Table may not exist yet — render empty
+    // Table may not exist yet -- render empty
   }
 
-  return <SkusPage initialData={initialData} teamId={teamId} />;
+  return <SkusPage initialData={initialData} teamId={teamId!} />;
 }

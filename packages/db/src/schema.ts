@@ -3999,3 +3999,20 @@ export const insightUserStatusRelations = relations(
     }),
   }),
 );
+
+// Re-export vending tables so Drizzle schema object includes them
+export {
+  routes as vendingRoutes,
+  locations as vendingLocations,
+  machines as vendingMachines,
+  skus as vendingSkus,
+  financing as vendingFinancing,
+  serviceSchedule as vendingServiceSchedule,
+  operatorWeeklyPlan as vendingOperatorWeeklyPlan,
+  operatorRates as vendingOperatorRates,
+  serviceLogs as vendingServiceLogs,
+  employees as vendingEmployees,
+  compensationPlans as vendingCompensationPlans,
+  revenueRecords as vendingRevenueRecords,
+  capacityAlerts as vendingCapacityAlerts,
+} from "./schema/vending";

@@ -1,9 +1,8 @@
 "use client";
 
 import { AskRouteCFO } from "@/components/ask-route-cfo";
-import { createClient } from "@vendcfo/supabase/client";
-import { Loader2, Users } from "lucide-react";
-import { useEffect, useState } from "react";
+import { Users } from "lucide-react";
+import { useMemo } from "react";
 import {
   CapacityAlertCards,
   HiringRecommendations,
@@ -79,6 +78,14 @@ interface HiringRecommendation {
   urgency: "low" | "medium" | "high";
 }
 
+interface ServerData {
+  employees: any[];
+  weeklyPlans: any[];
+  schedules: any[];
+  locations: any[];
+  routes: any[];
+}
+
 // ---------------------------------------------------------------------------
 // Helpers
 // ---------------------------------------------------------------------------
@@ -87,95 +94,37 @@ function toNum(val: string | null | undefined): number {
   return Number(val) || 0;
 }
 
-function getCurrentWeekStart(): string {
-  const now = new Date();
-  const day = now.getDay();
-  const diff = day === 0 ? -6 : 1 - day; // Monday
-  const monday = new Date(now);
-  monday.setDate(now.getDate() + diff);
-  return monday.toISOString().split("T")[0] ?? "";
-}
-
 // ---------------------------------------------------------------------------
 // Component
 // ---------------------------------------------------------------------------
 
-export function CapacityDashboard({ teamId }: { teamId: string }) {
-  const supabase = createClient();
-  const [loading, setLoading] = useState(true);
-  const [employeeCapacities, setEmployeeCapacities] = useState<
-    EmployeeCapacity[]
-  >([]);
-  const [alerts, setAlerts] = useState<CapacityAlert[]>([]);
-  const [recommendations, setRecommendations] = useState<
-    HiringRecommendation[]
-  >([]);
-  const [summaryStats, setSummaryStats] = useState({
-    totalEmployees: 0,
-    avgUtilization: 0,
-    overCapacity: 0,
-  });
+export function CapacityDashboard({
+  teamId,
+  serverData,
+}: {
+  teamId: string;
+  serverData: ServerData;
+}) {
+  const { employeeCapacities, alerts, recommendations, summaryStats } =
+    useMemo(() => {
+      const employeesList = (serverData.employees ?? []) as EmployeeRow[];
+      const weeklyPlans = (serverData.weeklyPlans ?? []) as WeeklyPlanRow[];
+      const schedules = (serverData.schedules ?? []) as ServiceScheduleRow[];
+      const locationsList = (serverData.locations ?? []) as LocationRow[];
+      const routesList = (serverData.routes ?? []) as RouteRow[];
 
-  useEffect(() => {
-    async function fetchData() {
-      setLoading(true);
-
-      const weekStart = getCurrentWeekStart();
-
-      // Cast .from() for custom vending tables not in generated Supabase types
-      const sb = supabase as any;
-
-      const [employeesRes, weeklyPlanRes, scheduleRes, locationsRes, routesRes] =
-        await Promise.all([
-          sb
-            .from("employees")
-            .select("id, name, role, employment_type, max_weekly_hours, hourly_rate, is_active")
-            .eq("business_id", teamId)
-            .eq("is_active", true),
-          sb
-            .from("operator_weekly_plan")
-            .select(
-              "operator_id, planned_stops, planned_driving_hrs, planned_warehouse_hrs, planned_load_van_hrs, planned_stock_hrs, planned_pick_hrs",
-            )
-            .eq("business_id", teamId)
-            .eq("week_start", weekStart),
-          sb
-            .from("service_schedule")
-            .select("location_id, day_of_week, action")
-            .eq("business_id", teamId),
-          sb
-            .from("locations")
-            .select("id, route_id")
-            .eq("business_id", teamId),
-          sb
-            .from("routes")
-            .select("id, operator_id")
-            .eq("business_id", teamId)
-            .eq("is_active", true),
-        ]);
-
-      const employeesList = (employeesRes.data ?? []) as EmployeeRow[];
-      const weeklyPlans = (weeklyPlanRes.data ?? []) as WeeklyPlanRow[];
-      const schedules = (scheduleRes.data ?? []) as ServiceScheduleRow[];
-      const locationsList = (locationsRes.data ?? []) as LocationRow[];
-      const routesList = (routesRes.data ?? []) as RouteRow[];
-
-      // Map operator_id -> user_id from routes, then from routes to locations
-      // to figure out stops per operator
       const routeOperatorMap = new Map(
         routesList
           .filter((r) => r.operator_id)
           .map((r) => [r.id, r.operator_id!]),
       );
 
-      // Map location -> route -> operator
       const locationRouteMap = new Map(
         locationsList
           .filter((l) => l.route_id)
           .map((l) => [l.id, l.route_id!]),
       );
 
-      // Count weekly stops per operator from service_schedule
       const operatorStopsMap = new Map<string, number>();
       for (const sched of schedules) {
         if (sched.action === "nothing") continue;
@@ -187,7 +136,6 @@ export function CapacityDashboard({ teamId }: { teamId: string }) {
         operatorStopsMap.set(operatorId, current + 1);
       }
 
-      // Aggregate weekly plan hours per employee
       const planHoursMap = new Map<
         string,
         {
@@ -219,15 +167,12 @@ export function CapacityDashboard({ teamId }: { teamId: string }) {
         });
       }
 
-      // Build employee capacities
       const capacities: EmployeeCapacity[] = employeesList.map((emp) => {
         const maxHours = toNum(emp.max_weekly_hours);
         const planHours = planHoursMap.get(emp.id);
         const scheduleStops = operatorStopsMap.get(emp.id) ?? 0;
 
-        // Use planned hours if available, otherwise estimate from schedule
-        const avgTaskDuration = 1.5; // hours per stop (stock + pick + misc)
-        const avgDrivingPerStop = 0.5; // driving time per stop
+        const avgDrivingPerStop = 0.5;
 
         const driving = planHours?.driving ?? scheduleStops * avgDrivingPerStop;
         const warehouse = planHours?.warehouse ?? 0;
@@ -236,7 +181,8 @@ export function CapacityDashboard({ teamId }: { teamId: string }) {
         const pick = planHours?.pick ?? scheduleStops * 0.5;
         const totalPlanned = driving + warehouse + loadVan + stock + pick;
 
-        const utilization = maxHours > 0 ? (totalPlanned / maxHours) * 100 : 0;
+        const utilization =
+          maxHours > 0 ? (totalPlanned / maxHours) * 100 : 0;
         const stops = planHours?.stops ?? scheduleStops;
 
         return {
@@ -256,9 +202,7 @@ export function CapacityDashboard({ teamId }: { teamId: string }) {
         };
       });
 
-      // Sort by utilization descending
       capacities.sort((a, b) => b.utilization - a.utilization);
-      setEmployeeCapacities(capacities);
 
       // Generate alerts
       const newAlerts: CapacityAlert[] = [];
@@ -286,7 +230,6 @@ export function CapacityDashboard({ teamId }: { teamId: string }) {
           });
         }
       }
-      setAlerts(newAlerts);
 
       // Generate hiring recommendations
       const newRecs: HiringRecommendation[] = [];
@@ -307,12 +250,9 @@ export function CapacityDashboard({ teamId }: { teamId: string }) {
       }
 
       if (avgUtil > 75 && capacities.length > 0) {
-        const avgStopsPerEmployee =
-          capacities.reduce((s, c) => s + c.assignedStopsPerWeek, 0) /
-          capacities.length;
         const slotsBeforeOverload = capacities.reduce((s, c) => {
           const remainingHours = c.maxWeeklyHours - c.totalPlannedHours;
-          const stopsFromRemaining = Math.floor(remainingHours / 2); // ~2h per stop
+          const stopsFromRemaining = Math.floor(remainingHours / 2);
           return s + Math.max(0, stopsFromRemaining);
         }, 0);
 
@@ -330,28 +270,17 @@ export function CapacityDashboard({ teamId }: { teamId: string }) {
         });
       }
 
-      setRecommendations(newRecs);
-
-      // Summary stats
-      setSummaryStats({
-        totalEmployees: capacities.length,
-        avgUtilization: avgUtil,
-        overCapacity: overCapacityCount,
-      });
-
-      setLoading(false);
-    }
-
-    fetchData();
-  }, [supabase, teamId]);
-
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center py-20">
-        <Loader2 size={24} className="animate-spin text-[#999]" />
-      </div>
-    );
-  }
+      return {
+        employeeCapacities: capacities,
+        alerts: newAlerts,
+        recommendations: newRecs,
+        summaryStats: {
+          totalEmployees: capacities.length,
+          avgUtilization: avgUtil,
+          overCapacity: overCapacityCount,
+        },
+      };
+    }, [serverData]);
 
   return (
     <div className="mx-auto w-full max-w-7xl px-4 py-6 sm:p-8">
