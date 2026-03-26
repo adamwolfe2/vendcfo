@@ -386,7 +386,7 @@ export function SkusPage({
   const handleDelete = async () => {
     if (!deleteId) return;
     setDeleting(true);
-    const { error } = await supabase.from("skus").delete().eq("id", deleteId);
+    const { error } = await supabase.from("skus").delete().eq("id", deleteId).eq("business_id", teamId);
     if (!error) {
       setSkus((prev) => prev.filter((s) => s.id !== deleteId));
     }

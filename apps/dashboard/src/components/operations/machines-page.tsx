@@ -408,7 +408,8 @@ export function MachinesPage({
     const { error } = await supabase
       .from("machines")
       .delete()
-      .eq("id", deleteId);
+      .eq("id", deleteId)
+      .eq("business_id", teamId);
     if (!error) {
       setMachines((prev) => prev.filter((m) => m.id !== deleteId));
     }

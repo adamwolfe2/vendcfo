@@ -226,20 +226,17 @@ export const documentsRouter = createTRPCRouter({
   signedUrls: protectedProcedure
     .input(signedUrlsSchema)
     .mutation(async ({ input, ctx: { supabase } }) => {
-      const signedUrls = [];
+      const results = await Promise.all(
+        input.map(async (filePath) => {
+          const { data } = await signedUrl(supabase, {
+            bucket: "vault",
+            path: filePath,
+            expireIn: 60, // 1 Minute
+          });
+          return data?.signedUrl ?? null;
+        }),
+      );
 
-      for (const filePath of input) {
-        const { data } = await signedUrl(supabase, {
-          bucket: "vault",
-          path: filePath,
-          expireIn: 60, // 1 Minute
-        });
-
-        if (data?.signedUrl) {
-          signedUrls.push(data.signedUrl);
-        }
-      }
-
-      return signedUrls ?? [];
+      return results.filter(Boolean) as string[];
     }),
 });

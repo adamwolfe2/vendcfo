@@ -479,9 +479,10 @@ export const invoiceRouter = createTRPCRouter({
           );
 
           if (!scheduledRun?.id) {
-            throw new Error(
-              "Failed to create scheduled job - no job ID returned",
-            );
+            throw new TRPCError({
+              code: "INTERNAL_SERVER_ERROR",
+              message: "Failed to create scheduled job - no job ID returned",
+            });
           }
 
           scheduledJobId = scheduledRun.id;

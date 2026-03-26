@@ -1,8 +1,18 @@
+import { createClient } from "@vendcfo/supabase/server";
 import { NextResponse } from "next/server";
 
 export const dynamic = "force-dynamic";
 
 export async function GET() {
+  const supabase = await createClient();
+  const {
+    data: { user: authUser },
+  } = await supabase.auth.getUser();
+
+  if (!authUser) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
   if (
     !process.env.FORTNOX_CLIENT_ID ||
     !process.env.FORTNOX_CLIENT_SECRET

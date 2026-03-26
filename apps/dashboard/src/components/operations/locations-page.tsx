@@ -436,7 +436,8 @@ export function LocationsPage({
     const { error } = await supabase
       .from("locations")
       .delete()
-      .eq("id", deleteId);
+      .eq("id", deleteId)
+      .eq("business_id", teamId);
     if (!error) {
       setLocations((prev) => prev.filter((l) => l.id !== deleteId));
     }
