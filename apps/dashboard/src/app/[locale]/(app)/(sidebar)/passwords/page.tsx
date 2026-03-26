@@ -8,12 +8,17 @@ export const metadata: Metadata = {
 };
 
 export default async function Page() {
-  const caller = await getServerCaller();
-  const user = await caller.user.me();
-
-  if (!user?.teamId) {
-    redirect("/teams");
+  let teamId: string | null = null;
+  let userId: string | null = null;
+  try {
+    const caller = await getServerCaller();
+    const user = await caller.user.me();
+    if (!user?.teamId) redirect("/teams");
+    teamId = user.teamId;
+    userId = user.id;
+  } catch {
+    redirect("/login");
   }
 
-  return <PasswordVault teamId={user.teamId} userId={user.id} />;
+  return <PasswordVault teamId={teamId} userId={userId!} />;
 }

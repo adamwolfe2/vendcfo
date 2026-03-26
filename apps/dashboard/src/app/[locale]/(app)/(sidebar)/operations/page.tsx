@@ -20,36 +20,46 @@ export default async function Page() {
     redirect("/login");
   }
 
-  const supabase = await createClient();
-
-  // Fetch stats in parallel
-  const [routesRes, locationsRes, machinesRes, productsRes] =
-    await Promise.all([
-      supabase
-        .from("routes")
-        .select("id", { count: "exact", head: true })
-        .eq("business_id", teamId)
-        .eq("is_active", true),
-      supabase
-        .from("locations")
-        .select("id", { count: "exact", head: true })
-        .eq("business_id", teamId),
-      supabase
-        .from("machines")
-        .select("id", { count: "exact", head: true })
-        .eq("business_id", teamId),
-      supabase
-        .from("skus")
-        .select("id", { count: "exact", head: true })
-        .eq("business_id", teamId),
-    ]);
-
-  const stats = {
-    routes: routesRes.count ?? 0,
-    locations: locationsRes.count ?? 0,
-    machines: machinesRes.count ?? 0,
-    products: productsRes.count ?? 0,
+  let stats = {
+    routes: 0,
+    locations: 0,
+    machines: 0,
+    products: 0,
   };
+
+  try {
+    const supabase = await createClient();
+
+    const [routesRes, locationsRes, machinesRes, productsRes] =
+      await Promise.all([
+        supabase
+          .from("routes")
+          .select("id", { count: "exact", head: true })
+          .eq("business_id", teamId)
+          .eq("is_active", true),
+        supabase
+          .from("locations")
+          .select("id", { count: "exact", head: true })
+          .eq("business_id", teamId),
+        supabase
+          .from("machines")
+          .select("id", { count: "exact", head: true })
+          .eq("business_id", teamId),
+        supabase
+          .from("skus")
+          .select("id", { count: "exact", head: true })
+          .eq("business_id", teamId),
+      ]);
+
+    stats = {
+      routes: routesRes.count ?? 0,
+      locations: locationsRes.count ?? 0,
+      machines: machinesRes.count ?? 0,
+      products: productsRes.count ?? 0,
+    };
+  } catch {
+    // Tables may not exist yet — render with zero counts
+  }
 
   return <OperationsDashboard stats={stats} />;
 }

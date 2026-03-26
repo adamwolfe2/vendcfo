@@ -1,0 +1,33 @@
+"use client";
+
+import { Button } from "@vendcfo/ui/button";
+
+export default function ErrorPage({
+  error,
+  reset,
+}: {
+  error: Error & { digest?: string };
+  reset: () => void;
+}) {
+  return (
+    <div className="h-[calc(100vh-200px)] w-full flex items-center justify-center">
+      <div className="max-w-md w-full text-center px-4">
+        <h2 className="font-medium mb-4">Unable to load this page</h2>
+        <p className="text-sm text-[#878787] mb-6">
+          Something went wrong while loading this page. Please check your
+          connection and try again.
+        </p>
+
+        {error.digest && (
+          <p className="text-xs text-[#4a4a4a] mt-4">
+            Error ID: {error.digest}
+          </p>
+        )}
+
+        <Button onClick={() => reset()} variant="outline" className="mt-6">
+          Try again
+        </Button>
+      </div>
+    </div>
+  );
+}

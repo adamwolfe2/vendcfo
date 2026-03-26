@@ -9,36 +9,48 @@ export const metadata: Metadata = {
 };
 
 export default async function Page() {
-  const caller = await getServerCaller();
-  const user = await caller.user.me();
-
-  if (!user?.teamId) {
-    redirect("/teams");
+  let teamId: string | null = null;
+  try {
+    const caller = await getServerCaller();
+    const user = await caller.user.me();
+    if (!user?.teamId) redirect("/teams");
+    teamId = user.teamId;
+  } catch {
+    redirect("/login");
   }
 
-  const supabase = await createClient();
+  let locations: any[] = [];
+  let routes: any[] = [];
 
-  // Fetch locations with route info
-  const { data: locations } = await supabase
-    .from("locations")
-    .select("id, name, address, route_id, is_active")
-    .eq("business_id", user.teamId)
-    .eq("is_active", true)
-    .order("name", { ascending: true });
+  try {
+    const supabase = await createClient();
 
-  // Fetch routes
-  const { data: routes } = await supabase
-    .from("routes")
-    .select("id, name")
-    .eq("business_id", user.teamId)
-    .eq("is_active", true)
-    .order("name", { ascending: true });
+    const [locationsRes, routesRes] = await Promise.all([
+      supabase
+        .from("locations")
+        .select("id, name, address, route_id, is_active")
+        .eq("business_id", teamId)
+        .eq("is_active", true)
+        .order("name", { ascending: true }),
+      supabase
+        .from("routes")
+        .select("id, name")
+        .eq("business_id", teamId)
+        .eq("is_active", true)
+        .order("name", { ascending: true }),
+    ]);
+
+    locations = locationsRes.data ?? [];
+    routes = routesRes.data ?? [];
+  } catch {
+    // Tables may not exist yet — render empty
+  }
 
   return (
     <RouteLogistics
-      locations={locations ?? []}
-      routes={routes ?? []}
-      teamId={user.teamId}
+      locations={locations}
+      routes={routes}
+      teamId={teamId}
     />
   );
 }

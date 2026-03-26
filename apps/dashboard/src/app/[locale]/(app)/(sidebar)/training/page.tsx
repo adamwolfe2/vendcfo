@@ -9,23 +9,32 @@ export const metadata: Metadata = {
 };
 
 export default async function Page() {
-  const caller = await getServerCaller();
-  const user = await caller.user.me();
-
-  if (!user?.teamId) {
-    redirect("/teams");
+  let teamId: string | null = null;
+  try {
+    const caller = await getServerCaller();
+    const user = await caller.user.me();
+    if (!user?.teamId) redirect("/teams");
+    teamId = user.teamId;
+  } catch {
+    redirect("/login");
   }
 
-  // Fetch public training videos server-side
-  const supabase = await createClient();
-  const { data: publicVideos } = await supabase
-    .from("training_videos")
-    .select("*")
-    .eq("is_public", true)
-    .order("sort_order", { ascending: true })
-    .order("created_at", { ascending: false });
+  let publicVideos: any[] = [];
+
+  try {
+    const supabase = await createClient();
+    const { data } = await supabase
+      .from("training_videos")
+      .select("*")
+      .eq("is_public", true)
+      .order("sort_order", { ascending: true })
+      .order("created_at", { ascending: false });
+    publicVideos = data ?? [];
+  } catch {
+    // Table may not exist yet — render empty
+  }
 
   return (
-    <TrainingPage publicVideos={publicVideos ?? []} teamId={user.teamId} />
+    <TrainingPage publicVideos={publicVideos} teamId={teamId} />
   );
 }

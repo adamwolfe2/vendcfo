@@ -9,12 +9,15 @@ export const metadata: Metadata = {
 };
 
 export default async function AlertsPage() {
-  const caller = await getServerCaller();
-  const user = await caller.user.me();
-
-  if (!user?.teamId) {
-    redirect("/teams");
+  let teamId: string | null = null;
+  try {
+    const caller = await getServerCaller();
+    const user = await caller.user.me();
+    if (!user?.teamId) redirect("/teams");
+    teamId = user.teamId;
+  } catch {
+    redirect("/login");
   }
 
-  return <AlertsPageClient teamId={user.teamId} />;
+  return <AlertsPageClient teamId={teamId} />;
 }

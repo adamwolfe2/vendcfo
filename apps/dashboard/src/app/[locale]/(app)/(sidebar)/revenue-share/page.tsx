@@ -8,12 +8,15 @@ export const metadata: Metadata = {
 };
 
 export default async function Page() {
-  const caller = await getServerCaller();
-  const user = await caller.user.me();
-
-  if (!user?.teamId) {
-    redirect("/teams");
+  let teamId: string | null = null;
+  try {
+    const caller = await getServerCaller();
+    const user = await caller.user.me();
+    if (!user?.teamId) redirect("/teams");
+    teamId = user.teamId;
+  } catch {
+    redirect("/login");
   }
 
-  return <RevenueSharePage teamId={user.teamId} />;
+  return <RevenueSharePage teamId={teamId} />;
 }

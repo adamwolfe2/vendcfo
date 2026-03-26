@@ -20,12 +20,19 @@ export default async function Page() {
     redirect("/login");
   }
 
-  const supabase = await createClient();
-  const { data } = await supabase
-    .from("skus")
-    .select("*")
-    .eq("business_id", teamId)
-    .order("name", { ascending: true });
+  let initialData: any[] = [];
 
-  return <SkusPage initialData={data || []} teamId={teamId} />;
+  try {
+    const supabase = await createClient();
+    const { data } = await supabase
+      .from("skus")
+      .select("*")
+      .eq("business_id", teamId)
+      .order("name", { ascending: true });
+    initialData = data || [];
+  } catch {
+    // Table may not exist yet — render empty
+  }
+
+  return <SkusPage initialData={initialData} teamId={teamId} />;
 }
