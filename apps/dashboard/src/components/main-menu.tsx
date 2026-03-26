@@ -7,6 +7,7 @@ import {
   BarChart3,
   CalendarDays,
   ClipboardCheck,
+  DollarSign,
   FileBarChart,
   GraduationCap,
   KeyRound,
@@ -40,6 +41,7 @@ const icons = {
   "/scenarios": () => <Icons.Tracker size={20} />,
   "/alerts": () => <Icons.Transactions size={20} />,
   "/analytics/location-pnl": () => <BarChart3 size={20} strokeWidth={1.5} />,
+  "/revenue-share": () => <DollarSign size={20} strokeWidth={1.5} />,
   "/import": () => <Icons.Files size={20} />,
   "/logistics": () => <CalendarDays size={20} strokeWidth={1.5} />,
   "/employees": () => <UserCheck size={20} strokeWidth={1.5} />,
@@ -71,6 +73,7 @@ const items = [
       { path: "/locations", name: "Locations" },
       { path: "/machines", name: "Machines" },
       { path: "/skus", name: "Products & SKUs" },
+      { path: "/revenue-share", name: "Revenue Share" },
       { path: "/import", name: "Import Data" },
     ],
   },
@@ -298,6 +301,7 @@ export function MainMenu({ onSelect, isExpanded = false }: Props) {
     "/locations",
     "/machines",
     "/skus",
+    "/revenue-share",
     "/import",
   ];
   const vendingAnalyticsPaths = [

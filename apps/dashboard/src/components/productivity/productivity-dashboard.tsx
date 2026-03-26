@@ -311,6 +311,18 @@ export function ProductivityDashboard({ teamId }: { teamId: string }) {
     );
   }
 
+  if (!loading && operators.length === 0) {
+    return (
+      <div className="flex flex-col items-center justify-center h-[300px] border border-border rounded-lg">
+        <Activity size={32} className="text-[#878787] mb-4" />
+        <p className="font-medium mb-1">No operator data found for this week.</p>
+        <p className="text-sm text-[#878787]">
+          Assign operators to routes to see productivity tracking.
+        </p>
+      </div>
+    );
+  }
+
   const selectedOperator = operators.find(
     (op) => op.operatorId === selectedOperatorId,
   );
