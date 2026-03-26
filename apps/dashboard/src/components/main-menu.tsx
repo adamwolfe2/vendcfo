@@ -12,6 +12,7 @@ import {
   KeyRound,
   LayoutGrid,
   Route,
+  Smartphone,
   UserCheck,
   Users,
   UsersRound,
@@ -48,6 +49,7 @@ const icons = {
   "/finance": () => <BarChart3 size={20} strokeWidth={1.5} />,
   "/capacity": () => <UsersRound size={20} strokeWidth={1.5} />,
   "/productivity": () => <ClipboardCheck size={20} strokeWidth={1.5} />,
+  "/field": () => <Smartphone size={20} strokeWidth={1.5} />,
 } as const;
 
 const items = [
@@ -87,6 +89,8 @@ const items = [
       { path: "/alerts", name: "Alerts" },
     ],
   },
+  // ─── VendCFO Field ───
+  { path: "/field", name: "Field View" },
   // ─── VendCFO Workforce ───
   { path: "/employees", name: "Workforce" },
   // ─── Training & Security ───

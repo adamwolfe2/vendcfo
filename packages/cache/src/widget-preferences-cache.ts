@@ -38,6 +38,10 @@ export const WIDGET_TYPES = [
   "inbox",
   "vault",
   "tax-summary",
+
+  // Vending operations
+  "vending-revenue",
+  "route-performance",
 ] as const;
 
 export type WidgetType = (typeof WIDGET_TYPES)[number];

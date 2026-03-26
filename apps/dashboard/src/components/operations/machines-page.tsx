@@ -1,6 +1,8 @@
 "use client";
 
 import { AskRouteCFO } from "@/components/ask-route-cfo";
+import { CsvExportButton } from "@/components/csv-export-button";
+import { exportToCsv } from "@/utils/csv-export";
 import { createClient } from "@vendcfo/supabase/client";
 import { Pencil, Plus, Server, Trash2, X } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
@@ -430,6 +432,34 @@ export function MachinesPage({
         </div>
         <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 w-full sm:w-auto">
           <AskRouteCFO prompt="Which machines are underperforming vs benchmarks? Any I should consider relocating?" />
+          <CsvExportButton
+            onClick={() => {
+              if (machines.length === 0) return;
+              exportToCsv(
+                `machines-${new Date().toISOString().slice(0, 10)}`,
+                machines.map((mac) => ({
+                  serial_number: mac.serial_number,
+                  make_model: mac.make_model ?? "",
+                  machine_type: mac.machine_type ?? "",
+                  location: mac.locations?.name ?? "Unassigned",
+                  capacity_slots: mac.capacity_slots ?? "",
+                  purchase_price: mac.purchase_price ?? "",
+                  date_acquired: mac.date_acquired ?? "",
+                  status: mac.is_active ? "Active" : "Inactive",
+                })),
+                [
+                  { key: "serial_number", header: "Serial Number" },
+                  { key: "make_model", header: "Make / Model" },
+                  { key: "machine_type", header: "Type" },
+                  { key: "location", header: "Location" },
+                  { key: "capacity_slots", header: "Capacity" },
+                  { key: "purchase_price", header: "Purchase Price" },
+                  { key: "date_acquired", header: "Date Acquired" },
+                  { key: "status", header: "Status" },
+                ],
+              );
+            }}
+          />
           <button
             type="button"
             onClick={() => setShowAddModal(true)}

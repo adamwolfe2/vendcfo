@@ -1,6 +1,8 @@
 "use client";
 
 import { AskRouteCFO } from "@/components/ask-route-cfo";
+import { CsvExportButton } from "@/components/csv-export-button";
+import { exportToCsv } from "@/utils/csv-export";
 import { createClient } from "@vendcfo/supabase/client";
 import { Building2, Pencil, Plus, Server, Trash2, X } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
@@ -459,6 +461,38 @@ export function LocationsPage({
         </div>
         <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 w-full sm:w-auto">
           <AskRouteCFO prompt="Compare my locations by revenue and commission rate. Which ones should I renegotiate?" />
+          <CsvExportButton
+            onClick={() => {
+              if (locations.length === 0) return;
+              exportToCsv(
+                `locations-${new Date().toISOString().slice(0, 10)}`,
+                locations.map((loc) => ({
+                  name: loc.name,
+                  address: loc.address ?? "",
+                  route: loc.routes?.name ?? "Unassigned",
+                  machines: loc.machines?.[0]?.count ?? 0,
+                  rev_share_pct: loc.rev_share_pct ?? "",
+                  monthly_rent: loc.monthly_rent ?? "",
+                  type: loc.location_type ?? "",
+                  status: loc.is_active ? "Active" : "Inactive",
+                  contact_name: loc.contact_name ?? "",
+                  contact_email: loc.contact_email ?? "",
+                })),
+                [
+                  { key: "name", header: "Location" },
+                  { key: "address", header: "Address" },
+                  { key: "route", header: "Route" },
+                  { key: "machines", header: "Machines" },
+                  { key: "rev_share_pct", header: "Rev Share %" },
+                  { key: "monthly_rent", header: "Monthly Rent" },
+                  { key: "type", header: "Type" },
+                  { key: "status", header: "Status" },
+                  { key: "contact_name", header: "Contact Name" },
+                  { key: "contact_email", header: "Contact Email" },
+                ],
+              );
+            }}
+          />
           <button
             type="button"
             onClick={() => setShowAddModal(true)}

@@ -1,5 +1,6 @@
 import { AddTransactions } from "@/components/add-transactions";
 import { ErrorFallback } from "@/components/error-fallback";
+import { ExportTransactionsCsv } from "@/components/export-transactions-csv";
 import { ScrollableContent } from "@/components/scrollable-content";
 import { DataTable } from "@/components/tables/transactions/data-table";
 import { Loading } from "@/components/tables/transactions/loading";
@@ -121,6 +122,9 @@ export default async function Transactions(props: Props) {
             <TransactionsSearchFilter />
             <div className="flex items-center gap-4">
               <div className="hidden md:flex items-center gap-2">
+                <Suspense fallback={null}>
+                  <ExportTransactionsCsv />
+                </Suspense>
                 <TransactionsColumnVisibility />
                 <AddTransactions />
               </div>

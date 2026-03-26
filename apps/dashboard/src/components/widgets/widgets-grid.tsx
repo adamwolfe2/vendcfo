@@ -191,6 +191,20 @@ const VaultWidget = dynamic(
   () => import("./vault").then((mod) => ({ default: mod.VaultWidget })),
   { loading: () => <WidgetPlaceholder />, ssr: false },
 );
+const VendingRevenueWidget = dynamic(
+  () =>
+    import("./vending-revenue").then((mod) => ({
+      default: mod.VendingRevenueWidget,
+    })),
+  { loading: () => <WidgetPlaceholder />, ssr: false },
+);
+const RoutePerformanceWidget = dynamic(
+  () =>
+    import("./route-performance").then((mod) => ({
+      default: mod.RoutePerformanceWidget,
+    })),
+  { loading: () => <WidgetPlaceholder />, ssr: false },
+);
 
 type RouterOutputs = inferRouterOutputs<AppRouter>;
 type WidgetPreferences = RouterOutputs["widgets"]["getWidgetPreferences"];
@@ -267,6 +281,8 @@ const WIDGET_COMPONENTS: Record<WidgetType, React.ComponentType> = {
   "overdue-invoices-alert": OverdueInvoicesAlertWidget,
   "billable-hours": BillableHoursWidget,
   "customer-lifetime-value": CustomerLifetimeValueWidget,
+  "vending-revenue": VendingRevenueWidget,
+  "route-performance": RoutePerformanceWidget,
 };
 
 export function WidgetsGrid() {

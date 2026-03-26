@@ -1,4 +1,6 @@
+import { Suspense } from "react";
 import { CustomersColumnVisibility } from "./customers-column-visibility";
+import { ExportCustomersCsv } from "./export-customers-csv";
 import { OpenCustomerSheet } from "./open-customer-sheet";
 import { SearchField } from "./search-field";
 
@@ -8,6 +10,9 @@ export async function CustomersHeader() {
       <SearchField placeholder="Search customers" />
 
       <div className="flex items-center gap-2">
+        <Suspense fallback={null}>
+          <ExportCustomersCsv />
+        </Suspense>
         <CustomersColumnVisibility />
         <div className="hidden sm:block">
           <OpenCustomerSheet />
