@@ -28,14 +28,21 @@ export default async function Overview() {
   try {
     const caller = await getServerCaller();
 
-    widgetPreferences = await caller.widgets.getWidgetPreferences();
+    const [widgetResult, suggestedResult] = await Promise.allSettled([
+      caller.widgets.getWidgetPreferences(),
+      caller.suggestedActions.list({ limit: 6 }),
+    ]);
+
+    widgetPreferences =
+      widgetResult.status === "fulfilled" ? widgetResult.value : null;
+    const suggestedActions =
+      suggestedResult.status === "fulfilled" ? suggestedResult.value : [];
 
     queryClient.setQueryData(
       trpc.widgets.getWidgetPreferences.queryOptions().queryKey,
       widgetPreferences,
     );
 
-    const suggestedActions = await caller.suggestedActions.list({ limit: 6 });
     queryClient.setQueryData(
       trpc.suggestedActions.list.queryOptions({ limit: 6 }).queryKey,
       suggestedActions,

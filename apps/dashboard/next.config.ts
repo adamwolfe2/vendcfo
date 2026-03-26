@@ -17,6 +17,7 @@ const config = {
     ],
   },
   images: {
+    formats: ["image/avif", "image/webp"],
     loader: "custom",
     loaderFile: "./image-loader.ts",
     qualities: [80, 100],
@@ -45,6 +46,15 @@ const config = {
   async headers() {
     return [
       {
+        source: "/:all*(svg|jpg|jpeg|png|webp|avif|woff|woff2|ttf|ico)",
+        headers: [
+          {
+            key: "Cache-Control",
+            value: "public, max-age=31536000, immutable",
+          },
+        ],
+      },
+      {
         source: "/((?!api/proxy).*)",
         headers: [
           {
@@ -66,6 +76,10 @@ const config = {
           {
             key: "Strict-Transport-Security",
             value: "max-age=63072000; includeSubDomains; preload",
+          },
+          {
+            key: "X-DNS-Prefetch-Control",
+            value: "on",
           },
           {
             key: "Content-Security-Policy",

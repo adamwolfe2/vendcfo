@@ -4,6 +4,8 @@ import "@vendcfo/ui/globals.css";
 import { DesktopHeader } from "@/components/desktop-header";
 import { isDesktopApp } from "@/utils/desktop";
 import { Provider as Analytics } from "@vendcfo/events/client";
+import { Analytics as VercelAnalytics } from "@vercel/analytics/react";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 import { Toaster } from "@vendcfo/ui/toaster";
 import type { Metadata } from "next";
 import { Hedvig_Letters_Sans, Hedvig_Letters_Serif } from "next/font/google";
@@ -90,6 +92,8 @@ export default async function Layout({
           </Providers>
           <Analytics />
         </NuqsAdapter>
+        <SpeedInsights />
+        <VercelAnalytics />
       </body>
     </html>
   );

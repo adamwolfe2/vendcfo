@@ -34,7 +34,7 @@ export async function middleware(request: NextRequest) {
   try {
     const { updateSession } = await import("@vendcfo/supabase/middleware");
 
-    const { response, user } = await updateSession(request, i18nResponse);
+    const { response, user, supabase } = await updateSession(request, i18nResponse);
 
     // Not authenticated — redirect to login (unless already on a public route)
     if (!user && !isPublicRoute) {
@@ -60,24 +60,9 @@ export async function middleware(request: NextRequest) {
         }
       }
 
-      // MFA check
-      const { createServerClient } = await import("@supabase/ssr");
-      const mfaSupabase = createServerClient(
-        process.env.NEXT_PUBLIC_SUPABASE_URL!,
-        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-        {
-          cookies: {
-            get(name: string) {
-              return request.cookies.get(name)?.value;
-            },
-            set() {},
-            remove() {},
-          },
-        },
-      );
-
+      // MFA check — reuse the Supabase client from updateSession
       const { data: mfaData } =
-        await mfaSupabase.auth.mfa.getAuthenticatorAssuranceLevel();
+        await supabase.auth.mfa.getAuthenticatorAssuranceLevel();
       if (
         mfaData &&
         mfaData.nextLevel === "aal2" &&

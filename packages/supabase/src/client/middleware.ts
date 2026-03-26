@@ -34,5 +34,5 @@ export async function updateSession(
     console.error(`[updateSession] getUser error: ${error.message}`);
   }
 
-  return { response, user };
+  return { response, user, supabase };
 }
