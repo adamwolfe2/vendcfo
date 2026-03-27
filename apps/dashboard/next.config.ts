@@ -54,8 +54,26 @@ const config = {
           },
         ],
       },
+      // Embed routes: allow framing from any origin
       {
-        source: "/((?!api/proxy).*)",
+        source: "/:locale/embed/:path*",
+        headers: [
+          {
+            key: "X-Frame-Options",
+            value: "ALLOWALL",
+          },
+          {
+            key: "Content-Security-Policy",
+            value: "frame-ancestors *;",
+          },
+          {
+            key: "X-Content-Type-Options",
+            value: "nosniff",
+          },
+        ],
+      },
+      {
+        source: "/((?!api/proxy|.*/embed/).*)",
         headers: [
           {
             key: "X-Frame-Options",

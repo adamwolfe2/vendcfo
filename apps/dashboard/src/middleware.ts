@@ -29,7 +29,8 @@ export async function middleware(request: NextRequest) {
     pathname.includes("/r/") ||
     pathname.includes("/verify") ||
     pathname.includes("/oauth-callback") ||
-    pathname.includes("/desktop/search");
+    pathname.includes("/desktop/search") ||
+    pathname.includes("/embed/");
 
   try {
     const { updateSession } = await import("@vendcfo/supabase/middleware");
