@@ -109,23 +109,21 @@ const config = {
   },
 };
 
-// Only apply Sentry configuration in production
-const isProduction = process.env.NODE_ENV === "production";
+// Only apply Sentry configuration when auth token is available
+const hasSentry = Boolean(
+  process.env.SENTRY_AUTH_TOKEN &&
+    process.env.SENTRY_ORG &&
+    process.env.SENTRY_PROJECT,
+);
 
-export default isProduction
+export default hasSentry
   ? withSentryConfig(config, {
       org: process.env.SENTRY_ORG,
       project: process.env.SENTRY_PROJECT,
       authToken: process.env.SENTRY_AUTH_TOKEN,
       telemetry: false,
-
-      // Only print logs for uploading source maps in CI
       silent: !process.env.CI,
-
-      // Upload source maps for better stack traces
       widenClientFileUpload: true,
-
-      // Tree-shake Sentry logger statements to reduce bundle size (Turbopack-compatible)
       bundleSizeOptimizations: {
         excludeDebugStatements: true,
         excludeReplayIframe: true,
