@@ -93,7 +93,7 @@ function MachineModal({
   onClose: () => void;
   onSaved: () => void;
 }) {
-  const supabase = createClient();
+  const supabase: any = createClient();
   const [serialNumber, setSerialNumber] = useState(entry?.serial_number ?? "");
   const [makeModel, setMakeModel] = useState(entry?.make_model ?? "");
   const [machineType, setMachineType] = useState(
@@ -374,7 +374,7 @@ export function MachinesPage({
   initialData: MachineRow[];
   teamId: string;
 }) {
-  const supabase = createClient();
+  const supabase: any = createClient();
   const [machines, setMachines] = useState<MachineRow[]>(initialData);
   const [locationOptions, setLocationOptions] = useState<LocationOption[]>([]);
   const [loading, setLoading] = useState(false);

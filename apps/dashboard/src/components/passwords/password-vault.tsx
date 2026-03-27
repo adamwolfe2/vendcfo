@@ -318,7 +318,7 @@ function PasswordModal({
   onClose: () => void;
   onSaved: () => void;
 }) {
-  const supabase = createClient();
+  const supabase: any = createClient();
   const [title, setTitle] = useState(entry?.title ?? "");
   const [username, setUsername] = useState(entry?.username ?? "");
   const [password, setPassword] = useState("");
@@ -641,7 +641,7 @@ export function PasswordVault({
   teamId: string;
   userId: string;
 }) {
-  const supabase = createClient();
+  const supabase: any = createClient();
   const [entries, setEntries] = useState<PasswordEntry[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");

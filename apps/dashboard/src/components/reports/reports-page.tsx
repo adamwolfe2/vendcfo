@@ -28,6 +28,8 @@ interface GeneratedReport {
   status: string;
   created_at: string;
   email_to: string | null;
+  email_subject: string | null;
+  email_body: string | null;
   email_sent_at: string | null;
   report_data: Record<string, unknown>;
 }
@@ -134,7 +136,7 @@ export function ReportsPage({
   const [downloadingId, setDownloadingId] = useState<string | null>(null);
 
   const refreshReports = useCallback(async () => {
-    const supabase = createClient();
+    const supabase: any = createClient();
     const { data } = await supabase
       .from("generated_reports")
       .select("*")
@@ -229,7 +231,7 @@ export function ReportsPage({
         userId={userId}
         locations={locations}
         locationGroups={locationGroups}
-        onComplete={handleReportGenerated}
+        onComplete={handleReportGenerated as any}
         onCancel={() => setShowWizard(false)}
       />
     );
@@ -341,8 +343,8 @@ export function ReportsPage({
 
           {/* Table Rows */}
           {reports.map((report) => {
-            const statusStyle = STATUS_STYLES[report.status] ??
-              STATUS_STYLES.draft;
+            const statusStyle = (STATUS_STYLES[report.status] ??
+              STATUS_STYLES.draft)!;
 
             return (
               <div

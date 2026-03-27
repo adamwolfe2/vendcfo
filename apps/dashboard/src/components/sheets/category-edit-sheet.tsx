@@ -41,8 +41,7 @@ export function CategoryEditSheet() {
             .getQueriesData({
               queryKey: trpc.transactionCategories.get.queryKey(),
             })
-            // @ts-expect-error
-            .flatMap(([, data]) => data?.pages ?? [])
+            .flatMap(([, data]) => (data as any)?.pages ?? [])
             .flatMap((page) => page.data ?? []);
 
           return pages.find((d) => d.id === categoryId);

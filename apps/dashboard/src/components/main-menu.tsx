@@ -25,7 +25,7 @@ import { ForesightLink } from "./foresight-link";
 
 const icons = {
   "/": () => <Icons.Overview size={20} />,
-  "/inbox": () => <Icons.Inbox size={20} />,
+  "/inbox": () => <Icons.Inbox width={20} height={20} />,
   "/tracker": () => <Icons.Tracker size={20} />,
   "/invoices": () => <Icons.Invoice size={20} />,
   "/transactions": () => <Icons.Transactions size={20} />,
@@ -54,7 +54,7 @@ const icons = {
   "/capacity": () => <UsersRound size={20} strokeWidth={1.5} />,
   "/productivity": () => <ClipboardCheck size={20} strokeWidth={1.5} />,
   "/field": () => <Smartphone size={20} strokeWidth={1.5} />,
-} as const;
+};
 
 const items = [
   // ─── Core Financial Features ───

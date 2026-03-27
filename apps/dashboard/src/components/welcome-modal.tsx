@@ -27,7 +27,7 @@ function useTeamId(): string | null {
   const [teamId, setTeamId] = useState<string | null>(null);
 
   useEffect(() => {
-    const supabase = createClient();
+    const supabase: any = createClient();
 
     async function resolve() {
       try {
@@ -58,7 +58,7 @@ function useTeamId(): string | null {
 }
 
 async function isNewUser(teamId: string): Promise<boolean> {
-  const supabase = createClient();
+  const supabase: any = createClient();
   const sb = supabase as any;
 
   const results = await Promise.allSettled([

@@ -62,8 +62,7 @@ export function InboxBulkActions() {
 
         // Flatten the data from all pages
         const allInboxes = previousData
-          // @ts-expect-error
-          .flatMap(([, data]) => data?.pages ?? [])
+          .flatMap(([, data]) => (data as any)?.pages ?? [])
           .flatMap((page: any) => page.data ?? []);
 
         // Optimistically update infinite query data by filtering out deleted items

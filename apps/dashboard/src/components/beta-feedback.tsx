@@ -46,7 +46,7 @@ export function BetaFeedback() {
       // Get team_id from user metadata or session
       const teamId = user?.user_metadata?.team_id ?? null;
 
-      await supabase.from("beta_feedback").insert({
+      await (supabase as any).from("beta_feedback").insert({
         team_id: teamId,
         user_id: user?.id ?? null,
         positive: positive || null,

@@ -222,7 +222,7 @@ function SortHeader({
 // ---------------------------------------------------------------------------
 
 export function LocationPnlDashboard({ teamId }: { teamId: string }) {
-  const supabase = createClient();
+  const supabase: any = createClient();
   const [loading, setLoading] = useState(true);
   const [rows, setRows] = useState<LocationPnl[]>([]);
   const [sortColumn, setSortColumn] = useState<SortColumn>("netProfit");

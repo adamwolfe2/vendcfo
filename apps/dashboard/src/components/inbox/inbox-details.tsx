@@ -123,8 +123,7 @@ export function InboxDetails() {
 
             // Flatten the data from all pages to find the current index and the next item
             const allInboxes = previousData
-              // @ts-expect-error
-              .flatMap(([, data]) => data?.pages ?? [])
+              .flatMap(([, data]) => (data as any)?.pages ?? [])
               .flatMap((page) => page.data ?? []);
 
             const currentIndex = allInboxes.findIndex(

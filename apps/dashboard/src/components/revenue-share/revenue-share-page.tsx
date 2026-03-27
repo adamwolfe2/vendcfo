@@ -163,7 +163,7 @@ function groupByStatus(rows: LocationRow[]): Record<string, LocationRow[]> {
     if (groups[status]) {
       groups[status].push(row);
     } else {
-      groups.current.push(row);
+      groups.current!.push(row);
     }
   }
   return groups;
@@ -283,7 +283,7 @@ function DropdownCell({
 
 function StatusBadge({ status }: { status: string }) {
   const s = (status ?? "current").toLowerCase();
-  const colors = STATUS_COLORS[s] ?? STATUS_COLORS.current;
+  const colors = (STATUS_COLORS[s] ?? STATUS_COLORS.current)!;
   const label =
     s === "expansion" ? "Expansion" : s.charAt(0).toUpperCase() + s.slice(1);
 
@@ -309,7 +309,7 @@ function AddLocationModal({
   onClose: () => void;
   onSaved: () => void;
 }) {
-  const supabase = createClient();
+  const supabase: any = createClient();
   const [name, setName] = useState("");
   const [machineCount, setMachineCount] = useState("1");
   const [machineType, setMachineType] = useState("Combo");
@@ -866,7 +866,7 @@ function GroupSection({
 // ---------------------------------------------------------------------------
 
 export function RevenueSharePage({ teamId }: { teamId: string }) {
-  const supabase = createClient();
+  const supabase: any = createClient();
   const [locations, setLocations] = useState<Location[]>([]);
   const [loading, setLoading] = useState(true);
   const [period, setPeriod] = useState<PeriodFilter>("month");
@@ -1020,7 +1020,7 @@ export function RevenueSharePage({ teamId }: { teamId: string }) {
   }, [fetchPayments]);
 
   const allRows = useMemo(
-    () => [...groups.current, ...groups.expansion, ...groups.inactive],
+    () => [...(groups.current ?? []), ...(groups.expansion ?? []), ...(groups.inactive ?? [])],
     [groups],
   );
 
@@ -1190,8 +1190,8 @@ export function RevenueSharePage({ teamId }: { teamId: string }) {
             <tbody>
               <GroupSection
                 label="Current"
-                rows={groups.current}
-                headerColor={STATUS_COLORS.current.header}
+                rows={groups.current!}
+                headerColor={STATUS_COLORS.current!.header}
                 onUpdate={handleUpdate}
                 savingId={savingId}
                 payments={payments}
@@ -1200,8 +1200,8 @@ export function RevenueSharePage({ teamId }: { teamId: string }) {
               />
               <GroupSection
                 label="Expansion Confirmed"
-                rows={groups.expansion}
-                headerColor={STATUS_COLORS.expansion.header}
+                rows={groups.expansion!}
+                headerColor={STATUS_COLORS.expansion!.header}
                 onUpdate={handleUpdate}
                 savingId={savingId}
                 payments={payments}
@@ -1210,8 +1210,8 @@ export function RevenueSharePage({ teamId }: { teamId: string }) {
               />
               <GroupSection
                 label="Inactive"
-                rows={groups.inactive}
-                headerColor={STATUS_COLORS.inactive.header}
+                rows={groups.inactive!}
+                headerColor={STATUS_COLORS.inactive!.header}
                 onUpdate={handleUpdate}
                 savingId={savingId}
                 payments={payments}

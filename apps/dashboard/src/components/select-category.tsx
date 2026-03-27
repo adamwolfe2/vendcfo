@@ -109,8 +109,7 @@ export function SelectCategory({
     }),
   );
 
-  // @ts-expect-error - slug is not nullable
-  const selectedValue = selected ? transformCategory(selected) : undefined;
+  const selectedValue = selected ? transformCategory(selected as any) : undefined;
 
   if (!selected && isLoading && !hideLoading) {
     return (

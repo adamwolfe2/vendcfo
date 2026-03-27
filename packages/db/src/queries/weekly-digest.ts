@@ -192,7 +192,7 @@ async function getCapacityAlertCount(
     .where(
       and(
         eq(capacityAlerts.business_id, teamId),
-        eq(capacityAlerts.is_dismissed, false),
+        sql`${capacityAlerts.dismissed_at} IS NULL`,
       ),
     );
 

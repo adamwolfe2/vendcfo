@@ -99,7 +99,7 @@ function LocationModal({
   onClose: () => void;
   onSaved: () => void;
 }) {
-  const supabase = createClient();
+  const supabase: any = createClient();
   const [name, setName] = useState(entry?.name ?? "");
   const [address, setAddress] = useState(entry?.address ?? "");
   const [routeId, setRouteId] = useState(entry?.route_id ?? "");
@@ -400,7 +400,7 @@ export function LocationsPage({
   initialData: LocationRow[];
   teamId: string;
 }) {
-  const supabase = createClient();
+  const supabase: any = createClient();
   const [locations, setLocations] = useState<LocationRow[]>(initialData);
   const [routeOptions, setRouteOptions] = useState<RouteOption[]>([]);
   const [loading, setLoading] = useState(false);

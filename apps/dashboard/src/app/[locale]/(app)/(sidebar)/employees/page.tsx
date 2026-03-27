@@ -24,7 +24,7 @@ export default async function Page() {
   let plans: any[] = [];
 
   try {
-    const supabase = await createClient();
+    const supabase = await createClient() as any;
     const [employeesRes, plansRes] = await Promise.all([
       supabase
         .from("employees")
@@ -47,7 +47,7 @@ export default async function Page() {
     <EmployeesPage
       initialData={employees}
       initialPlans={plans}
-      teamId={teamId}
+      teamId={teamId!}
     />
   );
 }

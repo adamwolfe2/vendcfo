@@ -61,7 +61,7 @@ export default async function Page(props: Props) {
     );
   }
 
-  const hasInboxItems = (data?.pages?.[0]?.data?.length ?? 0) > 0;
+  const hasInboxItems = ((data as any)?.pages?.[0]?.data?.length ?? 0) > 0;
   const hasConnectedAccounts = accounts && accounts.length > 0;
   // Exclude 'tab' from filter check since it's a navigation param, not a filter
   const hasFilter = Object.entries(filter).some(
@@ -75,7 +75,7 @@ export default async function Page(props: Props) {
 
   // Accounts exist and have been synced, but no items (and no filter) -> show connected empty
   // Check if at least one account has been synced (has lastAccessed set)
-  const hasSyncedAccounts = accounts?.some((a) => a.lastAccessed !== null);
+  const hasSyncedAccounts = accounts?.some((a: any) => a.lastAccessed !== null);
 
   if (
     hasConnectedAccounts &&

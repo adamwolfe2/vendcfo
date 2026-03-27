@@ -64,8 +64,7 @@ export const columns: ColumnDef<RouterOutputs["team"]["list"][number]>[] = [
           <div className="flex flex-col">
             <span className="font-medium text-sm">{row.original.name}</span>
             <span className="text-sm text-[#606060]">
-              {/* @ts-expect-error */}
-              {t(`roles.${row.original.role}`)}
+              {(t as any)(`roles.${row.original.role}`)}
             </span>
           </div>
         </div>

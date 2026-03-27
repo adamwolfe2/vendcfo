@@ -69,7 +69,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const supabase = await createClient();
+    const supabase = await createClient() as any;
 
     // Resolve team
     const { data: teamMembership } = await supabase
@@ -140,8 +140,7 @@ export async function POST(req: NextRequest) {
         contactEmail: report.email_to ?? undefined,
       };
 
-      // @ts-expect-error — react-pdf renderer types diverge from React.ReactElement
-      const pdfBuffer = await renderToBuffer(CommissionReportPdf(pdfData));
+      const pdfBuffer = await renderToBuffer(CommissionReportPdf(pdfData) as any);
 
       const filename = `Revenue-Share-Report-${pdfData.periodLabel.replace(/\s+/g, "-")}.pdf`;
 
@@ -207,12 +206,12 @@ export async function POST(req: NextRequest) {
       // Build line items
       const targetLocations =
         body.locationIds && body.locationIds.length > 0
-          ? locations.filter((l) => body.locationIds?.includes(l.id))
+          ? locations.filter((l: any) => body.locationIds?.includes(l.id))
           : locations;
 
       const lineItems: RevenueShareLineItem[] = targetLocations
-        .filter((loc) => Number(loc.rev_share_pct ?? 0) > 0)
-        .map((loc) => {
+        .filter((loc: any) => Number(loc.rev_share_pct ?? 0) > 0)
+        .map((loc: any) => {
           const rev = locationRevMap.get(loc.id) ?? {
             gross: 0,
             fees: 0,
@@ -247,7 +246,7 @@ export async function POST(req: NextRequest) {
         .eq("id", teamId)
         .single();
 
-      const contactLoc = targetLocations.find((l) => l.contact_email);
+      const contactLoc = targetLocations.find((l: any) => l.contact_email);
       const periodLabel = derivePeriodLabel(body.periodStart, body.periodEnd);
 
       const pdfData: CommissionReportData = {
@@ -261,8 +260,7 @@ export async function POST(req: NextRequest) {
         contactEmail: contactLoc?.contact_email ?? undefined,
       };
 
-      // @ts-expect-error — react-pdf renderer types diverge from React.ReactElement
-      const pdfBuffer = await renderToBuffer(CommissionReportPdf(pdfData));
+      const pdfBuffer = await renderToBuffer(CommissionReportPdf(pdfData) as any);
 
       const filename = `Revenue-Share-Report-${periodLabel.replace(/\s+/g, "-")}.pdf`;
 

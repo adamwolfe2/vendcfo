@@ -50,8 +50,7 @@ export function TrackerUpdateSheet() {
             .getQueriesData({
               queryKey: trpc.trackerProjects.get.infiniteQueryKey(),
             })
-            // @ts-expect-error
-            .flatMap(([, data]) => data?.pages ?? [])
+            .flatMap(([, data]) => (data as any)?.pages ?? [])
             .flatMap((page) => page.data ?? []);
 
           return pages.find((d) => d.id === projectId);

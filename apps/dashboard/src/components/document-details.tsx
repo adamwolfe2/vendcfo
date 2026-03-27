@@ -29,8 +29,7 @@ export function DocumentDetails() {
     placeholderData: () => {
       const pages = queryClient
         .getQueriesData({ queryKey: trpc.documents.get.infiniteQueryKey() })
-        // @ts-expect-error
-        .flatMap(([, data]) => data?.pages ?? [])
+        .flatMap(([, data]) => (data as any)?.pages ?? [])
         .flatMap((page) => page.data ?? []);
 
       return pages.find(
@@ -53,8 +52,7 @@ export function DocumentDetails() {
             {data?.title ?? data?.name?.split("/").at(-1)}
           </h2>
           <span className="text-sm text-muted-foreground whitespace-nowrap">
-            {/* @ts-expect-error - size is not typed (JSONB) */}
-            {data?.metadata?.size && formatSize(data?.metadata?.size)}
+            {(data?.metadata as any)?.size && formatSize((data?.metadata as any)?.size)}
           </span>
         </div>
 
@@ -65,8 +63,7 @@ export function DocumentDetails() {
         <div className="flex flex-col flex-grow min-h-0 relative h-full w-full items-center justify-center">
           <FileViewer
             url={`${process.env.NEXT_PUBLIC_API_URL}/files/proxy?filePath=vault/${data?.pathTokens?.join("/")}`}
-            // @ts-expect-error - mimetype is not typed (JSONB)
-            mimeType={data?.metadata?.mimetype}
+            mimeType={((data?.metadata as any)?.mimetype as string) ?? null}
             maxWidth={565}
           />
         </div>

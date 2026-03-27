@@ -56,7 +56,7 @@ export async function GET() {
       const res = await db.execute(
         sql.raw(`SELECT count(*)::int as cnt FROM ${table} WHERE ${col} = '${teamId}'`)
       );
-      const count = res.rows[0]?.cnt ?? 0;
+      const count = (res.rows[0] as any)?.cnt ?? 0;
       checks.push({
         name: `Table: ${table}`,
         status: count > 0 ? "pass" : "warn",

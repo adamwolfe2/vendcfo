@@ -116,8 +116,7 @@ export function ReconnectProvider({
   });
 
   const openTeller = () => {
-    // @ts-expect-error
-    const teller = window.TellerConnect.setup({
+    const teller = (window as any).TellerConnect.setup({
       applicationId: process.env.NEXT_PUBLIC_TELLER_APPLICATION_ID!,
       environment: process.env.NEXT_PUBLIC_TELLER_ENVIRONMENT,
       enrollmentId,

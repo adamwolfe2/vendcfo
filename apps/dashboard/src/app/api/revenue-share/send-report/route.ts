@@ -288,7 +288,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const supabase = await createClient();
+    const supabase = await createClient() as any;
 
     // Get user's team
     const { data: teamMembership } = await supabase

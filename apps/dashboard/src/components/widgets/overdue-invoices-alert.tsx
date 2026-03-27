@@ -79,9 +79,8 @@ export function OverdueInvoicesAlertWidget() {
     const { count, daysOverdue } = overdueData;
     const dayText = t("overdue_invoices.day", { count: daysOverdue });
 
-    return t("overdue_invoices.description", {
+    return (t as any)("overdue_invoices.description", {
       count,
-      // @ts-ignore
       days: daysOverdue,
       dayText,
     });

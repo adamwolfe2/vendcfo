@@ -157,7 +157,7 @@ function AddVideoModal({
   onAdded: () => void;
   teamId: string;
 }) {
-  const supabase = createClient();
+  const supabase: any = createClient();
   const [title, setTitle] = useState("");
   const [videoUrl, setVideoUrl] = useState("");
   const [description, setDescription] = useState("");
@@ -314,7 +314,7 @@ export function TrainingPage({
   publicVideos: TrainingVideo[];
   teamId: string;
 }) {
-  const supabase = createClient();
+  const supabase: any = createClient();
   const [activeTab, setActiveTab] = useState<Tab>("library");
   const [teamVideos, setTeamVideos] = useState<TrainingVideo[]>([]);
   const [loadingTeam, setLoadingTeam] = useState(false);

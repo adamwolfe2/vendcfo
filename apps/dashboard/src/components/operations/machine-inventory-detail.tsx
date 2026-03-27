@@ -82,7 +82,7 @@ export function MachineInventoryDetail({
   machineLabel: string;
   onClose: () => void;
 }) {
-  const supabase = createClient();
+  const supabase: any = createClient();
   const [inventory, setInventory] = useState<InventoryRow[]>([]);
   const [loading, setLoading] = useState(true);
   const [restocking, setRestocking] = useState<string | null>(null);

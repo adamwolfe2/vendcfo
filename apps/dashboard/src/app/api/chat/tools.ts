@@ -1003,7 +1003,8 @@ async function queryWorkforceData(
           message: capacityAlerts.message,
           currentUtilization: capacityAlerts.current_utilization,
           threshold: capacityAlerts.threshold,
-          isDismissed: capacityAlerts.is_dismissed,
+          isRead: capacityAlerts.is_read,
+          dismissedAt: capacityAlerts.dismissed_at,
           createdAt: capacityAlerts.created_at,
         })
         .from(capacityAlerts)
@@ -1011,7 +1012,7 @@ async function queryWorkforceData(
         .where(
           and(
             eq(capacityAlerts.business_id, teamId),
-            eq(capacityAlerts.is_dismissed, false),
+            sql`${capacityAlerts.dismissed_at} IS NULL`,
           ),
         )
         .orderBy(desc(capacityAlerts.created_at))

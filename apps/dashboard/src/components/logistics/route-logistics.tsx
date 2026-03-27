@@ -272,7 +272,7 @@ export function RouteLogistics({
   routes: Route[];
   teamId: string;
 }) {
-  const supabase = createClient();
+  const supabase: any = createClient();
 
   // Schedule state: Map<"locationId-dayOfWeek", ScheduleEntry>
   const [schedule, setSchedule] = useState<Map<string, ScheduleEntry>>(
@@ -372,7 +372,7 @@ export function RouteLogistics({
     const current = schedule.get(key);
     const currentAction = (current?.action ?? "nothing") as ActionType;
     const currentIdx = ACTION_CYCLE.indexOf(currentAction);
-    const nextAction = ACTION_CYCLE[(currentIdx + 1) % ACTION_CYCLE.length];
+    const nextAction = ACTION_CYCLE[(currentIdx + 1) % ACTION_CYCLE.length]!;
 
     const entry: ScheduleEntry = {
       team_id: teamId,
@@ -510,7 +510,7 @@ export function RouteLogistics({
   const operatorSummary = Array.from(operatorNames)
     .sort()
     .map((name, idx) => {
-      const color = OPERATOR_COLORS[idx % OPERATOR_COLORS.length];
+      const color = OPERATOR_COLORS[idx % OPERATOR_COLORS.length]!;
       const byDay = DAYS.map((day) => {
         let stops = 0;
         let serviceHours = 0;
@@ -902,7 +902,7 @@ export function RouteLogistics({
                           </td>
                           {op.byDay.map((d, i) => (
                             <td
-                              key={DAYS[i].key}
+                              key={DAYS[i]!.key}
                               className="border border-[#e5e5e5] px-3 py-1.5 text-center text-xs text-[#555]"
                             >
                               {d.stops || "-"}
@@ -919,7 +919,7 @@ export function RouteLogistics({
                           </td>
                           {op.byDay.map((d, i) => (
                             <td
-                              key={DAYS[i].key}
+                              key={DAYS[i]!.key}
                               className="border border-[#e5e5e5] px-3 py-1.5 text-center text-xs text-[#555]"
                             >
                               {d.drivingHours ? d.drivingHours.toFixed(1) : "-"}
@@ -936,7 +936,7 @@ export function RouteLogistics({
                           </td>
                           {op.byDay.map((d, i) => (
                             <td
-                              key={DAYS[i].key}
+                              key={DAYS[i]!.key}
                               className="border border-[#e5e5e5] px-3 py-1.5 text-center text-xs text-[#555]"
                             >
                               {d.totalHrs ? d.totalHrs.toFixed(1) : "-"}
@@ -953,7 +953,7 @@ export function RouteLogistics({
                           </td>
                           {op.byDay.map((d, i) => (
                             <td
-                              key={DAYS[i].key}
+                              key={DAYS[i]!.key}
                               className="border border-[#e5e5e5] px-3 py-1.5 text-center text-xs text-[#555]"
                             >
                               {d.cost ? `$${d.cost.toFixed(0)}` : "-"}

@@ -40,7 +40,7 @@ const config = {
   ],
   serverExternalPackages: ["@react-pdf/renderer", "pino", "pg"],
   typescript: {
-    ignoreBuildErrors: true,
+    ignoreBuildErrors: false,
   },
   devIndicators: false,
   async headers() {

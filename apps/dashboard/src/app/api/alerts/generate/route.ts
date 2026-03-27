@@ -351,7 +351,7 @@ export async function POST() {
       );
     }
 
-    const supabase = await createClient();
+    const supabase = await createClient() as any;
 
     // Get user's teamId
     const { data: userData } = await supabase

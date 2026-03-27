@@ -187,8 +187,7 @@ export function Form() {
     if (isDirty && form.watch("customerId") && invoiceNumberValid) {
       const currentFormValues = form.getValues();
       draftInvoiceMutation.mutate(
-        // @ts-expect-error
-        transformFormValuesToDraft(currentFormValues),
+        transformFormValuesToDraft(currentFormValues as any),
       );
 
       // If invoice is part of a recurring series, also update the series template
@@ -336,8 +335,7 @@ export function Form() {
 
   return (
     <form
-      // @ts-expect-error
-      onSubmit={form.handleSubmit(handleSubmit)}
+      onSubmit={form.handleSubmit(handleSubmit as any)}
       className="relative h-full"
       onKeyDown={handleKeyDown}
     >

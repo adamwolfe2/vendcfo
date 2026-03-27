@@ -28,7 +28,7 @@ export default async function Page() {
   let teamName = "";
 
   try {
-    const supabase = await createClient();
+    const supabase = await createClient() as any;
     const [reportsRes, locationsRes, groupsRes, teamRes] = await Promise.all([
       supabase
         .from("generated_reports")
@@ -58,9 +58,9 @@ export default async function Page() {
 
   return (
     <ReportsPage
-      teamId={teamId}
+      teamId={teamId!}
       teamName={teamName}
-      userId={userId}
+      userId={userId!}
       initialReports={reports}
       locations={locations}
       locationGroups={locationGroups}

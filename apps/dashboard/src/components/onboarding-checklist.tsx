@@ -83,7 +83,7 @@ interface CompletionCounts {
 async function fetchCompletionCounts(
   teamId: string,
 ): Promise<CompletionCounts> {
-  const supabase = createClient();
+  const supabase: any = createClient();
   // Cast to any for vending tables not yet in generated Supabase types
   const sb = supabase as any;
 
@@ -180,7 +180,7 @@ function useTeamId(): string | null {
   const [teamId, setTeamId] = useState<string | null>(null);
 
   useEffect(() => {
-    const supabase = createClient();
+    const supabase: any = createClient();
 
     async function resolve() {
       try {

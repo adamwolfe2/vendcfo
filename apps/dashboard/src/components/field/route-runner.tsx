@@ -209,7 +209,7 @@ export function RouteRunner({
 
         if (!machineId) return;
 
-        await supabase.from("service_logs").insert({
+        await (supabase as any).from("service_logs").insert({
           business_id: teamId,
           machine_id: machineId,
           user_id: teamId, // Will be replaced by actual user ID from auth

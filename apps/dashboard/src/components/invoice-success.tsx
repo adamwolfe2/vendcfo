@@ -90,8 +90,7 @@ export function InvoiceSuccess() {
               {invoice.template.customerLabel}
             </span>
             <div className="text-[#878787]">
-              {/* @ts-expect-error - customerDetails is JSONB */}
-              {formatEditorContent(invoice.customerDetails)}
+              {formatEditorContent(invoice.customerDetails as any)}
             </div>
           </motion.div>
 

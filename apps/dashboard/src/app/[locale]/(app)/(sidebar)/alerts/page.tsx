@@ -19,5 +19,5 @@ export default async function AlertsPage() {
     redirect("/login");
   }
 
-  return <AlertsPageClient teamId={teamId} />;
+  return <AlertsPageClient teamId={teamId!} />;
 }

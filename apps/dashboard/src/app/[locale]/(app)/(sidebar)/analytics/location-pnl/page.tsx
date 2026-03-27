@@ -19,5 +19,5 @@ export default async function LocationPnlPage() {
     redirect("/login");
   }
 
-  return <LocationPnlDashboard teamId={teamId} />;
+  return <LocationPnlDashboard teamId={teamId!} />;
 }

@@ -187,7 +187,7 @@ function EmployeeModal({
   onClose: () => void;
   onSaved: () => void;
 }) {
-  const supabase = createClient();
+  const supabase: any = createClient();
   const [name, setName] = useState(entry?.name ?? "");
   const [email, setEmail] = useState(entry?.email ?? "");
   const [phone, setPhone] = useState(entry?.phone ?? "");
@@ -468,7 +468,7 @@ function CompensationModal({
   onClose: () => void;
   onSaved: () => void;
 }) {
-  const supabase = createClient();
+  const supabase: any = createClient();
   const mode = entry ? "edit" : "add";
   const [planName, setPlanName] = useState(entry?.name ?? "");
   const [payModel, setPayModel] = useState(entry?.pay_model ?? "hourly");
@@ -772,7 +772,7 @@ function RecordPaymentModal({
   onClose: () => void;
   onSaved: () => void;
 }) {
-  const supabase = createClient();
+  const supabase: any = createClient();
   const [employeeId, setEmployeeId] = useState(preselectedEmployeeId ?? "");
   const [amount, setAmount] = useState("");
   const [paymentMethod, setPaymentMethod] = useState("ach");
@@ -1143,7 +1143,7 @@ function EmployeePaymentHistory({
   teamId: string;
   onRecordPayment: () => void;
 }) {
-  const supabase = createClient();
+  const supabase: any = createClient();
   const [payments, setPayments] = useState<PaymentRow[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -1302,7 +1302,7 @@ function EmployeeDetail({
   onEdit: () => void;
   onRefresh: () => void;
 }) {
-  const supabase = createClient();
+  const supabase: any = createClient();
   const [plans, setPlans] = useState<CompensationPlanRow[]>([]);
   const [loadingPlans, setLoadingPlans] = useState(true);
   const [showAddPlan, setShowAddPlan] = useState(false);
@@ -1844,7 +1844,7 @@ export function EmployeesPage({
   initialPlans: CompensationPlanRow[];
   teamId: string;
 }) {
-  const supabase = createClient();
+  const supabase: any = createClient();
   const [employees, setEmployees] = useState<EmployeeRow[]>(initialData);
   const [allPlans, setAllPlans] = useState<CompensationPlanRow[]>(initialPlans);
   const [loading, setLoading] = useState(false);

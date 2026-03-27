@@ -457,8 +457,7 @@ export function TransactionCreateForm() {
                     path: attachment.path.join("/"),
                   }))}
                   onUpload={(files) => {
-                    // @ts-expect-error
-                    form.setValue("attachments", files);
+                    form.setValue("attachments", files as any);
                   }}
                 />
               </div>

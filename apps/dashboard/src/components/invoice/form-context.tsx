@@ -249,8 +249,7 @@ export function FormContext({
   defaultSettings,
 }: FormContextProps) {
   const form = useZodForm(invoiceFormSchema, {
-    // @ts-expect-error
-    defaultValues: defaultSettings,
+    defaultValues: defaultSettings as any,
     mode: "onChange",
   });
 
@@ -258,13 +257,12 @@ export function FormContext({
     form.reset({
       ...(defaultSettings ?? {}),
       ...(data ?? {}),
-      // @ts-expect-error
       template: {
         ...(defaultSettings?.template ?? {}),
         ...(data?.template ?? {}),
       },
       customerId: data?.customerId ?? defaultSettings?.customerId ?? undefined,
-    });
+    } as any);
   }, [data, defaultSettings]);
 
   return <FormProvider {...form}>{children}</FormProvider>;

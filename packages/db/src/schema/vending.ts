@@ -352,7 +352,8 @@ export const capacityAlerts = pgTable("capacity_alerts", {
   threshold: decimal("threshold", { precision: 5, scale: 2 })
     .default("85")
     .notNull(),
-  is_dismissed: boolean("is_dismissed").default(false).notNull(),
+  is_read: boolean("is_read").default(false).notNull(),
+  dismissed_at: timestamp("dismissed_at", { withTimezone: true }),
   created_at: timestamp("created_at", { withTimezone: true })
     .defaultNow()
     .notNull(),

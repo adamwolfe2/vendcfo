@@ -22,7 +22,7 @@ async function fetchVendingStats(
   from: string,
   to: string,
 ): Promise<VendingStats> {
-  const supabase = createClient();
+  const supabase: any = createClient();
 
   // Current period revenue from revenue_records
   const { data: currentRevenue } = await supabase
@@ -33,7 +33,7 @@ async function fetchVendingStats(
     .lte("collection_date", to);
 
   const totalRevenue = (currentRevenue ?? []).reduce(
-    (sum, r) =>
+    (sum: number, r: any) =>
       sum + (Number(r.cash_amount) || 0) + (Number(r.card_amount) || 0),
     0,
   );
@@ -55,7 +55,7 @@ async function fetchVendingStats(
     .lte("collection_date", prevTo);
 
   const previousRevenue = (prevRevenue ?? []).reduce(
-    (sum, r) =>
+    (sum: number, r: any) =>
       sum + (Number(r.cash_amount) || 0) + (Number(r.card_amount) || 0),
     0,
   );

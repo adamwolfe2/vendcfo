@@ -20,5 +20,5 @@ export default async function Page() {
     redirect("/login");
   }
 
-  return <PasswordVault teamId={teamId} userId={userId!} />;
+  return <PasswordVault teamId={teamId!} userId={userId!} />;
 }

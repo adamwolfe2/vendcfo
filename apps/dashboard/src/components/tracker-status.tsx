@@ -19,8 +19,7 @@ export function TrackerStatus({ status }: Props) {
           status === "completed" && "bg-primary",
         )}
       />
-      {/* @ts-expect-error */}
-      <span>{t(`tracker_status.${status}`)}</span>
+      <span>{(t as any)(`tracker_status.${status}`)}</span>
     </div>
   );
 }

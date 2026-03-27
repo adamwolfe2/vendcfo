@@ -34,8 +34,7 @@ export async function getPdfImage(data: ArrayBuffer) {
       canvasFactory,
     };
 
-    // @ts-ignore
-    const renderTask = page.render(renderContext);
+    const renderTask = page.render(renderContext as any);
     await renderTask.promise;
 
     // Return image as PNG buffer

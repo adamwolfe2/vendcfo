@@ -111,8 +111,7 @@ export const columns: ColumnDef<Document>[] = [
         "w-[250px] min-w-[180px] md:sticky md:left-[50px] bg-background group-hover:bg-[#F2F1EF] z-20",
     },
     cell: ({ row }) => {
-      // @ts-expect-error - mimetype is not typed (JSONB)
-      const mimetype = row.original.metadata?.mimetype as string | undefined;
+      const mimetype = (row.original.metadata as Record<string, unknown>)?.mimetype as string | undefined;
       const isSupported = mimetype
         ? isMimeTypeSupportedForProcessing(mimetype)
         : false;
@@ -224,8 +223,7 @@ export const columns: ColumnDef<Document>[] = [
       className: "w-[100px] min-w-[80px]",
     },
     cell: ({ row }) => {
-      // @ts-expect-error - size is not typed (JSONB)
-      return <span>{formatSize(row.original.metadata?.size)}</span>;
+      return <span>{formatSize((row.original.metadata as any)?.size)}</span>;
     },
   },
   {
@@ -246,8 +244,7 @@ export const columns: ColumnDef<Document>[] = [
     cell: ({ row, table }) => {
       const { setParams } = useDocumentParams();
 
-      // @ts-expect-error - mimetype is not typed (JSONB)
-      const mimetype = row.original.metadata?.mimetype as string | undefined;
+      const mimetype = (row.original.metadata as Record<string, unknown>)?.mimetype as string | undefined;
       const isSupported = mimetype
         ? isMimeTypeSupportedForProcessing(mimetype)
         : false;

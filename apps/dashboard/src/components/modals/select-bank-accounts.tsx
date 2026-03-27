@@ -277,7 +277,7 @@ export function SelectBankAccountsModal() {
       enrollmentId: enrollment_id ?? undefined,
       // GoCardLess Requestion ID or Plaid Item ID
       referenceId: ref ?? undefined,
-      accounts: (data as AccountWithBalances[] | undefined)?.map((account) => ({
+      accounts: (data as any as AccountWithBalances[] | undefined)?.map((account) => ({
         name: account.name,
         institutionId: account.institution.id,
         logoUrl: account.institution?.logo,
@@ -336,7 +336,7 @@ export function SelectBankAccountsModal() {
                   >
                     {isLoading && <RowsSkeleton />}
 
-                    {data?.map((account) => {
+                    {(data as any)?.map((account: any) => {
                       // Get the last 4 digits of IBAN or account identifier for display
                       const accountIdentifier = account.iban?.slice(-4);
 
@@ -371,7 +371,7 @@ export function SelectBankAccountsModal() {
                                     </div>
                                     <div className="flex items-center justify-between mt-1">
                                       <span className="text-xs text-[#878787] font-normal">
-                                        {t(`account_type.${account.type}`)}
+                                        {(t as any)(`account_type.${account.type}`)}
                                       </span>
                                       <span className="text-sm font-medium">
                                         <FormatAmount

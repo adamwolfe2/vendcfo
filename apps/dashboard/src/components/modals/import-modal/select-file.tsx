@@ -57,8 +57,7 @@ export function SelectFile() {
           }
 
           setFileColumns(meta.fields);
-          // @ts-expect-error
-          setFirstRows(data);
+          setFirstRows(data as Record<string, string>[]);
           setIsLoading(false);
           processingRef.current = null;
         })

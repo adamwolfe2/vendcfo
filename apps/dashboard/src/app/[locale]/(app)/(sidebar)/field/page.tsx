@@ -29,7 +29,7 @@ export default async function Page() {
     redirect("/login");
   }
 
-  const supabase = await createClient();
+  const supabase = await createClient() as any;
   const todayDow = getTodayDayOfWeek();
 
   let routes: any[] = [];
@@ -77,7 +77,7 @@ export default async function Page() {
       locations={locations}
       schedules={schedules}
       machines={machines}
-      teamId={teamId}
+      teamId={teamId!}
       userName={userName}
       todayDayOfWeek={todayDow}
     />

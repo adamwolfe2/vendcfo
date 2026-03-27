@@ -210,7 +210,7 @@ export function ReportGenerationWizard({
 
   const goBack = useCallback(() => {
     if (canGoBack) {
-      setStep(steps[currentStepIndex - 1]);
+      setStep(steps[currentStepIndex - 1]!);
     }
   }, [canGoBack, currentStepIndex, steps]);
 
@@ -220,7 +220,7 @@ export function ReportGenerationWizard({
 
   const calculatePreview = useCallback(async () => {
     setPreviewLoading(true);
-    const supabase = createClient();
+    const supabase: any = createClient();
 
     try {
       if (reportType === "rev_share") {
@@ -413,7 +413,7 @@ export function ReportGenerationWizard({
       await calculatePreview();
       setStep("preview");
     } else if (canGoForward) {
-      setStep(steps[currentStepIndex + 1]);
+      setStep(steps[currentStepIndex + 1]!);
     }
   }, [canGoForward, currentStepIndex, steps, step, calculatePreview]);
 
@@ -425,7 +425,7 @@ export function ReportGenerationWizard({
     async (shouldSendEmail = false) => {
       setSaving(true);
       setSendError(null);
-      const supabase = createClient();
+      const supabase: any = createClient();
 
       const reportData =
         reportType === "rev_share"

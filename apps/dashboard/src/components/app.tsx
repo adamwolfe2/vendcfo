@@ -207,7 +207,6 @@ export function App({
                   <AccordionContent className="text-[#878787] text-sm">
                     <AppSettings
                       appId={id}
-                      // @ts-expect-error
                       settings={[
                         ...Object.values({
                           ...Object.fromEntries(
@@ -222,7 +221,7 @@ export function App({
                             ).map((setting) => [setting.id, setting]),
                           ),
                         }),
-                      ]}
+                      ] as any}
                     />
                   </AccordionContent>
                 </AccordionItem>

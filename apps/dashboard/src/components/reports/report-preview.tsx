@@ -26,6 +26,8 @@ interface GeneratedReport {
   status: string;
   created_at: string;
   email_to: string | null;
+  email_subject: string | null;
+  email_body: string | null;
   email_sent_at: string | null;
   report_data: Record<string, unknown>;
 }
@@ -104,7 +106,7 @@ export function ReportPreview({
   onSendEmail,
   isSending,
 }: Props) {
-  const statusStyle = STATUS_STYLES[report.status] ?? STATUS_STYLES.draft;
+  const statusStyle = (STATUS_STYLES[report.status] ?? STATUS_STYLES.draft)!;
   const data = report.report_data as Record<string, unknown>;
   const [downloadingPdf, setDownloadingPdf] = useState(false);
 

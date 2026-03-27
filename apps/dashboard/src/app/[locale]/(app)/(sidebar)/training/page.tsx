@@ -22,7 +22,7 @@ export default async function Page() {
   let publicVideos: any[] = [];
 
   try {
-    const supabase = await createClient();
+    const supabase = await createClient() as any;
     const { data } = await supabase
       .from("training_videos")
       .select("*")
@@ -35,6 +35,6 @@ export default async function Page() {
   }
 
   return (
-    <TrainingPage publicVideos={publicVideos} teamId={teamId} />
+    <TrainingPage publicVideos={publicVideos} teamId={teamId!} />
   );
 }

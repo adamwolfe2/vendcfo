@@ -522,7 +522,7 @@ function RouteModal({
   onClose: () => void;
   onSaved: () => void;
 }) {
-  const supabase = createClient();
+  const supabase: any = createClient();
   const [name, setName] = useState(entry?.name ?? "");
   const [description, setDescription] = useState(entry?.description ?? "");
   const [isActive, setIsActive] = useState(entry?.is_active ?? true);
@@ -837,7 +837,7 @@ export function RoutesPage({
   teamId: string;
   weekStart: string;
 }) {
-  const supabase = createClient();
+  const supabase: any = createClient();
   const [routes, setRoutes] = useState<RouteRow[]>(initialData);
   const [locations] = useState<LocationRow[]>(initialLocations);
   const [schedules] = useState<ScheduleRow[]>(initialSchedules);

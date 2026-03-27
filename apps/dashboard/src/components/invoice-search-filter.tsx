@@ -59,8 +59,7 @@ export function InvoiceSearchFilter() {
 
   const statusFilters = allowedStatuses.map((status) => ({
     id: status,
-    // @ts-expect-error
-    name: t(`invoice_status.${status}`),
+    name: (t as any)(`invoice_status.${status}`),
   }));
 
   const mapInvoiceFilters = useCallback(

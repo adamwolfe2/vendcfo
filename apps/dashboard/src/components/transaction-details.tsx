@@ -62,8 +62,7 @@ export function TransactionDetails() {
     placeholderData: () => {
       const pages = queryClient
         .getQueriesData({ queryKey: trpc.transactions.get.infiniteQueryKey() })
-        // @ts-expect-error
-        .flatMap(([, data]) => data?.pages ?? [])
+        .flatMap(([, data]) => (data as any)?.pages ?? [])
         .flatMap((page) => page.data ?? []);
 
       return pages.find((d) => d.id === transactionId);
@@ -322,9 +321,7 @@ export function TransactionDetails() {
           </Label>
 
           <SelectCategory
-            id={transactionId}
-            // @ts-expect-error
-            selected={data?.category ?? undefined}
+            selected={(data?.category ?? undefined) as any}
             onChange={async (category) => {
               if (category && data?.id && data?.name) {
                 await updateCategory(data.id, data.name, {

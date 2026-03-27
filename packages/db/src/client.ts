@@ -37,7 +37,6 @@ function createPool(connectionString: string) {
 
   // Wrap the pool's query to strip prepared statement names
   const originalQuery = pool.query.bind(pool);
-  // @ts-expect-error — overloaded signature, safe at runtime
   pool.query = (configOrText: any, ...args: any[]) => {
     if (
       typeof configOrText === "object" &&
@@ -72,10 +71,14 @@ const hasReplicas = Boolean(
 
 function createDb() {
   if (!hasReplicas) {
-    // No replicas — return primaryDb with $primary compat property
+    // No replicas — return primaryDb with $primary compat property and replica stubs
     return Object.assign(primaryDb, {
       $primary: primaryDb,
       usePrimaryOnly: () => primaryDb,
+      executeOnReplica: <TRow extends Record<string, unknown> = Record<string, unknown>>(query: any) =>
+        primaryDb.execute(query) as unknown as Promise<TRow[]>,
+      transactionOnReplica: <T>(transaction: any) =>
+        primaryDb.transaction(transaction) as unknown as Promise<T>,
     });
   }
 

@@ -137,8 +137,7 @@ export function LineItems() {
         {fields.map((field, index) => (
           <LineItemRow
             key={field.id}
-            // @ts-expect-error
-            item={field}
+            item={field as any}
             index={index}
             handleRemove={handleRemove}
             isReorderable={fields.length > 1}

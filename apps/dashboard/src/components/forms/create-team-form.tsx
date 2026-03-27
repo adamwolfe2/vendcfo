@@ -71,7 +71,7 @@ export function CreateTeamForm({
           }
 
           // Only log actual errors, not expected redirects
-          console.error(`[${successId}] Team creation flow failed:`, {
+          console.error(`Team creation flow failed:`, {
             error: error instanceof Error ? error.message : String(error),
             stack: error instanceof Error ? error.stack : undefined,
             teamId,

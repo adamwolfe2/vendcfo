@@ -73,8 +73,7 @@ export function Invites() {
                     {invite.team?.name}
                   </span>
                   <span className="text-sm text-[#606060]">
-                    {/* @ts-expect-error */}
-                    {t(`roles.${invite.role}`)}
+                    {(t as any)(`roles.${invite.role}`)}
                   </span>
                 </div>
               </div>

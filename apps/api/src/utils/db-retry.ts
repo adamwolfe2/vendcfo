@@ -45,7 +45,7 @@ export async function withRetryOnPrimary<T>(
       // Retry on primary
       for (let attempt = 0; attempt <= maxRetries; attempt++) {
         try {
-          const primaryDb = dbWithPrimary.usePrimaryOnly();
+          const primaryDb = dbWithPrimary.usePrimaryOnly() as Database;
           const primaryResult = await fn(primaryDb);
           // Return primary result even if it's still null (user genuinely doesn't exist)
           return primaryResult;
@@ -99,7 +99,7 @@ export async function withRetryOnPrimary<T>(
   // Retry attempts: use primary database
   for (let attempt = 0; attempt <= maxRetries; attempt++) {
     try {
-      const primaryDb = dbWithPrimary.usePrimaryOnly();
+      const primaryDb = dbWithPrimary.usePrimaryOnly() as Database;
       return await fn(primaryDb);
     } catch (error) {
       lastError = error;

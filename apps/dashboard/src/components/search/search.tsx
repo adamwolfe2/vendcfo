@@ -412,8 +412,7 @@ const SearchResultItemDisplay = ({
           <div className="flex items-center w-full">
             <div className="flex-grow truncate flex gap-2 items-center">
               <span>{item.data.invoice_number as string}</span>
-              {/* @ts-expect-error - Unstructured data */}
-              <InvoiceStatus status={item.data?.status} />
+              <InvoiceStatus status={item.data?.status as any} />
             </div>
             <div className="flex items-center gap-2 invisible group-hover/item:visible group-focus/item:visible group-aria-selected/item:visible">
               <CopyButton path={`?invoiceId=${item.id}&type=details`} />

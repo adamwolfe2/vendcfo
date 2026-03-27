@@ -14,10 +14,8 @@ export function getNotificationDisplayInfo(
 ): NotificationDisplayInfo | undefined {
   // Check if the notification type exists in translations
   try {
-    // @ts-expect-error - next-international typing might be strict
-    const name = t(`notifications.${type}.name`);
-    // @ts-expect-error - next-international typing might be strict
-    const description = t(`notifications.${type}.description`);
+    const name = (t as any)(`notifications.${type}.name`);
+    const description = (t as any)(`notifications.${type}.description`);
 
     // If the translation keys don't exist, t() will return the key itself
     // Check if we got actual translations or just the keys back
@@ -64,8 +62,7 @@ export function getCategoryDisplayTitle(
   t: ReturnType<typeof useI18n>,
 ): string {
   try {
-    // @ts-expect-error - next-international typing might be strict
-    const categoryTitle = t(`notifications.categories.${category}`);
+    const categoryTitle = (t as any)(`notifications.categories.${category}`);
 
     // If the translation key doesn't exist, t() will return the key itself
     // Check if we got actual translation or just the key back

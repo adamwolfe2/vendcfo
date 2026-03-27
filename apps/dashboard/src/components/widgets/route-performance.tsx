@@ -21,7 +21,7 @@ async function fetchRoutePerformance(
   from: string,
   to: string,
 ): Promise<RouteRevenue[]> {
-  const supabase = createClient();
+  const supabase: any = createClient();
 
   // Fetch routes for this business
   const { data: routes } = await supabase
@@ -41,7 +41,7 @@ async function fetchRoutePerformance(
     .lte("collection_date", to);
 
   if (!revenueRecords || revenueRecords.length === 0) {
-    return routes.slice(0, 3).map((r) => ({
+    return routes.slice(0, 3).map((r: any) => ({
       route_id: r.id,
       route_name: r.name,
       total: 0,
@@ -49,7 +49,7 @@ async function fetchRoutePerformance(
   }
 
   // Build a map of route name by id
-  const routeMap = new Map(routes.map((r) => [r.id, r.name]));
+  const routeMap = new Map<string, string>(routes.map((r: any) => [r.id, r.name]));
 
   // Aggregate revenue per route
   const revByRoute = new Map<string, number>();

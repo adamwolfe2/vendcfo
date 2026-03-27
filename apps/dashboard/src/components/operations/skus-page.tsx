@@ -104,7 +104,7 @@ function SkuModal({
   onClose: () => void;
   onSaved: () => void;
 }) {
-  const supabase = createClient();
+  const supabase: any = createClient();
   const [name, setName] = useState(entry?.name ?? "");
   const [category, setCategory] = useState(entry?.category ?? "soda");
   const [unitCost, setUnitCost] = useState(String(entry?.unit_cost ?? "0"));
@@ -364,7 +364,7 @@ export function SkusPage({
   initialData: SkuRow[];
   teamId: string;
 }) {
-  const supabase = createClient();
+  const supabase: any = createClient();
   const [skus, setSkus] = useState<SkuRow[]>(initialData);
   const [loading, setLoading] = useState(false);
   const [showAddModal, setShowAddModal] = useState(false);

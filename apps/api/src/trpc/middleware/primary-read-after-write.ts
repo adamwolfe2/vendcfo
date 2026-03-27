@@ -32,7 +32,7 @@ export const withPrimaryReadAfterWrite = async <TReturn>(opts: {
   if (forcePrimary && type !== "mutation") {
     const dbWithPrimary = ctx.db as DatabaseWithPrimary;
     if (dbWithPrimary.usePrimaryOnly) {
-      ctx.db = dbWithPrimary.usePrimaryOnly();
+      ctx.db = dbWithPrimary.usePrimaryOnly() as Database;
     }
     const result = await next({ ctx });
     return result;
@@ -46,7 +46,7 @@ export const withPrimaryReadAfterWrite = async <TReturn>(opts: {
       // Use primary-only mode to maintain interface consistency
       const dbWithPrimary = ctx.db as DatabaseWithPrimary;
       if (dbWithPrimary.usePrimaryOnly) {
-        ctx.db = dbWithPrimary.usePrimaryOnly();
+        ctx.db = dbWithPrimary.usePrimaryOnly() as Database;
       }
       // If usePrimaryOnly doesn't exist, we're already using the primary DB
     }
@@ -60,7 +60,7 @@ export const withPrimaryReadAfterWrite = async <TReturn>(opts: {
         // Use primary-only mode to maintain interface consistency
         const dbWithPrimary = ctx.db as DatabaseWithPrimary;
         if (dbWithPrimary.usePrimaryOnly) {
-          ctx.db = dbWithPrimary.usePrimaryOnly();
+          ctx.db = dbWithPrimary.usePrimaryOnly() as Database;
         }
         // If usePrimaryOnly doesn't exist, we're already using the primary DB
       }
@@ -69,7 +69,7 @@ export const withPrimaryReadAfterWrite = async <TReturn>(opts: {
     // When no team ID is present, always use primary DB
     const dbWithPrimary = ctx.db as DatabaseWithPrimary;
     if (dbWithPrimary.usePrimaryOnly) {
-      ctx.db = dbWithPrimary.usePrimaryOnly();
+      ctx.db = dbWithPrimary.usePrimaryOnly() as Database;
     }
     // If usePrimaryOnly doesn't exist, we're already using the primary DB
   }

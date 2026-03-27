@@ -148,8 +148,7 @@ export function TrackerCalendar({ weeklyCalendar }: Props) {
     enabled: !selectedDate,
   });
 
-  // @ts-expect-error
-  useOnClickOutside(ref, () => {
+  useOnClickOutside(ref as any, () => {
     if (range && range.length === 1) setParams({ range: null });
   });
 

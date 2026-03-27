@@ -211,8 +211,7 @@ export function TransactionAttachments({ id, data, onUpload }: Props) {
     );
   };
 
-  // @ts-expect-error
-  const handleOnSelectFile = async (file) => {
+  const handleOnSelectFile = async (file: any) => {
     const isInvoice = file.type === "invoice";
 
     if (isInvoice) {

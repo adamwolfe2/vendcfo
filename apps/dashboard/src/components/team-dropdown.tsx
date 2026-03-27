@@ -79,8 +79,7 @@ export function TeamDropdown({ isExpanded = false }: Props) {
       return (a.id ?? "").localeCompare(b.id ?? "");
     }) ?? [];
 
-  // @ts-expect-error
-  useOnClickOutside(ref, () => {
+  useOnClickOutside(ref as any, () => {
     if (!isChangingTeam) {
       setActive(false);
     }

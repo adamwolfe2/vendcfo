@@ -19,7 +19,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const supabase = await createClient();
+    const supabase = await createClient() as any;
 
     // Get user's team
     const { data: teamMembership } = await supabase
@@ -118,7 +118,6 @@ export async function POST(req: NextRequest) {
           String(reportData.periodLabel ?? "") ||
           derivePeriodLabel(report.period_start, report.period_end);
 
-        // @ts-expect-error — react-pdf renderer types diverge from React.ReactElement
         const pdfBuffer = await renderToBuffer(
           CommissionReportPdf({
             lineItems: (reportData.lineItems ?? []) as Array<{
@@ -140,7 +139,7 @@ export async function POST(req: NextRequest) {
             }),
             businessName: team?.name ?? "",
             contactEmail: report.email_to ?? undefined,
-          }),
+          }) as any,
         );
 
         pdfAttachment = {
