@@ -88,6 +88,7 @@ export const skus = pgTable("skus", {
   target_margin_pct: decimal("target_margin_pct", { precision: 5, scale: 2 }),
   upc_code: text("upc_code"),
   supplier: text("supplier"),
+  supplier_id: uuid("supplier_id"),
   created_at: timestamp("created_at", { withTimezone: true })
     .defaultNow()
     .notNull(),
@@ -331,6 +332,72 @@ export const machineInventory = pgTable("machine_inventory", {
     .defaultNow()
     .notNull(),
   updated_at: timestamp("updated_at", { withTimezone: true })
+    .defaultNow()
+    .notNull(),
+});
+
+export const suppliers = pgTable("suppliers", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  business_id: uuid("business_id")
+    .references(() => teams.id)
+    .notNull(),
+  name: text("name").notNull(),
+  contact_name: text("contact_name"),
+  email: text("email"),
+  phone: text("phone"),
+  lead_time_days: integer("lead_time_days").default(3),
+  minimum_order_amount: decimal("minimum_order_amount", {
+    precision: 12,
+    scale: 2,
+  }).default("0"),
+  notes: text("notes"),
+  is_active: boolean("is_active").default(true).notNull(),
+  created_at: timestamp("created_at", { withTimezone: true })
+    .defaultNow()
+    .notNull(),
+  updated_at: timestamp("updated_at", { withTimezone: true })
+    .defaultNow()
+    .notNull(),
+});
+
+export const purchaseOrders = pgTable("purchase_orders", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  business_id: uuid("business_id")
+    .references(() => teams.id)
+    .notNull(),
+  supplier_id: uuid("supplier_id")
+    .references(() => suppliers.id)
+    .notNull(),
+  order_number: text("order_number").notNull(),
+  status: text("status").default("draft").notNull(), // draft, submitted, confirmed, shipped, received, canceled
+  total_amount: decimal("total_amount", { precision: 12, scale: 2 })
+    .default("0")
+    .notNull(),
+  notes: text("notes"),
+  expected_delivery_date: date("expected_delivery_date"),
+  submitted_at: timestamp("submitted_at", { withTimezone: true }),
+  received_at: timestamp("received_at", { withTimezone: true }),
+  created_at: timestamp("created_at", { withTimezone: true })
+    .defaultNow()
+    .notNull(),
+  updated_at: timestamp("updated_at", { withTimezone: true })
+    .defaultNow()
+    .notNull(),
+});
+
+export const purchaseOrderItems = pgTable("purchase_order_items", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  purchase_order_id: uuid("purchase_order_id")
+    .references(() => purchaseOrders.id)
+    .notNull(),
+  sku_id: uuid("sku_id")
+    .references(() => skus.id)
+    .notNull(),
+  quantity: integer("quantity").notNull(),
+  unit_cost: decimal("unit_cost", { precision: 10, scale: 2 }).notNull(),
+  total_cost: decimal("total_cost", { precision: 12, scale: 2 }).notNull(),
+  received_quantity: integer("received_quantity").default(0).notNull(),
+  created_at: timestamp("created_at", { withTimezone: true })
     .defaultNow()
     .notNull(),
 });

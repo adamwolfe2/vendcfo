@@ -54,8 +54,8 @@ setup("authenticate", async ({ page }) => {
           const text = script.textContent ?? "";
           const urlMatch = text.match(/NEXT_PUBLIC_SUPABASE_URL['":\s]+"([^"]+)"/);
           const keyMatch = text.match(/NEXT_PUBLIC_SUPABASE_ANON_KEY['":\s]+"([^"]+)"/);
-          if (urlMatch) url = urlMatch[1];
-          if (keyMatch) key = keyMatch[1];
+          if (urlMatch) url = urlMatch[1] ?? "";
+          if (keyMatch) key = keyMatch[1] ?? "";
         }
       }
 

@@ -4014,5 +4014,9 @@ export {
   employees as vendingEmployees,
   compensationPlans as vendingCompensationPlans,
   revenueRecords as vendingRevenueRecords,
+  machineInventory as vendingMachineInventory,
   capacityAlerts as vendingCapacityAlerts,
+  suppliers as vendingSuppliers,
+  purchaseOrders as vendingPurchaseOrders,
+  purchaseOrderItems as vendingPurchaseOrderItems,
 } from "./schema/vending";
