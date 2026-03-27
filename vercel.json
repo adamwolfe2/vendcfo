@@ -1,7 +1,9 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
-  "buildCommand": "cd apps/dashboard && NODE_OPTIONS='--max-old-space-size=6144' NEXT_TELEMETRY_DISABLED=1 next build --experimental-app-only",
+  "buildCommand": "cd apps/dashboard && NODE_OPTIONS='--max-old-space-size=14336' NEXT_TELEMETRY_DISABLED=1 next build",
   "outputDirectory": "apps/dashboard/.next",
   "installCommand": "bun install",
-  "framework": "nextjs"
+  "framework": "nextjs",
+  "regions": ["iad1"],
+  "buildMachineType": "enhanced-16x"
 }
