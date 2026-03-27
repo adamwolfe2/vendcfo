@@ -312,6 +312,29 @@ export const revenueRecords = pgTable("revenue_records", {
     .notNull(),
 });
 
+export const machineInventory = pgTable("machine_inventory", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  business_id: uuid("business_id")
+    .references(() => teams.id)
+    .notNull(),
+  machine_id: uuid("machine_id")
+    .references(() => machines.id)
+    .notNull(),
+  sku_id: uuid("sku_id")
+    .references(() => skus.id)
+    .notNull(),
+  current_quantity: integer("current_quantity").notNull().default(0),
+  max_capacity: integer("max_capacity").notNull().default(10),
+  last_restocked_at: timestamp("last_restocked_at", { withTimezone: true }),
+  reorder_threshold: integer("reorder_threshold").default(2),
+  created_at: timestamp("created_at", { withTimezone: true })
+    .defaultNow()
+    .notNull(),
+  updated_at: timestamp("updated_at", { withTimezone: true })
+    .defaultNow()
+    .notNull(),
+});
+
 export const capacityAlerts = pgTable("capacity_alerts", {
   id: uuid("id").primaryKey().defaultRandom(),
   business_id: uuid("business_id")

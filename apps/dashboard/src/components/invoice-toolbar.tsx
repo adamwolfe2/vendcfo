@@ -271,7 +271,7 @@ export default function InvoiceToolbar({
               ) : (
                 <Button
                   size="sm"
-                  className="rounded-full h-7 px-3 text-xs text-secondary"
+                  className="rounded-full h-8 sm:h-7 px-4 sm:px-3 text-[13px] sm:text-xs text-secondary font-medium"
                   onClick={handleTogglePayment}
                   onMouseEnter={() => setShouldPrefetch(true)}
                 >

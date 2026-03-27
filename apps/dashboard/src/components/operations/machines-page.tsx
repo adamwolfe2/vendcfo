@@ -2,9 +2,10 @@
 
 import { AskRouteCFO } from "@/components/ask-route-cfo";
 import { CsvExportButton } from "@/components/csv-export-button";
+import { MachineInventoryDetail } from "@/components/operations/machine-inventory-detail";
 import { exportToCsv } from "@/utils/csv-export";
 import { createClient } from "@vendcfo/supabase/client";
-import { Pencil, Plus, Server, Trash2, X } from "lucide-react";
+import { Package, Pencil, Plus, Server, Trash2, X } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
 
 // ---------------------------------------------------------------------------
@@ -381,6 +382,9 @@ export function MachinesPage({
   const [editEntry, setEditEntry] = useState<MachineRow | null>(null);
   const [deleteId, setDeleteId] = useState<string | null>(null);
   const [deleting, setDeleting] = useState(false);
+  const [inventoryMachine, setInventoryMachine] = useState<MachineRow | null>(
+    null,
+  );
 
   useEffect(() => {
     (async () => {
@@ -572,6 +576,14 @@ export function MachinesPage({
                     <div className="flex items-center justify-end gap-1">
                       <button
                         type="button"
+                        onClick={() => setInventoryMachine(mac)}
+                        title="View Inventory"
+                        className="rounded p-2 min-h-[44px] min-w-[44px] flex items-center justify-center text-[#999] transition-colors hover:bg-[#f0f0f0] hover:text-[#555]"
+                      >
+                        <Package size={16} strokeWidth={1.5} />
+                      </button>
+                      <button
+                        type="button"
                         onClick={() => setEditEntry(mac)}
                         title="Edit"
                         className="rounded p-2 min-h-[44px] min-w-[44px] flex items-center justify-center text-[#999] transition-colors hover:bg-[#f0f0f0] hover:text-[#555]"
@@ -625,6 +637,13 @@ export function MachinesPage({
           onConfirm={handleDelete}
           onCancel={() => setDeleteId(null)}
           deleting={deleting}
+        />
+      )}
+      {inventoryMachine && (
+        <MachineInventoryDetail
+          machineId={inventoryMachine.id}
+          machineLabel={`${inventoryMachine.serial_number}${inventoryMachine.make_model ? ` - ${inventoryMachine.make_model}` : ""}`}
+          onClose={() => setInventoryMachine(null)}
         />
       )}
     </div>

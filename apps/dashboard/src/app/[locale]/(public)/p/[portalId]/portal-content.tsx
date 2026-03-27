@@ -179,8 +179,8 @@ export function PortalContent({ portalId }: Props) {
           }
           usedFilenames.add(filename);
           zip.file(filename, blob);
-        } catch (error) {
-          console.error(`Error processing invoice ${invoice.id}:`, error);
+        } catch {
+          // Skip failed downloads silently
         }
       });
 
@@ -199,20 +199,22 @@ export function PortalContent({ portalId }: Props) {
 
       const timestamp = new Date().toISOString().split("T")[0];
       await saveFile(zipBlob, `invoices-${timestamp}.zip`);
-    } catch (error) {
-      console.error("Failed to create invoice ZIP:", error);
+    } catch {
+      // Download failed silently
     } finally {
       setIsDownloading(false);
     }
   };
 
+  const hasOutstanding = summary.outstandingAmount > 0;
+
   return (
     <div className="min-h-screen dotted-bg">
-      <div className="max-w-3xl mx-auto px-4 py-12 sm:px-6 lg:px-8">
+      <div className="max-w-3xl mx-auto px-4 py-8 sm:py-12 sm:px-6 lg:px-8">
         {/* Header */}
-        <div className="mb-10">
+        <div className="mb-8 sm:mb-10">
           {customer.team.logoUrl && (
-            <div className="mb-6">
+            <div className="mb-4 sm:mb-6">
               <Image
                 src={customer.team.logoUrl}
                 alt={customer.team.name || "Company logo"}
@@ -222,7 +224,7 @@ export function PortalContent({ portalId }: Props) {
               />
             </div>
           )}
-          <h1 className="text-2xl font-serif tracking-tight">
+          <h1 className="text-xl sm:text-2xl font-serif tracking-tight">
             {customer.name}
           </h1>
           {customer.team.name && (
@@ -230,11 +232,28 @@ export function PortalContent({ portalId }: Props) {
           )}
         </div>
 
+        {/* Outstanding Balance Callout */}
+        {hasOutstanding && (
+          <div className="bg-background border border-border px-5 py-5 mb-6 sm:mb-8">
+            <div className="text-[12px] text-[#606060] mb-1 uppercase tracking-wide">
+              Amount Due
+            </div>
+            <div className="text-3xl sm:text-4xl font-semibold tracking-tight">
+              {formatAmount({
+                amount: summary.outstandingAmount,
+                currency: summary.currency,
+              })}
+            </div>
+          </div>
+        )}
+
         {/* Summary Cards */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-10">
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-8 sm:mb-10">
           <div className="bg-background border border-border px-4 py-3">
-            <div className="text-[12px] text-[#606060] mb-2">Total Amount</div>
-            <div className="text-[18px] font-medium">
+            <div className="text-[11px] sm:text-[12px] text-[#606060] mb-1.5">
+              Total Invoiced
+            </div>
+            <div className="text-[16px] sm:text-[18px] font-medium">
               {formatAmount({
                 amount: summary.totalAmount,
                 currency: summary.currency,
@@ -242,8 +261,10 @@ export function PortalContent({ portalId }: Props) {
             </div>
           </div>
           <div className="bg-background border border-border px-4 py-3">
-            <div className="text-[12px] text-[#606060] mb-2">Paid</div>
-            <div className="text-[18px] font-medium">
+            <div className="text-[11px] sm:text-[12px] text-[#606060] mb-1.5">
+              Paid
+            </div>
+            <div className="text-[16px] sm:text-[18px] font-medium text-[#00C969]">
               {formatAmount({
                 amount: summary.paidAmount,
                 currency: summary.currency,
@@ -251,8 +272,10 @@ export function PortalContent({ portalId }: Props) {
             </div>
           </div>
           <div className="bg-background border border-border px-4 py-3">
-            <div className="text-[12px] text-[#606060] mb-2">Outstanding</div>
-            <div className="text-[18px] font-medium">
+            <div className="text-[11px] sm:text-[12px] text-[#606060] mb-1.5">
+              Outstanding
+            </div>
+            <div className="text-[16px] sm:text-[18px] font-medium">
               {formatAmount({
                 amount: summary.outstandingAmount,
                 currency: summary.currency,
@@ -260,23 +283,25 @@ export function PortalContent({ portalId }: Props) {
             </div>
           </div>
           <div className="bg-background border border-border px-4 py-3">
-            <div className="text-[12px] text-[#606060] mb-2">Invoices</div>
-            <div className="text-[18px] font-medium">
+            <div className="text-[11px] sm:text-[12px] text-[#606060] mb-1.5">
+              Invoices
+            </div>
+            <div className="text-[16px] sm:text-[18px] font-medium">
               {summary.invoiceCount}
             </div>
           </div>
         </div>
 
-        {/* Invoices Section */}
-        <div className="mb-6">
-          <h2 className="text-[16px] font-medium mb-4">Invoices</h2>
+        {/* Invoices Section Header */}
+        <div className="mb-4">
+          <h2 className="text-[16px] font-medium">Invoices</h2>
         </div>
 
-        {/* Invoice Table */}
+        {/* Invoice List */}
         {invoices.length > 0 ? (
           <div className="bg-background border border-border overflow-hidden">
-            {/* Table Header */}
-            <div className="grid grid-cols-[32px_minmax(80px,1.2fr)_minmax(70px,1fr)_minmax(70px,1fr)_minmax(70px,1fr)_minmax(60px,0.8fr)_minmax(70px,auto)] gap-2 px-3 py-3 bg-muted/50 border-b border-border text-[12px] font-medium text-[#606060] items-center">
+            {/* Desktop Table Header - hidden on mobile */}
+            <div className="hidden sm:grid grid-cols-[32px_minmax(80px,1.2fr)_minmax(70px,1fr)_minmax(70px,1fr)_minmax(70px,1fr)_minmax(60px,0.8fr)_minmax(70px,auto)] gap-2 px-3 py-3 bg-muted/50 border-b border-border text-[12px] font-medium text-[#606060] items-center">
               <div className="flex items-center justify-center">
                 <Checkbox
                   checked={
@@ -293,129 +318,252 @@ export function PortalContent({ portalId }: Props) {
               <div />
             </div>
 
-            {/* Table Body */}
+            {/* Invoice Rows */}
             <div className="divide-y divide-border">
-              {invoices.map((invoice) => (
-                <div
-                  key={invoice.id}
-                  className="grid grid-cols-[32px_minmax(80px,1.2fr)_minmax(70px,1fr)_minmax(70px,1fr)_minmax(70px,1fr)_minmax(60px,0.8fr)_minmax(70px,auto)] gap-2 px-3 py-3 hover:bg-muted/50 transition-colors group items-center"
-                >
-                  <div
-                    className="flex items-center justify-center"
-                    onClick={(e) => e.stopPropagation()}
-                  >
-                    <Checkbox
-                      checked={selectedIds.has(invoice.id)}
-                      onCheckedChange={() => toggleOne(invoice.id)}
-                    />
-                  </div>
-                  <Link
-                    href={`/i/${invoice.token}`}
-                    target="_blank"
-                    className="text-[12px] hover:underline"
-                  >
-                    {invoice.invoiceNumber || "-"}
-                  </Link>
-                  <div className="text-[12px] text-[#606060]">
-                    {invoice.issueDate
-                      ? format(
-                          new TZDate(invoice.issueDate, "UTC"),
-                          "MMM d, yyyy",
-                        )
-                      : "-"}
-                  </div>
-                  <div className="text-[12px] text-[#606060]">
-                    {invoice.dueDate
-                      ? format(
-                          new TZDate(invoice.dueDate, "UTC"),
-                          "MMM d, yyyy",
-                        )
-                      : "-"}
-                  </div>
-                  <div className="text-[12px] text-right">
-                    {invoice.amount != null && invoice.currency
-                      ? formatAmount({
-                          amount: invoice.amount,
-                          currency: invoice.currency,
-                        })
-                      : "-"}
-                  </div>
-                  <div className="text-right">
-                    <InvoiceStatus status={invoice.status as any} />
-                  </div>
-                  <div className="flex items-center justify-center gap-1">
-                    {stripeConnected &&
-                      (invoice.status === "unpaid" ||
-                        invoice.status === "overdue") && (
-                        <Button
-                          variant="default"
-                          size="sm"
-                          className="h-6 px-2 text-[11px] text-secondary"
-                          onClick={() => handlePayInvoice(invoice)}
-                          disabled={payingId === invoice.id}
-                        >
-                          {payingId === invoice.id ? (
-                            <Spinner size={12} />
-                          ) : (
-                            "Pay"
-                          )}
-                        </Button>
-                      )}
-                    <DropdownMenu>
-                      <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" className="h-8 w-8 p-0">
-                          {downloadingId === invoice.id ? (
-                            <Spinner size={16} />
-                          ) : (
-                            <Icons.MoreHoriz className="h-4 w-4" />
-                          )}
-                        </Button>
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent align="end">
-                        <DropdownMenuItem asChild>
-                          <Link href={`/i/${invoice.token}`} target="_blank">
-                            View invoice
-                          </Link>
-                        </DropdownMenuItem>
-                        <DropdownMenuItem
-                          onClick={() => handleDownloadSingle(invoice)}
-                        >
-                          Download
-                        </DropdownMenuItem>
-                        {stripeConnected &&
-                          (invoice.status === "unpaid" ||
-                            invoice.status === "overdue") && (
+              {invoices.map((invoice) => {
+                const isPayable =
+                  stripeConnected &&
+                  (invoice.status === "unpaid" ||
+                    invoice.status === "overdue");
+
+                return (
+                  <div key={invoice.id}>
+                    {/* Desktop Row */}
+                    <div className="hidden sm:grid grid-cols-[32px_minmax(80px,1.2fr)_minmax(70px,1fr)_minmax(70px,1fr)_minmax(70px,1fr)_minmax(60px,0.8fr)_minmax(70px,auto)] gap-2 px-3 py-3 hover:bg-muted/50 transition-colors group items-center">
+                      <div
+                        className="flex items-center justify-center"
+                        onClick={(e) => e.stopPropagation()}
+                      >
+                        <Checkbox
+                          checked={selectedIds.has(invoice.id)}
+                          onCheckedChange={() => toggleOne(invoice.id)}
+                        />
+                      </div>
+                      <Link
+                        href={`/i/${invoice.token}`}
+                        target="_blank"
+                        className="text-[12px] hover:underline"
+                      >
+                        {invoice.invoiceNumber || "-"}
+                      </Link>
+                      <div className="text-[12px] text-[#606060]">
+                        {invoice.issueDate
+                          ? format(
+                              new TZDate(invoice.issueDate, "UTC"),
+                              "MMM d, yyyy",
+                            )
+                          : "-"}
+                      </div>
+                      <div className="text-[12px] text-[#606060]">
+                        {invoice.dueDate
+                          ? format(
+                              new TZDate(invoice.dueDate, "UTC"),
+                              "MMM d, yyyy",
+                            )
+                          : "-"}
+                      </div>
+                      <div className="text-[12px] text-right">
+                        {invoice.amount != null && invoice.currency
+                          ? formatAmount({
+                              amount: invoice.amount,
+                              currency: invoice.currency,
+                            })
+                          : "-"}
+                      </div>
+                      <div className="text-right">
+                        <InvoiceStatus status={invoice.status as any} />
+                      </div>
+                      <div className="flex items-center justify-center gap-1">
+                        {isPayable && (
+                          <Button
+                            variant="default"
+                            size="sm"
+                            className="h-7 px-3 text-[12px] text-secondary"
+                            onClick={() => handlePayInvoice(invoice)}
+                            disabled={payingId === invoice.id}
+                          >
+                            {payingId === invoice.id ? (
+                              <Spinner size={14} />
+                            ) : (
+                              "Pay"
+                            )}
+                          </Button>
+                        )}
+                        <DropdownMenu>
+                          <DropdownMenuTrigger asChild>
+                            <Button variant="ghost" className="h-8 w-8 p-0">
+                              {downloadingId === invoice.id ? (
+                                <Spinner size={16} />
+                              ) : (
+                                <Icons.MoreHoriz className="h-4 w-4" />
+                              )}
+                            </Button>
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent align="end">
+                            <DropdownMenuItem asChild>
+                              <Link
+                                href={`/i/${invoice.token}`}
+                                target="_blank"
+                              >
+                                View invoice
+                              </Link>
+                            </DropdownMenuItem>
                             <DropdownMenuItem
+                              onClick={() => handleDownloadSingle(invoice)}
+                            >
+                              Download
+                            </DropdownMenuItem>
+                            {isPayable && (
+                              <DropdownMenuItem
+                                onClick={() => handlePayInvoice(invoice)}
+                                disabled={payingId === invoice.id}
+                              >
+                                {payingId === invoice.id
+                                  ? "Redirecting..."
+                                  : "Pay now"}
+                              </DropdownMenuItem>
+                            )}
+                            {invoice.status === "paid" && (
+                              <DropdownMenuItem
+                                onClick={() => {
+                                  downloadFile(
+                                    `${process.env.NEXT_PUBLIC_API_URL}/files/download/invoice?token=${invoice.token}&type=receipt`,
+                                    `receipt-${invoice.invoiceNumber || "invoice"}.pdf`,
+                                  );
+                                }}
+                              >
+                                Download receipt
+                              </DropdownMenuItem>
+                            )}
+                          </DropdownMenuContent>
+                        </DropdownMenu>
+                      </div>
+                    </div>
+
+                    {/* Mobile Card Row */}
+                    <div className="sm:hidden px-4 py-4 hover:bg-muted/50 transition-colors">
+                      <div className="flex items-start justify-between gap-3">
+                        <div className="flex items-start gap-3 min-w-0 flex-1">
+                          <div
+                            className="pt-0.5 flex-shrink-0"
+                            onClick={(e) => e.stopPropagation()}
+                          >
+                            <Checkbox
+                              checked={selectedIds.has(invoice.id)}
+                              onCheckedChange={() => toggleOne(invoice.id)}
+                            />
+                          </div>
+                          <div className="min-w-0 flex-1">
+                            <div className="flex items-center gap-2 mb-1">
+                              <Link
+                                href={`/i/${invoice.token}`}
+                                target="_blank"
+                                className="text-[13px] font-medium hover:underline truncate"
+                              >
+                                {invoice.invoiceNumber || "-"}
+                              </Link>
+                              <InvoiceStatus status={invoice.status as any} />
+                            </div>
+                            <div className="text-[12px] text-[#606060]">
+                              {invoice.dueDate
+                                ? `Due ${format(
+                                    new TZDate(invoice.dueDate, "UTC"),
+                                    "MMM d, yyyy",
+                                  )}`
+                                : invoice.issueDate
+                                  ? format(
+                                      new TZDate(invoice.issueDate, "UTC"),
+                                      "MMM d, yyyy",
+                                    )
+                                  : "-"}
+                            </div>
+                          </div>
+                        </div>
+                        <div className="flex flex-col items-end gap-2 flex-shrink-0">
+                          <div className="text-[14px] font-medium">
+                            {invoice.amount != null && invoice.currency
+                              ? formatAmount({
+                                  amount: invoice.amount,
+                                  currency: invoice.currency,
+                                })
+                              : "-"}
+                          </div>
+                          {isPayable ? (
+                            <Button
+                              variant="default"
+                              className="h-11 min-w-[80px] px-4 text-[13px] font-medium text-secondary"
                               onClick={() => handlePayInvoice(invoice)}
                               disabled={payingId === invoice.id}
                             >
-                              {payingId === invoice.id
-                                ? "Redirecting..."
-                                : "Pay now"}
-                            </DropdownMenuItem>
+                              {payingId === invoice.id ? (
+                                <Spinner size={16} />
+                              ) : (
+                                "Pay Now"
+                              )}
+                            </Button>
+                          ) : (
+                            <DropdownMenu>
+                              <DropdownMenuTrigger asChild>
+                                <Button
+                                  variant="ghost"
+                                  className="h-8 w-8 p-0"
+                                >
+                                  {downloadingId === invoice.id ? (
+                                    <Spinner size={16} />
+                                  ) : (
+                                    <Icons.MoreHoriz className="h-4 w-4" />
+                                  )}
+                                </Button>
+                              </DropdownMenuTrigger>
+                              <DropdownMenuContent align="end">
+                                <DropdownMenuItem asChild>
+                                  <Link
+                                    href={`/i/${invoice.token}`}
+                                    target="_blank"
+                                  >
+                                    View invoice
+                                  </Link>
+                                </DropdownMenuItem>
+                                <DropdownMenuItem
+                                  onClick={() =>
+                                    handleDownloadSingle(invoice)
+                                  }
+                                >
+                                  Download
+                                </DropdownMenuItem>
+                                {invoice.status === "paid" && (
+                                  <DropdownMenuItem
+                                    onClick={() => {
+                                      downloadFile(
+                                        `${process.env.NEXT_PUBLIC_API_URL}/files/download/invoice?token=${invoice.token}&type=receipt`,
+                                        `receipt-${invoice.invoiceNumber || "invoice"}.pdf`,
+                                      );
+                                    }}
+                                  >
+                                    Download receipt
+                                  </DropdownMenuItem>
+                                )}
+                              </DropdownMenuContent>
+                            </DropdownMenu>
                           )}
-                        {invoice.status === "paid" && (
-                          <DropdownMenuItem
-                            onClick={() => {
-                              downloadFile(
-                                `${process.env.NEXT_PUBLIC_API_URL}/files/download/invoice?token=${invoice.token}&type=receipt`,
-                                `receipt-${invoice.invoiceNumber || "invoice"}.pdf`,
-                              );
-                            }}
-                          >
-                            Download receipt
-                          </DropdownMenuItem>
-                        )}
-                      </DropdownMenuContent>
-                    </DropdownMenu>
+                        </div>
+                      </div>
+                    </div>
                   </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           </div>
         ) : (
-          <div className="bg-background border border-border py-16 text-center">
-            <p className="text-[#606060]">No invoices yet</p>
+          <div className="bg-background border border-border py-20 text-center">
+            <div className="mb-3">
+              <Icons.Invoice className="size-10 text-[#878787] mx-auto" />
+            </div>
+            <p className="text-[15px] font-medium mb-1">No invoices yet</p>
+            <p className="text-[13px] text-[#606060]">
+              Invoices from {customer.team.name || "this business"} will appear
+              here.
+            </p>
           </div>
         )}
 
@@ -424,7 +572,7 @@ export function PortalContent({ portalId }: Props) {
           <div className="mt-6">
             <Button
               variant="outline"
-              className="w-full text-xs text-[#606060] bg-background"
+              className="w-full h-11 text-xs text-[#606060] bg-background"
               onClick={() => fetchNextPage()}
               disabled={isFetchingNextPage}
             >

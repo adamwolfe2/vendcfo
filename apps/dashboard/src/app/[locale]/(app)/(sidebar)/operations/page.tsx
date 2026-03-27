@@ -6,8 +6,9 @@ import {
   locations,
   machines,
   skus,
+  machineInventory,
 } from "@vendcfo/db/schema/vending";
-import { eq, and, sql } from "drizzle-orm";
+import { eq, and, sql, lte } from "drizzle-orm";
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 
@@ -32,10 +33,11 @@ export default async function Page() {
     locations: 0,
     machines: 0,
     products: 0,
+    lowStockItems: 0,
   };
 
   try {
-    const [routeCount, locationCount, machineCount, skuCount] =
+    const [routeCount, locationCount, machineCount, skuCount, lowStockCount] =
       await Promise.all([
         db
           .select({ count: sql<number>`count(*)` })
@@ -55,6 +57,15 @@ export default async function Page() {
           .select({ count: sql<number>`count(*)` })
           .from(skus)
           .where(eq(skus.business_id, teamId!)),
+        db
+          .select({ count: sql<number>`count(*)` })
+          .from(machineInventory)
+          .where(
+            and(
+              eq(machineInventory.business_id, teamId!),
+              sql`${machineInventory.current_quantity} <= ${machineInventory.reorder_threshold}`,
+            ),
+          ),
       ]);
 
     stats = {
@@ -62,6 +73,7 @@ export default async function Page() {
       locations: Number(locationCount[0]?.count ?? 0),
       machines: Number(machineCount[0]?.count ?? 0),
       products: Number(skuCount[0]?.count ?? 0),
+      lowStockItems: Number(lowStockCount[0]?.count ?? 0),
     };
   } catch {
     // Tables may not exist yet -- render with zero counts

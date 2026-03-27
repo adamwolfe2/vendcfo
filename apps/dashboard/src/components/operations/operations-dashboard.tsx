@@ -1,6 +1,7 @@
 "use client";
 
 import {
+  AlertTriangle,
   CalendarDays,
   DollarSign,
   FileSpreadsheet,
@@ -62,6 +63,7 @@ interface OperationsDashboardProps {
     locations: number;
     machines: number;
     products: number;
+    lowStockItems: number;
   };
 }
 
@@ -76,7 +78,7 @@ export function OperationsDashboard({ stats }: OperationsDashboardProps) {
       </div>
 
       {/* Stats bar */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-8">
+      <div className="grid grid-cols-2 sm:grid-cols-5 gap-4 mb-8">
         <div className="border border-[#e0e0e0] rounded-lg p-4">
           <p className="text-2xl font-bold">{stats.routes}</p>
           <p className="text-xs text-[#878787]">Active Routes</p>
@@ -92,6 +94,25 @@ export function OperationsDashboard({ stats }: OperationsDashboardProps) {
         <div className="border border-[#e0e0e0] rounded-lg p-4">
           <p className="text-2xl font-bold">{stats.products}</p>
           <p className="text-xs text-[#878787]">Products</p>
+        </div>
+        <div
+          className={`border rounded-lg p-4 ${
+            stats.lowStockItems > 0
+              ? "border-[#fde68a] bg-[#fffbeb]"
+              : "border-[#e0e0e0]"
+          }`}
+        >
+          <div className="flex items-center gap-2">
+            {stats.lowStockItems > 0 && (
+              <AlertTriangle
+                size={16}
+                strokeWidth={1.5}
+                className="text-[#d97706]"
+              />
+            )}
+            <p className="text-2xl font-bold">{stats.lowStockItems}</p>
+          </div>
+          <p className="text-xs text-[#878787]">Low Stock Items</p>
         </div>
       </div>
 
