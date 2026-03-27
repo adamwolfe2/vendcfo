@@ -95,3 +95,4 @@ blob-report/
 *.njsproj
 *.sln
 *.sw?
+packages/email/.react-email/
