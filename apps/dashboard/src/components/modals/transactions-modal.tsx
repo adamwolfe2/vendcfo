@@ -6,10 +6,10 @@ import { cn } from "@vendcfo/ui/cn";
 import { Dialog, DialogContent } from "@vendcfo/ui/dialog";
 import { useAction } from "next-safe-action/hooks";
 import Image from "next/image";
-import TransactionsScreenOneLight from "public/assets/transactions-1-light.png";
-import TransactionsScreenOne from "public/assets/transactions-1.png";
-import TransactionsScreenTwoLight from "public/assets/transactions-2-light.png";
-import TransactionsScreenTwo from "public/assets/transactions-2.png";
+import TransactionsScreenOneLight from "public/assets/transactions-1-light.webp";
+import TransactionsScreenOne from "public/assets/transactions-1.webp";
+import TransactionsScreenTwoLight from "public/assets/transactions-2-light.webp";
+import TransactionsScreenTwo from "public/assets/transactions-2.webp";
 import { Fragment, useState } from "react";
 
 const images = [

@@ -8,10 +8,10 @@ import { cn } from "@vendcfo/ui/cn";
 import { Dialog, DialogContent } from "@vendcfo/ui/dialog";
 import { useAction } from "next-safe-action/hooks";
 import Image from "next/image";
-import OverViewScreenOneLight from "public/assets/overview-1-light.png";
-import OverViewScreenOne from "public/assets/overview-1.png";
-import OverViewScreenTwoLight from "public/assets/overview-2-light.png";
-import OverViewScreenTwo from "public/assets/overview-2.png";
+import OverViewScreenOneLight from "public/assets/overview-1-light.webp";
+import OverViewScreenOne from "public/assets/overview-1.webp";
+import OverViewScreenTwoLight from "public/assets/overview-2-light.webp";
+import OverViewScreenTwo from "public/assets/overview-2.webp";
 import { Fragment, useEffect, useState } from "react";
 
 const images = [
