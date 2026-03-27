@@ -1,6 +1,6 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
-  "buildCommand": "cd apps/dashboard && TURBOPACK=0 NODE_OPTIONS='--max-old-space-size=7168' next build --no-turbopack",
+  "buildCommand": "cd apps/dashboard && NODE_OPTIONS='--max-old-space-size=7168' next build",
   "outputDirectory": "apps/dashboard/.next",
   "installCommand": "bun install",
   "framework": "nextjs"
