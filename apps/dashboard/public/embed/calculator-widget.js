@@ -13,7 +13,7 @@ var s=document.currentScript||document.querySelector('script[src*="calculator-wi
 var pos=(s&&s.getAttribute("data-position"))||"bottom-right";
 var col=(s&&s.getAttribute("data-color"))||"#0f172a";
 var lbl=(s&&s.getAttribute("data-label"))||"";
-var base=(s&&s.getAttribute("data-base-url"))||(s&&s.src?s.src.replace(/\/embed\/calculator-widget\.js.*$/,""):"")||"https://vendcfo.vercel.app";
+var base=(s&&s.getAttribute("data-base-url"))||(s&&s.src?s.src.replace(/\/embed\/calculator-widget\.js.*$/,""):"")||"https://vendcfo-lime.vercel.app";
 
 var URL=base+"/en/embed/calculators",W=400,H=600,SZ=56,G=24,open=false;
 var R=pos==="bottom-right",side=R?"right":"left";
