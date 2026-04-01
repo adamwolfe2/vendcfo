@@ -62,6 +62,7 @@ function ResultCard({
 
   if (items.length === 1) {
     const item = items[0];
+    if (!item) return null;
     return (
       <div
         className="mt-2 rounded-lg overflow-hidden text-xs border"
