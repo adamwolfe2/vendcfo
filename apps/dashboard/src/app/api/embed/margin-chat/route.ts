@@ -103,7 +103,7 @@ function parseAddItem(
 
 function parseRemoveTarget(msg: string): string | null {
   const m = msg.match(/(?:remove|delete|drop)\s+(.+)/i);
-  return m ? m[1].trim() : null;
+  return m?.[1]?.trim() ?? null;
 }
 
 function isClear(msg: string): boolean {
