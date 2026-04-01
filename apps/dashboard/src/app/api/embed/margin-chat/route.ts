@@ -124,11 +124,12 @@ function isHelp(msg: string): boolean {
 function compareReply(items: ComparisonItem[]): string {
   if (items.length === 0) return "No items yet. Add a product to get started.";
   if (items.length === 1)
-    return `Only ${items[0].name} so far — add another item to compare!`;
+    return `Only ${items[0]?.name ?? "that item"} so far — add another item to compare!`;
 
   const sorted = [...items].sort((a, b) => b.margin - a.margin);
   const best = sorted[0];
   const worst = sorted[sorted.length - 1];
+  if (!best || !worst) return "Add some items to compare.";
   const diff = best.margin - worst.margin;
 
   return `Best margin: ${best.name} at ${best.margin}% (${diff.toFixed(1)}pp ahead of ${worst.name}).`;
