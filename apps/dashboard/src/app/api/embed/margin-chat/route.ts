@@ -84,8 +84,8 @@ function parseAddItem(
   const nums = clean.match(/\d+(?:\.\d+)?/g);
   if (!nums || nums.length < 2) return null;
 
-  const cost = parseFloat(nums[0]);
-  const price = parseFloat(nums[1]);
+  const cost = parseFloat(nums[0] ?? "0");
+  const price = parseFloat(nums[1] ?? "0");
   if (cost <= 0 || price <= 0 || price <= cost) return null;
 
   // Name = everything before the first number
