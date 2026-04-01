@@ -188,33 +188,13 @@ function TypingIndicator() {
 
 // ─── Logo ─────────────────────────────────────────────────────────
 function Logo() {
-  // Replace the <img> src with your actual logo URL once provided
-  // e.g. src="/embed/vendingpreneurs-logo.png"
   return (
-    <div className="flex items-center gap-2">
-      {/* Placeholder icon — swap with <img> once logo is provided */}
-      <svg
-        className="w-5 h-5"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="1.5"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        style={{ color: "rgba(255,255,255,0.9)" }}
-      >
-        <rect x="3" y="3" width="18" height="18" rx="2" />
-        <path d="M3 9h18M9 21V9" />
-        <circle cx="15.5" cy="15" r="1.5" fill="currentColor" />
-      </svg>
-      <div>
-        <div className="font-bold text-white text-sm leading-none">
-          {BRAND.name}
-        </div>
-        <div className="text-[10px] leading-none mt-0.5" style={{ color: "rgba(255,255,255,0.65)" }}>
-          {BRAND.tagline}
-        </div>
-      </div>
+    <div className="flex items-center gap-2.5">
+      <img
+        src="/embed/vendingpreneurs-logo.png"
+        alt="Vendingpreneurs"
+        style={{ height: "28px", width: "auto", objectFit: "contain" }}
+      />
     </div>
   );
 }
